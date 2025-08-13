@@ -1,5 +1,4 @@
-## switch to stack exec if we add stack.yaml
-RUN  := cabal run RunInformath --
+RUN  := stack exec RunInformath --
 OPEN := open  # pdf viewer command
 GF_FILES := $(wildcard grammars/*.gf)
 
@@ -9,8 +8,6 @@ all: grammars/Informath.pgf Dedukti Agda Rocq Lean RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
-	sed -i '' 's/Monad\.Identity/Monad\.Identity\nimport Control\.Monad/' grammars/Informath.hs
-
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
@@ -23,9 +20,8 @@ Lean:
 
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
-
 RunInformath:
-	cabal install --overwrite-policy=always
+	stack build
 
 clean:
 	cd src/typetheory && \
@@ -34,7 +30,7 @@ clean:
 	done
 
 cleangrammars:
-	cd grammars && rm *.gfo *.pgf
+	cd grammars && rm *.gfo *.pgf *.hs
 
 demo:
 	$(RUN) -lang=Eng test/exx.dk

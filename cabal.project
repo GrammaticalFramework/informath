@@ -1,8 +1,0 @@
-packages: .
-
-with-compiler: ghc-9.6
-
-source-repository-package
-  type: git
-  location: https://github.com/GrammaticalFramework/gf-core.git
-  tag: e7c0b6dada71f16160aa60e6fed6251280cbaf16

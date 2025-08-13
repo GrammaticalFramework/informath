@@ -51,6 +51,5 @@ executable RunInformath
                        containers,
                        mtl,
                        array,
-                       gf
-                       -- TODO: require gf 3.12 once the release is done—then no need for git repo in cabal.project
+                       gf >= 3.12
   default-language:    Haskell2010

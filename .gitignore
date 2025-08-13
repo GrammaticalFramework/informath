@@ -6,5 +6,6 @@
 *.x
 dist*/
 out/*
+.stack-work
 src/typetheory/*/
 grammars/Informath.hs
