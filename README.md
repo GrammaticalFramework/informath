@@ -23,7 +23,7 @@ The software included in this directory supports the translation of text and cod
 ```
   $ make
 ```
-to build an executable `RunInformath`. After that, you can do
+to build `RunInformath` and all its dependencies. After that, you can do
 ```
   $ make demo
 ```
@@ -37,8 +37,6 @@ which illustrates different functionalities: translating between Dedukti and nat
 - [happy](https://www.haskell.org/happy/) (executable)
 
 to do this.
-
-**Caution**: At the moment, making RunInformath is very sensitive to GCH compiler and Haskell library versions. Cabal and Stack configurations are planned to solve these issues soon.
 
 ## Generating synthetic data
 
@@ -220,9 +218,6 @@ An example of a readily available demo case is
 $ make demo
 ```
 Consult the [Makefile](./Makefile) to see what these commands exactly do.
-
-**Note**: with some versions of GHC libraries, `make Informath.pgf` results into a `Informath.hs` that gives an error about an undefined monad operation. This is fixed by adding the line `import Control.Monad` to the import list. The current Makefile does this with a `sed` command - which may cause an error with some other versions of GHC libraries. If this happens, you can comment out the `sed` command from the Makefile.
-* (NB: once we release GF 3.12, that should fix the problem? /IL)
 
 ## Usage
 
