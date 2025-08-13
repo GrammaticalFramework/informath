@@ -6,7 +6,7 @@ concrete MathCoreFre of MathCore =
   ] with
     (Syntax=SyntaxFre),
     (Grammar=GrammarFre),
-    (Markup=MarkupFre), -- does not exist
+    (Markup=MarkupFre),
     (Extend=ExtendFre),
     (Symbolic=SymbolicFre)
   ** open
