@@ -1,0 +1,55 @@
+cabal-version:       3.6
+name:                informath
+version:             0.1.0.0
+-- synopsis:
+-- description:
+license:             BSD-3-Clause
+author:              Aarne Ranta
+maintainer:          aarne.ranta@gmail.com
+category:            Development
+build-type:          Simple
+
+
+executable RunInformath
+  main-is:             RunInformath.hs
+  other-modules:
+    CommonConcepts
+    ConstantData
+    Core2Dedukti
+    Core2Informath
+    Dedukti2Agda
+    Dedukti2Rocq
+    Dedukti2Core
+    Dedukti2Lean
+    DeduktiOperations
+    Environment
+    Informath
+    Informath2Core
+    Lexing
+    MkConstants
+    ParseInformath
+    Ranking
+    SpecialDeduktiConversions
+    Agda.AbsAgda
+    Agda.ComposOp
+    Agda.PrintAgda
+    Rocq.AbsRocq
+    Rocq.ComposOp
+    Rocq.PrintRocq
+    Dedukti.AbsDedukti
+    Dedukti.ComposOp
+    Dedukti.ErrM
+    Dedukti.LexDedukti
+    Dedukti.ParDedukti
+    Dedukti.PrintDedukti
+    Lean.AbsLean
+    Lean.ComposOp
+    Lean.PrintLean
+  hs-source-dirs:      app src src/typetheory grammars
+  ghc-options:         -O2
+  build-depends:       base >=4.18 && <5,
+                       containers,
+                       mtl,
+                       array,
+                       gf >= 3.12
+  default-language:    Haskell2010

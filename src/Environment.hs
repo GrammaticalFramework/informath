@@ -11,7 +11,7 @@ data Env = Env {
  lookBackData :: M.Map String String,  -- from GFFun to DkId ---- and to more info?
  specialConversions :: [String],
  convToAgdaData :: ConstantData,
- convToCoqData :: ConstantData,
+ convToRocqData :: ConstantData,
  convToLeanData :: ConstantData,
  cpgf :: PGF,
  lang :: Language,

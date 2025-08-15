@@ -1,12 +1,12 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE LambdaCase, PatternSynonyms #-}
 
 module DeduktiOperations where
 
 import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import Dedukti.ParDedukti (myLexer)
-import Dedukti.LexDedukti (Token(..), Tok(..), tsText)
+import Dedukti.LexDedukti (Token(..), prToken)
 import CommonConcepts
 import ConstantData
 
@@ -29,7 +29,7 @@ identsInTypes t = M.fromListWith (+) [(x, 1) | x <- ids t] where
     JDef qident typ exp -> qident : ids typ ++ ids exp
     JThm qident typ exp -> qident : ids typ ++ ids exp
     JInj qident typ exp -> qident : ids typ ++ ids exp
-    
+
     _ -> composOpMPlus ids tree
 
 
@@ -75,7 +75,7 @@ applyConstantData cd = appConst []
         (ident, com) -> foldl EApp (EIdent ident) (map (appConst bs) (applyCombination com xs))
       (f, xs) -> foldl EApp (appConst bs f) (map (appConst bs) xs)
     _ -> composOp (appConst bs) t
- 
+
    lookid :: QIdent -> (QIdent, Combination)
    lookid f@(QIdent c) = case M.lookup c cd of
      Just (BASE cat fun) -> (gfAnnotate cat fun f, ComALL)
@@ -83,7 +83,7 @@ applyConstantData cd = appConst []
      Just (NEW _ cat fun com) -> (gfAnnotate cat fun f, com)
      Just (CONV other) -> (QIdent other, ComALL)
      _ -> (f, ComALL)
-     
+
    gfAnnotate :: GFCat -> GFFun -> QIdent -> QIdent
    gfAnnotate cat fun ident@(QIdent c) = QIdent (c ++ "&" ++ cat ++ "&" ++ fun)
 
@@ -95,7 +95,7 @@ ignoreCoercions cs t = case t of
     (f, xs) -> foldl EApp (ignoreCoercions cs f) (map (ignoreCoercions cs) xs)
   _ -> composOp (ignoreCoercions cs) t
 
--- typically, ignore explicit type arguments to form a polymorphic expression 
+-- typically, ignore explicit type arguments to form a polymorphic expression
 ignoreFirstArguments ::[(QIdent, Int)] -> Tree a -> Tree a
 ignoreFirstArguments cns t = case t of
   EApp _ _ -> case splitApp t of
@@ -114,7 +114,7 @@ eliminateLocalDefinitions = elim [] where
     EFun (HLetExp x d) e -> elim ((x, elim defs d):defs) e
     EFun (HLetTyped x _ d) e -> elim defs (EFun (HLetExp x d) e)
     _ -> composOp (elim defs) t
-    
+
 
 peano2int :: Tree a -> Tree a
 peano2int t = case t of
@@ -185,7 +185,7 @@ catExp e = case e of
 splitType :: Exp -> ([Hypo], Exp)
 splitType exp = case exp of
   EFun hypo body -> case splitType body of
-    ([], _) -> ([hypo], body)        
+    ([], _) -> ([hypo], body)
     (hypos, rest) -> (hypo:hypos, rest)
   _ -> ([], exp)
 
@@ -230,7 +230,7 @@ splitApp exp = case exp of
 splitAbs :: Exp -> ([Bind], Exp)
 splitAbs exp = case exp of
   EAbs bind body -> case splitAbs body of
-    ([], _) -> ([bind], body)        
+    ([], _) -> ([bind], body)
     (binds, rest) -> (bind:binds, rest)
   _ -> ([], exp)
 
@@ -257,7 +257,7 @@ getNumber fun args =
     (EIdent (QIdent n), [x]) | n == nd -> getDigit x
     (EIdent (QIdent n), [x, y]) | n == nn -> do
       d <- getDigit x
-      n <- uncurry getNumber (splitApp y) 
+      n <- uncurry getNumber (splitApp y)
       return (d ++ n)
     _ -> Nothing
  where
@@ -272,7 +272,7 @@ int2exp = cc . show
     cc s = case s of
       [d] -> EApp (EIdent (QIdent nd)) (EIdent (QIdent s))
       d:ds -> EApp (EApp (EIdent (QIdent nn)) (EIdent (QIdent [d]))) (cc ds)
-      
+
 unresolvedIndexIdent :: Int -> QIdent
 unresolvedIndexIdent i = QIdent ("UNRESOLVED_INDEX_" ++ show i)
 
@@ -309,17 +309,4 @@ stripQualifiers t = case t of
      _ -> c
 
 deduktiTokens :: String -> [String]
-deduktiTokens = map sToken . myLexer
-  where
-    sToken token = case token of
-      PT _ tok -> sTok tok
-      Err _ -> "_ERROR_"
-
-    sTok tok = case tok of
-      TK ts -> tsText ts
-      TL s -> s
-      TI s -> s
-      TV s -> s
-      TD s -> s
-      TC s -> s
-      T_QIdent s -> s
+deduktiTokens = map prToken . myLexer

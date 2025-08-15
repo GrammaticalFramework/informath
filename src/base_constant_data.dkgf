@@ -97,7 +97,7 @@ vectorPlus BASE Oper vector_plus_Oper
 #CONV Lean forall All
 #CONV Lean exists Exist
 
-#CONV Coq forall All
-#CONV Coq exists Exist
-#CONV Coq Nat nat
-#CONV Coq _ x_
+#CONV Rocq forall All
+#CONV Rocq exists Exist
+#CONV Rocq Nat nat
+#CONV Rocq _ x_

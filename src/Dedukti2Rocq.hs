@@ -1,12 +1,12 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Dedukti2Coq where
+module Dedukti2Rocq where
 
 import Dedukti.AbsDedukti
-import qualified Coq.AbsCoq as C
+import qualified Rocq.AbsRocq as C
 
-import qualified Coq.PrintCoq as PrC
+import qualified Rocq.PrintRocq as PrC
 
 import DeduktiOperations
 import CommonConcepts
@@ -24,8 +24,8 @@ type Result = Err String
 failure :: Show a => a -> Result
 failure x = Bad $ "Undefined case: " ++ show x
 
-printCoqJmt :: C.Jmt -> String 
-printCoqJmt = PrC.printTree
+printRocqJmt :: C.Jmt -> String
+printRocqJmt = PrC.printTree
 
 transModule :: Module -> C.Module
 transModule t = case t of
@@ -43,7 +43,7 @@ transJmt t = case t of
     in C.JThm (transIdent qident) (transHypos (Just exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
   JDef qident (MTExp typ) MENone ->
     transJmt (JStatic qident typ)
-  JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)  
+  JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)
 ---  JRules rules -> map transRule rules
 
 ---transRule :: Rule -> C.Jmt
@@ -85,7 +85,7 @@ transExp t = case t of
 transExpProp :: Exp -> C.Exp
 transExpProp t = case t of
   EFun (HVarExp var typ) exp -> C.EAll [transIdent var] (transExp typ) (transExpProp exp)
-  EFun (HParVarExp var typ) exp -> transExpProp (EFun (HVarExp var typ) exp) 
+  EFun (HParVarExp var typ) exp -> transExpProp (EFun (HVarExp var typ) exp)
   _ -> transExp t
 
 transBind :: Bind -> C.CIdent
@@ -97,7 +97,7 @@ transHypos :: Maybe Exp -> [Hypo] -> [C.Hypo]
 transHypos mexp hypos = compress (map transHypo vhypos)
   where
     vhypos = addVarsToHypos mexp hypos
-    
+
     compress :: [C.Hypo] -> [C.Hypo]
     compress hs = case hs of
       h@(C.HVarExp vs exp) : hh -> case span ((== exp) . hypoType) hh of
@@ -107,7 +107,7 @@ transHypos mexp hypos = compress (map transHypo vhypos)
 
     hypoType :: C.Hypo -> C.Exp
     hypoType (C.HVarExp _ exp) = exp
-    
+
     hypoVars :: C.Hypo -> [C.CIdent]
     hypoVars (C.HVarExp vars _ ) = vars
 
@@ -119,14 +119,14 @@ transHypo t = case t of
 
 transIdent :: QIdent -> C.CIdent
 transIdent t = case t of
-  QIdent str -> C.CIdent str ---- not quite the same ident syntax ; reserved idents in Coq!
+  QIdent str -> C.CIdent str ---- not quite the same ident syntax ; reserved idents in Rocq!
 
 processDeduktiModule :: Module -> IO ()
 processDeduktiModule mo@(MJmts jmts) = do
       flip mapM_ jmts processDeduktiJmtTree
 
 processDeduktiJmtTree :: Jmt -> IO ()
-processDeduktiJmtTree t = do 
+processDeduktiJmtTree t = do
   putStrLn $
     map (\c -> if c==';' then '\n' else c) $  --- to remove bnfc layout artefact ;
       PrC.printTree $ transJmt t

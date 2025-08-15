@@ -23,21 +23,21 @@ The software included in this directory supports the translation of text and cod
 ```
   $ make
 ```
-to build an executable `RunInformath`. After that, you can do
+to build `RunInformath` and all its dependencies. After that, you can do
 ```
   $ make demo
 ```
 which illustrates different functionalities: translating between Dedukti and natural languages, as well as from Dedukti to Agda, Rocq, and Lean. Building the system requires some more software, as discribed below in [Requirements](#requirements).
 
-**Requirements**: you need 
-- [GF](https://www.grammaticalframework.org/) (both asexecutable and as the PGF library) 
-- [BNFC](https://bnfc.digitalgrammars.com/) (executable)
-- [GHC](https://www.haskell.org/ghcup/) (executable, with some common libraries)
+**Requirements**: you need
+- [GF](https://www.grammaticalframework.org/) == 3.12 (both as executable and as the PGF library)
+- [BNFC](https://bnfc.digitalgrammars.com/) >= 2.9 (executable)
+- [GHC](https://www.haskell.org/ghcup/) >= 9.6 (executable, with some common libraries)
+- [alex](https://www.haskell.org/alex/) (executable, tested with 3.5.4)
+- [happy](https://www.haskell.org/happy/) (executable)
 
 to do this.
 
-**Caution**: At the moment, making RunInformath is very sensitive to GCH compiler and Haskell library versions. Cabal and Stack configurations are planned to solve these issues soon.
- 
 ## Generating synthetic data
 
 For those who are interested just in the generation of synthetic data, the following commands (after building Informath with `make`) can do it: assuming that you have a `.dk` file available, build a `.jsonl` file with all conversions of each Dedukti judgement:
@@ -50,22 +50,24 @@ After that, select the desired formal and informal languages to generate a new `
 ```
 The currently available values of `<formal>` and `<informal>` are the keys in `<file>.jsonl` - for example, `agda` and `InformathEng`, respectively.
 
-## 
+##
 
 ## The languages involved
 
 The [src](./src/) directory contains
 - Haskell and other sources
-- [MathCore](./src/grammars/MathCore.gf), a minimal CNL for mathematics
-- MathCoreEng, Fre, Swe - concrete syntaxes of MathCore in [gramamrs](./src/grammars/).
-- [Informath](./src/grammars/Informath.gf), an extension of MathCore with alternative expressions
-- a [grammar](./src/typetheory/Dedukti.bnf) with generated parser and printer for the proof system [Dedukti](https://deducteam.github.io/)
+- a BNFC [grammar](./src/typetheory/Dedukti.bnf) with generated parser and printer for the proof system [Dedukti](https://deducteam.github.io/)
+- partial BNFC grammars of [Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) in [typetheory](./src/typetheory/) with generated parsers and printers
 - a translator from MathCore to Dedukti and vice-versa
-- partial grammars of [Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Coq](https://coq.inria.fr/), and [Lean](https://lean-lang.org/) in [typetheory](./src/typetheory/) with generated parsers and printers
 - translations between MathCore and Informath
-- [BaseConstants.dk](./src/BaseConstants.dk) of logical and numeric operations assumed in the translations, and correspoonding files for Agda, Coq, and Lean
+- [BaseConstants.dk](./src/BaseConstants.dk) of logical and numeric operations assumed in the translations, and correspoonding files for Agda, Rocq, and Lean
 - [base_constant_data.dkgf](./src/base_constant_data.dkgf), a symbol table for converting Dedukti constants to GF abstract syntax functions (read from this file by the conversion program)
 - some test material and scripts in [test/](./src/test/).
+
+The [grammars](./grammars) directory contains
+- [MathCore](./grammars/MathCore.gf), a minimal CNL for mathematics
+- MathCoreEng, Fre, Swe - concrete syntaxes of MathCore in [grammars](./grammars/).
+- [Informath](./grammars/Informath.gf), an extension of MathCore with alternative expressions
 
 The structure of the project is shown in the following picture:
 
@@ -74,15 +76,15 @@ The structure of the project is shown in the following picture:
 (to be updated with Rocq and German).
 Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Both MathCore and Informath could also be used as source, by parsing them and converting to Dedukti.
 ```
-Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) -> 
-  Proof (and (odd a) (odd c)) -> 
+Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
+  Proof (and (odd a) (odd c)) ->
   Proof (forall Int (b => even (plus (times a b) (times b c)))).
 ```
 
 
 MathCoreEng: Prop110. Let $a$ and $c$ be instances of integers. Assume that we can prove that $a$ is odd and $c$ is odd. Then we can prove that for all integers $b$, the sum of the product of $a$ and $b$ and the product of $b$ and $c$ is even.
 
-InformathEng: Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$. 
+InformathEng: Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
 
 MathCoreFre: Prop110. Soient $a$ et $c$ des instances d'entiers. Supposons que nous pouvons démontrer que $a$ est impair et $c$ est impair. Alors nous pouvons démontrer que pour tous les entiers $b$, la somme du produit de $a$ et de $b$ et du produit de $b$ et de $c$ est paire.
 
@@ -93,14 +95,14 @@ MathCoreSwe: Prop110. Låt $a$ och $c$ vara instanser av heltal. Anta att vi kan
 InformathSwe: Prop110. Låt $a$ och $c$ vara heltal. Anta att både $a$ och $c$ är udda. Då är $a b + b c$ jämnt för alla heltal $b$.
 
 ```
-Agda: postulate prop110 : (a : Int) -> (c : Int) -> 
-  and (odd a) (odd c) -> 
+Agda: postulate prop110 : (a : Int) -> (c : Int) ->
+  and (odd a) (odd c) ->
   all Int (\ b -> even (plus (times a b) (times b c)))
 
-Rocq: Axiom prop110 : forall a : Int, forall c : Int, 
+Rocq: Axiom prop110 : forall a : Int, forall c : Int,
   (odd a /\ odd c -> forall b : Int, even (a * b + b * c)) .
 
-Lean: axiom prop110 (a c : Int) (x : odd a ∧ odd c) : 
+Lean: axiom prop110 (a c : Int) (x : odd a ∧ odd c) :
   ∀ b : Int, even (a * b + b * c)
 ```
 MathCore renderings are designed to be unique for each Dedukti judgement. But the full Informath language recognizes several variations. Here are some of them for English, as generated by the system; other languages have equivalents of each of them:
@@ -120,7 +122,7 @@ Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then $a b + b 
 
 ### Dedukti
 
-[Dedukti](https://deducteam.github.io/) is a minimalistic logical framework aimed as an interlingua between different proof systems such as Agda, Rocq (formerly Coq), Isabelle, and Lean.
+[Dedukti](https://deducteam.github.io/) is a minimalistic logical framework aimed as an interlingua between different proof systems such as Agda, Rocq (formerly Rocq), Isabelle, and Lean.
 Its purpose is to help share formalizations between these systems.
 Dedukti comes with an efficient proof checker and evaluator.
 Translations from many other proof system to Dedukti have been built, and this work is ongoing.
@@ -135,7 +137,7 @@ Due to its simplicity and expressivity, together with an existing implementation
 
 Agda, Rocq, and Lean are type-theoretical proof systems just like Dedukti. But all of them have a richer syntax than Dedukti, because they are intended to be hand-written by mathematicians and programmers, whereas Dedukti has an austere syntax suitable for automatic generation for code.
 
-Translators from each of Agda, Rocq, and Lean to Dedukti are available, and we have no plans to write our own ones. However, translators from Dedukti to these formalisms are included in the current directory. They are very partial, because they only have to target fragments of the Agda, Rocq, and Lean. This is all we need for the purpose of autoformalization, if the generated code is just to be machine-checked and not to be read by humans. 
+Translators from each of Agda, Rocq, and Lean to Dedukti are available, and we have no plans to write our own ones. However, translators from Dedukti to these formalisms are included in the current directory. They are very partial, because they only have to target fragments of the Agda, Rocq, and Lean. This is all we need for the purpose of autoformalization, if the generated code is just to be machine-checked and not to be read by humans.
 
 However, if Informath is to be used as an input tool by Agda, Rocq, and Lean users, nice-looking syntax is desirable. In the case of Rocq and Lean, we have tried to include some syntactic sugar, such as infix notations. In Agda, this has not yet been done, partly because the syntactic sugar is not as standardized as in Rocq and Lean.
 
@@ -158,7 +160,7 @@ While being inspired by ForTheL and covering a similar fragment of English, the 
 - **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
 - **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension should be equipped with a new semantic rule that converts it to MathCore.
 - **Omissions**: Informath is not guaranteed to cover all of the original ForTheL. In particular, constructs that differ from grammatical English are usually omitted.
-- **Multilinguality**: Informath will have several concrete syntaxes sharing a common abstract syntax, reusing the ForTheL grammars in v2. 
+- **Multilinguality**: Informath will have several concrete syntaxes sharing a common abstract syntax, reusing the ForTheL grammars in v2.
 
 The MathCore language shares some features with Informath: grammaticality, LaTeX support, and extensibility (with a lexicon). But the other features are delegated to Informath via the NLG function.
 
@@ -170,7 +172,7 @@ MathCore is a minimalistic grammar for mathematical English, with other language
 - **Non-ambiguity**: all MathCore text has a unique parse tree and a unique translation to Dedukti.
 - **Losslessness**: Core is a lossless representation of Dedukti; that is, all Dedukti code translated to MathCore can be translated back to the same Dedukti code (modulo some differences yet to be specified).
 - **Traceability**: Dedukti code and MathCore text can be aligned part by part.
-- **Grammaticality**: MathCore text is grammatically correct natural language (with mathematical symbols and some mark-up to prevent ambiguity). 
+- **Grammaticality**: MathCore text is grammatically correct natural language (with mathematical symbols and some mark-up to prevent ambiguity).
 - **Naturalness**: MathCore supports natural expressions for mathematical concepts using nouns, adjectives, verbs, and other structures conventionally used in mathematical text.
 - **Minimality**: MathCore is defined to have exactly one way to express each Dedukti judgement. Alternative ways are provided in Informath via NLG. Typically, the unique way is the most straightforward one. For example, complex mathematical expressions are given in their verbal forms ("the sum of x and y") rather than formulas ("x + y"), because formulas are not available when any of the constituents if not formal ("x + the successor of y").
 - **Extensibility**: MathCore can be extended with lexical information assigning natural language verbalizations to Dedukti identifiers.
@@ -201,23 +203,21 @@ If you want to check the formal code in any of the proof systems, you must also 
 
 - [Dedukti](https://github.com/Deducteam/Dedukti)
 - [Agda](https://agda.readthedocs.io/en/latest/getting-started/installation.html)
-- [Coq](https://coq.inria.fr/download)
+- [Rocq](https://rocq-prover.org/)
 - [Lean](https://leanprover-community.github.io/get_started.html)
 
 
 ## Installation
 
-In order for this to work, you need to compile the formal (Dedukti, Agda, Coq, Lean) and the Informath grammars:
+In order for this to work, you need to compile the formal (Dedukti, Agda, Rocq, Lean) and the Informath grammars:
 ```
-$ make 
+$ make
 ```
 An example of a readily available demo case is
 ```
 $ make demo
 ```
-Consult the [Makefile](./src/Makefile) to see what these commands exactly do.
-
-**Note**: with some versions of GHC libraries, `make Informath.pgf` results into a `Informath.hs` that gives an error about an undefined monad operation. This is fixed by adding the line `import Control.Monad` to the import list. The current Makefile does this with a `sed` command - which may cause an error with some other versions of GHC libraries. If this happens, you can comment out the `sed` command from the Makefile.
+Consult the [Makefile](./Makefile) to see what these commands exactly do.
 
 ## Usage
 
@@ -234,13 +234,13 @@ to see the currently available functionalities.
 
 _Under construction, not guaranteed always to work like this_
 
-The lexicon part part of the GF grammar (files src/grammars/BaseConstants*, UserConstants*) give verbalizations to defined constants in .dk files. The UseConstants* files can be dynamically generated with the command
+The lexicon part part of the GF grammar (files grammars/BaseConstants*, UserConstants*) give verbalizations to defined constants in .dk files. The UseConstants* files can be dynamically generated with the command
 ```
 $ ./RunInformath <file>.dkgf
 ```
 which with the default lang=Eng generates at least two files:
-- [UserConstants.gf](src/grammars/UserConstants.gf)
-- [UserConstantsEng.gf](src/grammars/UserConstantsEng.gf) and similarly for other languages addressed in the .dkgf file
+- [UserConstants.gf](grammars/UserConstants.gf)
+- [UserConstantsEng.gf](grammars/UserConstantsEng.gf) and similarly for other languages addressed in the .dkgf file
 
 after which
 ```
@@ -248,16 +248,16 @@ $ make Informath.pgf
 ```
 and compiles Informath.pgf with them. The format of .dkgf files is a list of lines with data about constants, where user-defined ones have the forms
 ```
-<dkid> NEW <project> <gfcat> <gffun> <int>* = 
+<dkid> NEW <project> <gfcat> <gffun> <int>* =
 #LIN <lang> <gffun> = <word>+
 ```
-This generates new entries in the two UserConstants*.gf files (abstract and concrete) and also instructs RunInformath how to handle the constant <dkid> in translations to and from GF. 
+This generates new entries in the two UserConstants*.gf files (abstract and concrete) and also instructs RunInformath how to handle the constant <dkid> in translations to and from GF.
 
 The <project> label can be chosen freely by the user; it is appended to each generated GF abstract rule as a comment that can be grepped with.
 
-The <int>* part is a space-separated list of integers telling which arguments (numbered from 0) are sent to GF and in what order. It provides a way to deal with hidden arguments. Leaving it out means that all arguments are sent. 
+The <int>* part is a space-separated list of integers telling which arguments (numbered from 0) are sent to GF and in what order. It provides a way to deal with hidden arguments. Leaving it out means that all arguments are sent.
 
-Users can also map their Dedukti identifiers to already existing ones in [BaseConstants.dk](./src/BaseConstants.dk). This is performed with a simpler form of lines in .dkgf files, 
+Users can also map their Dedukti identifiers to already existing ones in [BaseConstants.dk](./src/BaseConstants.dk). This is performed with a simpler form of lines in .dkgf files,
 ```
 <dkid> ALIAS <project> <dkid> <int>*
 ```
@@ -311,13 +311,13 @@ Since this is cumbersome, we will need to implement something more automatic in 
 
 ### Generating other type theories
 
-Each of Agda, Coq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./src/BaseConstants.dk), with the format as in
+Each of Agda, Rocq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./src/BaseConstants.dk), with the format as in
 ```
 #CONV Agda forall all
-#CONV Coq forall All
+#CONV Rocq forall All
 #CONV Lean forall All
 ```
-The purpose of these conversions is to 
+The purpose of these conversions is to
 - avoid clashes of the target systems' reserved words
 - map Dedukti to standard libraries of these systems
 - comply to the identifier syntax of each system
@@ -338,22 +338,22 @@ $ agda --prop exx.agda
 ```
 The base file [BaseConstants.agda](./src/BaseConstants.agda) is imported automatically.
 
-### Generating and type checking Coq
+### Generating and type checking Rocq
 
 Generation from Dedukti is similar to Agda, but type checking requires at the moment concatenation with [BaseConstants.v](BaseConstants.v):
 ```
 $ ./RunInformath -to-coq test/exx.dk >exx.v
-$ cat BaseConstants.v exx.v >bexx.v   
+$ cat BaseConstants.v exx.v >bexx.v
 $ coqc bexx.lean
 ```
 This should be made less cumbersome in the future.
 
 ### Generating and type checking Lean
 
-Just like in Coq, type checking requires at the moment concatenation with [BaseConstants.lean](BaseConstants.lean):
+Just like in Rocq, type checking requires at the moment concatenation with [BaseConstants.lean](BaseConstants.lean):
 ```
 $ ./RunInformath -to-lean test/exx.dk >exx.lean
-$ cat BaseConstants.lean exx.lean >bexx.lean   
+$ cat BaseConstants.lean exx.lean >bexx.lean
 $ lean bexx.lean
 ```
 This should be made less cumbersome in the future.
@@ -363,11 +363,11 @@ This should be made less cumbersome in the future.
 - improve conversions from Dedukti to other proof systems in particular to preserve type correctness
 - extend the MathCore-Informath conversion
 - investigate the possibility of a declarative, user-defined extension of MathCore-Informath conversion
-- improve the concrete syntaxes of different languages by functor exceptions 
+- improve the concrete syntaxes of different languages by functor exceptions
 - add concrete syntaxes to yet other natural languages
 - extend the Informath language, in particular, with
      - proofs, in addition to theorems and definitions to proofs (complete in theory, but very rudimentary now)
      - wider coverage of BaseConstants.dk and the multilingual lexicon of math terms
-  
+
 
 

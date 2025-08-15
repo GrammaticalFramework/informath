@@ -23,7 +23,7 @@ import ParseInformath (parseJmt)
 import Lexing
 import MkConstants (mkConstants)
 import qualified Dedukti2Agda as DA
-import qualified Dedukti2Coq as DC
+import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
 import Ranking
 
@@ -53,7 +53,7 @@ helpMsg = unlines [
   "  -data=<files>   constant data additional to base_constant_data.dkgf",
   "  -projects=<names> project names used for filtering additional constant data",
   "  -to-agda        convert to Agda (with <file>.dk as argument)",
-  "  -to-coq         convert to Coq (with <file>.dk as argument)",
+  "  -to-coq         convert to Rocq (with <file>.dk as argument)",
   "  -to-lean        convert to Lean (with <file>.dk as argument)",
   "  -to-dedukti     to Dedukti code (typically after changes in <file.dk>)",
   "  -lang=<lang>    natural language to be targeted; Eng (default), Swe, Fre,...",
@@ -75,15 +75,15 @@ helpMsg = unlines [
   "  -idents         print a frequency table of identifiers in a .dk file",
   "  -idtypes        print the types identifiers in a .dk file",
   "  -no-unlex       do not unlex the output text",
-  "  -dedukti-tokens output Dedukti code tokenized by spaces",     
+  "  -dedukti-tokens output Dedukti code tokenized by spaces",
   "",
   "Output is to stdout and can be redirected to a file to check with",
-  "Dedukti or Agda or Coq or Lean when producing one of these."
+  "Dedukti or Agda or Rocq or Lean when producing one of these."
   ]
 
 informathPrefix = "Informath"
 informathPGFFile = "grammars/" ++ informathPrefix ++ ".pgf"
-baseConstantDataFile = "base_constant_data.dkgf"
+baseConstantDataFile = "src/base_constant_data.dkgf"
 Just jmt = readType "Jmt"
 
 unlex env s = if (ifFlag "-no-unlex" env) then s else unlextex s
@@ -107,7 +107,7 @@ main = do
   let specialconvs = commaSep (flagValue "conv" "" ff)
   let constantdata = extractConstantData mprojects datalines
   let targetdata = extractTargetConversions datalines
-  let lookbackdata = lookBackConstantData constantdata 
+  let lookbackdata = lookBackConstantData constantdata
   let Just lan = readLanguage (informathPrefix ++ (flagValue "lang" "Eng" ff))
   let env = Env{
         flags = ff,
@@ -115,7 +115,7 @@ main = do
 	lookBackData = lookbackdata,
 	specialConversions = specialconvs,
 	convToAgdaData = M.fromList [(dk, convInfo t) | ("Agda", dk, t) <- targetdata],
-	convToCoqData = M.fromList [(dk, convInfo t) | ("Coq", dk, t) <- targetdata],
+	convToRocqData = M.fromList [(dk, convInfo t) | ("Rocq", dk, t) <- targetdata],
 	convToLeanData = M.fromList [(dk, convInfo t) | ("Lean", dk, t) <- targetdata],
 	cpgf = corepgf,
 	lang = lan,
@@ -136,8 +136,8 @@ main = do
         _ | ifFlag "-to-agda" env ->
 	  DA.processDeduktiModule (applyConstantData (convToAgdaData env) mo)
         _ | ifFlag "-to-coq" env ->
-	  DC.processDeduktiModule (applyConstantData (convToCoqData env) mo)
-        _ | ifFlag "-to-lean" env -> 
+	  DR.processDeduktiModule (applyConstantData (convToRocqData env) mo)
+        _ | ifFlag "-to-lean" env ->
 	  DL.processDeduktiModule (applyConstantData (convToLeanData env) mo)
 	_ | ifFlag "-to-dedukti" env -> mapM_ putStrLn [printTreeEnv env j | j <- jmts] -- when modifying dedukti
 	_ | ifFlag "-parallel" env -> parallelJSONL env{flags = "-variations":flags env} mo
@@ -154,7 +154,7 @@ main = do
         _ | ifFlag "-to-agda" env ->
 	  DA.processDeduktiModule (applyConstantData (convToAgdaData env) mo)
         _ | ifFlag "-to-coq" env ->
-	  DC.processDeduktiModule (applyConstantData (convToCoqData env) mo)
+	  DR.processDeduktiModule (applyConstantData (convToRocqData env) mo)
         _ | ifFlag "-to-lean" env ->
 	  DL.processDeduktiModule (applyConstantData (convToLeanData env) mo)
 	_ -> mapM_ putStrLn ss
@@ -186,10 +186,10 @@ deduktiOpers :: Env -> [Module -> Module]
 deduktiOpers env =
   [peano2int | ifFlag "-peano2int" env] ++
   [ignoreCoercions envCoercions | ifFlag "-dropcoercions" env] ++
-  [applyConstantData (constantData env) | not (noConstantData env)] ++ 
+  [applyConstantData (constantData env) | not (noConstantData env)] ++
   [stripQualifiers | ifFlag "-dropqualifs" env] ++
   [f | c <- specialConversions env, Just f <- [M.lookup c specialDeduktiConversions]] ++
-  [dropDefinitions | ifFlag "-dropdefs" env] 
+  [dropDefinitions | ifFlag "-dropdefs" env]
  where
   envCoercions = map QIdent (coercionFunctions (constantData env))
   noConstantData env =
@@ -198,7 +198,7 @@ deduktiOpers env =
 -- example: ./RunInformath -idtypes -dropdefs -dropqualifs -dropcoercions test/matita-all.dk
 
 processDeduktiModule :: Env -> Module -> IO ()
-processDeduktiModule env mo@(MJmts jmts) = 
+processDeduktiModule env mo@(MJmts jmts) =
   if ifFlag "-to-latex-file" env
     then do
       putStrLn latexPreamble
@@ -292,7 +292,7 @@ parallelJSONL env mo@(MJmts jmts) = do
       let json = concat $ intersperse ", " $ [
             mkJSONField "dedukti" (printTreeEnv env jmt),
             mkJSONField "agda" (DA.printAgdaJmts (DA.transJmt (applyConstantData (convToAgdaData env) jmt))),
-            mkJSONField "coq" (DC.printCoqJmt (DC.transJmt (applyConstantData (convToCoqData env) jmt))),
+            mkJSONField "coq" (DR.printRocqJmt (DR.transJmt (applyConstantData (convToRocqData env) jmt))),
             mkJSONField "lean" (DL.printLeanJmt (DL.transJmt (applyConstantData (convToLeanData env) jmt)))
 	    ] ++ [
 	      mkJSONListField (showCId lang)
