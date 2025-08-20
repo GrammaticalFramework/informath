@@ -1,7 +1,7 @@
 concrete MathCoreGer of MathCore =
   TermsLatex, 
   UserConstantsGer **
-  MathCoreFunctor - [Pred3Adj] --- take a long time
+  MathCoreFunctor - [Pred3Prop] --- takes a long time
     with
     (Syntax=SyntaxGer),
     (Grammar=GrammarGer),
@@ -18,9 +18,9 @@ concrete MathCoreGer of MathCore =
 in {
 
 -- exceptions from functor
-lin
-  Pred3Adj pred y z =
-    AdvAP pred.ap (Syntax.mkAdv pred.prep1 (mkNP y (Syntax.mkAdv pred.prep2 z))) ; --- fake structure
+--lin
+  --Pred3Prop pred x y z =
+    --simpleProp (mkS (mkCl x (AdvAP pred.ap (Syntax.mkAdv pred.prep1 (mkNP y (Syntax.mkAdv pred.prep2 z)))))) ; --- fake structure
 
 
 oper
