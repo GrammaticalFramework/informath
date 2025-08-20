@@ -1,6 +1,6 @@
 abstract MathCore =
   Terms,
-  UserConstants   -- notations, BaseConstants + user-defined with MkConstants.hs
+  VerbalConstants
   ** {
 
 flags startcat = Jmt ;
@@ -95,13 +95,9 @@ fun
   NotAdjProp : Adj -> Exp -> Prop ;
   ReladjProp : Reladj -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
-  SetKind : Set -> Kind ;
   NameExp : Name -> Exp ;
   FunListExp : Fun -> Exps -> Exp ;
   LabelProofExp : Label -> ProofExp ;
-  ConstExp : Const -> Exp ;
-  OperListExp : Oper -> Exps -> Exp ; -- binary operation applied collectively
-  ComparAdj : Compar -> Exp -> Adj ;
   FamKind : Fam -> Kind -> Kind ;
   Fam2Kind : Fam -> Kind -> Kind -> Kind ;
   VerbProp : Verb -> Exp -> Prop ;
@@ -110,7 +106,6 @@ fun
   NotVerbProp : Verb -> Exp -> Prop ;
   NotRelverbProp : Relverb -> Exp -> Exp -> Prop ;
   NotRelnounProp : Relnoun -> Exp -> Exp -> Prop ;
-  ComparnounProp : Comparnoun -> Exp -> Exp -> Prop ;
   Pred3Prop : Pred3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath

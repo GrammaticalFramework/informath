@@ -5,7 +5,6 @@ open
   ParadigmsEng,
   (P=ParadigmsEng),
   SymbolicEng,
-  (L=BaseConstantsLatex),
   Formal,
   Prelude
 

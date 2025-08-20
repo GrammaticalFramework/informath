@@ -1,12 +1,10 @@
-concrete BaseConstantsSwe of BaseConstants =
+concrete VerbalConstantsSwe of VerbalConstants =
 
 open
   UtilitiesSwe,
   SyntaxSwe,
   ParadigmsSwe,
   SymbolicSwe,
-  (L=BaseConstantsLatex),
-  Formal,
   Prelude
 
 in {
@@ -23,10 +21,6 @@ lincat
   Name = NP ;
   Fun = FunctionT ;
   Label = LabelT ;
-  Const = ConstantT ;
-  Oper = OperatorT ;
-  Compar = ComparisonT ;
-  Comparnoun = ComparnounT ;
   Pred3 = Pred3T ;
 
 lin

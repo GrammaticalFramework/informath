@@ -1,5 +1,5 @@
 concrete InformathEng of Informath =
-  MathCoreEng **
+  MathCoreEng, SymbolicConstantsLatex **
   InformathFunctor with
     (Syntax = SyntaxEng),
     (Symbolic = SymbolicEng),
@@ -8,8 +8,7 @@ concrete InformathEng of Informath =
   ** open
     ParadigmsEng,
     Formal,
-    Prelude,
-    BaseConstantsLatex
+    Prelude
 in {
 
 -- functor parameters

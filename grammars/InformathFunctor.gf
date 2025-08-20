@@ -1,5 +1,5 @@
 incomplete concrete InformathFunctor of Informath =
-  MathCore **
+  MathCore, SymbolicConstants **
 
 open
   Syntax,
@@ -7,7 +7,7 @@ open
   Grammar,
   Extend,
   Formal,
-  BaseConstantsLatex,
+--  BaseConstantsLatex,
   Prelude
 in {
 
@@ -19,12 +19,11 @@ lin
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
 
-  SetTerm set = constant set.c ** {isNumber = False} ;
-  ConstTerm const = constant const.c ** {isNumber = False} ;
-  ComparEqsign compar = compar.op ;
-  ComparnounEqsign compar = compar.op ;
-  AppOperTerm op x y = appOper op.op x y ;
-  AppOperOneTerm op x = appOper op.op x ;
+  SetTerm set = constant set ** {isNumber = False} ;
+  ConstTerm const = constant const ** {isNumber = False} ;
+  ComparEqsign compar = compar ;
+  AppOperTerm op x y = appOper op x y ;
+  AppOperOneTerm op x = appOper op x ;
 
   SimpleAndProp props = simpleProp (mkS and_Conj props) ;
   SimpleOrProp props = simpleProp (mkS or_Conj props) ;

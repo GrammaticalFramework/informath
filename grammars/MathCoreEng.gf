@@ -1,6 +1,6 @@
 concrete MathCoreEng of MathCore =
   TermsLatex, 
-  UserConstantsEng **
+  VerbalConstantsEng **
   MathCoreFunctor - [negPol] with
     (Syntax=SyntaxEng),
     (Grammar=GrammarEng),

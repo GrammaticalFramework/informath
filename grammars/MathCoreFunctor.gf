@@ -1,6 +1,6 @@
 incomplete concrete MathCoreFunctor of MathCore =
   Terms,
-  UserConstants
+  VerbalConstants
 
  ** open
     Syntax,
@@ -197,14 +197,10 @@ lin
   AdjProp adj exp = simpleProp (mkS (mkCl exp adj)) ;
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
   ReladjProp rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
-  ComparAdj compar exp = Grammar.AdvAP compar.rel.ap (Syntax.mkAdv compar.rel.prep exp) ;
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
-  SetKind set = {cn = set.cn ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
   FunListExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
-  ConstExp const = const.np ;
-  OperListExp op exps = mkNP the_Det (mkCN op.f.cn (Syntax.mkAdv op.f.prep exps.np)) ;
   FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep1 (mkNP aPl_Det (useKind kind))} ;
   Fam2Kind fam kind1 kind2 =
     let
@@ -218,11 +214,10 @@ lin
     } ;
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
   RelverbProp verb x y = simpleProp (mkS (mkCl x verb y)) ; 
-  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkVP (mkCN rel y)))) ; 
-  NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
+  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  NotVerbProp verb exp = simpleProp (mkS negativePol (mkCl exp verb)) ; 
   NotRelverbProp verb x y = simpleProp (mkS negPol (mkCl x verb y)) ; 
-  NotRelnounProp rel x y = simpleProp (mkS negPol (mkCl x (mkVP (mkCN rel y)))) ; 
-  ComparnounProp rel x y = simpleProp (mkS (mkCl x (mkVP ((mkCN rel.cn (Syntax.mkAdv rel.prep y)))))) ;
+  NotRelnounProp rel x y = simpleProp (mkS negativePol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   Pred3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 

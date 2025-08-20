@@ -7,7 +7,7 @@ all: grammars/Informath.pgf Dedukti Agda Rocq Lean RunInformath
 .PHONY: all Dedukti Agda Lean Rocq demo RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 --probs=Informath.probs InformathEng.gf ## InformathFre.gf InformathSwe.gf InformathGer.gf
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
