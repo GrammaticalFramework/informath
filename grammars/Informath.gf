@@ -35,6 +35,9 @@ fun
 
   ExistNoProp : [ArgKind] -> Prop -> Prop ;
 
+  ReladjAdj : Reladj -> Exp -> Adj ;
+  Pred3Adj : Pred3 -> Exp -> Exp -> Adj ;
+
 -- for indexed parsing (terms in $...$ stored in a dictionary)
 
   IndexedTermExp : Int -> Exp ;

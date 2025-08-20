@@ -93,7 +93,7 @@ fun
 
   AdjProp : Adj -> Exp -> Prop ;
   NotAdjProp : Adj -> Exp -> Prop ;
-  ReladjAdj : Reladj -> Exp -> Adj ;
+  ReladjProp : Reladj -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
   SetKind : Set -> Kind ;
   NameExp : Name -> Exp ;
@@ -111,7 +111,7 @@ fun
   NotRelverbProp : Relverb -> Exp -> Exp -> Prop ;
   NotRelnounProp : Relnoun -> Exp -> Exp -> Prop ;
   ComparnounProp : Comparnoun -> Exp -> Exp -> Prop ;
-  Pred3Adj : Pred3 -> Exp -> Exp -> Adj ;
+  Pred3Prop : Pred3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
