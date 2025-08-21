@@ -1,161 +1,162 @@
-Set BASE Noun set_Noun
-Type BASE Noun type_Noun
-Prop BASE Noun proposition_Noun
-false BASE Name absurdity_Name
-Num BASE Noun number_Noun
-bool BASE Noun boolean_Noun
-List BASE Fam list_Fam
-Dig BASE Noun digit_Noun
-Nat BASE Noun natural_Noun
-Int BASE Noun integer_Noun
-Rat BASE Noun rational_Noun
-Real BASE Noun real_Noun
-Complex BASE Noun complex_Noun
-Cardinal BASE Noun cardinal_Noun
-Eq BASE Reladj Eq_Reladj
-Lt BASE Reladj Lt_Reladj
-Gt BASE Reladj Gt_Reladj
-Neq BASE Reladj Neq_Reladj
-Leq BASE Reladj Leq_Reladj
-Geq BASE Reladj Geq_Reladj
-positive BASE Adj positive_Adj
-negative BASE Adj negative_Adj
-plus BASE Fun plus_Fun
-minus BASE Fun minus_Fun
-times BASE Fun times_Fun
-div BASE Fun div_Fun
-pow BASE Fun pow_Fun
-neg BASE Fun neg_Fun
-log BASE Fun logarithm_Fun
-sqrt BASE Fun square_root_Fun
-succ BASE Fun successor_Fun
-abs BASE Fun absolute_value_Fun
-factorial BASE Fun factorial_Fun
-gcd BASE Fun gcd_Fun
-even BASE Adj even_Adj
-odd BASE Adj odd_Adj
-prime BASE Adj prime_Adj
-divisible BASE Reladj divisible_Reladj
-divide BASE Relverb divide_Relverb
-divisor BASE Relnoun divisor_Relnoun
-converge BASE Verb converge_Verb
-function BASE Fam function_Fam
-union BASE Fun union_Fun
-intersection BASE Fun intersection_Fun
-difference BASE Fun difference_Fun
-cartesian BASE Fun difference_Fun
-powerset BASE Fun powerset_Fun
-complement BASE Fun complement_Fun
-subset BASE Relnoun subset_Relnoun
-subseteq BASE Relnoun subseteq_Relnoun
-superset BASE Relnoun superset_Relnoun
-superseteq BASE Relnoun superset_Relnoun
-equalset BASE Reladj equalset_Reladj
-notequalset BASE Reladj notequalset_Reladj
-element BASE Relnoun element_Relnoun
-notelement BASE Relnoun notelement_Relnoun
-emptyset BASE Name emptyset_Name
-universeset BASE Name universeset_Name
-congruent BASE Pred3 congruent_Pred3
-finite BASE Adj finite_Adj
-infinite BASE Adj infinite_Adj
-rational BASE Adj rational_Adj
-irrational BASE Adj irrational_Adj
-Polynomial BASE Noun polynomial_Noun
-degree BASE Fun degree_Fun
-isRoot BASE Relnoun is_root_Relnoun
-cardinality BASE Fun cardinality_Fun
-denumerable BASE Adj denumerable_Adj
-Vector BASE Noun vector_Noun
-length BASE Fun length_Fun
-norm BASE Fun norm_Fun
-perpendicular BASE Reladj perpendicular_Reladj
-resultant BASE Fun resultant_Fun
-square BASE Fun square_Fun
-legendre BASE Fun legendre_symbol_Fun
-pi BASE Name pi_Name
-Circle BASE Noun circle_Noun
-radius BASE Fun radius_Fun
-area BASE Fun area_Fun
-binomial BASE Fun binomial_Fun
-combinations BASE Fun combinations_Fun
-combinationsFromSet BASE Fun combinationsFromSet_Fun
-sin BASE Fun sin_Fun
-cos BASE Fun cos_Fun
-tan BASE Fun tan_Fun
-arcsin BASE Fun arcsin_Fun
-arccos BASE Fun arccos_Fun
-arctan BASE Fun arctan_Fun
-orthogonal BASE Reladj orthogonal_Reladj
-angleBetween BASE Fun angle_between_Fun
-dotProduct BASE Fun dot_product_Fun
-vectorPlus BASE Fun vector_plus_Fun
+#GF Set set_Noun Noun
+#GF Type type_Noun Noun
+#GF Prop proposition_Noun Noun
+#GF false absurdity_Name Name
+#GF Num number_Noun Noun
+#GF bool boolean_Noun Noun
+#GF List list_Fam Fam
+#GF Dig digit_Noun Noun
+#GF Nat natural_Noun Noun
+#GF Int integer_Noun Noun
+#GF Rat rational_Noun Noun
+#GF Real real_Noun Noun
+#GF Complex complex_Noun Noun
+#GF Cardinal cardinal_Noun Noun
+#GF Eq Eq_Reladj Reladj
+#GF Lt Lt_Reladj Reladj
+#GF Gt Gt_Reladj Reladj
+#GF Neq Neq_Reladj Reladj
+#GF Leq Leq_Reladj Reladj
+#GF Geq Geq_Reladj Reladj
+#GF positive positive_Adj Adj
+#GF negative negative_Adj Adj
+#GF plus plus_Fun Fun
+#GF minus minus_Fun Fun
+#GF times times_Fun Fun
+#GF div div_Fun Fun
+#GF pow pow_Fun Fun
+#GF neg neg_Fun Fun
+#GF log logarithm_Fun Fun
+#GF sqrt square_root_Fun Fun
+#GF succ successor_Fun Fun
+#GF abs absolute_value_Fun Fun
+#GF factorial factorial_Fun Fun
+#GF gcd gcd_Fun Fun
+#GF even even_Adj Adj
+#GF odd odd_Adj Adj
+#GF prime prime_Adj Adj
+#GF divisible divisible_Reladj Reladj
+#GF divide divide_Relverb Relverb
+#GF converge converge_Verb Verb
+#GF function function_Fam Fam
+#GF union union_Fun Fun
+#GF intersection intersection_Fun Fun
+#GF difference difference_Fun Fun
+#GF cartesian difference_Fun Fun
+#GF powerset powerset_Fun Fun
+#GF complement complement_Fun Fun
+#GF subset subset_Relnoun Relnoun
+#GF subseteq subseteq_Relnoun Relnoun
+#GF superset superset_Relnoun Relnoun
+#GF superseteq superset_Relnoun Relnoun
+#GF equalset equalset_Reladj Reladj
+#GF notequalset notequalset_Reladj Reladj
+#GF element element_Relnoun Relnoun
+#GF notelement notelement_Relnoun Relnoun
+#GF emptyset emptyset_Name Name
+#GF universeset universeset_Name Name
+#GF congruent congruent_Pred3 Pred3
+#GF finite finite_Adj Adj
+#GF infinite infinite_Adj Adj
+#GF rational rational_Adj Adj
+#GF irrational irrational_Adj Adj
+#GF Polynomial polynomial_Noun Noun
+#GF degree degree_Fun Fun
+#GF isRoot is_root_Relnoun Relnoun
+#GF cardinality cardinality_Fun Fun
+#GF denumerable denumerable_Adj Adj
+#GF Vector vector_Noun Noun
+#GF length length_Fun Fun
+#GF norm norm_Fun Fun
+#GF perpendicular perpendicular_Reladj Reladj
+#GF resultant resultant_Fun Fun
+#GF square square_Fun Fun
+#GF legendre legendre_symbol_Fun Fun
+#GF pi pi_Name Name
+#GF Circle circle_Noun Noun
+#GF radius radius_Fun Fun
+#GF area area_Fun Fun
+#GF binomial binomial_Fun Fun
+#GF combinations combinations_Fun Fun
+#GF combinationsFromSet combinationsFromSet_Fun Fun
+#GF sin sin_Fun Fun
+#GF cos cos_Fun Fun
+#GF tan tan_Fun Fun
+#GF arcsin arcsin_Fun Fun
+#GF arccos arccos_Fun Fun
+#GF arctan arctan_Fun Fun
+#GF orthogonal orthogonal_Reladj Reladj
+#GF angleBetween angle_between_Fun Fun
+#GF dotProduct dot_product_Fun Fun
+#GF vectorPlus vector_plus_Fun Fun
 
-#CONV Agda forall all
-#CONV Agda Type Set
+#SYMBOLIC Nat natural_Set Set
+#SYMBOLIC Int integer_Set Set
+#SYMBOLIC Rat rational_Set Set
+#SYMBOLIC Real real_Set Set
+#SYMBOLIC Complex complex_Set Set
+#SYMBOLIC plus plus_Oper Oper
+#SYMBOLIC minus minus_Oper Oper
+#SYMBOLIC times times_Oper Oper
+#SYMBOLIC div div_Oper Oper
+#SYMBOLIC pow pow_Oper Oper
+#SYMBOLIC neg neg_Oper Oper
+#SYMBOLIC log logarithm_Oper Oper
+#SYMBOLIC sqrt square_root_Oper Oper
+#SYMBOLIC abs absolute_value_Oper Oper
+#SYMBOLIC factorial factorial_Oper Oper
+#SYMBOLIC union union_Oper Oper
+#SYMBOLIC intersection intersection_Oper Oper
+#SYMBOLIC difference difference_Oper Oper
+#SYMBOLIC cartesian difference_Oper Oper
+#SYMBOLIC powerset powerset_Oper Oper
+#SYMBOLIC complement complement_Oper Oper
+#SYMBOLIC cardinality cardinality_Oper Oper
+#SYMBOLIC length length_Oper Oper
+#SYMBOLIC norm norm_Oper Oper
+#SYMBOLIC resultant resultant_Oper Oper
+#SYMBOLIC square square_Oper Oper
+#SYMBOLIC legendre legendre_symbol_Oper Oper
+#SYMBOLIC binomial binomial_Oper Oper
+#SYMBOLIC combinations combinations_Oper Oper
+#SYMBOLIC combinationsFromSet combinationsFromSet_Oper Oper
+#SYMBOLIC sin sin_Oper Oper
+#SYMBOLIC cos cos_Oper Oper
+#SYMBOLIC tan tan_Oper Oper
+#SYMBOLIC arcsin arcsin_Oper Oper
+#SYMBOLIC arccos arccos_Oper Oper
+#SYMBOLIC arctan arctan_Oper Oper
+#SYMBOLIC dotProduct dot_product_Oper Oper
+#SYMBOLIC vectorPlus vector_plus_Oper Oper
+#SYMBOLIC Eq Eq_Compar Compar
+#SYMBOLIC Lt Lt_Compar Compar
+#SYMBOLIC Gt Gt_Compar Compar
+#SYMBOLIC Neq Neq_Compar Compar
+#SYMBOLIC Leq Leq_Compar Compar
+#SYMBOLIC Geq Geq_Compar Compar
+#SYMBOLIC subset subset_Compar Compar
+#SYMBOLIC subseteq subseteq_Compar Compar
+#SYMBOLIC superset superset_Compar Compar
+#SYMBOLIC superseteq superset_Compar Compar
+#SYMBOLIC equalset equalset_Compar Compar
+#SYMBOLIC notequalset notequalset_Compar Compar
+#SYMBOLIC element element_Compar Compar
+#SYMBOLIC notelement notelement_Compar Compar
+#SYMBOLIC perpendicular perpendicular_Compar Compar
+#SYMBOLIC orthogonal orthogonal_Compar Compar
+#SYMBOLIC emptyset emptyset_Const Const
+#SYMBOLIC universeset universeset_Const Const
+#SYMBOLIC pi pi_Const Const
 
-#CONV Lean forall All
-#CONV Lean exists Exist
+#SYNONYM divide divisor_Relnoun Relnoun
 
-#CONV Rocq forall All
-#CONV Rocq exists Exist
-#CONV Rocq Nat nat
-#CONV Rocq _ x_
+#CONV forall Agda all
+#CONV Type Agda Set
 
-#SYNONYM natural_Noun natural_Set
-#SYNONYM integer_Noun integer_Set
-#SYNONYM rational_Noun rational_Set
-#SYNONYM real_Noun real_Set
-#SYNONYM complex_Noun complex_Set
-#SYNONYM plus_Fun plus_Oper
-#SYNONYM minus_Fun minus_Oper
-#SYNONYM times_Fun times_Oper
-#SYNONYM div_Fun div_Oper
-#SYNONYM pow_Fun pow_Oper
-#SYNONYM neg_Fun neg_Oper
-#SYNONYM logarithm_Fun logarithm_Oper
-#SYNONYM square_root_Fun square_root_Oper
-#SYNONYM absolute_value_Fun absolute_value_Oper
-#SYNONYM factorial_Fun factorial_Oper
-#SYNONYM union_Fun union_Oper
-#SYNONYM intersection_Fun intersection_Oper
-#SYNONYM difference_Fun difference_Oper
-#SYNONYM difference_Fun difference_Oper
-#SYNONYM powerset_Fun powerset_Oper
-#SYNONYM complement_Fun complement_Oper
-#SYNONYM cardinality_Fun cardinality_Oper
-#SYNONYM length_Fun length_Oper
-#SYNONYM norm_Fun norm_Oper
-#SYNONYM resultant_Fun resultant_Oper
-#SYNONYM square_Fun square_Oper
-#SYNONYM legendre_symbol_Fun legendre_symbol_Oper
-#SYNONYM binomial_Fun binomial_Oper
-#SYNONYM combinations_Fun combinations_Oper
-#SYNONYM combinationsFromSet_Fun combinationsFromSet_Oper
-#SYNONYM sin_Fun sin_Oper
-#SYNONYM cos_Fun cos_Oper
-#SYNONYM tan_Fun tan_Oper
-#SYNONYM arcsin_Fun arcsin_Oper
-#SYNONYM arccos_Fun arccos_Oper
-#SYNONYM arctan_Fun arctan_Oper
-#SYNONYM dot_product_Fun dot_product_Oper
-#SYNONYM vector_plus_Fun vector_plus_Oper
-#SYNONYM Eq_Reladj Eq_Compar
-#SYNONYM Lt_Reladj Lt_Compar
-#SYNONYM Gt_Reladj Gt_Compar
-#SYNONYM Neq_Reladj Neq_Compar
-#SYNONYM Leq_Reladj Leq_Compar
-#SYNONYM Geq_Reladj Geq_Compar
-#SYNONYM subset_Relnoun subset_Compar
-#SYNONYM subseteq_Relnoun subseteq_Compar
-#SYNONYM superset_Relnoun superset_Compar
-#SYNONYM superset_Relnoun superset_Compar
-#SYNONYM equalset_Reladj equalset_Compar
-#SYNONYM notequalset_Reladj notequalset_Compar
-#SYNONYM element_Relnoun element_Comparnoun
-#SYNONYM notelement_Relnoun notelement_Compar
-#SYNONYM perpendicular_Reladj perpendicular_Compar
-#SYNONYM orthogonal_Reladj orthogonal_Compar
-#SYNONYM emptyset_Name emptyset_Const
-#SYNONYM universeset_Name universeset_Const
-#SYNONYM pi_Name pi_Const
+#CONV forall Lean All
+#CONV exists Lean Exist
+
+#CONV forall Rocq All
+#CONV exists Rocq Exist
+#CONV Nat Rocq nat
+#CONV _ Rocq x_
