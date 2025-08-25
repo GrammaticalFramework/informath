@@ -21,7 +21,7 @@ Lean:
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
 RunInformath:
-	stack build
+	stack install
 
 clean:
 	cd src/typetheory && \
