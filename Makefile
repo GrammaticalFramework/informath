@@ -60,7 +60,7 @@ demo:
 	echo "consider pdflatex out/sets.tex"
 
 top100:
-	$(RUN) -to-latex-file -variations test/top100.dk >out/top100.tex
+	$(RUN) -to-latex-file -variations -ranking test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk

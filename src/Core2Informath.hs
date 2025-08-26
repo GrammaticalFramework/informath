@@ -94,16 +94,14 @@ aggregate t = case t of
   GNotProp prop -> case aggregate prop of
     GAdjProp adj x -> GNotAdjProp adj x
     aprop -> GNotProp aprop
-  GSimpleAndProp (GListProp pp@(GAdjProp a x : props)) -> case getAdjs props x of
-    Just adjs -> GAdjProp (GAndAdj (GListAdj (a:adjs))) x
-    _ -> case getAdjArgs props a of
-      Just exps -> GAdjProp a (GAndExp (GListExp (x:exps)))
-      _ -> GSimpleAndProp (GListProp (map aggregate pp))
-  GSimpleOrProp (GListProp pp@(GAdjProp a x : props)) -> case getAdjs props x of
-    Just adjs -> GAdjProp (GOrAdj (GListAdj (a:adjs))) x
-    _ -> case getAdjArgs props a of
-      Just exps -> GAdjProp a (GOrExp (GListExp (x:exps)))
-      _ -> GSimpleOrProp (GListProp (map aggregate pp))
+  GSimpleAndProp (GListProp props) ->
+    case groupProps "and" props of
+      [p] -> p
+      pp -> GSimpleAndProp (GListProp pp)
+  GSimpleOrProp (GListProp props) ->
+    case groupProps "or" props of
+      [p] -> p
+      pp -> GSimpleOrProp (GListProp pp)
   GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent xs)]) prop -> case getExists kind prop of
     (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (xs ++ ys))]) (aggregate body)
   GListHypo hypos -> GListHypo (aggregateHypos hypos)
@@ -118,21 +116,21 @@ aggregate t = case t of
      h : hs -> aggregate h : aggregateHypos hs
      _ -> hypos
 
-getAdjs :: [GProp] -> GExp -> Maybe [GAdj]
+getAdjs :: [GProp] -> GExp -> Maybe ([GAdj], [GProp])
 getAdjs props x = case props of
   GAdjProp adj y : pp | x == y -> do
-    adjs <- getAdjs pp x
-    return (adj : adjs)
+    (adjs, ps) <- getAdjs pp x
+    return (adj : adjs, ps)
   prop : _ -> Nothing
-  _ -> return []
+  _ -> return ([], props)
 
-getAdjArgs :: [GProp] -> GAdj -> Maybe [GExp]
+getAdjArgs :: [GProp] -> GAdj -> Maybe ([GExp], [GProp])
 getAdjArgs props a = case props of
   GAdjProp b y : pp | a == b -> do
-    exps <- getAdjArgs pp a
-    return (y : exps)
+    (exps, ps) <- getAdjArgs pp a
+    return (y : exps, ps)
   prop : _ -> Nothing
-  _ -> return []
+  _ -> return ([], props)
 
 getExists :: GKind -> GProp -> ([GIdent], GProp)
 getExists kind prop = case prop of
@@ -140,6 +138,25 @@ getExists kind prop = case prop of
     case getExists kind body of
       (ys, bd) -> (xs ++ ys, bd)
   _ -> ([], prop)
+
+-- group flattened conjuncts to aggregated sublists; conj :: String is "and" or "or"
+groupProps :: String -> [GProp] -> [GProp]
+groupProps conj = groups where
+  groups props = case props of
+    p@(GAdjProp a x) : pp ->
+      case getAdjs pp x of
+        Just (adjs@(_:_:_), ps) -> (GAdjProp (adjConj conj (GListAdj (a:adjs))) x) : groups ps
+	_ -> case getAdjArgs pp a of
+          Just (exps@(_:_:_), ps) -> (GAdjProp a (expConj conj (GListExp (x:exps)))) : groups ps
+	  _ -> p : groups pp
+    p : pp -> p : groups pp
+    _ -> []
+  adjConj conj = case conj of
+    "and" -> GAndAdj
+    "or" -> GOrAdj
+  expConj conj = case conj of
+    "and" -> GAndExp
+    "or" -> GOrExp
 
 flatten :: Tree a -> Tree a
 flatten t = case t of

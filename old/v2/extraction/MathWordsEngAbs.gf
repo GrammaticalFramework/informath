@@ -1805,7 +1805,7 @@ fun manmade_N : N ;
 fun Montérolier_PN : PN ;  
 fun subshift_N : N ;  
 fun adjugate_A : A ;  
---fun everywhere_Adv : Adv ;  
+---fun everywhere_Adv : Adv ;  
 fun mazur_N : N ;  
 fun bijection_N : N ;  
 fun cauchy_A : A ;  

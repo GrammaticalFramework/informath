@@ -90,6 +90,7 @@ orthogonal BASE Compar orthogonal_Compar
 angleBetween BASE Fun angle_between_Fun
 dotProduct BASE Oper dot_product_Oper
 vectorPlus BASE Oper vector_plus_Oper
+sphenic BASE Adj sphenic_Adj
 
 #CONV Agda forall all
 #CONV Agda Type Set
