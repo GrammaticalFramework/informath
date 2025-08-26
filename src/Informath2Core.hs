@@ -176,6 +176,8 @@ sem env t = case t of
     GOperListExp (LexOper "neg_Oper") (GOneExps (sem env (GTermExp x)))
   GTermExp (GAppOperOneTerm oper x) ->
     GOperListExp oper (GOneExps (sem env (GTermExp x)))
+  GTermExp (GTSigma i m n f) ->
+    GSigmaExp i (sem env (GTermExp m)) (sem env (GTermExp n)) (sem env (GTermExp f))
   GTermExp (GTTimes x y) -> sem env (GTermExp (GAppOperTerm (LexOper "times_Oper") x y))
   GTermExp (GTFrac x y) -> sem env (GTermExp (GAppOperTerm (LexOper "div_Oper") x y))
   GTermExp (GTNeg x) ->  sem env (GTermExp (GAppOperOneTerm (LexOper "neg_Oper") x))
