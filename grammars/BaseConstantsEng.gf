@@ -1,4 +1,4 @@
-concrete BaseConstantsEng of BaseConstants =
+concrete BaseConstantsEng of BaseConstants = TermsLatex [Ident] **
 
 open
   UtilitiesEng,
@@ -28,6 +28,8 @@ lincat
   Compar = ComparisonT ;
   Comparnoun = ComparnounT ;
   Pred3 = Pred3T ;
+
+  Exp = NP ;
 
 lin
   type_Noun = mkNoun "type" ;
@@ -151,5 +153,26 @@ lin
   vector_plus_Oper = mkOper L.plus_Oper "sum" ;
 
   sphenic_Adj = mkAdj "sphenic" ;
+
+-- summer school example: sums
+  SigmaExp i m n exp =
+    mkNP the_Det (mkCN (mkCN sum_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP all_Predet
+	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
+	    (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))))) ;
+
+oper
+  range_V3 = mkV3 (mkV "range") from_Prep to_Prep ;
+  sum_N = mkN "sum" ;
+  where_Subj = mkSubj "where" ;
+  number_N = mkN "number" ;
+  given_A2 = mkA2 (mkA "given") as_Prep ;
+  as_Prep = mkPrep "as" ;
+
+  latexSymbNP : Symb -> NP = \x ->
+    symb (mkSymb ("$" ++ x.s ++ "$")) ;
+
+
 
 }

@@ -30,6 +30,9 @@ lincat
   Comparnoun = ComparnounT ;
   Pred3 = Pred3T ;
 
+  Exp = NP ;
+
+
 lin
   type_Noun = mkNoun type_N ;
   set_Noun = mkNoun ensemble_N ;

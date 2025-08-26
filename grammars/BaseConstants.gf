@@ -1,4 +1,4 @@
-abstract BaseConstants = {
+abstract BaseConstants = Terms [Ident] ** {
 
 cat
   Noun ; -- Kind -- set
@@ -17,6 +17,8 @@ cat
   Compar ; -- Exp -> Exp -> Prop + symbol -- greater than, >
   Comparnoun ; -- Exp -> Exp -> Prop + symbol -- subset of, >
   Pred3 ; -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
+
+  Exp ;
 
 fun
   type_Noun : Noun ;
@@ -139,4 +141,8 @@ fun
   vector_plus_Oper : Oper ;
 
   sphenic_Adj : Adj ;
+
+-- summer school example: sums
+  SigmaExp : Ident -> Exp -> Exp -> Exp -> Exp ;
+
 }

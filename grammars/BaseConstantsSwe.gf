@@ -28,6 +28,8 @@ lincat
   Compar = ComparisonT ;
   Comparnoun = ComparnounT ;
   Pred3 = Pred3T ;
+  
+  Exp = NP ;
 
 lin
   type_Noun = mkNoun (mkN "typ" "typer") ;

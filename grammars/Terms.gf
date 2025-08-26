@@ -29,6 +29,8 @@ fun
   TNeg : Term -> Term ;
   TApp : Function -> [Term] -> Term ;
 
+  TSigma : Ident -> Term -> Term -> Term -> Term ;
+  
   TEnumSet : [Term] -> Term ;
 
   TIdent : Ident -> Term ;

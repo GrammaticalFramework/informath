@@ -51,9 +51,10 @@ oper
   instance_N = mkN "instance" ;
   prove_VS = mkVS (mkV "prove") ;
 
-  as_Prep : Prep = mkPrep "as" ;
+--  as_Prep : Prep = mkPrep "as" ;
 
   let_Str : Bool => Str = \\_ => "let" ;
 
   assuming_Str = "assuming:" ;
+
 }

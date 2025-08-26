@@ -7,7 +7,6 @@ flags startcat = Jmt ;
 
 cat
   Jmt ;
-  Exp ;
   Exps ;
   Prop ;
   [Prop] {2} ;
@@ -121,5 +120,6 @@ fun
   ElemKind : Kind -> Kind ;
 
   CoercionExp : Coercion -> Exp -> Exp ;
+
 
 }

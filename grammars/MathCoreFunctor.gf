@@ -13,7 +13,6 @@ incomplete concrete MathCoreFunctor of MathCore =
 in {
 
 lincat
-  Exp = NP ;
   Kind = {cn : CN ; adv : Adv} ;
   Prop = Proposition ;
   Jmt = Text ;
@@ -297,5 +296,7 @@ oper
 
 -- non-functor
   negPol : Pol = negativePol ;
+
+
 
 }

@@ -60,7 +60,7 @@ formalize t = case t of
   GConstExp const -> GTermExp (GConstTerm const)
   GFunListExp f exps -> maybe t GTermExp (getTerm t) 
   GOperListExp f exps -> maybe t GTermExp (getTerm t) 
-  GAppExp f exps -> maybe t GTermExp (getTerm t) 
+  GAppExp f exps -> maybe t GTermExp (getTerm t)
   _ -> composOp formalize t
 
 getTerm :: Tree a -> Maybe GTerm
@@ -82,6 +82,11 @@ getTerm = maybe Nothing (return . optTerm) . gT where
       Just xs -> return (GTEnumSet (GListTerm xs))
       _ -> Nothing
     GTermExp term -> return term
+    GSigmaExp i m n f -> do
+      tm <- getTerm m
+      tn <- getTerm n
+      tf <- getTerm f
+      return $ GTSigma i tm tn tf
     _ -> Nothing
   optTerm :: Tree a -> Tree a
   optTerm t = case t of

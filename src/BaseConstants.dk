@@ -199,3 +199,6 @@ def perpendicular : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
 
 def vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector := u => v => resultant u v.
 
+(; summer school ;)
+def sigma : (m : Elem Nat) ->
+  (n : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
