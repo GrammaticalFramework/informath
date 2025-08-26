@@ -199,8 +199,3 @@ def perpendicular : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
 
 def vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector := u => v => resultant u v.
 
-def sphenic : (p : Elem Nat) -> Prop := p =>
-  exists Nat (k => exists Nat (m => exists Nat (n =>
-    and (and (and (prime k) (prime m)) (prime n))
-      (and (and (Lt k m) (Lt m n))
-        (Eq (times (times k m) n) p))))).

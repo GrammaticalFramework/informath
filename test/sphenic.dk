@@ -1,0 +1,7 @@
+def sphenic : (p : Elem Nat) -> Prop := p =>
+  exists Nat (k => exists Nat (m => exists Nat (n =>
+    and (and (and (prime k) (prime m)) (prime n))
+      (and (and (Lt k m) (Lt m n))
+        (Eq (times (times k m) n) p))))).
+
+theorem : Proof (forall Nat (p => if (sphenic p) (not (exists Nat (n => Eq p (square n)))))).

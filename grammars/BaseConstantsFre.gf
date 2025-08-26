@@ -153,5 +153,6 @@ lin
   dot_product_Oper = mkOper L.dot_product_Oper (mkCN (mkA "scalaire") (mkN "produit")) ;
   vector_plus_Oper = mkOper L.plus_Oper "somme" ;
 
+  sphenic_Adj = mkAdj "sphénique" ;
 
 }

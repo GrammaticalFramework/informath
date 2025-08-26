@@ -150,5 +150,7 @@ lin
   angle_between_Fun = mkFun (mkN "vinkel") (mkPrep "mellan") ;
   dot_product_Oper = mkOper L.dot_product_Oper "punktprodukt" ;
   vector_plus_Oper = mkOper L.plus_Oper "summa" ;
+  
+  sphenic_Adj = mkAdj "sfenisk" ;
 
 }

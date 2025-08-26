@@ -121,7 +121,6 @@ getAdjs props x = case props of
   GAdjProp adj y : pp | x == y -> do
     (adjs, ps) <- getAdjs pp x
     return (adj : adjs, ps)
-  prop : _ -> Nothing
   _ -> return ([], props)
 
 getAdjArgs :: [GProp] -> GAdj -> Maybe ([GExp], [GProp])
@@ -129,7 +128,6 @@ getAdjArgs props a = case props of
   GAdjProp b y : pp | a == b -> do
     (exps, ps) <- getAdjArgs pp a
     return (y : exps, ps)
-  prop : _ -> Nothing
   _ -> return ([], props)
 
 getExists :: GKind -> GProp -> ([GIdent], GProp)
@@ -139,16 +137,28 @@ getExists kind prop = case prop of
       (ys, bd) -> (xs ++ ys, bd)
   _ -> ([], prop)
 
+getEquations :: [GProp] -> GTerm -> Maybe (GEquation, [GProp])
+getEquations props b = case props of
+  p@(GFormulaProp (GFEquation eq@(GEBinary lt c d))) : pp | c == b -> do
+    case getEquations pp d of
+      Nothing -> return (eq, pp)
+      Just (eqs, ps) -> return (GEChain lt c eqs, ps)
+  _ -> Nothing
+
 -- group flattened conjuncts to aggregated sublists; conj :: String is "and" or "or"
 groupProps :: String -> [GProp] -> [GProp]
 groupProps conj = groups where
   groups props = case props of
     p@(GAdjProp a x) : pp ->
       case getAdjs pp x of
-        Just (adjs@(_:_:_), ps) -> (GAdjProp (adjConj conj (GListAdj (a:adjs))) x) : groups ps
+        Just (adjs@(_:_), ps) -> (GAdjProp (adjConj conj (GListAdj (a:adjs))) x) : groups ps
 	_ -> case getAdjArgs pp a of
-          Just (exps@(_:_:_), ps) -> (GAdjProp a (expConj conj (GListExp (x:exps)))) : groups ps
+          Just (exps@(_:_), ps) -> (GAdjProp a (expConj conj (GListExp (x:exps)))) : groups ps
 	  _ -> p : groups pp
+    p@(GFormulaProp (GFEquation (GEBinary lt a b))) : pp ->
+      case getEquations pp b of
+        Just (eqs, ps) -> (GFormulaProp (GFEquation (GEChain lt a eqs))) : groups ps
+	_ -> p : groups pp
     p : pp -> p : groups pp
     _ -> []
   adjConj conj = case conj of

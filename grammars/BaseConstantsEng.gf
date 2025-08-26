@@ -150,4 +150,6 @@ lin
   dot_product_Oper = mkOper L.dot_product_Oper "dot product" ;
   vector_plus_Oper = mkOper L.plus_Oper "sum" ;
 
+  sphenic_Adj = mkAdj "sphenic" ;
+
 }

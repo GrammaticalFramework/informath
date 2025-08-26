@@ -138,4 +138,5 @@ fun
   dot_product_Oper : Oper ;
   vector_plus_Oper : Oper ;
 
+  sphenic_Adj : Adj ;
 }
