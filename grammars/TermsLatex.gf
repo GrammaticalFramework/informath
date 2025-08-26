@@ -32,7 +32,7 @@ lin
   TApp f xs = constant (f ++ parenth xs.s) ** {isNumber = False} ;
 
   TSigma i m n t = {
-    s = "\\Sigma_{" ++ i ++ "=" ++ top m ++ "}^{" ++ top n ++ "}{" ++ usePrec 2 t ++ "}" ;
+    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ top n ++ "}{" ++ usePrec 2 t ++ "}" ;
     p = 1 ;
     isNumber = False
     } ;
