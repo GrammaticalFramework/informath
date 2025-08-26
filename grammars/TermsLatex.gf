@@ -36,6 +36,12 @@ lin
     p = 1 ;
     isNumber = False
     } ;
+    
+  TSum3dots a b c = {
+    s = usePrec 1 a ++ "+" ++ usePrec 1 b ++ "+ \\cdots +" ++ usePrec 1 c ;
+    p = 0 ;
+    isNumber = False
+    } ;
 
   TEnumSet ts = constant ("\\{" ++ ts.s ++ "\\}") ** {isNumber = False} ;
 
@@ -55,9 +61,7 @@ lin
   TNegative c = tinfixl 3 "^" c (tconstant (curlyStr "-")) ;
 
   TFrac a b = tconstant (macroApp "frac" (top a) (top b)) ;
-  
-  TFactorial t = postfix 3 "!" t ** {isNumber = t.isNumber} ;
-  
+    
   TComprehension a b f =
     tconstant ("\\{" ++ top a ++ "\\in" ++ top b ++
                 ":" ++ top f ++ "\\}") ;

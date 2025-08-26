@@ -232,6 +232,9 @@ variations tree = case tree of
     tree : [GOnlyIfProp a b, GFormulaImpliesProp fa fb]
   GSimpleIfProp a b ->
     tree : [GOnlyIfProp a b ]
+  GTSigma i (GTNumber (GInt m)) (GTNumber n) f ->
+    tree : [GTSum3dots (substTerm i (GTNumber (GInt m)) f)
+             (substTerm i (GTNumber (GInt (m + 1))) f) (substTerm i (GTNumber n) f)]
   _ -> composOpM variations tree
 
 allExpVariations :: GArgKind -> [GExp]
@@ -273,6 +276,11 @@ subst :: GArgKind -> GExp -> Maybe (GIdent, GKind)
 subst argkind exp = case (argkind, exp) of
   (GIdentsArgKind kind (GListIdent [x]), GTermExp (GTIdent y)) | x == y -> Just (x, kind)
   _ -> Nothing
+
+substTerm :: GIdent -> GTerm -> Tree a -> Tree a
+substTerm x val body = case body of
+  GTIdent y | y == x -> val
+  _ -> composOp (substTerm x val) body
 
 varless :: Tree a -> Tree a
 varless t = case t of

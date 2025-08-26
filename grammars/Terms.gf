@@ -30,6 +30,7 @@ fun
   TApp : Function -> [Term] -> Term ;
 
   TSigma : Ident -> Term -> Term -> Term -> Term ;
+  TSum3dots : Term -> Term -> Term -> Term ;
   
   TEnumSet : [Term] -> Term ;
 
