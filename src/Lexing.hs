@@ -58,9 +58,9 @@ lexMixed good = concat . alternate False [] where
   lex env = if env then lexLatexCode else lexText good
 
 unlexMixed :: (String -> Bool) -> [String] -> String
-unlexMixed good = fixCapitAfterDollar . capitInit . concat . alternate False . bindTok where
+unlexMixed good = fixesAfterDollars . capitInit . concat . alternate False . bindTok where
   alternate env s = case s of
-    _:_ -> case break (flip elem ["$","\\[","\\]","\\(","\\)"]) s of
+    _:_ -> case break (flip elem ["$","$$", "\\[","\\]","\\(","\\)"]) s of
       (t,[])  -> unlex env t : []
       (t,c:m) -> unlex env t : sep env c m : alternate (not env) m
     _ -> []
@@ -70,10 +70,12 @@ unlexMixed good = fixCapitAfterDollar . capitInit . concat . alternate False . b
     (_,  True) -> c ++ " "   -- closing $ otherwise separated by space from what follows
     _ -> " " ++ c   -- put space before opening $
 
-  fixCapitAfterDollar :: String -> String --- ugly hack instead of trying to find the root of a problem
-  fixCapitAfterDollar s = case s of
-    '$':'.':' ':c:cs -> '$':'.':' ': toUpper c : fixCapitAfterDollar cs
-    c:cs -> c : fixCapitAfterDollar cs
+  fixesAfterDollars :: String -> String --- ugly hack instead of trying to find the root of a problem
+  fixesAfterDollars s = case s of
+    '$':'$':'.':cs -> '.':'$':'$': fixesAfterDollars cs 
+    '$':'$':',':cs -> ',':'$':'$': fixesAfterDollars cs 
+    '$':'.':' ':c:cs -> '$':'.':' ': toUpper c : fixesAfterDollars cs
+    c:cs -> c : fixesAfterDollars cs
     _ -> s
 
 
