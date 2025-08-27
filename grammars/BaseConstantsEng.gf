@@ -161,6 +161,18 @@ lin
         (mkNP all_Predet
 	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
 	    (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))))) ;
+	    
+  SeriesExp i m exp =
+    mkNP the_Det (mkCN (mkCN series_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP all_Predet
+	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
+	    (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m infinity_NP)))))))) ;
+	    
+  IntegralExp i m n exp =
+    mkNP the_Det (mkCN (mkCN integral_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP exp (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))) ;
 
 oper
   range_V3 = mkV3 (mkV "range") from_Prep to_Prep ;
@@ -169,6 +181,9 @@ oper
   number_N = mkN "number" ;
   given_A2 = mkA2 (mkA "given") as_Prep ;
   as_Prep = mkPrep "as" ;
+  infinity_NP = mkNP (mkN "infinity") ;
+  series_N = mkN "series" ;
+  integral_N = mkN "integral" ;
 
   latexSymbNP : Symb -> NP = \x ->
     symb (mkSymb ("$" ++ x.s ++ "$")) ;

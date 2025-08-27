@@ -42,6 +42,20 @@ lin
     p = 0 ;
     isNumber = False
     } ;
+    
+  TSeries i m t = {
+    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ "\\infty" ++ "}{" ++ usePrec 2 t ++ "}" ;
+    p = 1 ;
+    isNumber = False
+    } ;
+
+  TIntegral x a b t = {
+    s = "\\int_{" ++ top a ++ "}^{" ++ top b ++ "}" ++ usePrec 2 t ++ "\\, d" ++ x ;
+    p = 1 ;
+    isNumber = False
+    } ;
+    
+
 
   TEnumSet ts = constant ("\\{" ++ ts.s ++ "\\}") ** {isNumber = False} ;
 

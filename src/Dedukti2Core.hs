@@ -237,6 +237,12 @@ exp2exp exp = case exp of
       EIdent (QIdent "sigma") | length args == 3 ->
         let [m, n, EAbs b f] = args
         in GSigmaExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
+      EIdent (QIdent "series") | length args == 2 ->
+        let [m, EAbs b f] = args
+        in GSeriesExp (bind2coreIdent b) (exp2exp m) (exp2exp f)  
+      EIdent (QIdent "integral") | length args == 3 ->
+        let [m, n, EAbs b f] = args
+        in GIntegralExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
       EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
 	Just [] -> GConstExp (LexConst "emptyset_Const")

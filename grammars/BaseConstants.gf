@@ -144,5 +144,7 @@ fun
 
 -- summer school example: sums
   SigmaExp : Ident -> Exp -> Exp -> Exp -> Exp ;
+  SeriesExp : Ident -> Exp -> Exp ->  Exp ;
+  IntegralExp : Ident -> Exp -> Exp -> Exp -> Exp ;
 
 }

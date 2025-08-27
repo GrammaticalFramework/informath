@@ -87,6 +87,15 @@ getTerm = maybe Nothing (return . optTerm) . gT where
       tn <- getTerm n
       tf <- getTerm f
       return $ GTSigma i tm tn tf
+    GSeriesExp i m f -> do
+      tm <- getTerm m
+      tf <- getTerm f
+      return $ GTSeries i tm tf
+    GIntegralExp i m n f -> do
+      tm <- getTerm m
+      tn <- getTerm n
+      tf <- getTerm f
+      return $ GTIntegral i tm tn tf
     _ -> Nothing
   optTerm :: Tree a -> Tree a
   optTerm t = case t of
@@ -238,7 +247,7 @@ variations tree = case tree of
 	   _ -> GAppOperTerm (LexOper "plus_Oper") m (GTNumber (GInt 1))
     in tree : [GTSum3dots (substTerm i m f) (substTerm i m1 f) (substTerm i n f)]
   GFormulaProp formula ->
-    tree : [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
+    ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
   _ -> composOpM variations tree
 
 hasDisplaySize :: Tree a -> Bool
@@ -246,8 +255,15 @@ hasDisplaySize = not . null . includesThese where
   includesThese :: Tree a -> [Tree a]
   includesThese t = case t of
     GTSigma _ _ _ _ -> [t]
+    GTSeries _ _ _ -> [t]
+    GTIntegral _ _ _ _ -> [t]
     GTSum3dots _ _ _ -> [t]
     _ -> composOpM includesThese t
+
+ifNeeded :: a -> [a] -> [a]
+ifNeeded given alts = case alts of
+  [] -> [given]
+  _ -> alts
 
 allExpVariations :: GArgKind -> [GExp]
 allExpVariations argkind = case argkind of
