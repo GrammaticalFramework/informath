@@ -202,3 +202,11 @@ def vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector := u => v
 (; summer school ;)
 def sigma : (m : Elem Nat) ->
   (n : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
+
+def series  : (m : Elem Nat) ->
+                    (Elem Nat -> Elem Num) -> Elem Num.
+
+def integral : (m : Elem Real) ->
+  (n : Elem Real) -> (Elem Real -> Elem Real) -> Elem Real.
+
+

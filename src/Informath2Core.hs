@@ -176,6 +176,10 @@ sem env t = case t of
     GOperListExp (LexOper "neg_Oper") (GOneExps (sem env (GTermExp x)))
   GTermExp (GAppOperOneTerm oper x) ->
     GOperListExp oper (GOneExps (sem env (GTermExp x)))
+  GTermExp (GTSum3dots m m1 n) ->
+    let
+      [sm, sm1, sn] = map (sem env) [m, m1, n]
+    in sem env (GTermExp (iqTest m m1 n)) 
   GTermExp (GTSigma i m n f) ->
     GSigmaExp i (sem env (GTermExp m)) (sem env (GTermExp n)) (sem env (GTermExp f))
   GTermExp (GTTimes x y) -> sem env (GTermExp (GAppOperTerm (LexOper "times_Oper") x y))
@@ -185,6 +189,14 @@ sem env t = case t of
   GTParenth term -> sem env term
       
   _ -> composOp (sem env) t
+
+-- trying to guess the summation term from given examples
+iqTest :: GTerm -> GTerm -> GTerm -> GTerm
+iqTest mterm m1term nterm = case findTerm mterm m1term nterm of
+  Just (i, m, n, fterm) -> GTSigma i m n fterm
+  _ -> foldl1 (GAppOperTerm (LexOper "plus_Oper")) [mterm, m1term, unknownTerm, nterm]
+ where
+   findTerm mterm m1term nterm = Nothing ---- TODO some more IQ
 
 chainedEquations :: GEquation -> [(GEqsign, GTerm, GTerm)]
 chainedEquations equation = case equation of
@@ -237,4 +249,7 @@ getAndProps prop = case prop of
 gExps :: [GExp] -> GExps
 gExps exps = foldr GAddExps (GOneExps (last exps)) (init exps)
 
+--- used in iqTest when guessing summation terms 
+unknownTerm :: GTerm
+unknownTerm = GTIdent (GStrIdent (GString "UNKNOWN"))
 
