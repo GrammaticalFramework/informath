@@ -10,6 +10,7 @@ cat
 
 fun
   FormulaProp : Formula -> Prop ;
+  DisplayFormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;
 
   SetTerm : Set -> Term ;

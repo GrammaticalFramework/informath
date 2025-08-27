@@ -79,6 +79,10 @@ top100single:
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
+sigma:
+	$(RUN) -variations -to-latex-file -ranking test/sigma.dk >out/sigma.tex
+	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
+
 baseconstants:
 #	tail -150 src/BaseConstants.dk >tmp/baseconstants.dk
 	cat src/BaseConstants.dk >tmp/baseconstants.dk

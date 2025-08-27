@@ -1,0 +1,6 @@
+a : Proof (Eq (sigma (nd 1) (nd 9) (i => i)) (nn 4 (nd 5))).
+
+b : Proof (Gt (sigma (nd 1) (nd 9) (n => div 1 n)) 2).
+
+c : (m : Nat) -> (n : Nat) -> Proof (and (Lt 0 m) (Lt m (minus n 1))) ->
+  Proof (Gt (sigma m n (i => div 1 i)) (sigma (plus m 1) n (i => div 1 i)) ).

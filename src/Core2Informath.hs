@@ -232,10 +232,22 @@ variations tree = case tree of
     tree : [GOnlyIfProp a b, GFormulaImpliesProp fa fb]
   GSimpleIfProp a b ->
     tree : [GOnlyIfProp a b ]
-  GTSigma i (GTNumber (GInt m)) (GTNumber n) f ->
-    tree : [GTSum3dots (substTerm i (GTNumber (GInt m)) f)
-             (substTerm i (GTNumber (GInt (m + 1))) f) (substTerm i (GTNumber n) f)]
+  GTSigma i m n f ->
+    let m1 = case m of
+           GTNumber (GInt m) -> GTNumber (GInt (m + 1))
+	   _ -> GAppOperTerm (LexOper "plus_Oper") m (GTNumber (GInt 1))
+    in tree : [GTSum3dots (substTerm i m f) (substTerm i m1 f) (substTerm i n f)]
+  GFormulaProp formula ->
+    tree : [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
   _ -> composOpM variations tree
+
+hasDisplaySize :: Tree a -> Bool
+hasDisplaySize = not . null . includesThese where
+  includesThese :: Tree a -> [Tree a]
+  includesThese t = case t of
+    GTSigma _ _ _ _ -> [t]
+    GTSum3dots _ _ _ -> [t]
+    _ -> composOpM includesThese t
 
 allExpVariations :: GArgKind -> [GExp]
 allExpVariations argkind = case argkind of

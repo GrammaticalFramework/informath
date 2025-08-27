@@ -17,6 +17,7 @@ lincat
 
 lin
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
+  DisplayFormulaProp formula = simpleProp (displayLatexS (mkSymb formula.s)) ;
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
 
   SetTerm set = constant set.c ** {isNumber = False} ;
@@ -102,4 +103,6 @@ lin
 
 oper
   postAdvS : S -> Adv -> S = \s, adv -> lin S {s = s.s ++ adv.s} ;
+  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
+
 }
