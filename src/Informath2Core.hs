@@ -179,7 +179,8 @@ sem env t = case t of
   GTermExp (GTSum3dots m m1 n) ->
     let
       [sm, sm1, sn] = map (sem env) [m, m1, n]
-    in sem env (GTermExp (iqTest m m1 n)) 
+      (var, nenv) = newVar env
+    in sem nenv (GTermExp (iqTest var m m1 n)) 
   GTermExp (GTSigma i m n f) ->
     GSigmaExp i (sem env (GTermExp m)) (sem env (GTermExp n)) (sem env (GTermExp f))
   GTermExp (GTTimes x y) -> sem env (GTermExp (GAppOperTerm (LexOper "times_Oper") x y))
@@ -191,12 +192,20 @@ sem env t = case t of
   _ -> composOp (sem env) t
 
 -- trying to guess the summation term from given examples
-iqTest :: GTerm -> GTerm -> GTerm -> GTerm
-iqTest mterm m1term nterm = case findTerm mterm m1term nterm of
-  Just (i, m, n, fterm) -> GTSigma i m n fterm
+iqTest :: GIdent -> GTerm -> GTerm -> GTerm -> GTerm
+iqTest i mterm m1term nterm = case findTerm mterm m1term nterm of
+  Just term -> term
   _ -> foldl1 (GAppOperTerm (LexOper "plus_Oper")) [mterm, m1term, unknownTerm, nterm]
  where
-   findTerm mterm m1term nterm = Nothing ---- TODO some more IQ
+   findTerm mterm m1term nterm = case refactorTerms mterm nterm of
+     Just (m, n, f) -> return (GTSigma i m n (f (GTIdent i))) ---- verify with m1term
+     _ -> Nothing
+   refactorTerms :: GTerm -> GTerm -> Maybe (GTerm, GTerm, GTerm -> GTerm)
+   refactorTerms mterm nterm = case (mterm, nterm) of
+     (GAppOperTerm f1 x1 y1, GAppOperTerm f2 x2 y2) | f1 == f2 -> case () of  --- special case: one binop
+       _ | x1 == x2 && y1 /= y2 -> return (y1, y2, \y -> GAppOperTerm f1 x1 y)
+       _ | x1 /= x2 && y1 == y2 -> return (x1, x2, \x -> GAppOperTerm f1 x y1)
+     _ -> Nothing
 
 chainedEquations :: GEquation -> [(GEqsign, GTerm, GTerm)]
 chainedEquations equation = case equation of
