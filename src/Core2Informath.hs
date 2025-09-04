@@ -242,10 +242,10 @@ variations tree = case tree of
   GSimpleIfProp a b ->
     tree : [GOnlyIfProp a b ]
   GTSigma i m n f ->
-    let m1 = case m of
-           GTNumber (GInt m) -> GTNumber (GInt (m + 1))
-	   _ -> GAppOperTerm (LexOper "plus_Oper") m (GTNumber (GInt 1))
-    in tree : [GTSum3dots (substTerm i m f) (substTerm i m1 f) (substTerm i n f)]
+    let m1s = case m of
+                GTNumber (GInt m) -> [GTNumber (GInt (m + 1))]
+	        _ -> [GAppOperTerm (LexOper "plus_Oper") m (GTNumber (GInt 1))]  --- not to be included with GInt m 
+    in tree : [GTSum3dots (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
   GFormulaProp formula ->
     ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
   _ -> composOpM variations tree

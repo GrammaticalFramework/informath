@@ -1,10 +1,10 @@
-a : Proof (Eq (sigma (nd 1) (nd 9) (i => i)) (nn 4 (nd 5))).
+theorem : Proof (Eq (sigma (nd 1) (nd 9) (i => i)) (nn 4 (nd 5))).
 
-b : Proof (Gt (sigma (nd 1) (nd 9) (n => div 1 n)) 2).
+theorem : Proof (Gt (sigma (nd 1) (nd 9) (n => div 1 n)) 2).
 
-c : Proof (Eq (series (nd 1) (n => div 1 (pow 2 n))) 1).
+theorem : Proof (Eq (series (nd 1) (n => div 1 (pow 2 n))) 1).
 
-d : Proof (Gt (integral (nd 0) (nd 1) (x => x)) 0).
+theorem : Proof (Gt (integral (nd 0) (nd 1) (x => x)) 0).
 
-e : (m : Nat) -> (n : Nat) -> Proof (and (Lt 0 m) (Lt m (minus n 1))) ->
+theorem : (m : Nat) -> (n : Nat) -> Proof (and (Lt 0 m) (Lt m (minus n 1))) ->
   Proof (Gt (sigma m n (i => div 1 i)) (sigma (plus m 1) n (i => div 1 i)) ).

@@ -83,6 +83,10 @@ sigma:
 	$(RUN) -variations -to-latex-file -ranking test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
+olymp:
+	$(RUN) -variations -to-latex-file -ranking test/olymp.dk >out/olymp.tex
+	cd out ; pdflatex olymp.tex ; $(OPEN) olymp.pdf
+
 baseconstants:
 #	tail -150 src/BaseConstants.dk >tmp/baseconstants.dk
 	cat src/BaseConstants.dk >tmp/baseconstants.dk
