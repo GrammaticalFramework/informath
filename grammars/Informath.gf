@@ -1,5 +1,6 @@
 abstract Informath =
-  MathCore
+  MathCore,
+  Naproche
   ** {
 
 flags startcat=Jmt ;

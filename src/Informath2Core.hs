@@ -188,7 +188,15 @@ sem env t = case t of
   GTermExp (GTNeg x) ->  sem env (GTermExp (GAppOperOneTerm (LexOper "neg_Oper") x))
   GTermExp (GTEnumSet (GListTerm xs)) -> sem env (GEnumSetExp (gExps (map GTermExp xs)))
   GTParenth term -> sem env term
-      
+
+
+-- Naproche extensions
+  GSupposePropHypo prop -> sem env (GPropHypo prop)
+  GIffIffProp a b -> sem env (GIffProp a b)
+  GWeHaveFormulaProp prop -> sem env (GFormulaProp prop)
+  GNoCommaAllProp argkinds prop -> sem env (GAllProp argkinds prop)
+  GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "set_Noun")) idents)
+  
   _ -> composOp (sem env) t
 
 -- trying to guess the summation term from given examples

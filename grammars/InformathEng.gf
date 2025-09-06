@@ -1,5 +1,7 @@
 concrete InformathEng of Informath =
-  MathCoreEng **
+  MathCoreEng,
+  NaprocheEng
+  **
   InformathFunctor with
     (Syntax = SyntaxEng),
     (Symbolic = SymbolicEng),
