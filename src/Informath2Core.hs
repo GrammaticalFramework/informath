@@ -168,6 +168,10 @@ sem env t = case t of
   GFormulaProp (GFEquation equation@(GEChain _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
       [sem env (GFormulaProp (GFEquation (GEBinary eqsign x y))) | (eqsign, x, y) <- triples])
+  GFormulaProp (GFElem (GListTerm xs) y) -> case xs of
+    [x] -> sem env (GFormulaProp (GFEquation (GEBinary
+      (GComparnounEqsign (LexComparnoun "element_Comparnoun")) x y)))
+    _ -> GAndProp (GListProp [sem env (GFormulaProp (GFElem (GListTerm [x]) y)) | x <- xs])
     
   GTermExp (GConstTerm const) -> GConstExp const
   GTermExp (GAppOperTerm oper x y) ->

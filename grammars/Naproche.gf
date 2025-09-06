@@ -13,6 +13,7 @@ fun
 -- lexicon
   inhabited_Adj : Adj ;
   empty_Adj : Adj ;
-  distinct_Reladj : Reladj ;
-
+  disjoint_Compar : Compar ;
+  ni_Compar : Compar ;
+  
 }

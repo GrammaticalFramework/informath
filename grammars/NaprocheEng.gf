@@ -21,7 +21,9 @@ lin
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
-  distinct_Reladj = mkRel "distinct" "from" ;
+  disjoint_Compar = mkCompar "\\notmeets" "disjoint" "from" ;
+  ni_Compar = mkCompar "\\ni" "containing" "" ; ---- should be Relverb "contain"
+  
 
 oper
   suppose_VS = mkVS (mkV "suppose") ;
