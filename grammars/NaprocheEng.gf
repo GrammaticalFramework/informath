@@ -3,6 +3,7 @@ concrete NaprocheEng of Naproche = MathCoreEng **
   open
     SyntaxEng,
     ParadigmsEng,
+    UtilitiesEng,
     SymbolicEng,
     (E = ExtendEng)
 in {
@@ -15,10 +16,12 @@ lin
     simpleProp (mkS (mkCl we_NP have_V2 (latexNP (mkSymb formula.s)))) ;
   NoCommaAllProp argkinds prop =
     simpleProp (lin S {s = (SyntaxEng.mkAdv for_Prep (mkNP all_Predet argkinds.pl)).s ++ (partProp prop).s}) ;
-
   BareIdentsArgKind idents =
     {cn = mkCN emptyN idents.np ; adv = emptyAdv ; isPl = idents.isPl} ;
 
+  inhabited_Adj = mkAP (mkA "inhabited") ;
+  empty_Adj = mkAP (mkA "empty") ;
+  distinct_Reladj = mkRel "distinct" "from" ;
 
 oper
   suppose_VS = mkVS (mkV "suppose") ;
