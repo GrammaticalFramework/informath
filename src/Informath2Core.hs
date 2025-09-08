@@ -103,7 +103,7 @@ sem env t = case t of
         (GSimpleIfProp
 	  (sem env (mkAndProp [GAdjProp adj (GTermExp (GTIdent x)) | x <- xs]))
 	  (sem env prop))
-    akinds -> GAllProp akinds (sem env prop)
+    akinds -> GAllProp (sem env akinds) (sem env prop)
     
   GKindProp exp (GAdjKind adj kind_) ->
     sem env (GAdjProp adj exp) --- ignoring kind, if not in hypothesis position
@@ -160,6 +160,10 @@ sem env t = case t of
     in GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
   GNotAdjProp adj exp -> GNotProp (sem env (GAdjProp adj exp))
 
+  GKindArgKind kind -> 
+    let (var, nenv) = newVar env
+    in GIdentsArgKind (sem nenv kind) (GListIdent [var])
+    
   GFormulaProp (GFModulo term1 term2 term3) ->
     GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
       (sem env (GTermExp term1))
@@ -169,8 +173,9 @@ sem env t = case t of
     triples -> GAndProp (GListProp
       [sem env (GFormulaProp (GFEquation (GEBinary eqsign x y))) | (eqsign, x, y) <- triples])
   GFormulaProp (GFElem (GListTerm xs) y) -> case xs of
-    [x] -> sem env (GFormulaProp (GFEquation (GEBinary
-      (GComparnounEqsign (LexComparnoun "element_Comparnoun")) x y)))
+  
+    [x] -> GComparnounProp (LexComparnoun "element_Comparnoun")
+              (sem env (GTermExp x)) (sem env (GTermExp y))
     _ -> GAndProp (GListProp [sem env (GFormulaProp (GFElem (GListTerm [x]) y)) | x <- xs])
     
   GTermExp (GConstTerm const) -> GConstExp const
