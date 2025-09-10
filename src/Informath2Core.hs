@@ -202,10 +202,15 @@ sem env t = case t of
 -- Naproche extensions
   GSupposePropHypo prop -> sem env (GPropHypo prop)
   GIffIffProp a b -> sem env (GIffProp a b)
-  GWeHaveFormulaProp prop -> sem env (GFormulaProp prop)
+  GWeHaveProp prop -> sem env prop
+---  GWeHaveFormulaProp prop -> sem env (GFormulaProp prop)
   GNoCommaAllProp argkinds prop -> sem env (GAllProp argkinds prop)
   GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "set_Noun")) idents)
-  
+  GFormulaArgKind formula -> case sem env formula of
+    GFElem (GListTerm terms) (GSetTerm set) ->
+      GIdentsArgKind (GSetKind set) (GListIdent [x | GTIdent x <- terms])
+    _ -> error "cannot use formula as argkind yet"
+
   _ -> composOp (sem env) t
 
 -- trying to guess the summation term from given examples
