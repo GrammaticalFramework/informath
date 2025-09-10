@@ -121,10 +121,15 @@ hypo2dedukti hypo = case hypo of
     [HExp (prop2dedukti prop)]
   GIndexedLetFormulaHypo (GInt i) ->
     [HExp (EIdent (unresolvedIndexIdent i))]
-  GLetHypo ident kind exp ->
-    [HLetTyped (ident2ident ident) (kind2dedukti kind) (exp2dedukti exp)]
-  GBareLetHypo ident exp ->
-    [HLetExp (ident2ident ident) (exp2dedukti exp)]
+  GLocalHypo local ->
+    [local2dedukti local]
+
+local2dedukti :: GLocal -> Hypo
+local2dedukti local = case local of
+  GLetLocal ident kind exp ->
+    HLetTyped (ident2ident ident) (kind2dedukti kind) (exp2dedukti exp)
+  GBareLetLocal ident exp ->
+    HLetExp (ident2ident ident) (exp2dedukti exp)
 
 argkind2dedukti :: GArgKind -> [(Exp, QIdent)]
 argkind2dedukti argkind = case argkind of

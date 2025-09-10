@@ -22,6 +22,7 @@ lincat
   [ArgKind] = {sg, neg, pl : NP} ;  -- there exists an A / there exists no A / for all As
   Hypo = Utt ;
   [Hypo] = {text : Text ; isEmpty : Bool} ;
+  Local = {name, value : NP} ;
   [Ident] = {np : NP ; isPl : Bool} ;
   Proof = Text ;
   [Proof] = Text ;
@@ -73,10 +74,12 @@ lin
   PropHypo prop = mkUtt (mkImp (mkVP assume_VS (topProp prop))) ; 
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
-  LetHypo ident kind exp =
+  LocalHypo local = Grammar.ImpP3 local.name (mkVP local.value) ; 
+
+  LetLocal ident kind exp =
     let ikind = {cn = mkCN kind.cn (latexNP (mkSymb ident)) ; adv = kind.adv ; isPl = False}
-    in Grammar.ImpP3 (mkNP the_Det (useKind ikind)) (mkVP exp) ; 
-  BareLetHypo ident exp = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp) ; 
+    in {name = mkNP the_Det (useKind ikind) ; value = exp} ; 
+  BareLetLocal ident exp = {name = latexNP (mkSymb ident) ; value = exp} ; 
 
   AppExp exp exps = mkNP exp (Syntax.mkAdv applied_to_Prep exps.np) ;
   AbsExp idents exp =

@@ -130,8 +130,8 @@ hypos2hypos hypos = case hypos of
     (xs, hs) -> GVarsHypo (GListIdent (map ident2ident (var:xs))) (exp2kind kind) : hypos2hypos hs
   HParVarExp var kind : hh -> hypos2hypos (HVarExp var kind : hh) 
   HExp prop : hh -> GPropHypo (exp2prop prop) : hypos2hypos hh
-  HLetExp ident exp : hh -> GBareLetHypo (ident2ident ident) (exp2exp exp) : hypos2hypos hh
-  HLetTyped ident typ exp : hh -> GLetHypo (ident2ident ident) (exp2kind typ) (exp2exp exp) : hypos2hypos hh
+  HLetExp ident exp : hh -> GLocalHypo (GBareLetLocal (ident2ident ident) (exp2exp exp)) : hypos2hypos hh
+  HLetTyped ident typ exp : hh -> GLocalHypo (GLetLocal (ident2ident ident) (exp2kind typ) (exp2exp exp)) : hypos2hypos hh
   [] -> []
  where
    getVarsHypos :: Exp -> [Hypo] -> ([QIdent], [Hypo])
