@@ -169,6 +169,8 @@ sem env t = case t of
       (sem env (GTermExp term1))
   GFormulaProp (GFEquation (GEBinary (GComparEqsign compar) term1 term2)) ->
     GAdjProp (GComparAdj compar (sem env (GTermExp term2))) (sem env (GTermExp term1))
+  GFormulaProp (GFEquation (GEBinary (GComparnounEqsign compar) term1 term2)) ->
+    GComparnounProp compar (sem env (GTermExp term1)) (sem env (GTermExp term2))
   GFormulaProp (GFEquation equation@(GEChain _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
       [sem env (GFormulaProp (GFEquation (GEBinary eqsign x y))) | (eqsign, x, y) <- triples])
@@ -206,10 +208,12 @@ sem env t = case t of
 ---  GWeHaveFormulaProp prop -> sem env (GFormulaProp prop)
   GNoCommaAllProp argkinds prop -> sem env (GAllProp argkinds prop)
   GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "set_Noun")) idents)
-  GFormulaArgKind formula -> case sem env formula of
-    GFElem (GListTerm terms) (GSetTerm set) ->
+  GDeclarationArgKind declaration -> case sem env declaration of
+    GDElem (GListTerm terms) (GSetTerm set) -> ---- TODO: check that all are idents
       GIdentsArgKind (GSetKind set) (GListIdent [x | GTIdent x <- terms])
-    _ -> error "cannot use formula as argkind yet"
+    GDElem (GListTerm terms) term -> 
+      GIdentsArgKind (GTermKind term) (GListIdent [x | GTIdent x <- terms])
+    _ -> t ---- error "cannot use declaration as argkind yet"
 
   _ -> composOp (sem env) t
 

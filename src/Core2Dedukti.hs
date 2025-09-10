@@ -136,7 +136,7 @@ argkind2dedukti argkind = case argkind of
   GIdentsArgKind kind (GListIdent idents) ->
     let dkind = kind2dedukti kind
     in [(dkind, ident2ident ident) | ident <- idents]
-  GIndexedFormulaArgKind (GInt i) ->
+  GIndexedDeclarationArgKind (GInt i) ->
     [(EIdent (unresolvedIndexIdent i), unresolvedIndexIdent i)]
 
 kind2dedukti :: GKind -> Exp

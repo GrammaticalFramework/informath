@@ -251,6 +251,8 @@ processInformathJmt :: Env -> String -> IO String
 processInformathJmt env s = do
   let gr = cpgf env
   let ls = lextex s
+  ifv env $ putStrLn "#"
+  ifv env $ putStrLn $ "## INPUT: " ++ s
   ifv env $ putStrLn $ "## LEXED: " ++ ls
   let (ils, tindex) = indexTex ls
   ifv env $ putStrLn $ "## INDEXED: " ++ ils ++ show tindex
@@ -275,8 +277,8 @@ processInformathJmtTree env t0 = do
   let tr = fg t
   let str = semantics tr
   let st = gf str
-  ifv env $ putStrLn $ "## Core     : " ++ showExpr [] st
-  ifv env $ putStrLn $ unlex env (linearize gr (lang env) st)
+  ifv env $ putStrLn $ "## Core Abs: " ++ showExpr [] st
+  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (lang env) st)
   let d = jmt2dedukti (lookBackData env) str
   let dt = printTreeEnv env d
   ifv env $ putStrLn $ dt
@@ -337,6 +339,9 @@ unindexJmt env expr = maybe expr id (unind  expr) where
         "IndexedLetFormulaHypo" -> do
 	   formula <- parsed "Formula" (filter (/='$') (look i))
 	   return $ mkApp (mkCId "LetFormulaHypo") [formula]
+        "IndexedDeclarationArgKind" -> do
+	   declaration <- parsed "Declaration" (filter (/='$') (look i))
+	   return $ mkApp (mkCId "DeclarationArgKind") [declaration]
         _ -> return expr
       _ -> do
         ux <- unind x

@@ -21,10 +21,10 @@ lin
     simpleProp (lin S {s = (SyntaxEng.mkAdv for_Prep (mkNP all_Predet argkinds.pl)).s ++ (partProp prop).s}) ;
   BareIdentsArgKind idents =
     {cn = mkCN emptyN idents.np ; adv = emptyAdv ; isPl = idents.isPl} ;
-  FormulaArgKind formula =
-    {cn = mkCN emptyN (latexNP (mkSymb formula.s)) ; adv = emptyAdv ; isPl = False} ; ---- isPl
-  IndexedFormulaArgKind i =
-    {cn = mkCN emptyN <symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}")) : NP> ; adv = emptyAdv ; isPl = False} ; ---- isPl
+  DeclarationArgKind declaration =
+    {cn = mkCN emptyN (latexNP (mkSymb declaration.s)) ; adv = emptyAdv ; isPl = declaration.isPl} ; 
+  IndexedDeclarationArgKind i =
+    {cn = mkCN emptyN <symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}")) : NP> ; adv = emptyAdv ; isPl = False} ; --- isPl
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
