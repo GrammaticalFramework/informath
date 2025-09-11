@@ -146,18 +146,29 @@ sem env t = case t of
       (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
         (GNotAdjProp adj (GTermExp (GTIdent x))))
 	
-  GAdjProp (GAndAdj (GListAdj adjs)) x ->
-    let sx = sem env x
-    in GAndProp (GListProp [GAdjProp adj sx | adj <- adjs])
-  GAdjProp (GOrAdj (GListAdj adjs)) x ->
-    let sx = sem env x
-    in GOrProp (GListProp [GAdjProp adj sx | adj <- adjs])
-  GAdjProp a (GAndExp (GListExp exps)) ->
-    let sa = sem env a
-    in GAndProp (GListProp [GAdjProp sa exp | exp <- exps])
-  GAdjProp a (GOrExp (GListExp exps)) ->
-    let sa = sem env a
-    in GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
+  GAdjProp adj exp -> case sem env adj of
+    GAndAdj (GListAdj adjs)  ->
+      let sx = sem env exp
+      in GAndProp (GListProp [GAdjProp adj sx | adj <- adjs])
+    GOrAdj (GListAdj adjs)  ->
+      let sx = sem env exp
+      in GOrProp (GListProp [GAdjProp adj sx | adj <- adjs])
+    sa -> case sem env exp of
+      (GAndExp (GListExp exps)) ->
+        GAndProp (GListProp [GAdjProp sa exp | exp <- exps])
+      (GOrExp (GListExp exps)) ->
+        GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
+      sexp -> GAdjProp sa sexp
+
+  GBothAndProp a b -> GAndProp (GListProp [sem env a, sem env b])
+  GBothAndAdj a b -> GAndAdj (GListAdj [sem env a, sem env b])
+  GBothAndExp a b -> GAndExp (GListExp [sem env a, sem env b])
+
+  GEitherOrProp a b -> GOrProp (GListProp [sem env a, sem env b])
+  GEitherOrAdj a b -> GOrAdj (GListAdj [sem env a, sem env b])
+  GEitherOrExp a b -> GOrExp (GListExp [sem env a, sem env b])
+
+
   GNotAdjProp adj exp -> GNotProp (sem env (GAdjProp adj exp))
 
   GKindArgKind kind -> 

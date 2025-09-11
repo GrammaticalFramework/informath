@@ -241,6 +241,18 @@ variations tree = case tree of
     tree : [GOnlyIfProp a b, GFormulaImpliesProp fa fb]
   GSimpleIfProp a b ->
     tree : [GOnlyIfProp a b ]
+  GSimpleAndProp (GListProp [a, b]) ->
+    tree : [GBothAndProp va vb | va <- variations a, vb <- variations b]
+  GAndAdj (GListAdj [a, b]) ->
+    tree : [GBothAndAdj va vb | va <- variations a, vb <- variations b]
+  GAndExp (GListExp [a, b]) ->
+    tree : [GBothAndExp va vb | va <- variations a, vb <- variations b]
+  GSimpleOrProp (GListProp [a, b]) ->
+    tree : [GEitherOrProp va vb | va <- variations a, vb <- variations b]
+  GOrAdj (GListAdj [a, b]) ->
+    tree : [GEitherOrAdj va vb | va <- variations a, vb <- variations b]
+  GOrExp (GListExp [a, b]) ->
+    tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
   GTSigma i m n f ->
     let m1s = case m of
                 GTNumber (GInt m) -> [GTNumber (GInt (m + 1))]

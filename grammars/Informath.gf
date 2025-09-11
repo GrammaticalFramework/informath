@@ -32,6 +32,15 @@ fun
 
   AndExp : [Exp] -> Exp ;
   OrExp : [Exp] -> Exp ;
+  
+  BothAndProp : Prop -> Prop -> Prop ;
+  EitherOrProp : Prop -> Prop -> Prop ;
+
+  BothAndAdj : Adj -> Adj -> Adj ;
+  EitherOrAdj : Adj -> Adj -> Adj ;
+
+  BothAndExp : Exp -> Exp -> Exp ;
+  EitherOrExp : Exp -> Exp -> Exp ;
 
   OnlyIfProp : Prop -> Prop -> Prop ;
 

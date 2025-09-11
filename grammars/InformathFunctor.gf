@@ -32,11 +32,20 @@ lin
   SimpleIfProp A B = simpleProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
   SimpleIffProp A B = simpleProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
 
-  AndAdj adjs = mkAP and_Conj adjs | mkAP both7and_DConj adjs ;
-  OrAdj adjs = mkAP or_Conj adjs  | mkAP either7or_DConj adjs ;
+  AndAdj adjs = mkAP and_Conj adjs ;
+  OrAdj adjs = mkAP or_Conj adjs ; 
 
-  AndExp exps =  mkNP and_Conj exps | mkNP both7and_DConj exps ;
-  OrExp exps = mkNP or_Conj exps | mkNP either7or_DConj exps ;
+  AndExp exps =  mkNP and_Conj exps ;
+  OrExp exps = mkNP or_Conj exps ;
+
+  BothAndProp x y = simpleProp (mkS both7and_DConj x.s y.s) ;
+  EitherOrProp x y = simpleProp (mkS either7or_DConj x.s y.s) ;
+  
+  BothAndAdj x y = mkAP both7and_DConj x y ;
+  EitherOrAdj x y = mkAP either7or_DConj x y ;
+  
+  BothAndExp x y = mkNP both7and_DConj x y ;
+  EitherOrExp x y = mkNP either7or_DConj x y ;
 
   OnlyIfProp A B = simpleProp (Grammar.SSubjS (partProp A) only_if_Subj (partProp B)) ;
 
