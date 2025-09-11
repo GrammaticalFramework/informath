@@ -31,7 +31,7 @@ import PGF
 
 import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
 ----import System.Random
-import Data.Char (isDigit)
+import Data.Char (isDigit, toUpper)
 import System.Environment (getArgs)
 import System.IO
 import qualified Data.Map as M
@@ -202,7 +202,7 @@ processDeduktiModule env mo@(MJmts jmts) =
   if ifFlag "-to-latex-file" env
     then do
       putStrLn latexPreamble
-      flip mapM_ jmts $ processDeduktiJmtTree env --(\j -> processDeduktiJmtTree env j >> putStrLn "")
+      flip mapM_ jmts $ processDeduktiJmtTree env
       putStrLn "\\end{document}"
   else
     flip mapM_ jmts $ processDeduktiJmtTree env
@@ -381,5 +381,14 @@ latexPreamble = unlines [
   "\\usepackage{amsmath}",
   "\\setlength\\parindent{0pt}",
   "\\setlength\\parskip{8pt}",
-  "\\begin{document}"
+  "\\begin{document}",
+  "\\newcommand{\\meets}{\\mathrel{\\supset\\!\\!\\!\\subset}}",
+  "\\newcommand{\\notmeets}{\\mathrel{\\not\\meets}}"
   ]
+
+-- for LaTeX, Agda, etc
+snake2camel :: String -> String
+snake2camel = concat . capit . words . uncamel where
+  uncamel = map (\c -> if c == '_' then ' ' else c)
+  capit (w:ws) = w : [toUpper c : cs | (c:cs) <- ws]
+

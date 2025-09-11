@@ -30,9 +30,9 @@ lin
     simpleProp (lin S
       {s = (mkS (E.ExistsNP argkinds.sg)).s ++ "such that" ++ prop.s.s}) ; 
 
-  OneVarExistProp ident prop =
+  NoArticleExistProp argkind prop =
     simpleProp (lin S
-      {s = "there exists" ++ "$" ++ ident ++ "$" ++ "such that" ++ prop.s.s}) ; 
+      {s = (mkS (E.ExistsNP (mkNP (mkCN argkind.cn argkind.adv)))).s ++ "such that" ++ prop.s.s}) ;  
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;

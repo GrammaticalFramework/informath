@@ -227,8 +227,8 @@ sem env t = case t of
     _ -> t ---- error "cannot use declaration as argkind yet"
   GNoCommaExistProp argkinds prop ->
     sem env (GExistProp argkinds prop)
-  GOneVarExistProp ident prop ->
-    sem env (GExistProp (GListArgKind [GBareIdentsArgKind (GListIdent [ident])]) prop)
+  GNoArticleExistProp argkind prop ->
+    sem env (GExistProp (GListArgKind [argkind]) prop)
   _ -> composOp (sem env) t
 
 -- trying to guess the summation term from given examples

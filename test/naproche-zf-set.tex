@@ -1,209 +1,209 @@
 % from https://github.com/adelon/naproche-zf/blob/main/library/set.tex, with data/extract_naproche_zf.py
-Abbreviation_ni. $A \ni a$ iff $a \in A$.
-Axiom_setext. Suppose for all $a$ we have $a \in A$ iff $a \in B$. Then $A = B$.
-Proposition_neq_witness. Suppose $A \neq B$. Then there exists $c$ such that either $c \in A$ and $c \not \in B$ or $c \not \in A$ and $c \in B$.
+AbbreviationNi. $A \ni a$ iff $a \in A$.
+AxiomSetext. Suppose for all $a$ we have $a \in A$ iff $a \in B$. Then $A = B$.
+PropositionNeqWitness. Suppose $A \neq B$. Then there exists $c$ such that either $c \in A$ and $c \not \in B$ or $c \not \in A$ and $c \in B$.
 Proof. Suppose not. Then $A = B$ by set extensionality. Contradiction.
-Definition_subseteq. $A \subseteq B$ iff for all $a \in A$ we have $a \in B$.
-Abbreviation_is_subset. $A$ is a subset of $B$ iff $A \subseteq B$.
-Abbreviation_supseteq. $B \supseteq A$ iff $A \subseteq B$.
-Proposition_subseteq_refl. $A \subseteq A$.
-Proposition_subseteq_antisymmetric. Suppose $A \subseteq B \subseteq A$. Then $A = B$.
+DefinitionSubseteq. $A \subseteq B$ iff for all $a \in A$ we have $a \in B$.
+AbbreviationIsSubset. $A$ is a subset of $B$ iff $A \subseteq B$.
+AbbreviationSupseteq. $B \supseteq A$ iff $A \subseteq B$.
+PropositionSubseteqRefl. $A \subseteq A$.
+PropositionSubseteqAntisymmetric. Suppose $A \subseteq B \subseteq A$. Then $A = B$.
 Proof. Follows by set extensionality.
-Proposition_elem_subseteq. Suppose $a \in A \subseteq B$. Then $a \in B$.
-Proposition_not_in_subseteq. Suppose $A \subseteq B$ and $c \notin B$. Then $c \notin A$.
-Proposition_subseteq_transitive. Suppose $A \subseteq B \subseteq C$. Then $A \subseteq C$.
-Definition_subset. $A \subset B$ iff $A \subseteq B$ and $A \neq B$.
-Proposition_subset_irrefl. $A \not \subset A$.
-Proposition_subset_transitive. Suppose $A \subseteq B \subseteq C$. Then $A \subseteq C$.
-Proposition_subset_witness. Suppose $A \subset B$. Then there exists $b \in B$ such that $b \notin A$.
+PropositionElemSubseteq. Suppose $a \in A \subseteq B$. Then $a \in B$.
+PropositionNotInSubseteq. Suppose $A \subseteq B$ and $c \notin B$. Then $c \notin A$.
+PropositionSubseteqTransitive. Suppose $A \subseteq B \subseteq C$. Then $A \subseteq C$.
+DefinitionSubset. $A \subset B$ iff $A \subseteq B$ and $A \neq B$.
+PropositionSubsetIrrefl. $A \not \subset A$.
+PropositionSubsetTransitive. Suppose $A \subseteq B \subseteq C$. Then $A \subseteq C$.
+PropositionSubsetWitness. Suppose $A \subset B$. Then there exists $b \in B$ such that $b \notin A$.
 Proof. $A \subseteq B$ and $A \neq B$.
-Abbreviation_family_of_subsets. $F$ is a family of subsets of $X$ iff for all $A \in F$ we have $A \subseteq X$.
-Axiom_emptyset. For all $a$ we have $a \notin \emptyset$.
-Abbreviation_inhabited. $A$ is inhabited iff there exists $a$ such that $a \in A$.
-Abbreviation_empty. $A$ is empty iff for all $x$ we have $x \notin A$.
-Proposition_nonempty_inhabited. Suppose $A \neq \emptyset$. Then $A$ is inhabited.
-Proposition_emptyset_subseteq. For all $a$ we have $ \emptyset  \subseteq a$.
-Proposition_subseteq_emptyset_iff. $A \subseteq  \emptyset$ iff $A =  \emptyset$.
-Definition_disjoint. $A$ is disjoint from $B$ iff there exists no $a$ such that $a \in A, B$.
-Abbreviation_notmeets. $A \notmeets B$ iff $A$ is disjoint from $B$.
-Abbreviation_meets. $A \meets B$ iff $A$ is not disjoint from $B$.
-Proposition_disjoint_symmetric. If $A$ is disjoint from $B$, then $B$ is disjoint from $A$.
-Axiom_cons_iff. $x \in  \cons{y}{X}$ iff $x = y$ or $x \in X$.
-Proposition_cons_left. $x \in  \cons{x}{X}$.
-Proposition_cons_right. If $y \in X$, then $y \in  \cons{x}{X}$.
-Proposition_upair_intro_left. $a \in \{a,b \}$.
-Proposition_upair_intro_right. $b \in \{a,b \}$.
-Proposition_upair_elim. Suppose $c \in \{a,b \}$. Then $a = c$ or $b = c$.
-Proposition_upair_iff. $c \in \{a,b \}$ iff $a = c$ or $b = c$.
-Proposition_singleton_intro. $a \in \{a \}$.
-Proposition_singleton_elim. If $a \in \{b \}$, then $a = b$.
-Proposition_singleton_iff. $a \in \{b \}$ iff $a = b$.
-Abbreviation_subsingleton. $A$ is a subsingleton iff for all $a, b \in A$ we have $a = b$.
-Proposition_singleton_inhabited. $ \{a \}$ is inhabited.
-Proposition_singleton_iff_inhabited_subsingleton. Let $A$ be a subsingleton. Let $a \in A$. Then $A =  \{a \}$.
+AbbreviationFamilyOfSubsets. $F$ is a family of subsets of $X$ iff for all $A \in F$ we have $A \subseteq X$.
+AxiomEmptyset. For all $a$ we have $a \notin \emptyset$.
+AbbreviationInhabited. $A$ is inhabited iff there exists $a$ such that $a \in A$.
+AbbreviationEmpty. $A$ is empty iff for all $x$ we have $x \notin A$.
+PropositionNonemptyInhabited. Suppose $A \neq \emptyset$. Then $A$ is inhabited.
+PropositionEmptysetSubseteq. For all $a$ we have $ \emptyset \subseteq a$.
+PropositionSubseteqEmptysetIff. $A \subseteq \emptyset$ iff $A = \emptyset$.
+DefinitionDisjoint. $A$ is disjoint from $B$ iff there exists no $a$ such that $a \in A, B$.
+AbbreviationNotmeets. $A \notmeets B$ iff $A$ is disjoint from $B$.
+AbbreviationMeets. $A \meets B$ iff $A$ is not disjoint from $B$.
+PropositionDisjointSymmetric. If $A$ is disjoint from $B$, then $B$ is disjoint from $A$.
+AxiomConsIff. $x \in \cons{y}{X}$ iff $x = y$ or $x \in X$.
+PropositionConsLeft. $x \in \cons{x}{X}$.
+PropositionConsRight. If $y \in X$, then $y \in \cons{x}{X}$.
+PropositionUpairIntroLeft. $a \in \{a,b \}$.
+PropositionUpairIntroRight. $b \in \{a,b \}$.
+PropositionUpairElim. Suppose $c \in \{a,b \}$. Then $a = c$ or $b = c$.
+PropositionUpairIff. $c \in \{a,b \}$ iff $a = c$ or $b = c$.
+PropositionSingletonIntro. $a \in \{a \}$.
+PropositionSingletonElim. If $a \in \{b \}$, then $a = b$.
+PropositionSingletonIff. $a \in \{b \}$ iff $a = b$.
+AbbreviationSubsingleton. $A$ is a subsingleton iff for all $a, b \in A$ we have $a = b$.
+PropositionSingletonInhabited. $ \{a \}$ is inhabited.
+PropositionSingletonIffInhabitedSubsingleton. Let $A$ be a subsingleton. Let $a \in A$. Then $A = \{a \}$.
 Proof. Follows by set extensionality.
-Proposition_singleton_subset_intro. Suppose $a \in C$. Then $ \{a \} \subseteq C$.
-Proposition_singleton_subset_elim. Suppose $ \{a \} \subseteq C$. Then $a \in C$.
-Axiom_unions_iff. $z \in \unions{X}$ iff there exists $Y \in X$ such that $z \in Y$.
-Proposition_unions_intro. Suppose $A \in B \in C$. Then $A \in \unions{C}$.
+PropositionSingletonSubsetIntro. Suppose $a \in C$. Then $ \{a \} \subseteq C$.
+PropositionSingletonSubsetElim. Suppose $ \{a \} \subseteq C$. Then $a \in C$.
+AxiomUnionsIff. $z \in \unions{X}$ iff there exists $Y \in X$ such that $z \in Y$.
+PropositionUnionsIntro. Suppose $A \in B \in C$. Then $A \in \unions{C}$.
 Proof. There exists $B \in C$ such that $A \in B$.
-Proposition_unions_emptyset. $ \unions{ \emptyset} =  \emptyset$.
-Proposition_unions_family. Let $F$ be a family of subsets of $X$. Then $ \unions{F} \subseteq X$.
-Abbreviation_closedunderunions. $T$ is closed under arbitrary unions iff for every subset $M$ of $T$ we have $ \unions{M} \in T$.
-Definition_inters. $ \inters{A} =  \{ x \in \unions{A} \mid  \text{for all $a \in A$ we have $x \in a$}  \}$.
-Proposition_inters_iff_forall. $z \in \inters{X}$ iff $X$ is inhabited and for all $Y \in X$ we have $z \in Y$.
-Proposition_inters_intro. Suppose $C$ is inhabited. Suppose for all $B \in C$ we have $A \in B$. Then $A \in \inters{C}$.
-Proposition_inters_destr. Suppose $A \in \inters{C}$. Suppose $B \in C$. Then $A \in B$.
-Proposition_inters_greatest. Suppose $A$ is inhabited. Suppose for all $a \in A$ we have $C \subseteq a$. Then $C \subseteq \inters{A}$.
-Proposition_subseteq_inters_iff. Suppose $A$ is inhabited. Then $C \subseteq \inters{A}$ iff for all $a \in A$ we have $C \subseteq a$.
-Proposition_inters_subseteq_elem. Let $B \in A$. Then $ \inters{A} \subseteq B$.
-Proposition_inters_singleton. $ \inters{ \{a \}} = a$.
-Proof. Every element of $a$ is an element of $ \inters{ \{a \}}$ by  \cref{inters_iff_forall,singleton_iff,singleton_inhabited}. Follows by set extensionality.
-Proposition_inters_emptyset. $ \inters{ \{ \emptyset \}} =  \emptyset$.
+PropositionUnionsEmptyset. $ \unions{ \emptyset} = \emptyset$.
+PropositionUnionsFamily. Let $F$ be a family of subsets of $X$. Then $ \unions{F} \subseteq X$.
+AbbreviationClosedunderunions. $T$ is closed under arbitrary unions iff for every subset $M$ of $T$ we have $ \unions{M} \in T$.
+DefinitionInters. $ \inters{A} = \{ x \in \unions{A} \mid \text{for all $a \in A$ we have $x \in a$} \}$.
+PropositionIntersIffForall. $z \in \inters{X}$ iff $X$ is inhabited and for all $Y \in X$ we have $z \in Y$.
+PropositionIntersIntro. Suppose $C$ is inhabited. Suppose for all $B \in C$ we have $A \in B$. Then $A \in \inters{C}$.
+PropositionIntersDestr. Suppose $A \in \inters{C}$. Suppose $B \in C$. Then $A \in B$.
+PropositionIntersGreatest. Suppose $A$ is inhabited. Suppose for all $a \in A$ we have $C \subseteq a$. Then $C \subseteq \inters{A}$.
+PropositionSubseteqIntersIff. Suppose $A$ is inhabited. Then $C \subseteq \inters{A}$ iff for all $a \in A$ we have $C \subseteq a$.
+PropositionIntersSubseteqElem. Let $B \in A$. Then $ \inters{A} \subseteq B$.
+PropositionIntersSingleton. $ \inters{ \{a \}} = a$.
+Proof. Every element of $a$ is an element of $ \inters{ \{a \}}$ by \cref{inters_iff_forall,singleton_iff,singleton_inhabited}. Follows by set extensionality.
+PropositionIntersEmptyset. $ \inters{ \{ \emptyset \}} = \emptyset$.
 Proof. Follows by set extensionality.
-Axiom_union_iff. Let $A, B$ be sets. $a \in A \union B$ iff $a \in A$ or $a \in B$.
-Proposition_union_intro_left. If $c \in A$, then $c \in A \union B$.
-Proposition_union_intro_right. If $c \in B$, then $c \in A \union B$.
-Proposition_union_as_unions. $ \unions{ \{x,y \}} = x \union y$.
-Align*. z \in  \unions{ \{x,y \}}  \iff  \exists Z \in \{x,y \}. z \in Z  \iff z \in x  \lor z \in y  \iff z \in x \union y. Follows by  \cref{setext}. %Follows by set extensionality.
-Proposition_union_comm. $A \union B = B \union A$.
+AxiomUnionIff. Let $A, B$ be sets. $a \in A \union B$ iff $a \in A$ or $a \in B$.
+PropositionUnionIntroLeft. If $c \in A$, then $c \in A \union B$.
+PropositionUnionIntroRight. If $c \in B$, then $c \in A \union B$.
+PropositionUnionAsUnions. $ \unions{ \{x,y \}} = x \union y$.
+Align*. z \in \unions{ \{x,y \}} \iff \exists Z \in \{x,y \}. z \in Z \iff z \in x \lor z \in y \iff z \in x \union y. Follows by \cref{setext}. %Follows by set extensionality.
+PropositionUnionComm. $A \union B = B \union A$.
 Proof. Follows by set extensionality.
-Proposition_union_assoc. $(A \union B) \union C = A \union (B \union C)$.
+PropositionUnionAssoc. $(A \union B) \union C = A \union (B \union C)$.
 Proof. Follows by set extensionality.
-Proposition_union_idempotent. $A \union A = A$.
+PropositionUnionIdempotent. $A \union A = A$.
 Proof. Follows by set extensionality.
-Proposition_union_subsets_is_subset. Suppose $A \subseteq C$ and $B \subseteq C$. Then $A \union B \subseteq C$.
-Proposition_subseteq_union_iff. $A \union B \subseteq C$ iff $A \subseteq C$ and $B \subseteq C$.
-Proposition_union_upper_left. $A \subseteq A \union B$.
-Proposition_union_upper_right. $B \subseteq A \union B$.
-Proposition_union_subseteq_union. Suppose $A \subseteq C$ and $B \subseteq D$. Then $A \union B \subseteq C \union D$.
-Proposition_union_emptyset. $A \union \emptyset = A$.
+PropositionUnionSubsetsIsSubset. Suppose $A \subseteq C$ and $B \subseteq C$. Then $A \union B \subseteq C$.
+PropositionSubseteqUnionIff. $A \union B \subseteq C$ iff $A \subseteq C$ and $B \subseteq C$.
+PropositionUnionUpperLeft. $A \subseteq A \union B$.
+PropositionUnionUpperRight. $B \subseteq A \union B$.
+PropositionUnionSubseteqUnion. Suppose $A \subseteq C$ and $B \subseteq D$. Then $A \union B \subseteq C \union D$.
+PropositionUnionEmptyset. $A \union \emptyset = A$.
 Proof. Follows by set extensionality.
-Proposition_union_emptyset_intro. Suppose $A =  \emptyset$ and $B =  \emptyset$. Then $A \union B =  \emptyset$.
+PropositionUnionEmptysetIntro. Suppose $A = \emptyset$ and $B = \emptyset$. Then $A \union B = \emptyset$.
 Proof. Follows by set extensionality.
-Proposition_union_emptyset_elim_left. Suppose $A \union B =  \emptyset$. Then $A =  \emptyset$.
-Proof. We have $A \subseteq \emptyset$ by  \cref{union_upper_left}. Follows by  \cref{subseteq_emptyset_iff}.
-Proposition_union_emptyset_elim_right. Suppose $A \union B =  \emptyset$. Then $B =  \emptyset$.
-Proof. We have $B \subseteq \emptyset$ by  \cref{union_upper_right}. Follows by  \cref{subseteq_emptyset_iff}.
-Proposition_union_absorb_subseteq_left. Suppose $A \subseteq B$. Then $A \union B = B$.
+PropositionUnionEmptysetElimLeft. Suppose $A \union B = \emptyset$. Then $A = \emptyset$.
+Proof. We have $A \subseteq \emptyset$ by \cref{union_upper_left}. Follows by \cref{subseteq_emptyset_iff}.
+PropositionUnionEmptysetElimRight. Suppose $A \union B = \emptyset$. Then $B = \emptyset$.
+Proof. We have $B \subseteq \emptyset$ by \cref{union_upper_right}. Follows by \cref{subseteq_emptyset_iff}.
+PropositionUnionAbsorbSubseteqLeft. Suppose $A \subseteq B$. Then $A \union B = B$.
 Proof. Follows by set extensionality.
-Proposition_union_absorb_subseteq_right. Suppose $A \subseteq B$. Then $B \union A = B$.
+PropositionUnionAbsorbSubseteqRight. Suppose $A \subseteq B$. Then $B \union A = B$.
 Proof. Follows by set extensionality.
-Proposition_union_eq_self_implies_subseteq. If $A \union B = B$, then $A \subseteq B$.
-Proposition_unions_cons. $ \unions{ \cons{b}{A}} = b \union \unions{A}$.
+PropositionUnionEqSelfImpliesSubseteq. If $A \union B = B$, then $A \subseteq B$.
+PropositionUnionsCons. $ \unions{ \cons{b}{A}} = b \union \unions{A}$.
 Proof. Follows by set extensionality.
-Proposition_union_cons. $ \cons{b}{A}  \union C =  \cons{b}{A \union C}$.
+PropositionUnionCons. $ \cons{b}{A} \union C = \cons{b}{A \union C}$.
 Proof. Follows by set extensionality.
-Proposition_union_absorb_left. $A \union (A \union B) = A \union B$.
+PropositionUnionAbsorbLeft. $A \union (A \union B) = A \union B$.
 Proof. Follows by set extensionality.
-Proposition_union_absorb_right. $(A \union B) \union B = A \union B$.
+PropositionUnionAbsorbRight. $(A \union B) \union B = A \union B$.
 Proof. Follows by set extensionality.
-Proposition_union_comm_left. $A \union (B \union C) = B \union (A \union C)$.
+PropositionUnionCommLeft. $A \union (B \union C) = B \union (A \union C)$.
 Proof. Follows by set extensionality.
-Abbreviation_closedunderunion. $T$ is closed under binary unions iff for every $U,V \in T$ we have $U \union V \in T$.
-Definition_inter. $A \inter B =  \{ a  \in A  \mid a \in B \}$.
-Proposition_inter_intro. If $c \in A, B$, then $c \in A \inter B$.
-Proposition_inter_elim_left. If $c \in A \inter B$, then $c \in A$.
-Proposition_inter_elim_right. If $c \in A \inter B$, then $c \in B$.
-Proposition_inter_as_inters. $ \inters{ \{A,B \}} = A \inter B$.
-Proof. $ \{A,B \}$ is inhabited. Thus for all $c$ we have $c \in \inters{ \{A,B \}}$ iff $c \in A \inter B$ by  \cref{inters_iff_forall,inter,upair_iff}. %Thus $ \inters{ \{A,B \}} = A \inter B$ by  \hyperref[setext]{extensionality}. Follows by  \hyperref[setext]{extensionality}.
-Proposition_inter_comm. $A \inter B = B \inter A$.
+AbbreviationClosedunderunion. $T$ is closed under binary unions iff for every $U,V \in T$ we have $U \union V \in T$.
+DefinitionInter. $A \inter B = \{ a \in A \mid a \in B \}$.
+PropositionInterIntro. If $c \in A, B$, then $c \in A \inter B$.
+PropositionInterElimLeft. If $c \in A \inter B$, then $c \in A$.
+PropositionInterElimRight. If $c \in A \inter B$, then $c \in B$.
+PropositionInterAsInters. $ \inters{ \{A,B \}} = A \inter B$.
+Proof. $ \{A,B \}$ is inhabited. Thus for all $c$ we have $c \in \inters{ \{A,B \}}$ iff $c \in A \inter B$ by \cref{inters_iff_forall,inter,upair_iff}. %Thus $ \inters{ \{A,B \}} = A \inter B$ by \hyperref[setext]{extensionality}. Follows by \hyperref[setext]{extensionality}.
+PropositionInterComm. $A \inter B = B \inter A$.
 Proof. Follows by set extensionality.
-Proposition_inter_assoc. $(A \inter B) \inter C = A \inter (B \inter C)$.
+PropositionInterAssoc. $(A \inter B) \inter C = A \inter (B \inter C)$.
 Proof. Follows by set extensionality.
-Proposition_inter_idempotent. $A \inter A = A$.
+PropositionInterIdempotent. $A \inter A = A$.
 Proof. Follows by set extensionality.
-Proposition_inter_emptyset. $A \inter \emptyset =  \emptyset$.
+PropositionInterEmptyset. $A \inter \emptyset = \emptyset$.
 Proof. Follows by set extensionality.
-Proposition_inter_absorb_supseteq_right. Suppose $A \subseteq B$. Then $A \inter B = A$.
+PropositionInterAbsorbSupseteqRight. Suppose $A \subseteq B$. Then $A \inter B = A$.
 Proof. Follows by set extensionality.
-Proposition_inter_absorb_supseteq_left. Suppose $A \subseteq B$. Then $B \inter A = A$.
+PropositionInterAbsorbSupseteqLeft. Suppose $A \subseteq B$. Then $B \inter A = A$.
 Proof. Follows by set extensionality.
-Proposition_inter_eq_left_implies_subseteq. Suppose $A \inter B = A$. Then $A \subseteq B$.
-Proposition_subseteq_inter_iff. $C \subseteq A \inter B$ iff $C \subseteq A$ and $C \subseteq B$.
-Proposition_inter_lower_left. $A \inter B  \subseteq A$.
-Proposition_inter_lower_right. $A \inter B  \subseteq B$.
-Proposition_inter_absorb_left. $A \inter (A \inter B) = A \inter B$.
-Proposition_inter_absorb_right. $(A \inter B)  \inter B = A \inter B$.
-Proposition_inter_comm_left. $A \inter (B \inter C) = B \inter (A \inter C)$.
+PropositionInterEqLeftImpliesSubseteq. Suppose $A \inter B = A$. Then $A \subseteq B$.
+PropositionSubseteqInterIff. $C \subseteq A \inter B$ iff $C \subseteq A$ and $C \subseteq B$.
+PropositionInterLowerLeft. $A \inter B \subseteq A$.
+PropositionInterLowerRight. $A \inter B \subseteq B$.
+PropositionInterAbsorbLeft. $A \inter (A \inter B) = A \inter B$.
+PropositionInterAbsorbRight. $(A \inter B) \inter B = A \inter B$.
+PropositionInterCommLeft. $A \inter (B \inter C) = B \inter (A \inter C)$.
 Proof. Follows by set extensionality.
-Proposition_inter_subseteq. Suppose $A,B \subseteq C$. Then $A \inter B \subseteq C$.
-Abbreviation_closedunderinter. $T$ is closed under binary intersections iff for every $U,V \in T$ we have $U \inter V \in T$.
-Proposition_inter_distrib_union. $A \inter (B \union C) = (A \inter B) \union (A \inter C)$.
+PropositionInterSubseteq. Suppose $A,B \subseteq C$. Then $A \inter B \subseteq C$.
+AbbreviationClosedunderinter. $T$ is closed under binary intersections iff for every $U,V \in T$ we have $U \inter V \in T$.
+PropositionInterDistribUnion. $A \inter (B \union C) = (A \inter B) \union (A \inter C)$.
 Proof. Follows by set extensionality.
-Proposition_union_distrib_inter. $x \union (y \inter z) = (x \union y) \inter (x \union z)$.
+PropositionUnionDistribInter. $x \union (y \inter z) = (x \union y) \inter (x \union z)$.
 Proof. Follows by set extensionality.
-Proposition_union_inter_assoc_intro. Suppose $C \subseteq A$. Then $A \inter (B \union C) = (A \inter B) \union C$.
-Align*. A \inter (B \union C) &= (A \inter B) \union (A \inter C)  \explanation{by  \cref{inter_distrib_union}} \ \ = (A \inter B) \union C  \explanation{by  \cref{inter_absorb_supseteq_left}}
-Proposition_union_inter_assoc_elim. Suppose $(A \inter B) \union C = A \inter (B \union C)$. Then $C \subseteq A$.
-Proof. Follows by  \cref{union_upper_right,union_upper_left,subseteq_union_iff,subseteq_antisymmetric,subseteq_inter_iff}.
-Proposition_union_inter_crazy. $(A \inter B) \union (B \inter C) \union (C \inter A) = (A \union B) \inter (B \union C) \inter (C \union A)$.
+PropositionUnionInterAssocIntro. Suppose $C \subseteq A$. Then $A \inter (B \union C) = (A \inter B) \union C$.
+Align*. A \inter (B \union C) &= (A \inter B) \union (A \inter C) \explanation{by \cref{inter_distrib_union}} \ \ = (A \inter B) \union C \explanation{by \cref{inter_absorb_supseteq_left}}
+PropositionUnionInterAssocElim. Suppose $(A \inter B) \union C = A \inter (B \union C)$. Then $C \subseteq A$.
+Proof. Follows by \cref{union_upper_right,union_upper_left,subseteq_union_iff,subseteq_antisymmetric,subseteq_inter_iff}.
+PropositionUnionInterCrazy. $(A \inter B) \union (B \inter C) \union (C \inter A) = (A \union B) \inter (B \union C) \inter (C \union A)$.
 Proof. Follows by set extensionality.
-Proposition_inters_distrib_union. Suppose $A$ and $B$ are inhabited. Then $ \inters{A \union B} = ( \inters{A}) \inter \inters{B}$.
-Proof. $A \union B$ is inhabited. Thus for all $c$ we have $c \in \inters{A \union B}$ iff $c \in( \inters{A}) \inter \inters{B}$ by  \cref{inter,union_iff,inters_iff_forall}. Follows by  \hyperref[setext]{set extensionality}. % We only need the actual setext axiom here, not the tactic.
-Definition_setminus. $A \setminus B =  \{ a  \in A  \mid a \not \in B \}$.
-Proposition_setminus_intro. If $a \in A$ and $a \notin B$, then $a \in A \setminus B$.
-Proposition_setminus_elim_left. If $a \in A \setminus B$, then $a \in A$.
-Proposition_setminus_elim_right. If $a \in A \setminus B$, then $a \notin B$.
-Proposition_setminus_emptyset. $x \setminus  \emptyset = x$.
+PropositionIntersDistribUnion. Suppose $A$ and $B$ are inhabited. Then $ \inters{A \union B} = ( \inters{A}) \inter \inters{B}$.
+Proof. $A \union B$ is inhabited. Thus for all $c$ we have $c \in \inters{A \union B}$ iff $c \in( \inters{A}) \inter \inters{B}$ by \cref{inter,union_iff,inters_iff_forall}. Follows by \hyperref[setext]{set extensionality}. % We only need the actual setext axiom here, not the tactic.
+DefinitionSetminus. $A \setminus B = \{ a \in A \mid a \not \in B \}$.
+PropositionSetminusIntro. If $a \in A$ and $a \notin B$, then $a \in A \setminus B$.
+PropositionSetminusElimLeft. If $a \in A \setminus B$, then $a \in A$.
+PropositionSetminusElimRight. If $a \in A \setminus B$, then $a \notin B$.
+PropositionSetminusEmptyset. $x \setminus \emptyset = x$.
 Proof. Follows by set extensionality.
-Proposition_emptyset_setminus. $ \emptyset \setminus x =  \emptyset$.
+PropositionEmptysetSetminus. $ \emptyset \setminus x = \emptyset$.
 Proof. Follows by set extensionality.
-Proposition_setminus_self. $x \setminus x =  \emptyset$.
+PropositionSetminusSelf. $x \setminus x = \emptyset$.
 Proof. Follows by set extensionality.
-Proposition_setminus_setminus. $x \setminus (x \setminus y) = x \inter y$.
+PropositionSetminusSetminus. $x \setminus (x \setminus y) = x \inter y$.
 Proof. Follows by set extensionality.
-Proposition_double_relative_complement. Suppose $y \subseteq x$. $x \setminus (x \setminus y) = y$.
-Proof. Follows by  \cref{setminus_setminus,inter_absorb_supseteq_left}.
-Proposition_setminus_inter. $x \setminus (y \inter z) = (x \setminus y) \union (x \setminus z)$.
+PropositionDoubleRelativeComplement. Suppose $y \subseteq x$. $x \setminus (x \setminus y) = y$.
+Proof. Follows by \cref{setminus_setminus,inter_absorb_supseteq_left}.
+PropositionSetminusInter. $x \setminus (y \inter z) = (x \setminus y) \union (x \setminus z)$.
 Proof. Follows by set extensionality.
-Proposition_setminus_union. $x \setminus (y \union z) = (x \setminus y) \inter (x \setminus z)$.
+PropositionSetminusUnion. $x \setminus (y \union z) = (x \setminus y) \inter (x \setminus z)$.
 Proof. Follows by set extensionality.
-Proposition_inter_setminus. $x \inter (y \setminus z) = (x \inter y) \setminus (x \inter z)$.
+PropositionInterSetminus. $x \inter (y \setminus z) = (x \inter y) \setminus (x \inter z)$.
 Proof. Follows by set extensionality.
-Proposition_difference_with_proper_subset_is_inhabited. Let $A, B$ be sets. Suppose $A \subset B$. Then $B \setminus A$ is inhabited.
+PropositionDifferenceWithProperSubsetIsInhabited. Let $A, B$ be sets. Suppose $A \subset B$. Then $B \setminus A$ is inhabited.
 Proof. Take $b$ such that $b \in B$ and $b \notin A$. Then $b \in B \setminus A$.
-Proposition_setminus_subseteq. $B \setminus A \subseteq B$.
-Proposition_subseteq_setminus. Suppose $C \subseteq A$. Suppose $C \inter B =  \emptyset$. Then $C \subseteq A \setminus B$.
-Proposition_subseteq_implies_setminus_supseteq. Suppose $A \subseteq B$. Then $C \setminus A \supseteq C \setminus B$.
-Proposition_setminus_absorb_right. Suppose $A \inter B =  \emptyset$. Then $A \setminus B = A$.
-Proposition_setminus_eq_emptyset_iff_subseteq. $A \setminus B =  \emptyset$ iff $A \subseteq B$.
-Proposition_subseteq_setminus_cons_intro. Suppose $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \cons{c}{C}$.
-Proposition_subseteq_setminus_cons_elim. Suppose $B \subseteq A \setminus \cons{c}{C}$. Then $B \subseteq A \setminus C$ and $c \notin B$.
-Proposition_setminus_cons. $A \setminus  \cons{a}{B} = (A \setminus  \{a \}) \setminus B$.
+PropositionSetminusSubseteq. $B \setminus A \subseteq B$.
+PropositionSubseteqSetminus. Suppose $C \subseteq A$. Suppose $C \inter B = \emptyset$. Then $C \subseteq A \setminus B$.
+PropositionSubseteqImpliesSetminusSupseteq. Suppose $A \subseteq B$. Then $C \setminus A \supseteq C \setminus B$.
+PropositionSetminusAbsorbRight. Suppose $A \inter B = \emptyset$. Then $A \setminus B = A$.
+PropositionSetminusEqEmptysetIffSubseteq. $A \setminus B = \emptyset$ iff $A \subseteq B$.
+PropositionSubseteqSetminusConsIntro. Suppose $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \cons{c}{C}$.
+PropositionSubseteqSetminusConsElim. Suppose $B \subseteq A \setminus \cons{c}{C}$. Then $B \subseteq A \setminus C$ and $c \notin B$.
+PropositionSetminusCons. $A \setminus \cons{a}{B} = (A \setminus \{a \}) \setminus B$.
 Proof. Follows by set extensionality.
-Proposition_setminus_cons_flip. $A \setminus  \cons{a}{B} = (A \setminus B) \setminus  \{a \}$.
+PropositionSetminusConsFlip. $A \setminus \cons{a}{B} = (A \setminus B) \setminus \{a \}$.
 Proof. Follows by set extensionality.
-Proposition_setminus_disjoint. $A \inter (B \setminus A) =  \emptyset$.
+PropositionSetminusDisjoint. $A \inter (B \setminus A) = \emptyset$.
 Proof. Follows by set extensionality.
-Proposition_setminus_partition. Suppose $A \subseteq B$. $A \union (B \setminus A) = B$.
+PropositionSetminusPartition. Suppose $A \subseteq B$. $A \union (B \setminus A) = B$.
 Proof. Follows by set extensionality.
-Proposition_subseteq_union_setminus. $A \subseteq B \union (A \setminus B)$.
-Proposition_double_complement. Suppose $A \subseteq B \subseteq C$. Then $B \setminus (C \setminus A) = A$.
+PropositionSubseteqUnionSetminus. $A \subseteq B \union (A \setminus B)$.
+PropositionDoubleComplement. Suppose $A \subseteq B \subseteq C$. Then $B \setminus (C \setminus A) = A$.
 Proof. Follows by set extensionality.
-Proposition_double_complement_union. Then $(A \union B) \setminus (B \setminus A) = A$.
+PropositionDoubleComplementUnion. Then $(A \union B) \setminus (B \setminus A) = A$.
 Proof. Follows by set extensionality.
-Proposition_setminus_eq_inter_complement. Suppose $A, B \subseteq C$. Then $A \setminus B = A \inter (C \setminus B)$.
+PropositionSetminusEqInterComplement. Suppose $A, B \subseteq C$. Then $A \setminus B = A \inter (C \setminus B)$.
 Proof. Follows by set extensionality.
-Axiom_pair_eq_iff. $(a, b) = (a', b')$ iff $a = a' \land b = b'$.
-Axiom_pair_neq_emptyset. $(a, b)  \neq  \emptyset$.
-Axiom_pair_neq_fst. $(a, b)  \neq a$.
-Axiom_pair_neq_snd. $(a, b)  \neq b$.
-Proposition_triple_eq_iff. $(a, b, c) = (a', b', c')$ iff $a = a'  \land b = b' \land c = c'$.
-Axiom_fst_eq. $ \fst{(a, b)} = a$.
-Axiom_snd_eq. $ \snd{(a, b)} = b$.
-Proposition_pair_eq_pair_of_proj. $(a, b) = ( \fst{(a,b)}, \snd{(a,b)})$.
-Definition_times. $A \times B =  \{ (a,b)  \mid a \in A, b \in B  \}$.
-Proposition_times_tuple_elim. Suppose $(x, y) \in X \times Y$. Then $x \in X$ and $y \in Y$.
-Proof. Take $x', y'$ such that $x' \in X \land y' \in Y  \land (x, y) = (x', y')$ by  \cref{times}. Then $x = x'$ and $y = y'$ by  \cref{pair_eq_iff}.
-Proposition_times_tuple_intro. Suppose $x \in X$ and $y \in Y$. Then $(x, y) \in X \times Y$.
-Proposition_times_empty_left. $ \emptyset \times Y =  \emptyset$.
-Proposition_times_empty_right. $X \times  \emptyset =  \emptyset$.
-Proposition_times_empty_iff. $X \times Y$ is empty iff $X$ is empty or $Y$ is empty.
-Proof. Follows by  \cref{times}.
-Proposition_fst_type. Suppose $c \in A \times B$. Then $ \fst{c} \in A$.
-Proof. Take $a, b$ such that $c = (a, b)$ and $a \in A$ by  \cref{times}. Follows by  \cref{fst_eq}. %$a =  \fst{c}$ by  \cref{fst_eq}.
-Proposition_snd_type. Suppose $c \in A \times B$. Then $ \snd{c} \in B$.
-Proof. Take $a, b$ such that $c = (a, b)$ and $b \in B$ by  \cref{times}. Follows by  \cref{snd_eq}. %$b =  \snd{c}$ by  \cref{snd_eq}.
-Proposition_times_elem_is_tuple. Suppose $p \in X \times Y$. Then there exist $x, y$ such that $x \in X$ and $y \in Y$ and $p = (x, y)$.
-Proposition_times_proj_elim. Suppose $p \in X \times Y$. Then $ \fst{p} \in X$ and $ \snd{p} \in Y$.
+AxiomPairEqIff. $(a, b) = (a', b')$ iff $a = a' \land b = b'$.
+AxiomPairNeqEmptyset. $(a, b) \neq \emptyset$.
+AxiomPairNeqFst. $(a, b) \neq a$.
+AxiomPairNeqSnd. $(a, b) \neq b$.
+PropositionTripleEqIff. $(a, b, c) = (a', b', c')$ iff $a = a' \land b = b' \land c = c'$.
+AxiomFstEq. $ \fst{(a, b)} = a$.
+AxiomSndEq. $ \snd{(a, b)} = b$.
+PropositionPairEqPairOfProj. $(a, b) = ( \fst{(a,b)}, \snd{(a,b)})$.
+DefinitionTimes. $A \times B = \{ (a,b) \mid a \in A, b \in B \}$.
+PropositionTimesTupleElim. Suppose $(x, y) \in X \times Y$. Then $x \in X$ and $y \in Y$.
+Proof. Take $x', y'$ such that $x' \in X \land y' \in Y \land (x, y) = (x', y')$ by \cref{times}. Then $x = x'$ and $y = y'$ by \cref{pair_eq_iff}.
+PropositionTimesTupleIntro. Suppose $x \in X$ and $y \in Y$. Then $(x, y) \in X \times Y$.
+PropositionTimesEmptyLeft. $ \emptyset \times Y = \emptyset$.
+PropositionTimesEmptyRight. $X \times \emptyset = \emptyset$.
+PropositionTimesEmptyIff. $X \times Y$ is empty iff $X$ is empty or $Y$ is empty.
+Proof. Follows by \cref{times}.
+PropositionFstType. Suppose $c \in A \times B$. Then $ \fst{c} \in A$.
+Proof. Take $a, b$ such that $c = (a, b)$ and $a \in A$ by \cref{times}. Follows by \cref{fst_eq}. %$a = \fst{c}$ by \cref{fst_eq}.
+PropositionSndType. Suppose $c \in A \times B$. Then $ \snd{c} \in B$.
+Proof. Take $a, b$ such that $c = (a, b)$ and $b \in B$ by \cref{times}. Follows by \cref{snd_eq}. %$b = \snd{c}$ by \cref{snd_eq}.
+PropositionTimesElemIsTuple. Suppose $p \in X \times Y$. Then there exist $x, y$ such that $x \in X$ and $y \in Y$ and $p = (x, y)$.
+PropositionTimesProjElim. Suppose $p \in X \times Y$. Then $ \fst{p} \in X$ and $ \snd{p} \in Y$.

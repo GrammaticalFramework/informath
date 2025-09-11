@@ -12,7 +12,7 @@ fun
   DeclarationArgKind : Declaration -> ArgKind ;
   IndexedDeclarationArgKind : Int -> ArgKind ;
   NoCommaExistProp : [ArgKind] -> Prop -> Prop ;
-  OneVarExistProp : Ident -> Prop -> Prop ;  -- there exists x such that P
+  NoArticleExistProp : ArgKind -> Prop -> Prop ;  -- there exists x such that P
 
 
 -- lexicon
