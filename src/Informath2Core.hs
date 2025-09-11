@@ -225,7 +225,10 @@ sem env t = case t of
     GDElem (GListTerm terms) term -> 
       GIdentsArgKind (GTermKind term) (GListIdent [x | GTIdent x <- terms])
     _ -> t ---- error "cannot use declaration as argkind yet"
-
+  GNoCommaExistProp argkinds prop ->
+    sem env (GExistProp argkinds prop)
+  GOneVarExistProp ident prop ->
+    sem env (GExistProp (GListArgKind [GBareIdentsArgKind (GListIdent [ident])]) prop)
   _ -> composOp (sem env) t
 
 -- trying to guess the summation term from given examples

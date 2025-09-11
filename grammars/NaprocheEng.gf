@@ -26,6 +26,14 @@ lin
   IndexedDeclarationArgKind i =
     {cn = mkCN emptyN <symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}")) : NP> ; adv = emptyAdv ; isPl = False} ; --- isPl
 
+  NoCommaExistProp argkinds prop =
+    simpleProp (lin S
+      {s = (mkS (E.ExistsNP argkinds.sg)).s ++ "such that" ++ prop.s.s}) ; 
+
+  OneVarExistProp ident prop =
+    simpleProp (lin S
+      {s = "there exists" ++ "$" ++ ident ++ "$" ++ "such that" ++ prop.s.s}) ; 
+
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
   disjoint_Compar = mkCompar "\\notmeets" "disjoint" "from" ;
