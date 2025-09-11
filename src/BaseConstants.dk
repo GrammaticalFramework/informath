@@ -209,3 +209,17 @@ series : (m : Elem Nat) ->
 integral : (m : Elem Real) ->
   (n : Elem Real) -> (Elem Real -> Elem Real) -> Elem Real.
 
+
+(; Naproche-zf ;)
+
+def ni : Set -> Elem universeset -> Prop :=
+  A => a => element a A.
+def disjoint : Set -> Set -> Prop :=
+  A => B => not (exists universeset (x => and (element x A) (element x B))).
+def empty : Set -> Prop :=
+  A => equalset A emptyset.
+def inhabited : Set -> Prop :=
+  A => not (empty A).
+ 
+
+

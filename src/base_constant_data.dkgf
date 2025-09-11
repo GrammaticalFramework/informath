@@ -43,13 +43,13 @@ function BASE Fam function_Fam
 union BASE Oper union_Oper
 intersection BASE Oper intersection_Oper
 difference BASE Oper difference_Oper
-cartesian BASE Oper difference_Oper
+cartesian BASE Oper cartesian_Oper
 powerset BASE Oper powerset_Oper
 complement BASE Oper complement_Oper
 subset BASE Comparnoun subset_Comparnoun
 subseteq BASE Comparnoun subseteq_Comparnoun
 superset BASE Comparnoun superset_Comparnoun
-superseteq BASE Comparnoun superset_Comparnoun
+superseteq BASE Comparnoun superseteq_Comparnoun
 equalset BASE Compar equalset_Compar
 notequalset BASE Compar notequalset_Compar
 element BASE Comparnoun element_Comparnoun
@@ -91,6 +91,11 @@ angleBetween BASE Fun angle_between_Fun
 dotProduct BASE Oper dot_product_Oper
 vectorPlus BASE Oper vector_plus_Oper
 sphenic BASE Adj sphenic_Adj
+
+ni BASE Compar ni_Compar
+disjoint BASE Compar disjoint_Compar
+empty BASE Adj empty_Adj
+inhabited BASE Adj inhabited_Adj
 
 #CONV Agda forall all
 #CONV Agda Type Set
