@@ -61,6 +61,7 @@ helpMsg = unlines [
   "  -conv=<ident>+  special dedukti conversions from defined in a separate file",
   "  -to-latex-file  generate a LaTeX file (used with natural language output)",
   "  -parallel       generate a jsonl list with all languages and variations",
+  "  -just-translate just perform NLG and/or translation, without parsing math parts",
   "  -v              verbose output, e.g. syntax trees and intermediate results",
   "  -variations     when producing natural language, show all variations",
   "  -ranking        rank trees with a number of scores",
@@ -145,10 +146,16 @@ main = do
 	_ | ifFlag "-idtypes" env ->
 	      mapM_ putStrLn [printTreeEnv env (JStatic c t) | (c, t) <- M.toList (identTypes mo)]
 	_ -> processDeduktiModule env mo
-    filename:_  -> do
+
+    -- files with NL text, e.g. tex and txt
+    filename:_  | ifFlag "-just-translate" env -> do
+      s <- readFile filename
+      mapM_ (processInformathJmt env) (filter (not . null) (lines s))
+      
+    filename:_  -> do  
       s <- readFile filename
       ss0 <- mapM (processInformathJmt env) (filter (not . null) (lines s))
-      let ss = renameLabels ss0 -- quick hack to rename labels
+      let ss = renameLabels ss0 -- quick hack to create unique theorem labels
       mo <- parseDeduktiModule env (unlines ss)
       case s of
         _ | ifFlag "-to-agda" env ->
@@ -244,7 +251,7 @@ convertCoreToInformath env ct = do
   let gffts_nb = maybe id take (nbest env) gffts
   flip mapM_ gffts_nb $ \ (gfft, s) -> do
     ifv env $ putStrLn $ "## Informath: " ++ showExpr [] gfft
-    putStrLn s
+    putStrLn $ if (ifFlag "-just-translate" env) then (unindexString env s) else s
     if (ifFlag "-to-latex-file" env) then (putStrLn "") else return ()
 
 processInformathJmt :: Env -> String -> IO String
@@ -259,6 +266,11 @@ processInformathJmt env s = do
   let (mts, msg) = parseJmt gr (lang env) jmt ils
   ifv env $ putStrLn msg
   case mts of
+    Just ts@(t:_) | ifFlag "-just-translate" env -> do
+      let env1 = env{termindex = tindex}
+      e:_ <- flip mapM ts $ processInformathJmtTreeIndexed env1
+      convertCoreToInformath env e
+      return ""
     Just ts@(t:_) -> do
       let env1 = env{termindex = tindex}
       s:_ <- flip mapM ts $ processInformathJmtTree env1
@@ -283,6 +295,18 @@ processInformathJmtTree env t0 = do
   let dt = printTreeEnv env d
   ifv env $ putStrLn $ dt
   return dt
+
+-- when you don't need to parse the dollar parts, just copy them
+processInformathJmtTreeIndexed :: Env -> Expr -> IO GJmt
+processInformathJmtTreeIndexed env t = do
+  let gr = cpgf env
+  ifv env $ putStrLn $ "## Informath: " ++ showExpr [] t
+  let tr = fg t
+  let setr = semantics tr
+  let st = gf setr
+  ifv env $ putStrLn $ "## Core Abs: " ++ showExpr [] st
+  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (lang env) st)
+  return setr
 
 parallelJSONL :: Env -> Module -> IO ()
 parallelJSONL env mo@(MJmts jmts) = do
@@ -360,6 +384,15 @@ unindexJmt env expr = maybe expr id (unind  expr) where
       Just (t:ts) -> return t ---- todo: ambiguity if ts
       _ -> Nothing
 
+
+-- replacing INDEXEDTERM with the $ expression given in Env
+unindexString :: Env -> String -> String
+unindexString env = unwords . findterms . words
+  where
+    findterms ws = case ws of
+      "\\INDEXEDTERM{" : n : "}" : ww -> "$" : termindex env !! (read n) : "$" : findterms ww
+      w : ww -> w : findterms ww
+      _ -> ws
 
 printFrequencyTable :: M.Map QIdent Int -> IO ()
 printFrequencyTable m = do
