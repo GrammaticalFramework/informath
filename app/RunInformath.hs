@@ -56,6 +56,7 @@ helpMsg = unlines [
   "  -to-coq         convert to Rocq (with <file>.dk as argument)",
   "  -to-lean        convert to Lean (with <file>.dk as argument)",
   "  -to-dedukti     to Dedukti code (typically after changes in <file.dk>)",
+  "  -from=<lang>    natural language to be parsed; Eng (default), Swe, Fre,...",
   "  -lang=<lang>    natural language to be targeted; Eng (default), Swe, Fre,...",
   "  -gfname=<ident> GF module generated from .dkgf, default UserConstants",
   "  -conv=<ident>+  special dedukti conversions from defined in a separate file",
@@ -109,6 +110,7 @@ main = do
   let constantdata = extractConstantData mprojects datalines
   let targetdata = extractTargetConversions datalines
   let lookbackdata = lookBackConstantData constantdata
+  let Just fro = readLanguage (informathPrefix ++ (flagValue "from" "Eng" ff))
   let Just lan = readLanguage (informathPrefix ++ (flagValue "lang" "Eng" ff))
   let env = Env{
         flags = ff,
@@ -119,7 +121,8 @@ main = do
 	convToRocqData = M.fromList [(dk, convInfo t) | ("Rocq", dk, t) <- targetdata],
 	convToLeanData = M.fromList [(dk, convInfo t) | ("Lean", dk, t) <- targetdata],
 	cpgf = corepgf,
-	lang = lan,
+	fromlang = fro,
+	tolang = lan,
 	morpho = buildMorpho corepgf lan,
 	nbest = let fv = flagValue "nbest" "none" ff
 	        in if all isDigit fv then Just (read fv) else Nothing,
@@ -150,7 +153,13 @@ main = do
     -- files with NL text, e.g. tex and txt
     filename:_  | ifFlag "-just-translate" env -> do
       s <- readFile filename
-      mapM_ (processInformathJmt env) (filter (not . null) (lines s))
+      if ifFlag "-to-latex-file" env
+      then do
+        putStrLn latexPreamble
+        mapM_ (processInformathJmt env) (filter (not . null) (lines s))
+        putStrLn "\\end{document}"
+      else do
+        mapM_ (processInformathJmt env) (filter (not . null) (lines s))
       
     filename:_  -> do  
       s <- readFile filename
@@ -224,7 +233,7 @@ roundtripDeduktiJmt env cs = do
       ifv env $ putStrLn $ "## Dedukti: " ++ show t
       let gft = gf $ jmt2core t
       ifv env $ putStrLn $ "## MathCore: " ++ showExpr [] gft
-      let lin = unlex env $ linearize gr (lang env) gft
+      let lin = unlex env $ linearize gr (tolang env) gft
       putStrLn lin
       processInformathJmt env lin
       return ()
@@ -236,14 +245,14 @@ processDeduktiJmtTree env t = do
   let ct = jmt2core t
   let gft = gf ct
   ifv env $ putStrLn $ "## MathCore: " ++ showExpr [] gft
-  ifv env $ putStrLn $ "# MathCoreEng: " ++ unlex env (linearize gr (lang env) gft)
+  ifv env $ putStrLn $ "# MathCoreEng: " ++ unlex env (linearize gr (tolang env) gft)
   convertCoreToInformath env ct
 
 convertCoreToInformath :: Env -> GJmt -> IO ()
 convertCoreToInformath env ct = do
   let fgr = cpgf env
   let fts = nlg (flags env) ct
-  let gfts = [(gfft, unlex env (linearize fgr (lang env) gfft)) | gfft <- map gf fts]
+  let gfts = [(gfft, unlex env (linearize fgr (tolang env) gfft)) | gfft <- map gf fts]
   let gffts =
         if (ifFlag "-ranking" env)
         then [(t, s ++ "\n%% " ++ show sk) | ((t, s), sk) <- rankTreesAndStrings env gfts]
@@ -263,13 +272,13 @@ processInformathJmt env s = do
   ifv env $ putStrLn $ "## LEXED: " ++ ls
   let (ils, tindex) = indexTex ls
   ifv env $ putStrLn $ "## INDEXED: " ++ ils ++ show tindex
-  let (mts, msg) = parseJmt gr (lang env) jmt ils
+  let (mts, msg) = parseJmt gr (fromlang env) jmt ils
   ifv env $ putStrLn msg
   case mts of
     Just ts@(t:_) | ifFlag "-just-translate" env -> do
       let env1 = env{termindex = tindex}
       e:_ <- flip mapM ts $ processInformathJmtTreeIndexed env1
-      convertCoreToInformath env e
+      convertCoreToInformath env1 e
       return ""
     Just ts@(t:_) -> do
       let env1 = env{termindex = tindex}
@@ -290,7 +299,7 @@ processInformathJmtTree env t0 = do
   let str = semantics tr
   let st = gf str
   ifv env $ putStrLn $ "## Core Abs: " ++ showExpr [] st
-  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (lang env) st)
+  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (tolang env) st)
   let d = jmt2dedukti (lookBackData env) str
   let dt = printTreeEnv env d
   ifv env $ putStrLn $ dt
@@ -305,7 +314,7 @@ processInformathJmtTreeIndexed env t = do
   let setr = semantics tr
   let st = gf setr
   ifv env $ putStrLn $ "## Core Abs: " ++ showExpr [] st
-  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (lang env) st)
+  ifv env $ putStrLn $ "## Core Cnc: " ++ unlex env (linearize gr (tolang env) st)
   return setr
 
 parallelJSONL :: Env -> Module -> IO ()
@@ -379,7 +388,7 @@ unindexJmt env expr = maybe expr id (unind  expr) where
   look i = termindex env !! i
   parsed c s = do
     cat <- readType c
-    let (mts, msg) = parseJmt (cpgf env) (lang env) cat s
+    let (mts, msg) = parseJmt (cpgf env) (fromlang env) cat s
     case mts of
       Just (t:ts) -> return t ---- todo: ambiguity if ts
       _ -> Nothing
@@ -390,7 +399,7 @@ unindexString :: Env -> String -> String
 unindexString env = unwords . findterms . words
   where
     findterms ws = case ws of
-      "\\INDEXEDTERM{" : n : "}" : ww -> "$" : termindex env !! (read n) : "$" : findterms ww
+      "\\INDEXEDTERM{" : n : ('}':cs) : ww -> (termindex env !! (read n) ++ cs) : findterms ww
       w : ww -> w : findterms ww
       _ -> ws
 

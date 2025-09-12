@@ -28,7 +28,7 @@ scoreString env s = Scores {
   initial_dollars = initdollars toks + if head toks == "$" then 1 else 0,
   parses =
     if (ifFlag "-test-ambiguity" env)
-    then maybe 0 (length . take 3) (fst (parseJmt (cpgf env) (lang env) jmt inds))
+    then maybe 0 (length . take 3) (fst (parseJmt (cpgf env) (tolang env) jmt inds))
     else 1
   }
  where

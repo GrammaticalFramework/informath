@@ -14,7 +14,8 @@ data Env = Env {
  convToRocqData :: ConstantData,
  convToLeanData :: ConstantData,
  cpgf :: PGF,
- lang :: Language,
+ fromlang :: Language,
+ tolang :: Language,
  morpho :: Morpho,
  nbest :: Maybe Int,
  termindex :: [String] -- list of terms replaced by \INDEXEDTERM{ i }
