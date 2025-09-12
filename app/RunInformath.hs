@@ -65,8 +65,9 @@ helpMsg = unlines [
   "  -just-translate just perform NLG and/or translation, without parsing math parts",
   "  -v              verbose output, e.g. syntax trees and intermediate results",
   "  -variations     when producing natural language, show all variations",
-  "  -ranking        rank trees with a number of scores",
+  "  -ranking        rank trees with possibly weighted scores (smaller better)",
   "  -nbest=<int>    take at most <int> best ranked variations",
+  "  -weights=<int>  weights of scores, default 1,1,1,1,1,1,1",
   "  -test-ambiguity test for ambiguity when ranking (can be expensive)",
   "  -idents         show frequency list of idents in a Dedukti file",
   "  -dropdefs       drop definition parts of Dedukti code",
@@ -94,6 +95,11 @@ printTreeEnv env t =
   if (ifFlag "-dedukti-tokens" env) then unwords (deduktiTokens (printTree t)) else printTree t
 
 commaSep s = words (map (\c -> if c==',' then ' ' else c) s)
+
+commaSepInts :: String -> [Int]
+commaSepInts s =
+  let ws = commaSep s
+  in if all (all isDigit) ws then map read ws else error ("expected digits found " ++ s)
 
 allLanguages env = languages (cpgf env)
 
@@ -126,7 +132,9 @@ main = do
 	morpho = buildMorpho corepgf lan,
 	nbest = let fv = flagValue "nbest" "none" ff
 	        in if all isDigit fv then Just (read fv) else Nothing,
-	termindex = []}
+	scoreWeights = commaSepInts (flagValue "weights" "1,1,1,1,1,1,1,1,1" ff),
+	termindex = []
+	}
   case yy of
     _ | ifFlag "-help" env -> do
       putStrLn helpMsg

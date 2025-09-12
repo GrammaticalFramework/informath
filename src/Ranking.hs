@@ -15,7 +15,7 @@ data Scores = Scores {
   tokens :: Int,
   subsequent_dollars :: Int,
   initial_dollars :: Int,
-  parses :: Int
+  extra_parses :: Int
   } deriving Show
 
 scoreString :: Env -> String -> Scores
@@ -26,9 +26,9 @@ scoreString env s = Scores {
   tokens = length toks,
   subsequent_dollars = subdollars toks,
   initial_dollars = initdollars toks + if head toks == "$" then 1 else 0,
-  parses =
+  extra_parses =  -- can be expensive; return #parses -1 
     if (ifFlag "-test-ambiguity" env)
-    then maybe 0 (length . take 3) (fst (parseJmt (cpgf env) (tolang env) jmt inds))
+    then maybe 0 ((+ (-1)) . length . take 3) (fst (parseJmt (cpgf env) (tolang env) jmt inds))
     else 1
   }
  where
@@ -62,9 +62,12 @@ scoreTreeAndString env (t, s) =
   let scores = (scoreString env s){
         tree_length = treeLength t, tree_depth = treeDepth t}
   in (scores,
-      sum (map (\f -> f scores)
-               [tree_length, tree_depth, characters, tokens,
-                subsequent_dollars, initial_dollars, parses]))
+      sum (map (\ (w, f) -> w * (f scores))
+               (zip
+	         (scoreWeights env)
+	         [tree_length, tree_depth, characters, tokens,
+                 subsequent_dollars, initial_dollars, extra_parses])))
+		 
 
 -- sorts trees from lowest to highest total score
 rankTreesAndStrings :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))] 

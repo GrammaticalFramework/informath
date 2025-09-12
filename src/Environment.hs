@@ -18,6 +18,7 @@ data Env = Env {
  tolang :: Language,
  morpho :: Morpho,
  nbest :: Maybe Int,
+ scoreWeights :: [Int],
  termindex :: [String] -- list of terms replaced by \INDEXEDTERM{ i }
  }
 
