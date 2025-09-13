@@ -17,6 +17,7 @@ data Env = Env {
  fromlang :: Language,
  tolang :: Language,
  morpho :: Morpho,
+ domain :: String,
  nbest :: Maybe Int,
  scoreWeights :: [Int],
  termindex :: [String] -- list of terms replaced by \INDEXEDTERM{ i }

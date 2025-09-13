@@ -216,9 +216,8 @@ sem env t = case t of
   GSupposePropHypo prop -> sem env (GPropHypo prop)
   GIffIffProp a b -> sem env (GIffProp a b)
   GWeHaveProp prop -> sem env prop
----  GWeHaveFormulaProp prop -> sem env (GFormulaProp prop)
   GNoCommaAllProp argkinds prop -> sem env (GAllProp argkinds prop)
-  GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "set_Noun")) idents)
+  GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "number_Noun")) idents) ---- TODO: get from env
   GDeclarationArgKind declaration -> case sem env declaration of
     GDElem (GListTerm terms) (GSetTerm set) -> ---- TODO: check that all are idents
       GIdentsArgKind (GSetKind set) (GListIdent [x | GTIdent x <- terms])

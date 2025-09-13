@@ -1,5 +1,7 @@
 concrete InformathFre of Informath =
-  MathCoreFre **
+  MathCoreFre,
+  NaprocheFre
+  **
   InformathFunctor - [
     AllKindExp, AllIdentsKindExp,
     postAdvS

@@ -76,7 +76,7 @@ lin
 
   converge_Verb = mkVP (mkV "konvergieren") ;
   divide_Relverb = mkV2 "teilen" ;
-  member_Relnoun = mkN2 (mkN "Element") ;
+  member_Relnoun = mkN2 (mkN "Element" "Elemente" neuter) ;
   divisor_Relnoun = mkN2 (mkN "Teiler") ;
 
   plus_Oper = mkOper L.plus_Oper "Summe" ;

@@ -60,21 +60,13 @@ demo:
 	echo "consider pdflatex out/sets.tex"
 
 top100:
-	$(RUN) -to-latex-file -variations -ranking test/top100.dk >out/top100.tex
+	$(RUN) -to-latex-file -variations -ranking -lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
-top100fre:
-	$(RUN) -to-latex-file -lang=Fre -variations -ranking test/top100.dk >out/top100fre.tex
-	cd out ; pdflatex top100fre.tex ; $(OPEN) top100fre.pdf
-
-top100ger:
-	$(RUN) -to-latex-file -lang=Ger -variations -ranking test/top100.dk >out/top100ger.tex
-	cd out ; pdflatex top100ger.tex ; $(OPEN) top100ger.pdf
-
 top100single:
-	$(RUN) -to-latex-file test/top100.dk >out/top100.tex
+	$(RUN) -to-latex-file -lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
@@ -86,6 +78,11 @@ sigma:
 olymp:
 	$(RUN) -variations -to-latex-file -ranking test/olymp.dk >out/olymp.tex
 	cd out ; pdflatex olymp.tex ; $(OPEN) olymp.pdf
+
+naproche:
+	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
+	$(RUN) -to-latex-file -variations -lang=$(lang) tmp/napzf.dk >out/napzf.tex
+	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
 
 baseconstants:
 #	tail -150 src/BaseConstants.dk >tmp/baseconstants.dk

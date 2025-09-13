@@ -142,5 +142,5 @@ oper
   tal_N : N = mkN "Zahl" feminine ;
 
   mängd_N = mkN "Menge" ;
-  element_N = mkN "Element" neuter ;
+  element_N = mkN "Element" "Elemente" neuter ;
 }

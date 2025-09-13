@@ -1,7 +1,9 @@
 --# -path=.:present
 
 concrete InformathGer of Informath =
-  MathCoreGer **
+  MathCoreGer,
+  NaprocheGer
+  **
   InformathFunctor - [
     Pred3Adj,
     postAdvS,
