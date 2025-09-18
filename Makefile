@@ -2,6 +2,8 @@ RUN  := stack exec RunInformath --
 OPEN := open  # pdf viewer command
 GF_FILES := $(wildcard grammars/*.gf)
 
+lang=Eng
+
 all: grammars/Informath.pgf Dedukti Agda Rocq Lean RunInformath
 
 .PHONY: all Dedukti Agda Lean Rocq demo RunInformath
