@@ -11,17 +11,6 @@ open
 
 in {
 oper
-  RelationT : Type = {ap : AP ; prep : Prep} ;
-  FunctionT : Type = {cn : CN ; prep : Prep} ;
-  ConstantT : Type = {np : NP ; c : Str} ;
-  OperatorT : Type = {op : L.OperT ; f : FunctionT} ; 
-  ComparisonT : Type = {rel : RelationT ; op :  Str} ;
-  SetT : Type = {cn : CN ; c : Str} ;
-  FamilyT : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
-  LabelT = {np : NP ; isEmpty : Bool} ;
-  ComparnounT = {cn : CN ; prep : Prep ; op : Str} ;
-  Pred3T = {ap : AP ; prep1, prep2 : Prep} ;
-
   mkNoun = overload {
     mkNoun : Str -> CN
       = \s -> mkCN (mkN s) ;
@@ -84,37 +73,6 @@ oper
       = \s -> {np = mkNP (mkPN s) ; isEmpty = False}
     } ;
 
-  mkConst = overload {
-    mkConst : Str -> Str -> ConstantT
-      = \c, w -> {np = mkName w ; c = c} ;
-    mkConst : Str -> NP -> ConstantT
-      = \c, np -> {np = np ; c = c} ;
-    } ;
-    
-  mkOper = overload {
-    mkOper : L.OperT -> Str -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> N -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> CN -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> N -> Prep -> OperatorT
-      = \op, w, prep -> {op = op ; f = mkFun w prep} ; 
-    } ;
-
-  mkCompar = overload {
-    mkCompar : Str -> Str -> Str -> ComparisonT
-      = \op, s, p -> {rel = mkRel s p ; op = op} ;
-    } ;
-
-  mkComparnoun = overload {
-    mkComparnoun : Str -> Str -> ComparnounT
-      = \op, s -> {cn = mkCN (mkN s) ; prep = possess_Prep ; op = op} ;
-    mkComparnoun : Str -> CN -> ComparnounT
-      = \op, cn -> {cn = cn ; prep = possess_Prep ; op = op} ;
-    mkComparnoun : Str -> CN -> Prep -> ComparnounT
-      = \op, cn, prep -> {cn = cn ; prep = prep ; op = op} ;
-    } ;
 
   mkPred3 = overload {
     mkPred3 : AP -> Prep -> Prep -> Pred3T
@@ -123,4 +81,6 @@ oper
 
   latexName : Str -> NP
       = \s -> symb (mkSymb ("$" ++ s ++ "$")) ;
+
+
 }

@@ -1,6 +1,6 @@
 -- mathematical terms as they appear in "normal" mathematical text
 
-abstract Terms = {
+abstract Terms = Identifiers ** {
 
 cat
   Formula ;
@@ -9,7 +9,6 @@ cat
   Eqsign ;
   Term ;
   [Term] {1} ;
-  Ident ;
   Function ;
 
 fun
@@ -36,8 +35,6 @@ fun
 
   FIdent : Ident -> Function ;
   FDerivative : Function -> Function ;
-
-  StrIdent : String -> Ident ;
   
   TFrac : Term -> Term -> Term ;
   TComprehension : Term -> Term -> Formula -> Term ;

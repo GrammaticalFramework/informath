@@ -1,28 +1,9 @@
 abstract MathCore =
-  Terms,
-  UserConstants   -- notations, BaseConstants + user-defined with MkConstants.hs
+  Categories,
+  Identifiers
   ** {
 
 flags startcat = Jmt ;
-
-cat
-  Jmt ;
-  Exp ;
-  Exps ;
-  Prop ;
-  [Prop] {2} ;
-  Kind ;
-  ArgKind ;
-  [ArgKind] {1} ;
-  Hypo ;
-  [Hypo] ;
-  [Ident] {1} ;
-  Proof ;
-  [Proof] {0} ;
-  ProofExp ;
-  Rule ;
-  [Rule] {1} ;
-  Coercion ;
 
 fun
   ThmJmt : Label -> [Hypo] -> Prop -> Proof -> Jmt ;
@@ -50,7 +31,7 @@ fun
 
   AppExp : Exp -> Exps -> Exp ;
   AbsExp : [Ident] -> Exp -> Exp ;
-  TermExp : Term -> Exp ;
+----  TermExp : Term -> Exp ; ---- TODO
   KindExp : Kind -> Exp ;
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;
@@ -66,7 +47,7 @@ fun
   IdentProp : Ident -> Prop ;
   AppProp : Ident -> Exps -> Prop ;
 
-  TermKind : Term -> Kind ;
+----  TermKind : Term -> Kind ; ---- TODO
   SuchThatKind : Ident -> Kind -> Prop -> Kind ;
   AppKind : Ident -> Exps -> Kind ;
   FunKind : [ArgKind] -> Kind -> Kind ;
@@ -95,13 +76,9 @@ fun
   NotAdjProp : Adj -> Exp -> Prop ;
   ReladjProp : Reladj -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
-  SetKind : Set -> Kind ;
   NameExp : Name -> Exp ;
   FunListExp : Fun -> Exps -> Exp ;
   LabelProofExp : Label -> ProofExp ;
-  ConstExp : Const -> Exp ;
-  OperListExp : Oper -> Exps -> Exp ; -- binary operation applied collectively
-  ComparAdj : Compar -> Exp -> Adj ;
   FamKind : Fam -> Kind -> Kind ;
   Fam2Kind : Fam -> Kind -> Kind -> Kind ;
   VerbProp : Verb -> Exp -> Prop ;
@@ -110,7 +87,6 @@ fun
   NotVerbProp : Verb -> Exp -> Prop ;
   NotRelverbProp : Relverb -> Exp -> Exp -> Prop ;
   NotRelnounProp : Relnoun -> Exp -> Exp -> Prop ;
-  ComparnounProp : Comparnoun -> Exp -> Exp -> Prop ;
   Pred3Prop : Pred3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath
