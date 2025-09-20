@@ -1,74 +1,67 @@
-abstract SymbolicConstants = {
-
-cat
-  Set ;     -- Kind                      -- Z
-  Const ;   -- Exp                       -- Ø
-  Oper ;    -- [Exp] -> Exp symbol       -- +
-  Compar ;  -- Exp -> Exp -> Prop symbol -- >
-
+abstract SymbolicConstants = Terms ** {
 
 fun
-  natural_Set : Set ;
-  integer_Set : Set ;
-  rational_Set : Set ;
-  real_Set : Set ;
-  complex_Set : Set ;
+  natural_Term : Term ;
+  integer_Term : Term ;
+  rational_Term : Term ;
+  real_Term : Term ;
+  complex_Term : Term ;
 
-  Eq_Compar : Compar ;
-  Lt_Compar : Compar ;
-  Gt_Compar : Compar ;
-  Neq_Compar : Compar ;
-  Leq_Compar : Compar ;
-  Geq_Compar : Compar ;
+  Eq_Eqsign : Eqsign ;
+  Lt_Eqsign : Eqsign ;
+  Gt_Eqsign : Eqsign ;
+  Neq_Eqsign : Eqsign ;
+  Leq_Eqsign : Eqsign ;
+  Geq_Eqsign : Eqsign ;
 
-  plus_Oper : Oper ;
-  minus_Oper : Oper ;
-  times_Oper : Oper ;
-  div_Oper : Oper ;
-  pow_Oper : Oper ;
-  neg_Oper : Oper ;
-  logarithm_Oper : Oper ;
-  square_root_Oper : Oper ;
+  plus_Term : Term -> Term -> Term ;
+  minus_Term : Term -> Term -> Term ;
+  times_Term : Term -> Term -> Term ;
+  div_Term : Term -> Term -> Term ;
+  pow_Term : Term -> Term -> Term ;
+  neg_Term : Term -> Term -> Term ;
+  logarithm_Term : Term -> Term -> Term ;
+  square_root_Term : Term -> Term ;
   
-  absolute_value_Oper : Oper ;
-  factorial_Oper : Oper ;
+  absolute_value_Term : Term -> Term ;
+  factorial_Term : Term -> Term -> Term ;
 
-  function_Oper : Oper ;
-  union_Oper : Oper ;
-  intersection_Oper : Oper ;
-  cartesian_Oper : Oper ;
-  difference_Oper : Oper ;
-  complement_Oper : Oper ;
-  powerset_Oper : Oper ;
+  function_Term : Term -> Term -> Term ;
+  union_Term : Term -> Term -> Term ;
+  intersection_Term : Term -> Term -> Term ;
+  cartesian_Term : Term -> Term -> Term ;
+  difference_Term : Term -> Term -> Term ;
+  complement_Term : Term -> Term -> Term ;
+  powerset_Term : Term -> Term -> Term ;
 
-  subset_Compar : Compar ;  
-  subseteq_Compar : Compar ;  
-  superset_Compar : Compar ;
-  superseteq_Compar : Compar ;
-  equalset_Compar : Compar ;
-  notequalset_Compar : Compar ;
-  element_Compar : Compar ;
-  notelement_Compar : Compar ;
+  subset_Eqsign : Eqsign ;  
+  subseteq_Eqsign : Eqsign ;  
+  superset_Eqsign : Eqsign ;
+  superseteq_Eqsign : Eqsign ;
+  equalset_Eqsign : Eqsign ;
+  notequalset_Eqsign : Eqsign ;
+  element_Eqsign : Eqsign ;
+  notelement_Eqsign : Eqsign ;
 
-  emptyset_Const : Const ;
-  universeset_Const : Const ;
+  emptyset_Term : Term ;
+  universeset_Term : Term ;
 
-  cardinality_Oper : Oper ; -- top100
-  length_Oper : Oper ; -- top100
-  perpendicular_Compar : Compar ; -- top100
-  square_Oper : Oper ; -- top100
-  legendre_symbol_Oper : Oper ; -- top100
-  pi_Const : Const ; -- top100
-  binomial_Oper : Oper ; -- top100
-  combinations_Oper : Oper ; -- top100
-  sin_Oper : Oper ;
-  cos_Oper : Oper ;
-  tan_Oper : Oper ;
-  arcsin_Oper : Oper ;
-  arccos_Oper : Oper ;
-  arctan_Oper : Oper ;
-  orthogonal_Compar : Compar ;
-  dot_product_Oper : Oper ;
-  vector_plus_Oper : Oper ;
+  cardinality_Term : Term -> Term ; -- top100
+  length_Term : Term -> Term ; -- top100
+  perpendicular_Eqsign : Eqsign ; -- top100
+  square_Term : Term -> Term -> Term ; -- top100
+  legendre_symbol_Term : Term -> Term -> Term ; -- top100
+  pi_Term : Term ; -- top100
+  binomial_Term : Term -> Term -> Term ; -- top100
+  combinations_Term : Term -> Term -> Term ; -- top100
+  sin_Term : Term -> Term ;
+  cos_Term : Term -> Term ;
+  tan_Term : Term -> Term ;
+  arcsin_Term : Term -> Term ;
+  arccos_Term : Term -> Term ;
+  arctan_Term : Term -> Term ;
+  orthogonal_Eqsign : Eqsign ;
+  dot_product_Term : Term -> Term -> Term ;
+  vector_plus_Term : Term -> Term -> Term ;
 
 }

@@ -19,15 +19,14 @@ lincat
   [Exp] = Syntax.ListNP ;
 
 lin
+  TermExp term = latexNP (mkSymb term.s) ;
+  TermKind term = {
+    cn = mkCN element_N ;
+    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb term.s))
+    } ;
+
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
-
-----  SetTerm set = constant set.c ** {isNumber = False} ;
-----  ConstTerm const = constant const.c ** {isNumber = False} ;
-----  ComparEqsign compar = compar.op ;
-----  ComparnounEqsign compar = compar.op ;
-----  AppOperTerm op x y = appOper op.op x y ;
-----  AppOperOneTerm op x = appOper op.op x ;
 
   SimpleAndProp props = simpleProp (mkS and_Conj props) ;
   SimpleOrProp props = simpleProp (mkS or_Conj props) ;
@@ -39,6 +38,15 @@ lin
 
   AndExp exps =  mkNP and_Conj exps | mkNP both7and_DConj exps ;
   OrExp exps = mkNP or_Conj exps | mkNP either7or_DConj exps ;
+
+  BothAndProp x y = simpleProp (mkS both7and_DConj x.s y.s) ;
+  EitherOrProp x y = simpleProp (mkS either7or_DConj x.s y.s) ;
+  
+  BothAndAdj x y = mkAP both7and_DConj x y ;
+  EitherOrAdj x y = mkAP either7or_DConj x y ;
+  
+  BothAndExp x y = mkNP both7and_DConj x y ;
+  EitherOrExp x y = mkNP either7or_DConj x y ;
 
   OnlyIfProp A B = simpleProp (Grammar.SSubjS (partProp A) only_if_Subj (partProp B)) ;
 

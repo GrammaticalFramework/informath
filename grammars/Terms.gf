@@ -28,6 +28,12 @@ fun
   TNeg : Term -> Term ;
   TApp : Function -> [Term] -> Term ;
 
+  TSigma : Ident -> Term -> Term -> Term -> Term ;
+  TSum3dots : Term -> Term -> Term -> Term ;
+
+  TSeries : Ident -> Term -> Term -> Term ;
+  TIntegral : Ident -> Term -> Term -> Term -> Term ;
+
   TEnumSet : [Term] -> Term ;
 
   TIdent : Ident -> Term ;

@@ -8,14 +8,10 @@ cat
   [Exp] {2} ;
 
 fun
+  TermExp : Term -> Exp ;
+  TermKind : Term -> Kind ;
   FormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;
-
-----  SetTerm : Set -> Term ;
-----  ConstTerm : Const -> Term ;
-----  ComparEqsign : Compar -> Eqsign ;
-----  AppOperTerm : Oper -> Term -> Term -> Term ;
-----  AppOperOneTerm : Oper -> Term -> Term ;
 
 -- to remove parentheses around complex propositions
   SimpleAndProp : [Prop] -> Prop ;
@@ -28,6 +24,15 @@ fun
 
   AndExp : [Exp] -> Exp ;
   OrExp : [Exp] -> Exp ;
+
+  BothAndProp : Prop -> Prop -> Prop ;
+  EitherOrProp : Prop -> Prop -> Prop ;
+
+  BothAndAdj : Adj -> Adj -> Adj ;
+  EitherOrAdj : Adj -> Adj -> Adj ;
+
+  BothAndExp : Exp -> Exp -> Exp ;
+  EitherOrExp : Exp -> Exp -> Exp ;
 
   OnlyIfProp : Prop -> Prop -> Prop ;
 

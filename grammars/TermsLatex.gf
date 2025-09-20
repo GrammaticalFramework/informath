@@ -30,6 +30,30 @@ lin
   TNeg x = prefix 2 "-" x ** {isNumber = x.isNumber} ;
   TApp f xs = constant (f ++ parenth xs.s) ** {isNumber = False} ;
 
+  TSigma i m n t = {
+    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ top n ++ "}{" ++ usePrec 2 t ++ "}" ;
+    p = 1 ;
+    isNumber = False
+    } ;
+    
+  TSum3dots a b c = {
+    s = usePrec 1 a ++ "+" ++ usePrec 1 b ++ "+ \\cdots +" ++ usePrec 1 c ;
+    p = 0 ;
+    isNumber = False
+    } ;
+    
+  TSeries i m t = {
+    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ "\\infty" ++ "}{" ++ usePrec 2 t ++ "}" ;
+    p = 1 ;
+    isNumber = False
+    } ;
+
+  TIntegral x a b t = {
+    s = "\\int_{" ++ top a ++ "}^{" ++ top b ++ "}" ++ usePrec 2 t ++ "\\, d" ++ x ;
+    p = 1 ;
+    isNumber = False
+    } ;
+    
   TEnumSet ts = constant ("\\{" ++ ts.s ++ "\\}") ** {isNumber = False} ;
 
   TIdent x =  constant x ** {isNumber = False} ;
@@ -64,6 +88,10 @@ oper
 
   tinfixl : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->
     infixl p op x y ** {isNumber = False} ;
+  tprefix : Prec -> Str -> TermPrecNum -> TermPrecNum = \p, op, x ->
+    prefix p op x ** {isNumber = False} ;
+---  tinfix : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->
+   --- infix p op x y ** {isNumber = False} ;
   tconstant : Str -> TermPrecNum = \s ->
     constant s ** {isNumber = False} ;
 
@@ -79,6 +107,21 @@ oper
     macroApp : (f, x : Str) -> Str = \f, x -> "\\" + f ++ "{" ++ x ++ "}" ;
     macroApp : (f, x, y : Str) -> Str = \f, x, y ->
       "\\" + f ++ "{" ++ x ++ "} {" ++ y ++ "}" ;
+    macroApp : (f, x, y, z : Str) -> Str = \f, x, y, z ->
+      "\\" + f ++ "{" ++ x ++ "} {" ++ y ++ "} {" ++ z ++ "}" ;
    } ;
+
+{-
+  macroAppTerm = overload {
+    macroAppTerm : (f : TermPrec) -> TermPrec = \f ->
+      constant ("\\" + f) ;
+    macroAppTerm : (f, x : TermPrec) -> TermPrec = \f, x ->
+      {s = "\\" + f ++ "{" ++ usePrec x ++ "}" } ;
+    macroAppTerm : (f, x, y : TermPrec) -> TermPrec = \f, x, y ->
+      "\\" + f ++ "{" ++ x ++ "} {" ++ y ++ "}" ;
+    macroAppTerm : (f, x, y, z : TermPrec) -> TermPrec = \f, x, y, z ->
+      "\\" + f ++ "{" ++ x ++ "} {" ++ y ++ "} {" ++ z ++ "}" ;
+   } ;
+-}
 
 }

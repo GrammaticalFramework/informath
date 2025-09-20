@@ -67,7 +67,7 @@ lin
   AbsExp idents exp =
     mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
   KindExp kind = mkNP the_Det (mkCN type_CN (Syntax.mkAdv possess_Prep (mkNP aPl_Det (useKind kind)))) ;
-  TermExp term = latexNP (mkSymb term.s) ;
+  IdentExp ident = latexNP (mkSymb ident) ;
   TypedExp exp kind = mkNP the_Det (mkCN (mkCN kind.cn exp) kind.adv) ;
   EnumSetExp exps = mkNP the_Det (mkCN set_N (Syntax.mkAdv possess_Prep exps.np)) ;
 
@@ -86,9 +86,9 @@ lin
   FalseProp = simpleProp (mkS (mkCl we_NP have_V2 (mkNP a_Det contradiction_N))) ;
   AppProp f exps = simpleProp (mkS (mkCl (latexNP (mkSymb f)) hold_V2 exps.np)) ;
 
-  TermKind term = {
+  IdentKind ident = {
     cn = mkCN element_N ;
-    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb term.s))
+    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb ident))
     } ;
   SuchThatKind ident kind prop = {
     cn = mkCN kind.cn (latexNP (mkSymb ident)) ;
