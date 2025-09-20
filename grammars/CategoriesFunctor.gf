@@ -1,6 +1,7 @@
 incomplete concrete CategoriesFunctor of Categories =
   IdentifiersLatex ** 
   open
+    Utilities,
     Syntax,
     Prelude,
     Markup,
@@ -20,6 +21,7 @@ lincat
   [ArgKind] = {sg, neg, pl : NP} ;  -- there exists an A / there exists no A / for all As
   Hypo = Utt ;
   [Hypo] = {text : Text ; isEmpty : Bool} ;
+  Local = {name, value : NP} ;
   Proof = Text ;
   [Proof] = Text ;
   ProofExp = NP ;
@@ -27,6 +29,7 @@ lincat
   [Rule] = Text ;
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
+  Pred3 = Pred3T ;
 
 -- lexicon, verbal
   Noun = CN ;
@@ -35,32 +38,17 @@ lincat
   Verb = VP ;
   Reladj = RelationT ;
   Relverb = V2 ;
-  Relnoun = N2 ;
+  Relnoun = {cn : CN ; prep : Prep} ;
   Name = NP ;
   Fun = FunctionT ;
   Label = LabelT ;
-
+{-
 -- lexicon, symbolic
   Set = SetT ;
   Const = ConstantT ;
   Oper = OperatorT ;
   Compar = ComparisonT ;
-
--- type synonyms
-oper
-  Proposition : Type = {s : S ; isComplex : Bool} ;
-  
-  RelationT : Type = {ap : AP ; prep : Prep} ;
-  FunctionT : Type = {cn : CN ; prep : Prep} ;
-  ConstantT : Type = {np : NP ; c : Str} ;
-  OperatorT : Type = {f : FunctionT} ; 
-  ComparisonT : Type = {rel : RelationT ; op :  Str} ;
-  SetT : Type = {cn : CN ; c : Str} ;
-  FamilyT : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
-  LabelT = {np : NP ; isEmpty : Bool} ;
-  ComparnounT = {cn : CN ; prep : Prep ; op : Str} ;
-  Pred3T = {ap : AP ; prep1, prep2 : Prep} ;
-
+-}
 lin
 -- Base and Const for lists
   BaseIdent ident =
@@ -107,33 +95,6 @@ lin
 
   BaseRule rule = prefixText item_Label (mkText rule) ;
   ConsRule rule rules = mkText (prefixText "\\item" (mkText rule)) rules ;
-
--- utilities
-oper
-  latexNP : Symb -> NP = \x ->
-    symb (mkSymb ("$" ++ x.s ++ "$")) ;
-
-  commaConj : Conj = mkConj "," ;
-
-  useKind : {cn : CN ; adv : Adv} -> CN = \kind -> mkCN kind.cn kind.adv ;
-
-  latexS : Symb -> S = \x ->
-    symb (mkSymb ("$" ++ x.s ++ "$")) ;
-
-  simpleProp : S -> Proposition = \s -> {s = s ; isComplex = False} ;
-  complexProp : S -> Proposition = \s -> {s = s ; isComplex = True} ;
-
-  topProp : Proposition -> S = \prop -> prop.s ;
-  partProp : Proposition -> S = \prop -> case prop.isComplex of {
-    True => parenthS prop.s ;
-    False => prop.s
-    } ;
-    
-  parenthS : S -> S = \s -> Markup.MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
-
-  prefixText : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s} ;
-
-  item_Label : Str = "\\item" ;
 
 
 }

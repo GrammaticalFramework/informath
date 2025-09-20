@@ -11,11 +11,11 @@ fun
   FormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;
 
-  SetTerm : Set -> Term ;
-  ConstTerm : Const -> Term ;
-  ComparEqsign : Compar -> Eqsign ;
-  AppOperTerm : Oper -> Term -> Term -> Term ;
-  AppOperOneTerm : Oper -> Term -> Term ;
+----  SetTerm : Set -> Term ;
+----  ConstTerm : Const -> Term ;
+----  ComparEqsign : Compar -> Eqsign ;
+----  AppOperTerm : Oper -> Term -> Term -> Term ;
+----  AppOperOneTerm : Oper -> Term -> Term ;
 
 -- to remove parentheses around complex propositions
   SimpleAndProp : [Prop] -> Prop ;

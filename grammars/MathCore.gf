@@ -1,6 +1,5 @@
 abstract MathCore =
-  Categories,
-  Identifiers
+  Categories
   ** {
 
 flags startcat = Jmt ;
@@ -26,8 +25,10 @@ fun
   PropHypo : Prop -> Hypo ;
   VarsHypo : [Ident] -> Kind -> Hypo ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
-  LetHypo : Ident -> Kind -> Exp -> Hypo ;
-  BareLetHypo : Ident -> Exp -> Hypo ;
+  LocalHypo : Local -> Hypo ;
+  
+  LetLocal : Ident -> Kind -> Exp -> Local ;
+  BareLetLocal : Ident -> Exp -> Local ;
 
   AppExp : Exp -> Exps -> Exp ;
   AbsExp : [Ident] -> Exp -> Exp ;

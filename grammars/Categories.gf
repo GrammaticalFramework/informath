@@ -14,6 +14,7 @@ cat
   [ArgKind] {1} ;
   Hypo ;
   [Hypo] ;
+  Local ;
   Proof ;
   [Proof] {0} ;
   ProofExp ;
@@ -34,12 +35,6 @@ cat
   Fun ;     -- [Exp] -> Exp        -- the sum of
   Label ;   -- Exp                 -- theorem 1
   Pred3 ;   -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
-
--- lexicon, symbolic
-  Set ;     -- Kind                      -- Z
-  Const ;   -- Exp                       -- Ø
-  Oper ;    -- [Exp] -> Exp symbol       -- +
-  Compar ;  -- Exp -> Exp -> Prop symbol -- >
 
 
 }

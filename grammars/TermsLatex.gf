@@ -1,4 +1,4 @@
-concrete TermsLatex of Terms =
+concrete TermsLatex of Terms = IdentifiersLatex **
   open Formal, Prelude in {
 
 lincat
@@ -8,7 +8,6 @@ lincat
   Eqsign = Str ;
   Term = TermPrecNum ;
   [Term] = {s : Str ; isPl : Bool} ;
-  Ident = Str ;
   Function = Str ;
 
 lin
@@ -38,8 +37,6 @@ lin
 
   BaseTerm x = {s = top x ; isPl = False} ;
   ConsTerm x xs = {s = top x ++ "," ++ xs.s ; isPl = True} ;
-
-  StrIdent s = s.s ;
 
   FIdent v = v ;
   FDerivative f = f ++ "'" ;

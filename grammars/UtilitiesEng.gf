@@ -1,86 +1,60 @@
-resource UtilitiesEng =
+instance UtilitiesEng of Utilities =
 
 open
   SyntaxEng,
   ParadigmsEng,
   (P=ParadigmsEng),
   SymbolicEng,
-  (L=BaseConstantsLatex),
+  MarkupEng,
+  (I=IrregEng),
+  (E=ExtendEng),
   Formal,
   Prelude
 
 in {
+
 oper
-  mkNoun = overload {
-    mkNoun : Str -> CN
-      = \s -> mkCN (mkN s) ;
-    mkNoun : Str -> Str -> CN
-      = \a, n -> mkCN (mkA a) (mkN n) ;
-    } ;
-    
-  mkSet = overload {
-    mkSet : Str -> Str -> SetT
-      = \c, s -> {cn = mkCN (mkN s) ; c = c} ;
-    mkSet : Str -> Str -> Str -> SetT
-      = \c, a, n -> {cn = mkCN (mkA a) (mkN n) ; c = c} ;
-    } ;
-    
-  mkFun = overload {
-    mkFun : Str -> FunctionT
-      = \s -> {cn = mkCN (mkN s) ; prep = possess_Prep} ;
-    mkFun : N -> FunctionT
-      = \n -> {cn = mkCN n ; prep = possess_Prep} ;
-    mkFun : CN -> FunctionT
-      = \n -> {cn = n ; prep = possess_Prep} ;
-    mkFun : N -> Prep -> FunctionT
-      = \n, p -> {cn = mkCN n ; prep = p} ;
-    mkFun : N -> Str -> FunctionT
-      = \n, s -> {cn = mkCN (mkCN n) (P.mkAdv s) ; prep = possess_Prep} ;
-    mkFun : (a, n : Str) -> FunctionT
-      = \a, n -> {cn = mkCN (mkA a) (mkN n) ; prep = possess_Prep} ;
-    mkFun : (a, b, n : Str) -> FunctionT
-      = \a, b, n -> {cn = mkCN (mkA a) (mkCN (mkA b) (mkN n)) ; prep = possess_Prep} ;
-    } ;
+  commaConj : Conj = mkConj "," ;
 
-  mkFam = overload {
-    mkFam : Str -> FamilyT = \s ->
-      {cn = mkCN (mkN s) ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : Str -> Prep -> Prep -> FamilyT = \s, p1, p2 ->
-      {cn = mkCN (mkN s) ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
-    mkFam : CN -> FamilyT = \cn ->
-      {cn = cn ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : CN -> Prep -> Prep -> FamilyT = \cn, p1, p2 ->
-      {cn = cn ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
-    } ;
+  define_V2 : V2 = mkV2 (mkV "define") ;
+  assume_VS : VS = mkVS (mkV "assume") ;
+  element_N : N = mkN "element" ;
+  type_CN : CN = mkCN (mkN "type") ;
+  case_N : N = mkN "case" ;
+  contradiction_N : N = mkN "contradiction" ;
+  then_Adv : Adv = ParadigmsEng.mkAdv "then" ;
+  thenText_Adv : Adv = ParadigmsEng.mkAdv "then" ;
+  such_that_Subj : Subj = mkSubj "such that" ;
+  applied_to_Prep : Prep = mkPrep "applied to" ;
+  defined_as_Prep : Prep = mkPrep "defined as" ;
+  function_N : N = mkN "function" ;
+  basic_type_CN : CN = mkCN (mkA "basic") (mkN "type") ;
+  map_V3 = mkV3 (mkV "map") noPrep to_Prep ;
+  say_VS = mkVS I.say_V ;
+  hold_V2 = mkV2 I.hold_V for_Prep ;
+  arbitrary_A = mkA "arbitrary" ;
+  set_N = mkN "set" ;
 
-  mkAdj = overload {
-    mkAdj : Str -> AP
-      = \s -> mkAP (mkA s) ;
-    } ;
-    
-  mkRel = overload {
-    mkRel : Str -> Str -> {ap : AP ; prep : Prep}
-      = \s, p -> {ap = mkAP (mkA s) ; prep = mkPrep p}
-    } ;
-    
-  mkName = overload {
-    mkName : Str -> NP
-      = \s -> mkNP (mkPN s)
-    } ;
+  iff_Subj : Subj = mkSubj "if and only if" ;
+  commaConj : Conj = mkConj "," ;
 
-  mkLabel = overload {
-    mkLabel : Str -> LabelT
-      = \s -> {np = mkNP (mkPN s) ; isEmpty = False}
-    } ;
+  basic_concept_Str = "basic concept" ;
+  by_cases_Str = "by cases:" ;
+  proof_Str = "proof" ;
+  axiom_Str = "axiom" ;
+  theorem_Str = "theorem" ;
+  definition_Str = "definition" ;
 
+  instance_N = mkN "instance" ;
+  prove_VS = mkVS (mkV "prove") ;
 
-  mkPred3 = overload {
-    mkPred3 : AP -> Prep -> Prep -> Pred3T
-      = \ap, p1, p2 -> {ap = ap ; prep1 = p1 ; prep2 = p2} ;
-    } ;
+  as_Prep : Prep = mkPrep "as" ;
 
-  latexName : Str -> NP
-      = \s -> symb (mkSymb ("$" ++ s ++ "$")) ;
+  let_Str : Bool => Str = \\_ => "let" ;
 
+  assuming_Str = "assuming:" ;
+  
+  imply_V2 : V2 = mkV2 (mkV "imply") ;
+  only_if_Subj : Subj = mkSubj "only if" ;
 
 }

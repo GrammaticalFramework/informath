@@ -1,4 +1,11 @@
-abstract SymbolicConstants = Categories ** {
+abstract SymbolicConstants = {
+
+cat
+  Set ;     -- Kind                      -- Z
+  Const ;   -- Exp                       -- Ø
+  Oper ;    -- [Exp] -> Exp symbol       -- +
+  Compar ;  -- Exp -> Exp -> Prop symbol -- >
+
 
 fun
   natural_Set : Set ;

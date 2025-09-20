@@ -1,8 +1,8 @@
 incomplete concrete MathCoreFunctor of MathCore =
-  Terms,
-  UserConstants
+  Categories
 
  ** open
+    Utilities,
     Syntax,
     Grammar,
     Markup,
@@ -56,10 +56,12 @@ lin
   PropHypo prop = mkUtt (mkImp (mkVP assume_VS (topProp prop))) ; 
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
-  LetHypo ident kind exp =
+  LocalHypo local = Grammar.ImpP3 local.name (mkVP local.value) ; 
+
+  LetLocal ident kind exp =
     let ikind = {cn = mkCN kind.cn (latexNP (mkSymb ident)) ; adv = kind.adv ; isPl = False}
-    in Grammar.ImpP3 (mkNP the_Det (useKind ikind)) (mkVP exp) ; 
-  BareLetHypo ident exp = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp) ; 
+    in {name = mkNP the_Det (useKind ikind) ; value = exp} ; 
+  BareLetLocal ident exp = {name = latexNP (mkSymb ident) ; value = exp} ; 
 
   AppExp exp exps = mkNP exp (Syntax.mkAdv applied_to_Prep exps.np) ;
   AbsExp idents exp =
@@ -156,10 +158,10 @@ lin
     } ;
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
   RelverbProp verb x y = simpleProp (mkS (mkCl x verb y)) ; 
-  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkVP (mkCN rel y)))) ; 
+  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
-  NotRelverbProp verb x y = simpleProp (mkS negPol (mkCl x verb y)) ; 
-  NotRelnounProp rel x y = simpleProp (mkS negPol (mkCl x (mkVP (mkCN rel y)))) ; 
+  NotRelverbProp verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
+  NotRelnounProp rel x y = simpleProp (mkS negativePol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   ComparnounProp rel x y = simpleProp (mkS (mkCl x (mkVP ((mkCN rel.cn (Syntax.mkAdv rel.prep y)))))) ;
   Pred3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
@@ -181,17 +183,6 @@ lin
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
 oper
-
-  labelText : LabelT -> Text -> Text = \label, text ->
-    let period = if_then_Str label.isEmpty "" "." in
-    lin Text {s = (mkUtt label.np).s ++ period ++ text.s} ;
-
-  thenText : {text : Text ; isEmpty : Bool} -> S -> Text = \hypos, s ->
-    case hypos.isEmpty of {
-      True => mkText hypos.text (mkText (mkUtt s)) ;
-      False => mkText hypos.text (mkText (mkUtt (mkS thenText_Adv s)))
-	     | mkText hypos.text (mkText (mkUtt s))    ---- variants !!??
-      } ;
 
   notionNP : {np : NP ; isPl : Bool} -> {cn : CN ; adv : Adv} -> NP = \idents, kind ->
     let det = case idents.isPl of {

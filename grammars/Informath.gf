@@ -2,7 +2,9 @@ abstract Informath =
   MathCore,
   VerbalConstants,
   SymbolicConstants,
-  MathExtensions
+  MathExtensions,
+--  Terms,
+  Naproche
   ** {
 
 flags startcat=Jmt ;
