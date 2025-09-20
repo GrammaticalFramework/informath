@@ -3,8 +3,7 @@ abstract Informath =
   VerbalConstants,
   SymbolicConstants,
   MathExtensions,
---  Terms,
-  Naproche
+  UserExtensions
   ** {
 
 flags startcat=Jmt ;

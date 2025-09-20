@@ -34,8 +34,8 @@ lin
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
-----  disjoint_Compar = mkCompar "\\notmeets" "disjoint" "from" ;
-----  ni_Compar = mkCompar "\\ni" "containing" "" ; ---- should be Relverb "contain"
+  disjoint_Eqsign = "\\notmeets" ;
+  ni_Eqsign = "\\ni" ;
   
 
 oper

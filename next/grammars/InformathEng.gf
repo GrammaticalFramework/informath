@@ -3,6 +3,5 @@ concrete InformathEng of Informath =
   VerbalConstantsEng,
   SymbolicConstantsLatex,
   MathExtensionsEng,
---  TermsLatex,
-  NaprocheEng
+  UserExtensionsEng
   ;
