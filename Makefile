@@ -11,6 +11,10 @@ all: grammars/Informath.pgf Dedukti Agda Rocq Lean RunInformath
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
 
+# if you want to use the -next option, also do this
+next/grammars/NextInformath.pgf: $(GF_FILES)
+	cd next/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,Fun,Fun2,Verb,Verb2,Label,Compar,Term -name=NextInformath InformathEng.gf 
+
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
 

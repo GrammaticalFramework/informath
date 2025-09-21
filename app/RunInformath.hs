@@ -27,6 +27,8 @@ import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
 import Ranking
 
+import BuildConstantTable -- next version
+
 import PGF
 
 import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
@@ -90,6 +92,9 @@ informathPGFFile = "grammars/" ++ informathPrefix ++ ".pgf"
 baseConstantDataFile = "src/base_constant_data.dkgf"
 Just jmt = readType "Jmt"
 
+baseConstantFile = "src/BaseConstants.dk"
+nextInformathPGF = "next/grammars/NextInformath.pgf"
+
 unlex env s = if (ifFlag "-no-unlex" env) then s else unlextex s
 
 printTreeEnv env t =
@@ -140,6 +145,15 @@ main = do
   case yy of
     _ | ifFlag "-help" env -> do
       putStrLn helpMsg
+      
+    filename:_ | ifFlag "-next" env && isSuffixOf ".dkgf" filename -> do
+      let dkfile = flagValue "dkfile" baseConstantFile ff
+      dk <- readFile dkfile >>= justParseDeduktiModule
+      pgf <- readPGF nextInformathPGF
+      table <- buildConstantTable filename dk pgf
+      putStrLn $ printConstantTable table
+      
+
     filename:_ | isSuffixOf ".dkgf" filename -> do
       let gfname = flagValue "gfname" "UserConstants" ff
       mkConstants filename gfname
@@ -201,11 +215,18 @@ loop env = do
     _     -> parseDeduktiModule env ss >>= processDeduktiModule env
   loop env
 
-parseDeduktiModule :: Env -> String -> IO Module
-parseDeduktiModule env s = do
+
+justParseDeduktiModule :: String -> IO Module
+justParseDeduktiModule s = do
   case pModule (myLexer s) of
     Bad e -> error ("parse error: " ++ e)
-    Ok mo -> return $ foldr ($) mo (deduktiOpers env)
+    Ok mo -> return mo
+
+
+parseDeduktiModule :: Env -> String -> IO Module
+parseDeduktiModule env s = do
+  mo <- justParseDeduktiModule s
+  return $ foldr ($) mo (deduktiOpers env)
 
 
 deduktiOpers :: Env -> [Module -> Module]
