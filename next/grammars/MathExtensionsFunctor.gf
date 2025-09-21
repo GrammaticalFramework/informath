@@ -51,8 +51,8 @@ lin
 
   ExistNoProp argkinds prop = simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.neg)) such_that_Subj (partProp prop)) ; 
 
-  ReladjAdj rel y = Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y) ;
-  Pred3Adj pred y z =
+  Adj2Adj rel y = Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y) ;
+  Adj3Adj pred y z =
     AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z) ;
 
   BaseAdj a b = mkListAP a b ;

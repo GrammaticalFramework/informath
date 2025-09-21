@@ -29,26 +29,23 @@ lincat
   [Rule] = Text ;
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
-  Pred3 = Pred3T ;
+  Adj3 = Pred3T ;
 
 -- lexicon, verbal
   Noun = CN ;
-  Fam = FamilyT ; 
+  Fam = FamilyT ;
+  Fam2 = FamilyT ;
+  Noun1 = CN ;
   Adj = AP ;
   Verb = VP ;
-  Reladj = RelationT ;
-  Relverb = V2 ;
-  Relnoun = {cn : CN ; prep : Prep} ;
+  Adj2 = RelationT ;
+  Verb2 = V2 ;
+  Noun2 = {cn : CN ; prep : Prep} ;
   Name = NP ;
   Fun = FunctionT ;
+  Fun2 = FunctionT ;
   Label = LabelT ;
-{-
--- lexicon, symbolic
-  Set = SetT ;
-  Const = ConstantT ;
-  Oper = OperatorT ;
-  Compar = ComparisonT ;
--}
+
 lin
 -- Base and Const for lists
   BaseIdent ident =

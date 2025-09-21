@@ -13,13 +13,13 @@ lin
   real_Term = tconstant "R";
   complex_Term = tconstant "C";
 
-  Eq_Eqsign = "=" ;
-  Lt_Eqsign = "<" ;
-  Gt_Eqsign = ">" ;
-  Neq_Eqsign = "\\neq" ;
-  Leq_Eqsign = "\\leq" ;
-  Geq_Eqsign = "\\geq" ;
-  perpendicular_Eqsign = "\\perp" ;
+  Eq_Compar = "=" ;
+  Lt_Compar = "<" ;
+  Gt_Compar = ">" ;
+  Neq_Compar = "\\neq" ;
+  Leq_Compar = "\\leq" ;
+  Geq_Compar = "\\geq" ;
+  perpendicular_Compar = "\\perp" ;
   
   plus_Term = mkTerm "+" <1 : Prec> <1 : Prec> <2 : Prec> ;
   minus_Term = mkTerm "-" <1 : Prec> <1 : Prec> <2 : Prec> ;
@@ -44,14 +44,14 @@ lin
   square_Term = mkTerm "" "" "^{ 2 }" <2 : Prec> ;
   legendre_symbol_Term = mkTerm "\\left(\\frac{" "}{" "}\\right)" <4 : Prec> ;
 
-  subset_Eqsign = "\\subset" ;  
-  subseteq_Eqsign = "\\subseteq" ;
-  superset_Eqsign = "\\supset" ;  
-  superseteq_Eqsign = "\\supseteq" ;  
-  equalset_Eqsign = "=" ;
-  notequalset_Eqsign = "\\neq" ;
-  element_Eqsign = "\\in" ;  
-  notelement_Eqsign = "\\notin" ;
+  subset_Compar = "\\subset" ;  
+  subseteq_Compar = "\\subseteq" ;
+  superset_Compar = "\\supset" ;  
+  superseteq_Compar = "\\supseteq" ;  
+  equalset_Compar = "=" ;
+  notequalset_Compar = "\\neq" ;
+  element_Compar = "\\in" ;  
+  notelement_Compar = "\\notin" ;
 
   emptyset_Term = tconstant "\\emptyset" ;
   universeset_Term = tconstant "\\mathbb{ U }" ;
@@ -69,7 +69,7 @@ lin
   arcsin_Term = mkTerm  "\\arcsin" ;
   arccos_Term = mkTerm  "\\arccos" ;
   arctan_Term = mkTerm  "\\arctan" ;
-  orthogonal_Eqsign = "\\perp" ;
+  orthogonal_Compar = "\\perp" ;
 
   dot_product_Term = mkTerm "\\cdot" <1 : Prec> <1 : Prec> <2 : Prec> ;
   vector_plus_Term = mkTerm "+" <1 : Prec> <1 : Prec> <2 : Prec> ;
@@ -104,9 +104,21 @@ oper
 	p = p ;
 	isNumber = False
 	} ;
+    mkTerm : (beg, op, end : Str) -> Prec -> TermPrecNum -> TermPrecNum
+      = \beg, op, end, p, x  -> {
+        s = beg ++ usePrec (nextPrec p) x ++ op ++ end ;
+	p = p ;
+	isNumber = False
+	} ;
     mkOper : (beg, op, end : Str) -> Prec -> Prec -> Prec -> OperT -- worst case
       = \beg, op, end , p, p1, p2, x, y -> {
         s = beg ++ usePrec p1 x ++ op ++ usePrec p2 y ++ end ;
+	p = p ;
+	isNumber = False
+	} ; 
+    mkOper : (beg, op, end : Str) -> Prec -> Prec -> Prec -> TermPrecNum -> TermPrecNum
+      = \beg, op, end , p, p1, p2, x -> {
+        s = beg ++ usePrec p1 x ++ op ++ end ;
 	p = p ;
 	isNumber = False
 	} ; 

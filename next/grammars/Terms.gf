@@ -6,7 +6,7 @@ cat
   Formula ;
   Declaration ;
   Equation ;
-  Eqsign ;
+  Compar ;
   Term ;
   [Term] {1} ;
   Function ;
@@ -19,8 +19,8 @@ fun
   DElem : [Term] -> Term -> Declaration ;
   DFunction : Ident -> Term -> Term -> Declaration ;
 
-  EChain : Eqsign -> Term -> Equation -> Equation ;
-  EBinary : Eqsign -> Term -> Term -> Equation ;
+  EChain : Compar -> Term -> Equation -> Equation ;
+  EBinary : Compar -> Term -> Term -> Equation ;
 
   TParenth : Term -> Term ; -- extra parentheses
 

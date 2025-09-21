@@ -34,8 +34,8 @@ lin
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
-  disjoint_Eqsign = "\\notmeets" ;
-  ni_Eqsign = "\\ni" ;
+  disjoint_Compar = "\\notmeets" ;
+  ni_Compar = "\\ni" ;
   
 
 oper

@@ -5,7 +5,7 @@ lincat
   Formula = TermPrec ;
   Declaration = {s : Str ; isPl : Bool} ;
   Equation = {s : Str} ;
-  Eqsign = Str ;
+  Compar = Str ;
   Term = TermPrecNum ;
   [Term] = {s : Str ; isPl : Bool} ;
   Function = Str ;

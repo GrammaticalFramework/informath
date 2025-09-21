@@ -75,21 +75,24 @@ fun
 
   AdjProp : Adj -> Exp -> Prop ;
   NotAdjProp : Adj -> Exp -> Prop ;
-  ReladjProp : Reladj -> Exp -> Exp -> Prop ;
+  Adj2Prop : Adj2 -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
   NameExp : Name -> Exp ;
-  FunListExp : Fun -> Exps -> Exp ;
+  FunExp : Fun -> Exp -> Exp ;
+  Fun2Exp : Fun2 -> Exp -> Exp -> Exp ;
   LabelProofExp : Label -> ProofExp ;
   FamKind : Fam -> Kind -> Kind ;
-  Fam2Kind : Fam -> Kind -> Kind -> Kind ;
+  Fam2Kind : Fam2 -> Kind -> Kind -> Kind ;
+  Noun1Prop : Noun1 -> Exp -> Prop ;
   VerbProp : Verb -> Exp -> Prop ;
-  RelverbProp : Relverb -> Exp -> Exp -> Prop ;
-  RelnounProp : Relnoun -> Exp -> Exp -> Prop ;
+  Verb2Prop : Verb2 -> Exp -> Exp -> Prop ;
+  Noun2Prop : Noun2 -> Exp -> Exp -> Prop ;
   NotVerbProp : Verb -> Exp -> Prop ;
-  NotReladjProp : Reladj -> Exp -> Exp -> Prop ;
-  NotRelverbProp : Relverb -> Exp -> Exp -> Prop ;
-  NotRelnounProp : Relnoun -> Exp -> Exp -> Prop ;
-  Pred3Prop : Pred3 -> Exp -> Exp -> Exp -> Prop ;
+  NotNoun1Prop : Noun1 -> Exp -> Prop ;
+  NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
+  NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
+  NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
+  Adj3Prop : Adj3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti

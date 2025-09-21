@@ -136,10 +136,12 @@ lin
 
   AdjProp adj exp = simpleProp (mkS (mkCl exp adj)) ;
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
-  ReladjProp rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
+  Adj2Prop rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
-  FunListExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
+  FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
+  Fun2Exp f x y = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep (mkNP and_Conj x y))) ;
+----  FunListExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
   FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep1 (mkNP aPl_Det (useKind kind))} ;
   Fam2Kind fam kind1 kind2 =
@@ -152,14 +154,16 @@ lin
       True => Syntax.mkAdv fam.prep1 (mkNP and_Conj k1 k2)  
       }
     } ;
+  Noun1Prop noun exp = simpleProp (mkS (mkCl exp noun)) ; 
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
-  RelverbProp verb x y = simpleProp (mkS (mkCl x verb y)) ; 
-  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  Verb2Prop verb x y = simpleProp (mkS (mkCl x verb y)) ; 
+  Noun2Prop rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
-  NotReladjProp adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
-  NotRelverbProp verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
-  NotRelnounProp rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
-  Pred3Prop pred x y z =
+  NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
+  NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
+  NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
+  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  Adj3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 
 -- coercions, to disappear in Core2Informath

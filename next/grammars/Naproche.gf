@@ -18,7 +18,7 @@ fun
 -- lexicon
   inhabited_Adj : Adj ;
   empty_Adj : Adj ;
-  disjoint_Eqsign : Eqsign ;
-  ni_Eqsign : Eqsign ;
+  disjoint_Compar : Compar ;
+  ni_Compar : Compar ;
   
 }
