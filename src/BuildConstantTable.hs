@@ -127,22 +127,6 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
-{-
--- annotate idents with all information
-annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
-annotateDkIdents table t = case t of
-  EIdent ident -> case M.lookup ident table of
-    Just entry -> EAnnotIdent ident
-                    (let (f, t) = primary entry in GFFunCat (dk f) (dk (valCat t)))
-		    [GFFunCat (dk f) (dk (valCat t)) | (f, t) <- symbolics entry]
-		    [GFFunCat (dk f) (dk (valCat t)) | (f, t) <- synonyms entry]
-    _ -> t
-  _ -> composOp (annotateDkIdents table) t
- where
-   valCat t = case unType t of (_, c, _) -> c
-   dk c = QIdent (showCId c)
--}
-
 -- annotate idents with cat and fun
 annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
 annotateDkIdents table t = case t of
@@ -156,24 +140,13 @@ annotateDkIdents table t = case t of
    dk c = showCId c
 
 
--- look up the primary fun and cat of an annotated Dk ident
-lookupPrimaryConstant :: Exp -> Maybe (String, String)
-lookupPrimaryConstant exp = case exp of
-  EAnnotIdent dk (GFFunCat (QIdent f) (QIdent c)) _ _ -> Just (f, c)
-  _ -> Nothing
-
--- look up symbolic variants
-lookupSymbolicConstants :: Exp -> [(String, String)]
-lookupSymbolicConstants exp = case exp of
-  EAnnotIdent dk _ symbs _ -> [(f, c) | GFFunCat (QIdent f) (QIdent c) <- symbs]
-  _ -> []
-
--- look up synonym variants
-lookupSynonymConstants :: Exp -> [(String, String)]
-lookupSynonymConstants exp = case exp of
-  EAnnotIdent dk _ _ syns -> [(f, c) | GFFunCat (QIdent f) (QIdent c) <- syns]
-  _ -> []
-
+-- annotate idents with symbolic cat and fun, if possible
+annotateDkIdentsSymbolic :: ConstantTable -> DkTree a -> DkTree a
+annotateDkIdentsSymbolic table = annotateDkIdents symtable where
+  symtable = M.map primsym table
+  primsym entry = case symbolics entry of
+    fc : _ -> entry {primary = fc}
+    _ -> entry
 
 ----variantDkAnnotations :: ConstantTable -> DkTree a -> [DkTree a]
 

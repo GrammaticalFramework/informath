@@ -30,46 +30,47 @@ jmt2jmt jmt = case jmt of
     let mexp = case meexp of
           MEExp exp -> Just exp
           _ -> Nothing
-    in case (splitType typ, guessGFCat ident typ) of
+	(hypos, kind) = splitType typ
+	chypos = hypos2hypos (addVarsToHypos mexp hypos)
+    in case ((hypos, kind), guessGFCat ident typ) of
       ((hypos, kind), c) | elem c ["Label"] -> 
         (maybe GAxiomJmt (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
           (ident2label ident)
           (GListHypo (hypos2hypos hypos))
           (exp2prop kind)
-      ((hypos, kind), c) | elem c ["Noun", "Set"] -> 
+      ((hypos, kind), c) | elem c ["Noun"] -> 
           (maybe (GAxiomKindJmt axiomLabel)
                (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
             (GListHypo (hypos2hypos hypos))
             (ident2kind ident)
-      ((hypos, kind), c) | elem c ["Name", "Const", "Unknown"] ->
+      ((hypos, kind), c) | elem c ["Name", "Term"] ->
           (maybe (GAxiomExpJmt axiomLabel)
 	         (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp exp)) mexp)
-            (GListHypo (hypos2hypos hypos))
-	    (ident2exp ident)
+            (GListHypo chypos)
+	    (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
             (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Fun", "Oper"] ->
-        let chypos = hypos2hypos (addVarsToHypos mexp hypos)
-        in (maybe (GAxiomExpJmt axiomLabel)
+      ((hypos, kind), c) | elem c ["Fun", "Fun2"] ->
+        (maybe (GAxiomExpJmt axiomLabel)
 	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
              (GListHypo chypos)
              (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
              (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Adj2", "Verb2", "Noun2", "Adj3"] ->
-        let chypos = hypos2hypos  (addVarsToHypos mexp hypos)
-        in (maybe (GAxiomPropJmt axiomLabel)
+      ((hypos, kind), c) | elem c ["Adj2", "Verb2", "Noun2", "Adj3", "Compar"] ->
+        (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
 	     (funListProp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
-      ((hypos, kind), c) | elem c ["Adj", "Verb"] ->
-        let chypos = hypos2hypos  (addVarsToHypos mexp hypos)
-        in (maybe (GAxiomPropJmt axiomLabel)
+      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1"] ->
+        (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
 	     (funListProp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
       ((hypos, kind), _) -> -- def of "Unknown" ident is interpreted as a theorem
-        GAxiomExpJmt axiomLabel
-          (GListHypo (hypos2hypos hypos)) (ident2exp ident)
-          (exp2kind kind)
+	GAxiomExpJmt axiomLabel
+             (GListHypo chypos)
+	  ---(ident2exp ident)
+	     (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+             (exp2kind kind)
   JStatic ident typ ->
     jmt2jmt (JDef ident (MTExp typ) MENone)
   JInj ident mtyp mexp ->
@@ -87,8 +88,9 @@ axiomLabel = LexLabel "axiomLabel"
 
 funListExp :: QIdent -> [GExp] -> GExp
 funListExp ident exps = case ident of
-  QIdent s -> case lookupConstant s of
-----    Just ("Fun", c) -> GFunListExp (LexFun c) (gExps exps)
+  QIdent s -> case (lookupConstant s, exps) of
+    (Just ("Fun", c), [x]) -> GFunExp (LexFun c) x
+    (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) x y
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps exps)

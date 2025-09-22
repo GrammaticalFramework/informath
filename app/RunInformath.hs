@@ -164,7 +164,14 @@ main = do
         mapM_ (putStrLn . printTree) jmts
       let gfjmts = map DMC.jmt2core jmts
       let gftrees = map N.gf gfjmts
-      mapM_ (putStrLn . linearize pgf (tolang env)) gftrees 
+      let dk1@(MJmts jmts) = annotateDkIdentsSymbolic table dk
+      ifv env $ do
+        putStrLn "# showing symbolically annotated Dedukti code"
+        mapM_ (putStrLn . printTree) jmts
+      let gfjmts = map DMC.jmt2core jmts
+      let sgftrees = map N.gf gfjmts
+      let allgftrees = concat [[v, s] | (v, s) <- zip gftrees sgftrees]
+      mapM_ (putStrLn . linearize pgf (tolang env)) allgftrees 
     ---- end next version
       
 
