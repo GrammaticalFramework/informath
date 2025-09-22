@@ -6,6 +6,9 @@ module BuildConstantTable where
 import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 
+import CommonConcepts
+import DeduktiOperations
+
 import PGF
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -124,7 +127,8 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
--- annotate idents
+{-
+-- annotate idents with all information
 annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
 annotateDkIdents table t = case t of
   EIdent ident -> case M.lookup ident table of
@@ -137,6 +141,20 @@ annotateDkIdents table t = case t of
  where
    valCat t = case unType t of (_, c, _) -> c
    dk c = QIdent (showCId c)
+-}
+
+-- annotate idents with cat and fun
+annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
+annotateDkIdents table t = case t of
+  QIdent ident -> case M.lookup t table of
+    Just entry -> let (f, t) = primary entry
+                  in QIdent (ident ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
+    _ -> t
+  _ -> composOp (annotateDkIdents table) t
+ where
+   valCat t = case unType t of (_, c, _) -> c
+   dk c = showCId c
+
 
 -- look up the primary fun and cat of an annotated Dk ident
 lookupPrimaryConstant :: Exp -> Maybe (String, String)
@@ -144,5 +162,43 @@ lookupPrimaryConstant exp = case exp of
   EAnnotIdent dk (GFFunCat (QIdent f) (QIdent c)) _ _ -> Just (f, c)
   _ -> Nothing
 
+-- look up symbolic variants
+lookupSymbolicConstants :: Exp -> [(String, String)]
+lookupSymbolicConstants exp = case exp of
+  EAnnotIdent dk _ symbs _ -> [(f, c) | GFFunCat (QIdent f) (QIdent c) <- symbs]
+  _ -> []
+
+-- look up synonym variants
+lookupSynonymConstants :: Exp -> [(String, String)]
+lookupSynonymConstants exp = case exp of
+  EAnnotIdent dk _ _ syns -> [(f, c) | GFFunCat (QIdent f) (QIdent c) <- syns]
+  _ -> []
 
 
+----variantDkAnnotations :: ConstantTable -> DkTree a -> [DkTree a]
+
+-- deciding the kind of a new constant
+guessGFCat :: QIdent -> Exp -> String
+guessGFCat ident@(QIdent c) typ =
+  let
+    (hypos, val) = splitType typ
+    arity = length hypos
+  in case lookupConstant c of
+    Just (cat, _) -> cat
+    _ -> case splitApp val of
+      (EIdent f, _) | f == identProp -> case arity of
+        0 -> "Name" --- not really
+        1 -> "Adj"
+        2 -> "Adj2"
+        3 -> "Adj3"
+        _ -> "Fun"
+      (EIdent f, _) | elem f [identSet, identType] -> case arity of
+        0 -> "Noun"
+        1 -> "Fam"
+        _ -> "Fam2"
+      (EIdent f, _) | f == identElem -> case arity of
+        0 -> "Name"
+        1 -> "Fun"
+        _ -> "Fun2"
+      (EIdent f, _) | f == identProof -> "Label"
+      _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)

@@ -30,7 +30,7 @@ jmt2jmt jmt = case jmt of
     let mexp = case meexp of
           MEExp exp -> Just exp
           _ -> Nothing
-    in case (splitType typ, guessCat ident typ) of
+    in case (splitType typ, guessGFCat ident typ) of
       ((hypos, kind), c) | elem c ["Label"] -> 
         (maybe GAxiomJmt (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
           (ident2label ident)

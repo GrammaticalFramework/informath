@@ -29,6 +29,7 @@ import Ranking
 
 import BuildConstantTable -- next version
 import qualified DMC
+import qualified NextInformath as N
 
 import PGF
 
@@ -146,15 +147,26 @@ main = do
   case yy of
     _ | ifFlag "-help" env -> do
       putStrLn helpMsg
-      
+
+    ---- Next version, to be merged
     filename:_ | ifFlag "-next" env && isSuffixOf ".dkgf" filename -> do
       let dkfile = flagValue "dkfile" baseConstantFile ff
       dk <- readFile dkfile >>= justParseDeduktiModule
       pgf <- readPGF nextInformathPGF
+      putStrLn "# building and checking constant table"
       table <- buildConstantTable filename dk pgf
-      putStrLn $ printConstantTable table
-      let dk1 = annotateDkIdents table dk
-      putStrLn $ printTree dk1
+      ifv env $ do
+        putStrLn "# showing constant table"
+        putStrLn $ printConstantTable table
+      let dk1@(MJmts jmts) = annotateDkIdents table dk
+      ifv env $ do
+        putStrLn "# showing annotated Dedukti code"
+        mapM_ (putStrLn . printTree) jmts
+      let gfjmts = map DMC.jmt2core jmts
+      let gftrees = map N.gf gfjmts
+      mapM_ (putStrLn . linearize pgf (tolang env)) gftrees 
+    ---- end next version
+      
 
     filename:_ | isSuffixOf ".dkgf" filename -> do
       let gfname = flagValue "gfname" "UserConstants" ff
