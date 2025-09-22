@@ -1,3 +1,6 @@
+{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
+
 module BuildConstantTable where
 
 import Dedukti.AbsDedukti
@@ -117,4 +120,29 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
     EFun hypo exp -> case getDkType exp of
       (hypos, val) -> (hypo:hypos, val)
     _ -> ([], typ)
+
+
+type DkTree a = Dedukti.AbsDedukti.Tree a
+
+-- annotate idents
+annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
+annotateDkIdents table t = case t of
+  EIdent ident -> case M.lookup ident table of
+    Just entry -> EAnnotIdent ident
+                    (let (f, t) = primary entry in GFFunCat (dk f) (dk (valCat t)))
+		    [GFFunCat (dk f) (dk (valCat t)) | (f, t) <- symbolics entry]
+		    [GFFunCat (dk f) (dk (valCat t)) | (f, t) <- synonyms entry]
+    _ -> t
+  _ -> composOp (annotateDkIdents table) t
+ where
+   valCat t = case unType t of (_, c, _) -> c
+   dk c = QIdent (showCId c)
+
+-- look up the primary fun and cat of an annotated Dk ident
+lookupPrimaryConstant :: Exp -> Maybe (String, String)
+lookupPrimaryConstant exp = case exp of
+  EAnnotIdent dk (GFFunCat (QIdent f) (QIdent c)) _ _ -> Just (f, c)
+  _ -> Nothing
+
+
 

@@ -28,6 +28,7 @@ import qualified Dedukti2Lean as DL
 import Ranking
 
 import BuildConstantTable -- next version
+import qualified DMC
 
 import PGF
 
@@ -152,7 +153,8 @@ main = do
       pgf <- readPGF nextInformathPGF
       table <- buildConstantTable filename dk pgf
       putStrLn $ printConstantTable table
-      
+      let dk1 = annotateDkIdents table dk
+      putStrLn $ printTree dk1
 
     filename:_ | isSuffixOf ".dkgf" filename -> do
       let gfname = flagValue "gfname" "UserConstants" ff

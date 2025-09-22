@@ -45,7 +45,10 @@ executable RunInformath
     Lean.AbsLean
     Lean.ComposOp
     Lean.PrintLean
-  hs-source-dirs:      app src src/typetheory grammars
+    BuildConstantTable
+    DMC
+    NextInformath
+  hs-source-dirs:      app src src/typetheory grammars next/grammars
   ghc-options:         -O2
   build-depends:       base >=4.18 && <5,
                        containers,
