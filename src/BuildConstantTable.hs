@@ -23,7 +23,7 @@ type Fun = CId
 type Cat = CId
 
 symbolicCats :: S.Set Cat
-symbolicCats = S.fromList [mkCId c | c <- words "Formula Term Compar"]
+symbolicCats = S.fromList [mkCId c | c <- words "Formula Term Compar Const Oper Oper2"]
 
 
 type ConstantTable = M.Map QIdent ConstantTableEntry
@@ -82,8 +82,8 @@ mismatchingTypes :: DkType -> Type -> Bool
 mismatchingTypes dktyp gftyp = arityMismatch dktyp (unType gftyp) where
   arityMismatch (dkhypos, _) (gfhypos, cid, _) = length dkhypos /= arity gfhypos cid
   arity gfhypos cid = case showCId cid of
-    s | elem s (words "Adj Verb Fun Fam Noun1") -> 1
-    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar") -> 2
+    s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
+    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2") -> 2
     s | elem s (words "Adj3") -> 3
     _ -> length gfhypos
     

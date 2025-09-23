@@ -47,29 +47,29 @@ jmt2jmt jmt = case jmt of
           (maybe (GAxiomExpJmt axiomLabel)
 	         (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp exp)) mexp)
             (GListHypo chypos)
-	    (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+	    (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
             (exp2kind kind)
       ((hypos, kind), c) | elem c ["Fun", "Fun2"] ->
         (maybe (GAxiomExpJmt axiomLabel)
 	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
              (GListHypo chypos)
-             (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+             (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
              (exp2kind kind)
       ((hypos, kind), c) | elem c ["Adj2", "Verb2", "Noun2", "Adj3", "Compar"] ->
         (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
-	     (funListProp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+	     (funListProp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
       ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1"] ->
         (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
-	     (funListProp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+	     (funListProp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
       ((hypos, kind), _) -> -- def of "Unknown" ident is interpreted as a theorem
 	GAxiomExpJmt axiomLabel
              (GListHypo chypos)
 	  ---(ident2exp ident)
-	     (funListExp ident (map (GTermExp . GTIdent) (concatMap hypoIdents chypos)))
+	     (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
              (exp2kind kind)
   JStatic ident typ ->
     jmt2jmt (JDef ident (MTExp typ) MENone)
@@ -249,7 +249,7 @@ exp2exp exp = case exp of
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
     -}
       EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
-        Just s -> GTermExp (GTNumber (GInt (read s)))
+        Just s -> GTermExp (GNumberTerm (GInt (read s)))
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
       EIdent ident@(QIdent f) -> case (f, args) of
         _ -> case (lookupConstant f, args) of
@@ -301,7 +301,7 @@ ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Name", c) -> GNameExp (LexName c)
-    _ -> GTermExp (GTIdent (ident2ident ident))
+    _ -> GTermExp (GIdentTerm (ident2ident ident))
 
 ident2label :: QIdent -> GLabel
 ident2label ident = case ident of
@@ -313,7 +313,7 @@ ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Noun", c) -> GNounKind (LexNoun c)
-    _ -> GTermKind (GTIdent (ident2ident ident))
+    _ -> GTermKind (GIdentTerm (ident2ident ident))
 
 bind2coreIdent :: Bind -> GIdent
 bind2coreIdent = ident2ident . bind2ident

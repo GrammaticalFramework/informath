@@ -6,11 +6,11 @@ Num number_Noun
 bool boolean_Noun
 List list_Fam
 Dig digit_Noun
-Nat natural_Noun natural_Term
-Int integer_Noun integer_Term
-Rat rational_Noun rational_Term
-Real real_Noun real_Term
-Complex complex_Noun complex_Term
+Nat natural_Noun natural_Const
+Int integer_Noun integer_Const
+Rat rational_Noun rational_Const
+Real real_Noun real_Const
+Complex complex_Noun complex_Const
 Cardinal cardinal_Noun
 Eq Eq_Adj2 Eq_Compar
 Lt Lt_Adj2 Lt_Compar
@@ -20,17 +20,17 @@ Leq Leq_Compar
 Geq Geq_Compar
 positive positive_Adj
 negative negative_Adj
-plus plus_Fun2 plus_Term
-minus minus_Fun2 minus_Term
-times times_Fun2 times_Term
-div div_Fun2 div_Term
-pow pow_Fun2 pow_Term
-neg neg_Fun neg_Term
-log logarithm_Fun2 logarithm_Term
-sqrt square_root_Fun square_root_Term
+plus plus_Fun2 plus_Oper2
+minus minus_Fun2 minus_Oper2
+times times_Fun2 times_Oper2
+div div_Fun2 div_Oper2
+pow pow_Fun2 pow_Oper2
+neg neg_Fun neg_Oper
+log logarithm_Fun2 logarithm_Oper
+sqrt square_root_Fun square_root_Oper
 succ successor_Fun
-abs absolute_value_Fun absolute_value_Term
-factorial factorial_Fun factorial_Term
+abs absolute_value_Fun absolute_value_Oper
+factorial factorial_Fun factorial_Oper
 gcd gcd_Fun2
 even even_Adj
 odd odd_Adj
@@ -40,22 +40,22 @@ divide divide_Verb2
 divisor divisor_Noun2
 converge converge_Verb
 function function_Fam2
-union union_Fun2 union_Term
-intersection intersection_Fun2 intersection_Term
-difference difference_Fun2 difference_Term
-cartesian cartesian_Fun2 cartesian_Term
-powerset powerset_Fun powerset_Term
-complement complement_Fun complement_Term
+union union_Fun2 union_Oper2
+intersection intersection_Fun2 intersection_Oper2
+difference difference_Fun2 difference_Oper2
+cartesian cartesian_Fun2 cartesian_Oper2
+powerset powerset_Fun powerset_Oper
+complement complement_Fun complement_Oper
 subset subset_Noun2 subset_Compar
 subseteq subseteq_Noun2 subseteq_Compar
 superset superset_Noun2 superset_Compar
 superseteq superseteq_Noun2 superseteq_Compar
-equalset equalset_Adj2 equalset_Compar
-notequalset notequalset_Adj2 notequalset_Compar
+equalset equalset_Adj2 Eq_Compar
+notequalset notequalset_Adj2 Neq_Compar
 element element_Noun2 element_Compar
 notelement notelement_Noun2 notelement_Compar
-emptyset emptyset_Name emptyset_Term
-universeset universeset_Name universeset_Term
+emptyset emptyset_Name emptyset_Const
+universeset universeset_Name universeset_Const
 congruent congruent_Pred3
 finite finite_Adj
 infinite infinite_Adj
@@ -64,30 +64,30 @@ irrational irrational_Adj
 Polynomial polynomial_Noun
 degree degree_Fun
 isRoot is_root_Noun2
-cardinality cardinality_Fun cardinality_Term
+cardinality cardinality_Fun cardinality_Oper
 denumerable denumerable_Adj
 Vector vector_Noun
-length length_Fun length_Term norm_Fun
+length length_Fun length_Oper norm_Fun
 perpendicular perpendicular_Compar
 resultant resultant_Fun2
-square square_Fun square_Term
-legendre legendre_symbol_Fun2 legendre_symbol_Term
-pi pi_Name pi_Term
+square square_Fun square_Oper
+legendre legendre_symbol_Fun2 legendre_symbol_Oper2
+pi pi_Name pi_Const
 Circle circle_Noun
 radius radius_Fun
 area area_Fun
-binomial binomial_Fun2 binomial_Term
-combinations combinations_Fun2 combinations_Term
-combinationsFromSet combinationsFromSet_Fun2 combinations_Term
-sin sin_Fun sin_Term
-cos cos_Fun cos_Term
-tan tan_Fun tan_Term
-arcsin arcsin_Fun arcsin_Term
-arccos arccos_Fun arcsin_Term
-arctan arctan_Fun arcsin_Term
+binomial binomial_Fun2 binomial_Oper2
+combinations combinations_Fun2 combinations_Oper2
+combinationsFromSet combinationsFromSet_Fun2 combinations_Oper2
+sin sin_Fun sin_Oper
+cos cos_Fun cos_Oper
+tan tan_Fun tan_Oper
+arcsin arcsin_Fun arcsin_Oper
+arccos arccos_Fun arcsin_Oper
+arctan arctan_Fun arcsin_Oper
 orthogonal orthogonal_Compar
 angleBetween angle_between_Fun2
-dotProduct dot_product_Fun2 dot_product_Term
-vectorPlus vector_plus_Fun2 plus_Term
+dotProduct dot_product_Fun2 dot_product_Oper2
+vectorPlus vector_plus_Fun2 plus_Oper2
 sphenic sphenic_Adj
 

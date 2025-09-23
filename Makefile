@@ -13,7 +13,7 @@ grammars/Informath.pgf: $(GF_FILES)
 
 # if you want to use the -next option, also do this
 next/grammars/NextInformath.pgf: $(GF_FILES)
-	cd next/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,Fun,Fun2,Verb,Verb2,Label,Compar,Term -name=NextInformath InformathEng.gf 
+	cd next/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,Fun,Fun2,Verb,Verb2,Label,Compar,Const,Oper,Oper2 -name=NextInformath InformathEng.gf 
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
