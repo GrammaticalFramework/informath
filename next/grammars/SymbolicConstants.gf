@@ -20,7 +20,7 @@ fun
   div_Oper2 : Oper2 ;
   pow_Oper2 : Oper2 ;
   neg_Oper : Oper ;
-  logarithm_Oper : Oper ;
+  logarithm_Oper2 : Oper2 ;
   square_root_Oper : Oper ;
   
   absolute_value_Oper : Oper ;

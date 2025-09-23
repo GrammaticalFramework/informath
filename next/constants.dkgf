@@ -15,9 +15,9 @@ Cardinal cardinal_Noun
 Eq Eq_Adj2 Eq_Compar
 Lt Lt_Adj2 Lt_Compar
 Gt Gt_Adj2 Gt_Compar
-Neq Neq_Compar
-Leq Leq_Compar
-Geq Geq_Compar
+Neq Neq_Adj2 Neq_Compar
+Leq Leq_Adj2 Leq_Compar
+Geq Geq_Adj2 Geq_Compar
 positive positive_Adj
 negative negative_Adj
 plus plus_Fun2 plus_Oper2
@@ -26,7 +26,7 @@ times times_Fun2 times_Oper2
 div div_Fun2 div_Oper2
 pow pow_Fun2 pow_Oper2
 neg neg_Fun neg_Oper
-log logarithm_Fun2 logarithm_Oper
+log logarithm_Fun2 logarithm_Oper2
 sqrt square_root_Fun square_root_Oper
 succ successor_Fun
 abs absolute_value_Fun absolute_value_Oper
@@ -68,7 +68,8 @@ cardinality cardinality_Fun cardinality_Oper
 denumerable denumerable_Adj
 Vector vector_Noun
 length length_Fun length_Oper norm_Fun
-perpendicular perpendicular_Compar
+norm length_Fun length_Oper norm_Fun
+perpendicular perpendicular_Adj2 orthogonal_Adj2 perpendicular_Compar
 resultant resultant_Fun2
 square square_Fun square_Oper
 legendre legendre_symbol_Fun2 legendre_symbol_Oper2
@@ -85,7 +86,7 @@ tan tan_Fun tan_Oper
 arcsin arcsin_Fun arcsin_Oper
 arccos arccos_Fun arcsin_Oper
 arctan arctan_Fun arcsin_Oper
-orthogonal orthogonal_Compar
+orthogonal orthogonal_Adj2 orthogonal_Compar
 angleBetween angle_between_Fun2
 dotProduct dot_product_Fun2 dot_product_Oper2
 vectorPlus vector_plus_Fun2 plus_Oper2

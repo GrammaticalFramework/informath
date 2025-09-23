@@ -149,6 +149,8 @@ main = do
       putStrLn helpMsg
 
     ---- Next version, to be merged
+    -- RunInformath -next -inputfile=test/top100.dk next/constants.dkgf
+    
     filename:_ | ifFlag "-next" env && isSuffixOf ".dkgf" filename -> do
       let dkfile = flagValue "dkfile" baseConstantFile ff
       dk <- readFile dkfile >>= justParseDeduktiModule
@@ -158,13 +160,15 @@ main = do
       ifv env $ do
         putStrLn "# showing constant table"
         putStrLn $ printConstantTable table
-      let dk1@(MJmts jmts) = annotateDkIdents table dk
+      let inputfile = flagValue "inputfile" dkfile ff
+      dk0 <- readFile inputfile >>= justParseDeduktiModule
+      let dk1@(MJmts jmts) = annotateDkIdents table dk0
       ifv env $ do
         putStrLn "# showing annotated Dedukti code"
         mapM_ (putStrLn . printTree) jmts
       let gfjmts = map DMC.jmt2core jmts
       let gftrees = map N.gf gfjmts
-      let dk1@(MJmts jmts) = annotateDkIdentsSymbolic table dk
+      let dk1@(MJmts jmts) = annotateDkIdentsSymbolic table dk0
       ifv env $ do
         putStrLn "# showing symbolically annotated Dedukti code"
         mapM_ (putStrLn . printTree) jmts
