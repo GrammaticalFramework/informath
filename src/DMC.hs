@@ -33,6 +33,8 @@ jmt2jmt jmt = case jmt of
 	(hypos, kind) = splitType typ
 	chypos = hypos2hypos (addVarsToHypos mexp hypos)
     in case ((hypos, kind), guessGFCat ident typ) of
+    
+    -- verbal constants
       ((hypos, kind), c) | elem c ["Label"] -> 
         (maybe GAxiomJmt (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
           (ident2label ident)
@@ -43,34 +45,39 @@ jmt2jmt jmt = case jmt of
                (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
             (GListHypo (hypos2hypos hypos))
             (ident2kind ident)
-      ((hypos, kind), c) | elem c ["Name", "Term"] ->
-          (maybe (GAxiomExpJmt axiomLabel)
-	         (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp exp)) mexp)
-            (GListHypo chypos)
-	    (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
-            (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Fun", "Fun2"] ->
+      ((hypos, kind), c) | elem c ["Name", "Fun", "Fun2"] ->
         (maybe (GAxiomExpJmt axiomLabel)
 	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
              (GListHypo chypos)
              (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
              (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Adj2", "Verb2", "Noun2", "Adj3", "Compar"] ->
+      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "Verb2", "Noun2", "Adj3"] ->
         (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
 	     (funListProp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
-      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1"] ->
-        (maybe (GAxiomPropJmt axiomLabel)
-	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
+	     
+    -- symbolic constants
+      ((hypos, kind), c) | elem c ["Const", "Oper", "Oper2"] ->
+        (maybe (GAxiomExpJmt axiomLabel)
+	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
              (GListHypo chypos)
-	     (funListProp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
-      ((hypos, kind), _) -> -- def of "Unknown" ident is interpreted as a theorem
-	GAxiomExpJmt axiomLabel
-             (GListHypo chypos)
-	  ---(ident2exp ident)
-	     (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
+             (GTermExp (funListTerm ident (map GIdentTerm (concatMap hypoIdents chypos))))
              (exp2kind kind)
+      ((hypos, kind), c) | elem c ["Compar"] ->
+        (maybe (GAxiomPropJmt axiomLabel)
+	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
+             (GListHypo chypos)
+	     (GFormulaProp (funListFormula ident (map GIdentTerm (concatMap hypoIdents chypos))))
+	     
+    -- "Unknown" constants not in symbol tables, treated as Exp
+      ((hypos, kind), _) -> 
+        (maybe (GAxiomExpJmt axiomLabel)
+	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
+             (GListHypo chypos)
+             (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
+             (exp2kind kind)
+	     
   JStatic ident typ ->
     jmt2jmt (JDef ident (MTExp typ) MENone)
   JInj ident mtyp mexp ->
@@ -89,11 +96,22 @@ axiomLabel = LexLabel "axiomLabel"
 funListExp :: QIdent -> [GExp] -> GExp
 funListExp ident exps = case ident of
   QIdent s -> case (lookupConstant s, exps) of
+    (Just ("Name", c), []) -> GNameExp (LexName c)
     (Just ("Fun", c), [x]) -> GFunExp (LexFun c) x
     (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) x y
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps exps)
+
+funListTerm :: QIdent -> [GTerm] -> GTerm
+funListTerm ident exps = case ident of
+  QIdent s -> case (lookupConstant s, exps) of
+    (Just ("Const", c), []) -> GConstTerm (LexConst c)
+    (Just ("Oper", c), [x]) -> GOperTerm (LexOper c) x
+    (Just ("Oper2", c), [x, y]) -> GOper2Term (LexOper2 c) x y
+    _ -> case exps of
+      [] -> GIdentTerm (ident2ident ident)
+      _:_ -> GAppFunctionTerm (GIdentFunction (ident2ident ident)) (GListTerm exps)
 
 funListProp :: QIdent -> [GExp] -> GProp
 funListProp ident exps = case ident of
@@ -115,6 +133,14 @@ funListProp ident exps = case ident of
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
       _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps)
+
+funListFormula :: QIdent -> [GTerm] -> GFormula
+funListFormula ident terms = case ident of
+  QIdent s -> case (lookupConstant s, terms) of
+    (Just ("Compar", c), [x, y]) ->
+      GEquationFormula (GBinaryEquation (LexCompar c) x y)
+  _ -> error ("cannot get formula from " ++ show ident) 
+
 
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of
@@ -217,22 +243,37 @@ exp2prop exp = case exp of
           GVerb2Prop verb x y -> GNotVerb2Prop verb x y
           GNoun2Prop noun x y -> GNotNoun2Prop noun x y
           p -> GNotProp p
-      EIdent ident -> funListProp ident (map exp2exp args)
+      EIdent ident@(QIdent f) -> case exp2formula exp of
+	 Just formula -> GFormulaProp formula
+	 _ -> funListProp ident (map exp2exp args)
+----      _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
   EFun _ _ -> case splitType exp of
     (hypos, exp) ->
       GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
   EAbs _ _ -> case splitAbs exp of
     (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
 
---- (EApp (EApp (EApp (EIdent (QIdent "sigma")) (EIdent (QIdent "1"))) (EIdent (QIdent "9"))) (EAbs (BVar (QIdent "i")) (EIdent (QIdent "i"))))
+exp2formula :: Exp -> Maybe GFormula
+exp2formula exp = case splitApp exp of
+  (fun@(EIdent (ident@(QIdent s))), args) -> do
+    terms <- mapM exp2term args
+    let (cat, c) = maybe ("Unknown", s) id (lookupConstant s)
+    case (cat, terms) of
+      ("Compar", [x, y]) -> return $ GEquationFormula (GBinaryEquation (LexCompar c) x y)
+----      (_, []) -> return $ GIdentTerm (ident2ident ident)
+      _ -> Nothing
+  _ -> Nothing
+
 
 exp2exp :: Exp -> GExp
 exp2exp exp = case exp of
   EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
     Just ("Name", c) -> GNameExp (LexName c)
     _ -> ident2exp ident
+    
   EApp _ _ -> case splitApp exp of
     (fun, args) -> case fun of
+    
     {- ---- TODO in constants.dkgf
       EIdent (QIdent "sigma") | length args == 3 ->
         let [m, n, EAbs b f] = args
@@ -248,14 +289,14 @@ exp2exp exp = case exp of
 	Just [] -> GTermExp (LexTerm "emptyset_Term")
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
     -}
-      EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
-        Just s -> GTermExp (GNumberTerm (GInt (read s)))
-	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-      EIdent ident@(QIdent f) -> case (f, args) of
-        _ -> case (lookupConstant f, args) of
-----          (Just ("Fun", c), exps) -> GFunListExp (LexFun c) (gExps (map exp2exp exps))     
-          _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+    
+      EIdent ident@(QIdent f) -> case lookupConstant f of
+	Just (cat, c) | elem cat ["Name", "Fun", "Fun2"] -> funListExp ident (map exp2exp args)
+	_ -> case exp2term exp of
+	  Just term -> GTermExp term
+	  _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
       _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+      
   EAbs _ _ -> case splitAbs exp of
     (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
   EFun _ _ -> 
@@ -263,6 +304,22 @@ exp2exp exp = case exp of
       (hypos, valexp) ->
         GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
   _ -> error ("not yet exp2exp: " ++ printTree exp)
+
+
+exp2term :: Exp -> Maybe GTerm
+exp2term exp = case splitApp exp of
+  (fun@(EIdent (ident@(QIdent s))), args) -> case getNumber fun args of
+    Just s -> return (GNumberTerm (GInt (read s)))
+    _ -> do
+      terms <- mapM exp2term args
+      let (cat, c) = maybe ("Unknown", s) id (lookupConstant s)
+      case (cat, terms) of
+        ("Const", []) -> return $ GConstTerm (LexConst c)
+        ("Oper", [x]) -> return $ GOperTerm (LexOper c) x
+        ("Oper2", [x, y]) -> return $ GOper2Term (LexOper2 c) x y
+        (_, []) -> return $ GIdentTerm (ident2ident ident)
+        _ -> Nothing
+  _ -> Nothing
 
 
 exp2proof :: Exp -> GProof
