@@ -71,17 +71,17 @@ lin
   TypedExp exp kind = mkNP the_Det (mkCN (mkCN kind.cn exp) kind.adv) ;
   EnumSetExp exps = mkNP the_Det (mkCN set_N (Syntax.mkAdv possess_Prep exps.np)) ;
 
-  AndProp props = complexProp (mkS and_Conj props) ;
-  OrProp props = complexProp (mkS or_Conj props) ;
-  IfProp A B = complexProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
-  IffProp A B = complexProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
+  CoreAndProp A B = complexProp (mkS and_Conj (partProp A) (partProp B)) ;
+  CoreOrProp A B = complexProp (mkS or_Conj (partProp A) (partProp B)) ;
+  CoreIfProp A B = complexProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
+  CoreIffProp A B = complexProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
   NotProp prop =
     simpleProp (mkS negPol (mkCl 
           (mkVP (mkNP the_Quant (mkCN case_N (Syntax.mkAdv that_Subj (partProp prop))))))) ;
-  AllProp argkinds prop =
-    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet argkinds.pl)) (partProp prop)) ;
-  ExistProp argkinds prop =
-    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.sg)) such_that_Subj (partProp prop)) ; 
+  CoreAllProp ident kind prop =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (allNP (identKindCN ident kind))) (partProp prop)) ;
+  CoreExistProp ident kind prop =
+    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP (mkNP a_Det ((identKindCN ident kind))))) such_that_Subj (partProp prop)) ; 
   IdentProp f = simpleProp (latexS (mkSymb f)) ;
   FalseProp = simpleProp (mkS (mkCl we_NP have_V2 (mkNP a_Det contradiction_N))) ;
   AppProp f exps = simpleProp (mkS (mkCl (latexNP (mkSymb f)) hold_V2 exps.np)) ;
@@ -200,6 +200,12 @@ oper
   by_Prep : Prep = by8means_Prep ;
 
   ccAdv : Adv -> Adv -> Adv = \x, y -> lin Adv {s = x.s ++ y.s} ;
+
+  identKindCN : Str -> {cn : CN ; adv : Adv} -> CN = \ident, kind ->
+    mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv ;
+
+  allNP : CN -> NP = \cn ->
+    mkNP all_Predet (mkNP aPl_Det cn) ;
 
 -- non-functor
   negPol : Pol = negativePol ;

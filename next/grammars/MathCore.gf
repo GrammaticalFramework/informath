@@ -37,14 +37,14 @@ fun
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;
 
-  AndProp : [Prop] -> Prop ;
-  OrProp : [Prop] -> Prop ;
-  IfProp : Prop -> Prop -> Prop ;
-  IffProp : Prop -> Prop -> Prop ;
+  CoreAndProp : Prop -> Prop -> Prop ;
+  CoreOrProp : Prop -> Prop -> Prop ;
+  CoreIfProp : Prop -> Prop -> Prop ;
+  CoreIffProp : Prop -> Prop -> Prop ;
   NotProp : Prop -> Prop ;
   FalseProp : Prop ;
-  AllProp : [ArgKind] -> Prop -> Prop ;
-  ExistProp : [ArgKind] -> Prop -> Prop ; 
+  CoreAllProp : Ident -> Kind -> Prop -> Prop ;
+  CoreExistProp : Ident -> Kind -> Prop -> Prop ; 
   IdentProp : Ident -> Prop ;
   AppProp : Ident -> Exps -> Prop ;
 

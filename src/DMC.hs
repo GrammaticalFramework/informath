@@ -218,24 +218,20 @@ exp2prop exp = case exp of
   EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
   EApp _ _ -> case splitApp exp of
     (fun, args) -> case fun of
-      EIdent conn | conn == identConj -> case splitIdent conn exp of
-        exps -> GAndProp (GListProp (map exp2prop exps))
-      EIdent conn | conn == identDisj -> case splitIdent conn exp of
-        exps -> GOrProp (GListProp (map exp2prop exps))
+      EIdent conn | conn == identConj -> case args of
+        [a, b] -> GCoreAndProp (exp2prop a) (exp2prop b) 
+      EIdent conn | conn == identDisj -> case args of
+        [a, b] -> GCoreOrProp (exp2prop a) (exp2prop b) 
       EIdent conn | conn == identImpl -> case args of
-        [a, b] -> GIfProp (exp2prop a) (exp2prop b) 
+        [a, b] -> GCoreIfProp (exp2prop a) (exp2prop b) 
       EIdent conn | conn == identEquiv -> case args of
-        [a, b] -> GIffProp (exp2prop a) (exp2prop b) 
+        [a, b] -> GCoreIffProp (exp2prop a) (exp2prop b) 
       EIdent conn | conn == identSigma -> case args of
         [kind, EAbs bind prop] ->
-          GExistProp
-            (GListArgKind [hypo2coreArgKind (HVarExp (bind2var bind) kind)])
-            (exp2prop prop)
+          GCoreExistProp (ident2ident (bind2var bind)) (exp2kind kind) (exp2prop prop)
       EIdent conn | conn == identPi -> case args of
         [kind, EAbs bind prop] ->
-          GAllProp
-            (GListArgKind [hypo2coreArgKind (HVarExp (bind2var bind) kind)])
-            (exp2prop prop)
+          GCoreAllProp (ident2ident (bind2var bind)) (exp2kind kind) (exp2prop prop)
       EIdent conn | conn == identNeg -> case args of
         [a] -> case exp2prop a of
           GAdjProp adj x -> GNotAdjProp adj x

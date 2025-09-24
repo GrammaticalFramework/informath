@@ -14,10 +14,12 @@ fun
   FormulaImpliesProp : Formula -> Formula -> Prop ;
 
 -- to remove parentheses around complex propositions
-  SimpleAndProp : [Prop] -> Prop ;
-  SimpleOrProp : [Prop] -> Prop ;
-  SimpleIfProp : Prop -> Prop -> Prop ;
-  SimpleIffProp : Prop -> Prop -> Prop ;
+  AndProp : [Prop] -> Prop ;
+  OrProp : [Prop] -> Prop ;
+  IfProp : Prop -> Prop -> Prop ;
+  IffProp : Prop -> Prop -> Prop ;
+  AllProp : [ArgKind] -> Prop -> Prop ;
+  ExistProp : [ArgKind] -> Prop -> Prop ; 
 
   AndAdj : [Adj] -> Adj ;
   OrAdj : [Adj] -> Adj ;

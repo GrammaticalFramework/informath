@@ -27,10 +27,14 @@ lin
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
 
-  SimpleAndProp props = simpleProp (mkS and_Conj props) ;
-  SimpleOrProp props = simpleProp (mkS or_Conj props) ;
-  SimpleIfProp A B = simpleProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
-  SimpleIffProp A B = simpleProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
+  AndProp props = simpleProp (mkS and_Conj props) ;
+  OrProp props = simpleProp (mkS or_Conj props) ;
+  IfProp A B = simpleProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
+  IffProp A B = simpleProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
+  AllProp argkinds prop =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet argkinds.pl)) (partProp prop)) ;
+  ExistProp argkinds prop =
+    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.sg)) such_that_Subj (partProp prop)) ; 
 
   AndAdj adjs = mkAP and_Conj adjs | mkAP both7and_DConj adjs ;
   OrAdj adjs = mkAP or_Conj adjs  | mkAP either7or_DConj adjs ;
