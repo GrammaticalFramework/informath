@@ -138,7 +138,7 @@ annotateDkIdents table t = case t of
  where
    valCat t = case unType t of (_, c, _) -> c
    dk c = showCId c
-
+ 
 
 -- annotate idents with symbolic cat and fun, if possible
 annotateDkIdentsSymbolic :: ConstantTable -> DkTree a -> DkTree a
@@ -148,7 +148,29 @@ annotateDkIdentsSymbolic table = annotateDkIdents symtable where
     fc : _ -> entry {primary = fc}
     _ -> entry
 
-----variantDkAnnotations :: ConstantTable -> DkTree a -> [DkTree a]
+{-
+variantDkAnnotations :: ConstantTable -> DkTree a -> [DkTree a]
+variantDkAnnotations table t = case t of
+  EApp _ _ -> case splitApp t of
+    (EIdent c, xs) -> case M.lookup c table of
+      Just entry -> symbs c xs ++ [ 
+        foldl EApp (EIdent (annot c t f)) xx |
+	   (f, t) <- primary entry : synonyms entry,
+	   xx <- sequence (map (variantDkAnnotations table) xs)
+	   ]
+      _ -> [ 
+        foldl EApp (EIdent c) xx |
+	   xx <- sequence (map (variantDkAnnotations table) xs)
+	   ]
+ where
+   symbs c xs = [ 
+        foldl EApp (EIdent (annot c t f)) xx |
+	   (f, t) <- symbolics entry,
+	   xx <- sequence (map (variantDkAnnotations table) xs)
+	   ]
+-}   
+
+
 
 -- deciding the kind of a new constant
 guessGFCat :: QIdent -> Exp -> String

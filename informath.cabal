@@ -48,7 +48,7 @@ executable RunInformath
     BuildConstantTable
     DMC
     NextInformath
-  hs-source-dirs:      app src src/typetheory grammars next/grammars
+  hs-source-dirs:      app src src/typetheory grammars next next/grammars
   ghc-options:         -O2
   build-depends:       base >=4.18 && <5,
                        containers,

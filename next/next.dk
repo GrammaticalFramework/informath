@@ -1,0 +1,10 @@
+p1 : Proof (exists Nat (n => and (even n) (prime n))).
+
+p2 : Proof (exists Nat (m => exists Nat (n => Gt m n))).
+
+p3 : Proof (forall Nat (m => forall Nat (n => Geq (plus m n) n))).
+
+p4 : (n : Elem Nat) -> Proof (even n) -> Proof (not (odd n)).
+
+
+

@@ -29,6 +29,7 @@ import Ranking
 
 import BuildConstantTable -- next version
 import qualified DMC
+import qualified MCI
 import qualified NextInformath as N
 
 import PGF
@@ -146,7 +147,7 @@ main = do
 	}
   case yy of
     _ | ifFlag "-help" env -> do
-      putStrLn helpMsg
+      putStrLn helpMsg 
 
     ---- Next version, to be merged
     -- RunInformath -next -inputfile=test/top100.dk next/constants.dkgf
@@ -159,13 +160,14 @@ main = do
       table <- buildConstantTable filename dk pgf
       ifv env $ do
         putStrLn "# showing constant table"
-        putStrLn $ printConstantTable table
+        putStrLn $ printConstantTable table 
       let inputfile = flagValue "inputfile" dkfile ff
       dk0 <- readFile inputfile >>= justParseDeduktiModule
-      let dk1@(MJmts jmts) = annotateDkIdents table dk0
+      let dk1@(MJmts jmts) = annotateDkIdents table dk0 
       ifv env $ do
         putStrLn "# showing annotated Dedukti code"
-        mapM_ (putStrLn . printTree) jmts
+        mapM_ (putStrLn . printTree) jmts 
+	
       let gfjmts = map DMC.jmt2core jmts
       let gftrees = map N.gf gfjmts
       let dk1@(MJmts jmts) = annotateDkIdentsSymbolic table dk0
@@ -174,8 +176,13 @@ main = do
         mapM_ (putStrLn . printTree) jmts
       let gfjmts = map DMC.jmt2core jmts
       let sgftrees = map N.gf gfjmts
-      let allgftrees = concat [[v, s] | (v, s) <- zip gftrees sgftrees]
-      mapM_ (putStrLn . linearize pgf (tolang env)) allgftrees 
+---      let allgftrees = concat [[v, s] | (v, s) <- zip gftrees sgftrees]
+---      mapM_ (putStrLn . linearize pgf (tolang env)) allgftrees
+
+      let nlgjmts = map (MCI.nlg (flags env)) gfjmts 
+      let nlgtreess = map (map N.gf) nlgjmts
+      let allnlgtrees = concat [v : s | (v, s) <- zip gftrees nlgtreess]
+      mapM_ (putStrLn . linearize pgf (tolang env)) allnlgtrees 
     ---- end next version
       
 

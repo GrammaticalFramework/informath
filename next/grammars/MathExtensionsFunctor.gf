@@ -90,7 +90,7 @@ lin
           <lin Adv (mkUtt (mkVP adj)) : Adv>) (Syntax.mkAdv if_Subj prop.s))))) ; 
 
   AdjKind adj kind = kind ** {cn = mkCN adj kind.cn} ;
-  KindProp exp kind = simpleProp (mkS (mkCl exp kind.cn)) ;
+  KindProp exp kind = simpleProp (mkS (mkCl exp (useKind kind))) ;
 
   AllKindExp kind = mkNP all_Predet (mkNP aPl_Det (useKind kind)) ;
   AllIdentsKindExp idents kind = mkNP all_Predet (mkNP aPl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)) ;
