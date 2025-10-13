@@ -162,28 +162,19 @@ main = do
         putStrLn "# showing constant table"
         putStrLn $ printConstantTable table 
       let inputfile = flagValue "inputfile" dkfile ff
-      dk0 <- readFile inputfile >>= justParseDeduktiModule
-      let dk1@(MJmts jmts) = annotateDkIdents table dk0 
+      MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
+      let djmtss = map (annotateDkIdents table) jmts 
       ifv env $ do
         putStrLn "# showing annotated Dedukti code"
-        mapM_ (putStrLn . printTree) jmts 
+        mapM_ (putStrLn . printTree) (concat djmtss) 
 	
-      let gfjmts = map DMC.jmt2core jmts
-      let gftrees = map N.gf gfjmts
-      let dk1@(MJmts jmts) = annotateDkIdentsSymbolic table dk0
-      ifv env $ do
-        putStrLn "# showing symbolically annotated Dedukti code"
-        mapM_ (putStrLn . printTree) jmts
-      let gfjmts = map DMC.jmt2core jmts
-      let sgftrees = map N.gf gfjmts
----      let allgftrees = concat [[v, s] | (v, s) <- zip gftrees sgftrees]
----      mapM_ (putStrLn . linearize pgf (tolang env)) allgftrees
-
-      let nlgjmts = map (MCI.nlg (flags env)) gfjmts 
+      let gfjmtss = map (map DMC.jmt2core) djmtss
+      
+      let nlgjmts = map (concatMap (MCI.nlg (flags env))) gfjmtss
       let nlgtreess = map (map N.gf) nlgjmts
-      let allnlgtrees = concat [v : s | (v, s) <- zip gftrees nlgtreess]
+      let allnlgtrees = concat nlgtreess
       mapM_ (putStrLn . linearize pgf (tolang env)) allnlgtrees 
-    ---- end next version
+    ---- end next version 
       
 
     filename:_ | isSuffixOf ".dkgf" filename -> do

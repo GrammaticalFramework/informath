@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE GADTs, KindSignatures, DataKinds, Rank2Types #-}
 {-# LANGUAGE LambdaCase #-}
 
 module BuildConstantTable where
@@ -12,7 +12,7 @@ import DeduktiOperations
 import PGF
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition)
+import Data.List (partition, nub)
 
 
 constant_table_file = "constants.dkgf"
@@ -127,49 +127,47 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
--- annotate idents with cat and fun
-annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
-annotateDkIdents table t = case t of
-  QIdent ident -> case M.lookup t table of
-    Just entry -> let (f, t) = primary entry
-                  in QIdent (ident ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
-    _ -> t
-  _ -> composOp (annotateDkIdents table) t
- where
-   valCat t = case unType t of (_, c, _) -> c
-   dk c = showCId c
- 
+-- annotate idents with cats and funs
+annotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
+annotateDkIdents table t = nub (symbs t ++ verbs t) where
 
--- annotate idents with symbolic cat and fun, if possible
-annotateDkIdentsSymbolic :: ConstantTable -> DkTree a -> DkTree a
-annotateDkIdentsSymbolic table = annotateDkIdents symtable where
-  symtable = M.map primsym table
-  primsym entry = case symbolics entry of
-    fc : _ -> entry {primary = fc}
-    _ -> entry
+  symbs :: forall a. DkTree a -> [DkTree a]
+  symbs t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
+	  ac <- strictAnnotId symbolics c,
+	  xx <- sequence (map symbs xs)
+	  ]
+    EIdent c -> [EIdent ac | ac <- annotId symbolics c]
+    _ -> composOpM symbs t
+    
+  verbs :: forall a. DkTree a -> [DkTree a]
+  verbs t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
+	  ac <- annotId verbals c,
+	  xx <- sequence (map (\x -> symbs x ++ verbs x) xs)
+	  ]
+    EIdent c -> [EIdent ac | ac <- annotId verbals c]
+    EAbs b exp -> [EAbs b aexp | aexp <- verbs exp]
+    _ -> composOpM verbs t
 
-{-
-variantDkAnnotations :: ConstantTable -> DkTree a -> [DkTree a]
-variantDkAnnotations table t = case t of
-  EApp _ _ -> case splitApp t of
-    (EIdent c, xs) -> case M.lookup c table of
-      Just entry -> symbs c xs ++ [ 
-        foldl EApp (EIdent (annot c t f)) xx |
-	   (f, t) <- primary entry : synonyms entry,
-	   xx <- sequence (map (variantDkAnnotations table) xs)
-	   ]
-      _ -> [ 
-        foldl EApp (EIdent c) xx |
-	   xx <- sequence (map (variantDkAnnotations table) xs)
-	   ]
- where
-   symbs c xs = [ 
-        foldl EApp (EIdent (annot c t f)) xx |
-	   (f, t) <- symbolics entry,
-	   xx <- sequence (map (variantDkAnnotations table) xs)
-	   ]
--}   
+  annotId get c = case M.lookup c table of
+    Just entry -> withDefault c [annotIdent c t f | (f, t) <- get entry]
+    _ -> [c]
+    
+  strictAnnotId get c = case M.lookup c table of
+    Just entry -> [annotIdent c t f | (f, t) <- get entry]
+    _ -> []
 
+  annotIdent :: QIdent -> Type -> Fun -> QIdent
+  annotIdent (QIdent s) t f = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
+
+  verbals e = primary e : symbolics e
+
+  withDefault d vs = if null vs then [d] else vs
+  valCat t = case unType t of (_, c, _) -> c
+  dk c = showCId c
 
 
 -- deciding the kind of a new constant
