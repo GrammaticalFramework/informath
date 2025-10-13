@@ -173,9 +173,17 @@ main = do
       let nlgjmts = map (concatMap (MCI.nlg (flags env))) gfjmtss
       let nlgtreess = map (map N.gf) nlgjmts
       let allnlgtrees = concat nlgtreess
-      mapM_ (putStrLn . linearize pgf (tolang env)) allnlgtrees 
+      mapM_ (putStrLn . linearize pgf (tolang env)) allnlgtrees
+{-
+  let gfts = [(gfft, unlex env (linearize fgr (tolang env) gfft)) | gfft <- map gf fts]
+  let gffts =
+        if (ifFlag "-ranking" env)
+        then [(t, s ++ "\n%% " ++ show sk) | ((t, s), sk) <- rankTreesAndStrings env gfts]
+        else gfts
+-}
+
     ---- end next version 
-      
+     
 
     filename:_ | isSuffixOf ".dkgf" filename -> do
       let gfname = flagValue "gfname" "UserConstants" ff

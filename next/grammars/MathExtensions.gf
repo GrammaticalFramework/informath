@@ -11,6 +11,7 @@ fun
   TermExp : Term -> Exp ;
   TermKind : Term -> Kind ;
   FormulaProp : Formula -> Prop ;
+  DisplayFormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;
 
 -- to remove parentheses around complex propositions
