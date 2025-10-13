@@ -133,4 +133,24 @@ lin
 
   sphenic_Adj = mkAdj "sphenic" ;
 
+-- special constants
+
+  SigmaExp i m n exp =
+    mkNP the_Det (mkCN (mkCN sum_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP all_Predet
+	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
+	    (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))))) ;
+	    
+  SeriesExp i m exp =
+    mkNP the_Det (mkCN (mkCN series_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP all_Predet
+	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
+	    (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m infinity_NP)))))))) ;
+	    
+  IntegralExp i m n exp =
+    mkNP the_Det (mkCN (mkCN integral_N)
+      (SyntaxEng.mkAdv possess_Prep
+        (mkNP exp (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))) ;
 }

@@ -138,7 +138,7 @@ annotateDkIdents table t = nub (symbs t ++ verbs t) where
 	  ac <- strictAnnotId symbolics c,
 	  xx <- sequence (map symbs xs)
 	  ]
-    EIdent c -> [EIdent ac | ac <- annotId symbolics c]
+    EIdent c -> [EIdent ac | ac <- strictAnnotId symbolics c]
     _ -> composOpM symbs t
     
   verbs :: forall a. DkTree a -> [DkTree a]

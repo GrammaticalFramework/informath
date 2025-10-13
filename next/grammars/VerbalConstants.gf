@@ -123,4 +123,9 @@ fun
 
   sphenic_Adj : Adj ;
 
+-- special constants
+  SigmaExp : Ident -> Exp -> Exp -> Exp -> Exp ;
+  SeriesExp : Ident -> Exp -> Exp ->  Exp ;
+  IntegralExp : Ident -> Exp -> Exp -> Exp -> Exp ;
+
 }

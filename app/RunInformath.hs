@@ -324,7 +324,7 @@ convertCoreToInformath env ct = do
     ifv env $ putStrLn $ "## Informath: " ++ showExpr [] gfft
     putStrLn $ if (ifFlag "-just-translate" env) then (unindexString env s) else s
     if (ifFlag "-to-latex-file" env) then (putStrLn "") else return ()
-
+ 
 processInformathJmt :: Env -> String -> IO String
 processInformathJmt env s = do
   let gr = cpgf env

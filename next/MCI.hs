@@ -201,6 +201,13 @@ variations tree = case tree of
   GOrExp (GListExp [a, b]) ->
     tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
+  GSigmaExp i (GTermExp m) (GTermExp n) (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gsigma_Term i m n f)]
+  GSeriesExp i (GTermExp m) (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gseries_Term i m f)]
+  GIntegralExp i (GTermExp m) (GTermExp n) (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gintegral_Term i m n f)]
+  
   Gsigma_Term i m n f ->
     let m1s = case m of
                 GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]

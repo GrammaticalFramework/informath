@@ -269,8 +269,8 @@ exp2exp exp = case exp of
     
   EApp _ _ -> case splitApp exp of
     (fun, args) -> case fun of
-    
-    {- ---- TODO in constants.dkgf
+
+      --- special constants
       EIdent (QIdent "sigma") | length args == 3 ->
         let [m, n, EAbs b f] = args
         in GSigmaExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
@@ -282,9 +282,8 @@ exp2exp exp = case exp of
         in GIntegralExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
       EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
-	Just [] -> GTermExp (LexTerm "emptyset_Term")
+	Just [] -> GTermExp (GConstTerm (LexConst "emptyset_Const"))
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-    -}
     
       EIdent ident@(QIdent f) -> case lookupConstant f of
 	Just (cat, c) | elem cat ["Name", "Fun", "Fun2"] -> funListExp ident (map exp2exp args)
