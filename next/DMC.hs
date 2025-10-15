@@ -11,6 +11,7 @@ import DeduktiOperations
 import BuildConstantTable
 
 import Data.Char
+import Data.List(isPrefixOf)
 
 import qualified Data.Map as M
 
@@ -270,14 +271,14 @@ exp2exp exp = case exp of
   EApp _ _ -> case splitApp exp of
     (fun, args) -> case fun of
 
-      --- special constants
-      EIdent (QIdent "sigma") | length args == 3 ->
+      --- special constants. ---- TODO make this declarative
+      EIdent (QIdent s) | isPrefixOf "sigma&" s &&length args == 3 ->
         let [m, n, EAbs b f] = args
         in GSigmaExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
-      EIdent (QIdent "series") | length args == 2 ->
+      EIdent (QIdent s) | isPrefixOf "series&" s && length args == 2 ->
         let [m, EAbs b f] = args
         in GSeriesExp (bind2coreIdent b) (exp2exp m) (exp2exp f)  
-      EIdent (QIdent "integral") | length args == 3 ->
+      EIdent (QIdent s) | isPrefixOf "integral" s && length args == 3 ->
         let [m, n, EAbs b f] = args
         in GIntegralExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
       EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of

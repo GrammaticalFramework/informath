@@ -326,7 +326,7 @@ convertCoreToInformath env ct = do
     if (ifFlag "-to-latex-file" env) then (putStrLn "") else return ()
  
 processInformathJmt :: Env -> String -> IO String
-processInformathJmt env s = do
+processInformathJmt env s = do 
   let gr = cpgf env
   let ls = lextex s
   ifv env $ putStrLn "#"
