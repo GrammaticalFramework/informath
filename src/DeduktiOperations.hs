@@ -291,6 +291,14 @@ hypo2vars hypo = case hypo of
   HLetTyped v _ _ -> [v]
   HExp v -> []
 
+hypo2type :: Hypo -> Maybe Exp
+hypo2type hypo = case hypo of
+  HVarExp v e -> Just e
+  HParVarExp v e -> Just e
+  HLetExp v _ -> Nothing
+  HLetTyped v e _ -> Just e
+  HExp e -> Just e
+
 pattbindIdents :: [Pattbind] -> [QIdent]
 pattbindIdents = concatMap bident where
   bident :: Pattbind -> [QIdent]

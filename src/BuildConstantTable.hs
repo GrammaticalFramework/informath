@@ -80,12 +80,14 @@ mkConstantTableEntry pgf (fun:funs) = ConstantTableEntry {
 
 mismatchingTypes :: DkType -> Type -> Bool
 mismatchingTypes dktyp gftyp = arityMismatch dktyp (unType gftyp) where
-  arityMismatch (dkhypos, _) (gfhypos, cid, _) = length dkhypos /= arity gfhypos cid
-  arity gfhypos cid = case showCId cid of
+  arityMismatch (dkhypos, _) (gfhypos, cid, _) = dkArity dkhypos /= gfArity gfhypos cid
+  gfArity gfhypos cid = case showCId cid of
     s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
     s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2") -> 2
     s | elem s (words "Adj3") -> 3
     _ -> length gfhypos
+  dkArity dkhypos = foldl (+) 0 (map hypoArity dkhypos)
+  hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
 
  ---- TODO: check more than arity
@@ -112,19 +114,12 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 
   getFun :: Jmt -> [(QIdent, DkType)]
   getFun jmt = case jmt of
-    JStatic fun typ -> return (fun, getDkType typ)
-    JDef fun (MTExp typ) _ -> return (fun, getDkType typ)
-    JInj fun (MTExp typ) _ -> return (fun, getDkType typ)
-    JThm fun (MTExp typ) _ -> return (fun, getDkType typ)
+    JStatic fun typ -> return (fun, splitType typ)
+    JDef fun (MTExp typ) _ -> return (fun, splitType typ)
+    JInj fun (MTExp typ) _ -> return (fun, splitType typ)
+    JThm fun (MTExp typ) _ -> return (fun, splitType typ)
     _ -> []
     
-  getDkType :: Exp -> DkType
-  getDkType typ = case typ of
-    EFun hypo exp -> case getDkType exp of
-      (hypos, val) -> (hypo:hypos, val)
-    _ -> ([], typ)
-
-
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate idents with cats and funs
