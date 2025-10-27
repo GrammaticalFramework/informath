@@ -323,6 +323,7 @@ exp2term exp = case splitApp exp of
           ("Oper2", [x, y]) -> return $ GOper2Term (LexOper2 c) x y
           (_, []) -> return $ GIdentTerm (ident2ident ident)
           _ -> Nothing
+  _ -> Nothing
 
 
 exp2proof :: Exp -> GProof

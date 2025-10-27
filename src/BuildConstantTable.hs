@@ -141,7 +141,7 @@ annotateDkIdents table t = nub (symbs t ++ verbs t) where
     EApp _ _ -> case splitApp t of
       (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
 	  ac <- annotId verbals c,
-	  xx <- sequence (map (\x -> symbs x ++ verbs x) xs)
+	  xx <- subsequence (map (\x -> symbs x ++ verbs x) xs)
 	  ]
     EIdent c -> [EIdent ac | ac <- annotId verbals c]
     EAbs b exp -> [EAbs b aexp | aexp <- verbs exp]
@@ -164,6 +164,9 @@ annotateDkIdents table t = nub (symbs t ++ verbs t) where
   valCat t = case unType t of (_, c, _) -> c
   dk c = showCId c
 
+  subsequence xss =
+    let m = maximum (map length xss)
+    in [[xs !! mk | xs <- xss, let mk = min k (length xs - 1)] | k <- [0 .. m-1]]
 
 -- deciding the kind of a new constant
 guessGFCat :: QIdent -> Exp -> String

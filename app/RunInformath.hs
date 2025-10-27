@@ -163,24 +163,28 @@ main = do
         putStrLn $ printConstantTable table 
       let inputfile = flagValue "inputfile" dkfile ff
       MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
-      let djmtss = map (annotateDkIdents table) jmts 
-      ifv env $ do
-        putStrLn "# showing annotated Dedukti code"
-        mapM_ (putStrLn . printTree) (concat djmtss) 
-	
-      let gfjmtss = map (map DMC.jmt2core) djmtss
       
-      let nlgjmts = map (concatMap (MCI.nlg (flags env))) gfjmtss
-      let nlgtreess = map (map N.gf) nlgjmts
-      let allnlgtrees = concat nlgtreess
-      mapM_ (putStrLn . linearize pgf (tolang env)) allnlgtrees
-{-
-  let gfts = [(gfft, unlex env (linearize fgr (tolang env) gfft)) | gfft <- map gf fts]
-  let gffts =
-        if (ifFlag "-ranking" env)
-        then [(t, s ++ "\n%% " ++ show sk) | ((t, s), sk) <- rankTreesAndStrings env gfts]
-        else gfts
--}
+      let mkOne jmt = do
+            let djmts = annotateDkIdents table jmt 
+            ifv env $ do
+              putStrLn "# showing annotated Dedukti code"
+              mapM_ (putStrLn . printTree) djmts 
+	
+            let gfjmts = map DMC.jmt2core djmts
+      
+            let nlgjmts = concatMap (MCI.nlg (flags env)) gfjmts
+            let nlgtrees = map N.gf nlgjmts
+
+            let gfts = [(gft, unlex env (linearize pgf (tolang env) gft)) | gft <- nlgtrees]
+            let rgfts = [unlines ["%# " ++ printTree jmt, 
+	                          "%# " ++ showExpr [] t,
+				  "%# " ++ show sk,
+				  s] | ((t, s), sk) <- rankTreesAndStrings env gfts]
+	    let best_rgfts = maybe id take (nbest env) rgfts
+            mapM_ putStrLn best_rgfts
+	    
+      mapM_ mkOne jmts
+      
 
     ---- end next version 
      
