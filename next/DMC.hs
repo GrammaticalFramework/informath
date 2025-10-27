@@ -306,16 +306,23 @@ exp2term :: Exp -> Maybe GTerm
 exp2term exp = case splitApp exp of
   (fun@(EIdent (ident@(QIdent s))), args) -> case getNumber fun args of
     Just s -> return (GNumberTerm (GInt (read s)))
-    _ -> do
-      terms <- mapM exp2term args
-      let (cat, c) = maybe ("Unknown", s) id (lookupConstant s)
-      case (cat, terms) of
-        ("Const", []) -> return $ GConstTerm (LexConst c)
-        ("Oper", [x]) -> return $ GOperTerm (LexOper c) x
-        ("Oper2", [x, y]) -> return $ GOper2Term (LexOper2 c) x y
-        (_, []) -> return $ GIdentTerm (ident2ident ident)
-        _ -> Nothing
-  _ -> Nothing
+    _ -> case fun of
+      EIdent (QIdent s) | isPrefixOf "sigma&" s && length args == 3 -> do
+        let [m, n, EAbs b f] = args
+        tm <- exp2term m
+        tn <- exp2term n
+        tf <- exp2term f
+        return $ Gsigma_Term (bind2coreIdent b) tm tn tf
+
+      _ -> do
+        terms <- mapM exp2term args
+        let (cat, c) = maybe ("Unknown", s) id (lookupConstant s)
+        case (cat, terms) of
+          ("Const", []) -> return $ GConstTerm (LexConst c)
+          ("Oper", [x]) -> return $ GOperTerm (LexOper c) x
+          ("Oper2", [x, y]) -> return $ GOper2Term (LexOper2 c) x y
+          (_, []) -> return $ GIdentTerm (ident2ident ident)
+          _ -> Nothing
 
 
 exp2proof :: Exp -> GProof

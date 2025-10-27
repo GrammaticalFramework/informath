@@ -254,11 +254,12 @@ isWildIdent (QIdent s) = all (=='_') s
 getNumber :: Exp -> [Exp] -> Maybe String
 getNumber fun args =
   case (fun, args) of
-    (EIdent (QIdent n), [x]) | n == nd -> getDigit x
-    (EIdent (QIdent n), [x, y]) | n == nn -> do
+    (EIdent (QIdent n), [x]) | n == nd -> getDigit x -- (nd 6)
+    (EIdent (QIdent n), [x, y]) | n == nn -> do  -- (nn 6 (nd 7))
       d <- getDigit x
       n <- uncurry getNumber (splitApp y)
       return (d ++ n)
+    (EIdent (QIdent n), []) -> getDigit fun -- bare 6
     _ -> Nothing
  where
    getDigit :: Exp -> Maybe String
