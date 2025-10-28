@@ -56,10 +56,7 @@ oper
   RelationT : Type = {ap : AP ; prep : Prep} ;
   RelnounT : Type = {cn : CN ; prep : Prep} ;
   FunctionT : Type = {cn : CN ; prep : Prep} ;
-  ConstantT : Type = {np : NP ; c : Str} ;
-  OperatorT : Type = {f : FunctionT} ; 
-  ComparisonT : Type = {rel : RelationT ; op :  Str} ;
-  SetT : Type = {cn : CN ; c : Str} ;
+  Function2T : Type = {cn : CN ; prep1, prep2 : Prep} ;
   FamilyT : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
   LabelT = {np : NP ; isEmpty : Bool} ;
   ComparnounT = {cn : CN ; prep : Prep ; op : Str} ;
@@ -91,7 +88,14 @@ oper
     mkFun : (a, b, n : Str) -> FunctionT
       = \a, b, n -> {cn = mkCN (mkA a) (mkCN (mkA b) (mkN n)) ; prep = possess_Prep} ;
     } ;
-    
+
+  mkFun2 = overload {
+    mkFun2 : Str -> Str -> Function2T
+      = \s, sprep2 -> {cn = mkCN (mkN s) ; prep1 = possess_Prep ; prep2 = mkPrep sprep2} ;
+    mkFun2 : CN -> Prep -> Prep -> Function2T
+      = \cn, prep1, prep2 -> {cn = cn ; prep1 = prep1 ; prep2 = prep2} ;
+    } ;
+
   mkRelnoun = overload {
     mkRelnoun : Str -> RelnounT
       = \s -> {cn = mkCN (mkN s) ; prep = possess_Prep} ;

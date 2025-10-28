@@ -28,14 +28,16 @@ cat
   Fam ;     -- Kind -> Kind         -- list of integers
   Fam2 ;    -- Kind -> Kind -> Kind -- function from reals to integers
   Noun1 ;   -- Exp -> Prop          -- (a) prime
+  Noun2 ;   -- Exp -> Exp -> Prop   -- divisor of
   Adj ;     -- Exp -> Prop          -- even
-  Verb ;    -- Exp -> Exp           -- converge
   Adj2 ;    -- Exp -> Exp -> Prop   -- divisible by
+  AdjC ;    -- [Exp] -> Prop        -- linearly independent
+  Verb ;    -- Exp -> Exp           -- converge
   Verb2 ;   -- Exp -> Exp -> Prop   -- divide
-  Noun2 ;   -- Exp -> Exp -> Prop   - divisor of
   Name ;    -- Exp                  -- the empty set
   Fun ;     -- Exp -> Exp           -- the square of
-  Fun2 ;    -- Exp -> Exp -> Exp    -- the sum of
+  Fun2 ;    -- Exp -> Exp -> Exp    -- the quotient of
+  FunC ;    -- [Exp] -> Exp         -- the sum of
   Label ;   -- Exp                  -- theorem 1
   Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
 

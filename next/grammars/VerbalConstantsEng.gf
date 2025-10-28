@@ -18,13 +18,13 @@ lin
   proofs_Fun = mkFun  "type of proofs" ;
 
   absurdity_Name = mkName "absurdity" ;
-  conjunction_Fun2 = mkFun "conjunction" ;
-  disjunction_Fun2 = mkFun "disjunction" ;
-  implication_Fun2 = mkFun "implication" ;
-  universal_Fun2 = mkFun "universal" "quanfication" ;
-  existential_Fun2 = mkFun "existential" "quanfication" ;
+  conjunction_FunC = mkFun "conjunction" ;
+  disjunction_FunC = mkFun "disjunction" ;
+  implication_FunC = mkFun "implication" ;
+  universal_FunC = mkFun "universal" "quanfication" ;
+  existential_FunC = mkFun "existential" "quanfication" ;
   negation_Fun = mkFun "negation" ;
-  equivalence_Fun2 = mkFun "equivalence" ;
+  equivalence_FunC = mkFun "equivalence" ;
 
   digit_Noun = mkNoun "digit" ;
   number_Noun = mkNoun "number" ;
@@ -39,9 +39,11 @@ lin
   complex_Noun = mkNoun "complex" "number" ;
 
   Eq_Adj2 = mkReladj "equal" "to" ;
+  Eq_AdjC = mkAP (mkA "equal") ;
   Lt_Adj2 = mkReladj "less" "than" ;
   Gt_Adj2 = mkReladj "greater" "than" ;
-  Neq_Adj2 = mkReladj "not equal" "to" ;
+  Neq_Adj2 = mkReladj "distinct" "from" ;
+  Neq_AdjC = mkAP (mkA "distinct") ;
   Leq_Adj2 = mkReladj "less than or equal" "to" ;
   Geq_Adj2 = mkReladj "greater than or equal" "to" ;
 
@@ -54,19 +56,19 @@ lin
   member_Noun2 = mkRelnoun "member" ;
   divisor_Noun2 = mkRelnoun "divisor" ;
 
-  plus_Fun2 = mkFun "sum" ;
-  minus_Fun2 = mkFun "difference" ;
-  times_Fun2 = mkFun "product" ;
-  div_Fun2 = mkFun "quotient" ;
-  pow_Fun2 = mkFun "exponentiation" ;
+  plus_FunC = mkFun "sum" ;
+  minus_Fun2 = mkFun2 "subtraction" "from" ;
+  times_FunC = mkFun "product" ;
+  div_Fun2 = mkFun2 "division" "by" ;
+  pow_Fun2 = mkFun2 "exponentiation" "to";
   neg_Fun = mkFun "negation" ;
-  logarithm_Fun2 = mkFun "logarithm" ; ----
+  logarithm_FunC = mkFun "logarithm" ; ----
   square_root_Fun = mkFun "square root" ;
 
   successor_Fun = mkFun "successor" ;
   absolute_value_Fun = mkFun "absolute value" ;
   factorial_Fun = mkFun "factorial" ;
-  gcd_Fun2 = mkFun "greatest" "common" "divisor" ;
+  gcd_FunC = mkFun "greatest" "common" "divisor" ;
 
   even_Adj = mkAdj "even" ;
   odd_Adj = mkAdj "odd" ;
@@ -74,11 +76,11 @@ lin
   prime_Adj = mkAdj "prime" ;
 
   function_Fam2 = mkFam "function" from_Prep to_Prep ;
-  union_Fun2 = mkFun "union" ;
-  intersection_Fun2 = mkFun "intersection" ;
-  difference_Fun2 = mkFun "difference" ;
+  union_FunC = mkFun "union" ;
+  intersection_FunC = mkFun "intersection" ;
+  difference_FunC = mkFun "difference" ;
   complement_Fun = mkFun "complement" ;
-  cartesian_Fun2 = mkFun "cartesian product" ;
+  cartesian_FunC = mkFun "cartesian product" ;
   powerset_Fun = mkFun "power set" ;
 
   subset_Noun2 = mkRelnoun "proper subset" ;  
@@ -98,16 +100,16 @@ lin
   finite_Adj = mkAdj "finite" ;
   infinite_Adj = mkAdj "infinite" ;
 
-  combinationsFromSet_Fun2 = mkFun "number of combinations" ;
-  combinations_Fun2 = mkFun "set of combinations" ;
-  binomial_Fun2 = mkFun "binomial coefficient" ;
+  combinationsFromSet_FunC = mkFun "number of combinations" ;
+  combinations_FunC = mkFun "set of combinations" ;
+  binomial_FunC = mkFun "binomial coefficient" ;
   area_Fun = mkFun "area" ;
   radius_Fun = mkFun "radius" ;
   circle_Noun = mkNoun "circle" ;
   pi_Name = mkNP the_Det (mkCN (mkN "number") (symb "\\(\\pi\\)")) ;
-  legendre_symbol_Fun2 = mkFun "Legendre symbol" ;
+  legendre_symbol_FunC = mkFun "Legendre symbol" ;
   square_Fun = mkFun "square" ;
-  resultant_Fun2 = mkFun "resultant" ;
+  resultant_FunC = mkFun "resultant" ;
   perpendicular_Adj2 = mkReladj "perpendicular" "to" ;
   length_Fun = mkFun "length" ;
   norm_Fun = mkFun "norm" ;
@@ -127,9 +129,9 @@ lin
   arccos_Fun = mkFun "arccosine" ;
   arctan_Fun = mkFun "arctangent" ;
   orthogonal_Adj2 = mkReladj "orthogonal" "to" ;
-  angle_between_Fun2 = mkFun "angle" "between" ;
-  dot_product_Fun2 = mkFun "dot product" ;
-  vector_plus_Fun2 = mkFun "sum" ;
+  angle_between_FunC = mkFun "angle" "between" ;
+  dot_product_FunC = mkFun "dot product" ;
+  vector_plus_FunC = mkFun "sum" ;
 
   sphenic_Adj = mkAdj "sphenic" ;
 

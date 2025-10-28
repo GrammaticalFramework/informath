@@ -9,13 +9,13 @@ fun
   proofs_Fun : Fun ;
 
   absurdity_Name : Name ;
-  conjunction_Fun2 : Fun2 ;
-  disjunction_Fun2 : Fun2 ;
-  implication_Fun2 : Fun2 ;
-  universal_Fun2 : Fun2 ;
-  existential_Fun2 : Fun2 ;
+  conjunction_FunC : FunC ;
+  disjunction_FunC : FunC ;
+  implication_FunC : FunC ;
+  universal_FunC : FunC ;
+  existential_FunC : FunC ;
   negation_Fun : Fun ;
-  equivalence_Fun2 : Fun2 ;
+  equivalence_FunC : FunC ;
 
   number_Noun : Noun ;
   boolean_Noun : Noun ;
@@ -35,7 +35,10 @@ fun
   Neq_Adj2 : Adj2 ;
   Leq_Adj2 : Adj2 ;
   Geq_Adj2 : Adj2 ;
-  
+
+  Eq_AdjC : AdjC ;
+  Neq_AdjC : AdjC ;
+
   positive_Adj : Adj ;
   negative_Adj : Adj ;
 
@@ -44,19 +47,19 @@ fun
   member_Noun2 : Noun2 ;
   divisor_Noun2 : Noun2 ;
 
-  plus_Fun2 : Fun2 ;
+  plus_FunC : FunC ;
   minus_Fun2 : Fun2 ;
-  times_Fun2 : Fun2 ;
+  times_FunC : FunC ;
   div_Fun2 : Fun2 ;
   pow_Fun2 : Fun2 ;
   neg_Fun : Fun ;
-  logarithm_Fun2 : Fun2 ;
+  logarithm_FunC : FunC ;
   square_root_Fun : Fun ;
   
   successor_Fun : Fun ;
   absolute_value_Fun : Fun ;
   factorial_Fun : Fun ;
-  gcd_Fun2 : Fun2 ;
+  gcd_FunC : FunC ;
 
   even_Adj : Adj ;
   odd_Adj : Adj ;
@@ -65,10 +68,10 @@ fun
 
   function_Fam2 : Fam2 ;
   
-  union_Fun2 : Fun2 ;
-  intersection_Fun2 : Fun2 ;
-  cartesian_Fun2 : Fun2 ;
-  difference_Fun2 : Fun2 ;
+  union_FunC : FunC ;
+  intersection_FunC : FunC ;
+  cartesian_FunC : FunC ;
+  difference_FunC : FunC ;
   complement_Fun : Fun ;
   powerset_Fun : Fun ;
 
@@ -100,16 +103,16 @@ fun
   length_Fun : Fun ; -- top100
   norm_Fun : Fun ; -- top100
   perpendicular_Adj2 : Adj2 ; -- top100
-  resultant_Fun2 : Fun2 ; -- top100
+  resultant_FunC : FunC ; -- top100
   square_Fun : Fun ; -- top100
-  legendre_symbol_Fun2 : Fun2 ; -- top100
+  legendre_symbol_FunC : FunC ; -- top100
   pi_Name : Name ; -- top100
   circle_Noun : Noun ; -- top100
   radius_Fun  : Fun ; -- top100
   area_Fun : Fun ; -- top100
-  binomial_Fun2 : Fun2 ; -- top100
-  combinations_Fun2 : Fun2 ; -- top100
-  combinationsFromSet_Fun2 : Fun2 ; -- top100
+  binomial_FunC : FunC ; -- top100
+  combinations_FunC : FunC ; -- top100
+  combinationsFromSet_FunC : FunC ; -- top100
   sin_Fun : Fun ;
   cos_Fun : Fun ;
   tan_Fun : Fun ;
@@ -117,9 +120,9 @@ fun
   arccos_Fun : Fun ;
   arctan_Fun : Fun ;
   orthogonal_Adj2 : Adj2 ;
-  angle_between_Fun2 : Fun2 ;
-  dot_product_Fun2 : Fun2 ;
-  vector_plus_Fun2 : Fun2 ;
+  angle_between_FunC : FunC ;
+  dot_product_FunC : FunC ;
+  vector_plus_FunC : FunC ;
 
   sphenic_Adj : Adj ;
 

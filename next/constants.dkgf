@@ -12,26 +12,26 @@ Rat rational_Noun rational_Const
 Real real_Noun real_Const
 Complex complex_Noun complex_Const
 Cardinal cardinal_Noun
-Eq Eq_Adj2 Eq_Compar
+Eq Eq_Adj2 Eq_AdjC Eq_Compar
 Lt Lt_Adj2 Lt_Compar
 Gt Gt_Adj2 Gt_Compar
-Neq Neq_Adj2 Neq_Compar
+Neq Neq_Adj2 Neq_AdjC Neq_Compar
 Leq Leq_Adj2 Leq_Compar
 Geq Geq_Adj2 Geq_Compar
 positive positive_Adj
 negative negative_Adj
-plus plus_Fun2 plus_Oper2
+plus plus_FunC plus_Oper2
 minus minus_Fun2 minus_Oper2
-times times_Fun2 times_Oper2
+times times_FunC times_Oper2
 div div_Fun2 div_Oper2
 pow pow_Fun2 pow_Oper2
 neg neg_Fun neg_Oper
-log logarithm_Fun2 logarithm_Oper2
+log logarithm_FunC logarithm_Oper2
 sqrt square_root_Fun square_root_Oper
 succ successor_Fun
 abs absolute_value_Fun absolute_value_Oper
 factorial factorial_Fun factorial_Oper
-gcd gcd_Fun2
+gcd gcd_FunC
 even even_Adj
 odd odd_Adj
 prime prime_Adj
@@ -40,10 +40,10 @@ divide divide_Verb2
 divisor divisor_Noun2
 converge converge_Verb
 function function_Fam2
-union union_Fun2 union_Oper2
-intersection intersection_Fun2 intersection_Oper2
-difference difference_Fun2 difference_Oper2
-cartesian cartesian_Fun2 cartesian_Oper2
+union union_FunC union_Oper2
+intersection intersection_FunC intersection_Oper2
+difference difference_FunC difference_Oper2
+cartesian cartesian_FunC cartesian_Oper2
 powerset powerset_Fun powerset_Oper
 complement complement_Fun complement_Oper
 subset subset_Noun2 subset_Compar
@@ -70,16 +70,16 @@ Vector vector_Noun
 length length_Fun length_Oper norm_Fun
 norm length_Fun length_Oper norm_Fun
 perpendicular perpendicular_Adj2 orthogonal_Adj2 perpendicular_Compar
-resultant resultant_Fun2
+resultant resultant_FunC
 square square_Fun square_Oper
-legendre legendre_symbol_Fun2 legendre_symbol_Oper2
+legendre legendre_symbol_FunC legendre_symbol_Oper2
 pi pi_Name pi_Const
 Circle circle_Noun
 radius radius_Fun
 area area_Fun
-binomial binomial_Fun2 binomial_Oper2
-combinations combinations_Fun2 combinations_Oper2
-combinationsFromSet combinationsFromSet_Fun2 combinations_Oper2
+binomial binomial_FunC binomial_Oper2
+combinations combinations_FunC combinations_Oper2
+combinationsFromSet combinationsFromSet_FunC combinations_Oper2
 sin sin_Fun sin_Oper
 cos cos_Fun cos_Oper
 tan tan_Fun tan_Oper
@@ -87,9 +87,9 @@ arcsin arcsin_Fun arcsin_Oper
 arccos arccos_Fun arcsin_Oper
 arctan arctan_Fun arcsin_Oper
 orthogonal orthogonal_Adj2 orthogonal_Compar
-angleBetween angle_between_Fun2
-dotProduct dot_product_Fun2 dot_product_Oper2
-vectorPlus vector_plus_Fun2 plus_Oper2
+angleBetween angle_between_FunC
+dotProduct dot_product_FunC dot_product_Oper2
+vectorPlus vector_plus_FunC plus_Oper2
 sphenic sphenic_Adj
 sigma SigmaExp sigma_Term
 series SeriesExp series_Term

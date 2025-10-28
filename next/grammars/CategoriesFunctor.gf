@@ -37,13 +37,15 @@ lincat
   Fam2 = FamilyT ;
   Noun1 = CN ;
   Adj = AP ;
-  Verb = VP ;
   Adj2 = RelationT ;
+  AdjC = AP ;
+  Verb = VP ;
   Verb2 = V2 ;
   Noun2 = {cn : CN ; prep : Prep} ;
   Name = NP ;
   Fun = FunctionT ;
-  Fun2 = FunctionT ;
+  Fun2 = Function2T ;
+  FunC = FunctionT ;
   Label = LabelT ;
 
 lin

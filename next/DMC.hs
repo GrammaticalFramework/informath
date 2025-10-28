@@ -46,13 +46,13 @@ jmt2jmt jmt = case jmt of
                (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
             (GListHypo (hypos2hypos hypos))
             (ident2kind ident)
-      ((hypos, kind), c) | elem c ["Name", "Fun", "Fun2"] ->
+      ((hypos, kind), c) | elem c ["Name", "Fun", "Fun2", "FunC"] ->
         (maybe (GAxiomExpJmt axiomLabel)
 	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
              (GListHypo chypos)
              (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
              (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "Verb2", "Noun2", "Adj3"] ->
+      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "Verb2", "Noun2", "Adj3"] ->
         (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
@@ -100,6 +100,7 @@ funListExp ident exps = case ident of
     (Just ("Name", c), []) -> GNameExp (LexName c)
     (Just ("Fun", c), [x]) -> GFunExp (LexFun c) x
     (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) x y
+    (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (gExps [x, y])
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps exps)
@@ -121,6 +122,8 @@ funListProp ident exps = case ident of
       GAdjProp (LexAdj c) (exps !! 0)
     Just ("Adj2", c) | length exps == 2 ->
       GAdj2Prop (LexAdj2 c) (exps !! 0) (exps !! 1)
+    Just ("AdjC", c) | length exps == 2 ->
+      GAdjCProp (LexAdjC c) (gExps [exps !! 0, exps !! 1])
     Just ("Adj3", c) | length exps == 3 ->
       GAdj3Prop (LexAdj3 c) (exps !! 0) (exps !! 1) (exps !! 2)
     Just ("Verb", c) | length exps == 1 ->
@@ -287,7 +290,7 @@ exp2exp exp = case exp of
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
     
       EIdent ident@(QIdent f) -> case lookupConstant f of
-	Just (cat, c) | elem cat ["Name", "Fun", "Fun2"] -> funListExp ident (map exp2exp args)
+	Just (cat, c) | elem cat ["Name", "Fun", "Fun2", "FunC"] -> funListExp ident (map exp2exp args)
 	_ -> case exp2term exp of
 	  Just term -> GTermExp term
 	  _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))

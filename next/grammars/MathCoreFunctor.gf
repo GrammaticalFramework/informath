@@ -137,11 +137,14 @@ lin
   AdjProp adj exp = simpleProp (mkS (mkCl exp adj)) ;
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
   Adj2Prop rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
+  AdjCProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
+  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
+  
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
   FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
-  Fun2Exp f x y = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep (mkNP and_Conj x y))) ;
-----  FunListExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
+  Fun2Exp f x y = mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y)) ;
+  FunCExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
   FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep1 (mkNP aPl_Det (useKind kind))} ;
   Fam2Kind fam kind1 kind2 =
