@@ -147,10 +147,10 @@ main = do
 	        in if all isDigit fv then Just (read fv) else Nothing,
 	scoreWeights = commaSepInts (flagValue "weights" "1,1,1,1,1,1,1,1,1" ff),
 	termindex = []
-	}
+	} 
   case yy of
     _ | ifFlag "-help" env -> do
-      putStrLn helpMsg 
+      putStrLn helpMsg
 
     ---- Next version, to be merged
     -- RunInformath -next -inputfile=test/top100.dk next/constants.dkgf

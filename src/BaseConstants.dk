@@ -158,8 +158,6 @@ Vector : Set.
 norm : Elem Vector -> Elem Real.
 def length : (v : Elem Vector) -> Elem Real := v => norm v.
 
-resultant : Elem Vector -> Elem Vector -> Elem Vector.
-
 legendre : Elem Nat -> Elem Nat -> Elem Int.
 
 pi : Elem Real.
@@ -197,7 +195,7 @@ def orthogonal : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
 def perpendicular : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
   orthogonal u v.
 
-def vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector := u => v => resultant u v.
+vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector.
 
 (; summer school ;)
 sigma : (m : Elem Nat) ->

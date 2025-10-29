@@ -19,7 +19,7 @@ Thm03 : Proof (denumerable Rat).
 Thm03a : Proof (Eq (cardinality Nat) (cardinality Rat)).
 
 Thm04 : (u : Elem Vector) -> (v : Elem Vector) -> Proof (perpendicular u v) ->
-  Proof (Eq (length (resultant u v)) (sqrt (plus (square (length u)) (square (length v))))).
+  Proof (Eq (length (vectorPlus u v)) (sqrt (plus (square (length u)) (square (length v))))).
 
 thm07 : (p : Elem Nat) -> (q : Elem Nat) -> Proof (and (prime p) (prime q)) ->
   Proof (Eq (times (legendre p q) (legendre q p)) (pow (neg 1) (times (div (minus p 1) 2) (div (minus q 1) 2)))).

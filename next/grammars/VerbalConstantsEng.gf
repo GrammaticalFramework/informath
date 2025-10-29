@@ -14,29 +14,19 @@ lin
   set_Noun = mkNoun "set" ;
   proposition_Noun = mkNoun "proposition" ;
 
-  elements_Fun = mkFun "type of elements" ;
-  proofs_Fun = mkFun  "type of proofs" ;
-
-  absurdity_Name = mkName "absurdity" ;
-  conjunction_FunC = mkFun "conjunction" ;
-  disjunction_FunC = mkFun "disjunction" ;
-  implication_FunC = mkFun "implication" ;
-  universal_FunC = mkFun "universal" "quanfication" ;
-  existential_FunC = mkFun "existential" "quanfication" ;
-  negation_Fun = mkFun "negation" ;
-  equivalence_FunC = mkFun "equivalence" ;
-
   digit_Noun = mkNoun "digit" ;
   number_Noun = mkNoun "number" ;
   boolean_Noun = mkNoun "boolean" ;
   cardinal_Noun = mkNoun "cardinal" ;
-  list_Fam = mkFam "list" ;
-
   natural_Noun = mkNoun "natural" "number" ;
   integer_Noun = mkNoun "integer" ;
   rational_Noun = mkNoun "rational" "number" ;
   real_Noun = mkNoun "real" "number" ;
   complex_Noun = mkNoun "complex" "number" ;
+
+  list_Fam = mkFam "list" ;
+  set_Fam = mkFam "set" ;
+
 
   Eq_Adj2 = mkReladj "equal" "to" ;
   Eq_AdjE = mkAP (mkA "equal") ;
@@ -62,7 +52,7 @@ lin
   div_Fun2 = mkFun2 "division" "by" ;
   pow_Fun2 = mkFun2 "exponentiation" "to";
   neg_Fun = mkFun "negation" ;
-  logarithm_FunC = mkFun "logarithm" ; ----
+  logarithm_Fun2 = mkFun2 "logarithm" "in base" ;
   square_root_Fun = mkFun "square root" ;
 
   successor_Fun = mkFun "successor" ;
@@ -78,7 +68,7 @@ lin
   function_Fam2 = mkFam "function" from_Prep to_Prep ;
   union_FunC = mkFun "union" ;
   intersection_FunC = mkFun "intersection" ;
-  difference_FunC = mkFun "difference" ;
+  difference_Fun2 = mkFun2 "difference" "from" ;
   complement_Fun = mkFun "complement" ;
   cartesian_FunC = mkFun "cartesian product" ;
   powerset_Fun = mkFun "power set" ;
@@ -100,14 +90,14 @@ lin
   finite_Adj = mkAdj "finite" ;
   infinite_Adj = mkAdj "infinite" ;
 
-  combinationsFromSet_FunC = mkFun "number of combinations" ;
-  combinations_FunC = mkFun "set of combinations" ;
-  binomial_FunC = mkFun "binomial coefficient" ;
+  combinationsFromSet_Fun2 = mkFun2 "number of combinations" "of size" ;
+  combinations_Fun2 = mkFun2 "set of combinations" "of size" ;
+  binomial_Fun2 = mkFun2 "binomial coefficient" "over" ;
   area_Fun = mkFun "area" ;
   radius_Fun = mkFun "radius" ;
   circle_Noun = mkNoun "circle" ;
   pi_Name = mkNP the_Det (mkCN (mkN "number") (symb "\\(\\pi\\)")) ;
-  legendre_symbol_FunC = mkFun "Legendre symbol" ;
+  legendre_symbol_Fun2 = mkFun2 "Legendre symbol" "over" ;
   square_Fun = mkFun "square" ;
   resultant_FunC = mkFun "resultant" ;
   perpendicular_Adj2 = mkReladj "perpendicular" "to" ;
@@ -129,7 +119,10 @@ lin
   arccos_Fun = mkFun "arccosine" ;
   arctan_Fun = mkFun "arctangent" ;
   orthogonal_Adj2 = mkReladj "orthogonal" "to" ;
-  angle_between_FunC = mkFun "angle" "between" ;
+  orthogonal_AdjC = mkAP (mkA "orthogonal") ;
+  perpendicular_Adj2 = mkReladj "perpendicular" "to" ;
+  perpendicular_AdjC = mkAP (mkA "perpendicular") ;
+  angle_between_Fun2 = mkFun2 "angle" "with" ;
   dot_product_FunC = mkFun "dot product" ;
   vector_plus_FunC = mkFun "sum" ;
 

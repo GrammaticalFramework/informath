@@ -5,22 +5,8 @@ fun
   set_Noun : Noun ;
   proposition_Noun : Noun ;
 
-  elements_Fun : Fun ;
-  proofs_Fun : Fun ;
-
-  absurdity_Name : Name ;
-  conjunction_FunC : FunC ;
-  disjunction_FunC : FunC ;
-  implication_FunC : FunC ;
-  universal_FunC : FunC ;
-  existential_FunC : FunC ;
-  negation_Fun : Fun ;
-  equivalence_FunC : FunC ;
-
   number_Noun : Noun ;
-  boolean_Noun : Noun ;
-  list_Fam : Fam ;
-  
+  boolean_Noun : Noun ;  
   cardinal_Noun : Noun ;
   digit_Noun : Noun ;
   natural_Noun : Noun ;
@@ -29,6 +15,9 @@ fun
   real_Noun : Noun ;
   complex_Noun : Noun ;
 
+  list_Fam : Fam ;
+  set_Fam : Fam ;
+  
   Eq_Adj2 : Adj2 ;
   Lt_Adj2 : Adj2 ;
   Gt_Adj2 : Adj2 ;
@@ -53,7 +42,7 @@ fun
   div_Fun2 : Fun2 ;
   pow_Fun2 : Fun2 ;
   neg_Fun : Fun ;
-  logarithm_FunC : FunC ;
+  logarithm_Fun2 : Fun2 ;
   square_root_Fun : Fun ;
   
   successor_Fun : Fun ;
@@ -71,7 +60,7 @@ fun
   union_FunC : FunC ;
   intersection_FunC : FunC ;
   cartesian_FunC : FunC ;
-  difference_FunC : FunC ;
+  difference_Fun2 : Fun2 ;
   complement_Fun : Fun ;
   powerset_Fun : Fun ;
 
@@ -105,14 +94,14 @@ fun
   perpendicular_Adj2 : Adj2 ; -- top100
   resultant_FunC : FunC ; -- top100
   square_Fun : Fun ; -- top100
-  legendre_symbol_FunC : FunC ; -- top100
+  legendre_symbol_Fun2 : Fun2 ; -- top100
   pi_Name : Name ; -- top100
   circle_Noun : Noun ; -- top100
   radius_Fun  : Fun ; -- top100
   area_Fun : Fun ; -- top100
-  binomial_FunC : FunC ; -- top100
-  combinations_FunC : FunC ; -- top100
-  combinationsFromSet_FunC : FunC ; -- top100
+  binomial_Fun2 : Fun2 ; -- top100
+  combinations_Fun2 : Fun2 ; -- top100
+  combinationsFromSet_Fun2 : Fun2 ; -- top100
   sin_Fun : Fun ;
   cos_Fun : Fun ;
   tan_Fun : Fun ;
@@ -120,7 +109,10 @@ fun
   arccos_Fun : Fun ;
   arctan_Fun : Fun ;
   orthogonal_Adj2 : Adj2 ;
-  angle_between_FunC : FunC ;
+  orthogonal_AdjC : AdjC ;
+  perpendicular_Adj2 : Adj2 ;
+  perpendicular_AdjC : AdjC ;
+  angle_between_Fun2 : Fun2 ;
   dot_product_FunC : FunC ;
   vector_plus_FunC : FunC ;
 
