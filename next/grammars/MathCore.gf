@@ -78,6 +78,8 @@ fun
   Adj2Prop : Adj2 -> Exp -> Exp -> Prop ;
   AdjCProp : AdjC -> Exps -> Prop ;
   NotAdjCProp : AdjC -> Exps -> Prop ;
+  AdjEProp : AdjE -> Exps -> Prop ;
+  NotAdjEProp : AdjE -> Exps -> Prop ;
   NounKind : Noun -> Kind ;
   NameExp : Name -> Exp ;
   FunExp : Fun -> Exp -> Exp ;

@@ -38,6 +38,7 @@ lincat
   Noun1 = CN ;
   Adj = AP ;
   Adj2 = RelationT ;
+  AdjE = AP ;
   AdjC = AP ;
   Verb = VP ;
   Verb2 = V2 ;

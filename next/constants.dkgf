@@ -12,7 +12,7 @@ Rat rational_Noun rational_Const
 Real real_Noun real_Const
 Complex complex_Noun complex_Const
 Cardinal cardinal_Noun
-Eq Eq_Adj2 Eq_AdjC Eq_Compar
+Eq Eq_Adj2 Eq_AdjE Eq_Compar
 Lt Lt_Adj2 Lt_Compar
 Gt Gt_Adj2 Gt_Compar
 Neq Neq_Adj2 Neq_AdjC Neq_Compar
@@ -50,7 +50,7 @@ subset subset_Noun2 subset_Compar
 subseteq subseteq_Noun2 subseteq_Compar
 superset superset_Noun2 superset_Compar
 superseteq superseteq_Noun2 superseteq_Compar
-equalset equalset_Adj2 Eq_Compar
+equalset equalset_Adj2 Eq_AdjE Eq_Compar
 notequalset notequalset_Adj2 Neq_Compar
 element element_Noun2 element_Compar
 notelement notelement_Noun2 notelement_Compar

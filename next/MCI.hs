@@ -14,7 +14,7 @@ type Opts = [String]
 nlg :: Opts -> Tree a -> [Tree a]
 nlg opts tree = case opts of
   _ | elem "-variations" opts ->
-         nub $ concatMap variations [t, ut, aft, iaft, viaft]
+         nub $ concatMap variations [t, ut, aft, iaft, viaft, coll]
   _ -> [viaft]
  where
    t = unparenth tree
@@ -22,6 +22,7 @@ nlg opts tree = case opts of
    aft = aggregate (flatten ut)
    iaft = insitu aft
    viaft = varless iaft
+   coll = maybe viaft id (collectivize viaft)
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
@@ -292,3 +293,35 @@ exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
   GOneExps e -> [e]
   GAddExps e es -> e : exps2list es
+
+list2mexps :: [GExp] -> Maybe GExps
+list2mexps exps = case exps of
+  [e] -> return $ GOneExps e
+  e : es -> do
+    jes <- list2mexps es
+    return $ GAddExps e jes
+  [] -> Nothing
+
+flattenExps :: [GExps] -> Maybe GExps -- Nothing for empty list
+flattenExps = list2mexps .  concatMap exps2list
+
+collectivize :: Tree a -> Maybe (Tree a)
+collectivize t = case t of
+  -- put together instances of an equivalence relation that have common elements
+  GAndProp (GListProp props) -> do
+    (adjc, expss) <- commonRel props
+    nexps <- list2mexps $ nub $ expss 
+    return $ GAdjEProp adjc nexps 
+  _ -> composOpM collectivize t
+ where
+   commonRel :: [GProp] -> Maybe (GAdjE, [GExp])
+   commonRel props = case props of
+     GAdjEProp adjc exps : [] ->
+       return (adjc, exps2list exps)
+     GAdjEProp adjc exps : pp -> do
+       (adjc2, expss) <- commonRel pp
+       let lexp = exps2list exps
+       if adjc2 == adjc && any (flip elem expss) lexp
+         then return (adjc, lexp ++ expss)
+         else Nothing
+     _ -> Nothing

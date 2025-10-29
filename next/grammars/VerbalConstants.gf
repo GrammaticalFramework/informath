@@ -36,7 +36,7 @@ fun
   Leq_Adj2 : Adj2 ;
   Geq_Adj2 : Adj2 ;
 
-  Eq_AdjC : AdjC ;
+  Eq_AdjE : AdjE ;
   Neq_AdjC : AdjC ;
 
   positive_Adj : Adj ;

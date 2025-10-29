@@ -139,6 +139,8 @@ lin
   Adj2Prop rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
   AdjCProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
   NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
+  AdjEProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
+  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
   
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;

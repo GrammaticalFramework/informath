@@ -52,7 +52,7 @@ jmt2jmt jmt = case jmt of
              (GListHypo chypos)
              (funListExp ident (map (GTermExp . GIdentTerm) (concatMap hypoIdents chypos)))
              (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "Verb2", "Noun2", "Adj3"] ->
+      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "AdjE", "Verb2", "Noun2", "Adj3"] ->
         (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
              (GListHypo chypos)
@@ -124,6 +124,8 @@ funListProp ident exps = case ident of
       GAdj2Prop (LexAdj2 c) (exps !! 0) (exps !! 1)
     Just ("AdjC", c) | length exps == 2 ->
       GAdjCProp (LexAdjC c) (gExps [exps !! 0, exps !! 1])
+    Just ("AdjE", c) | length exps == 2 ->
+      GAdjEProp (LexAdjE c) (gExps [exps !! 0, exps !! 1])
     Just ("Adj3", c) | length exps == 3 ->
       GAdj3Prop (LexAdj3 c) (exps !! 0) (exps !! 1) (exps !! 2)
     Just ("Verb", c) | length exps == 1 ->
@@ -136,7 +138,7 @@ funListProp ident exps = case ident of
       GNoun2Prop (LexNoun2 c) (exps !! 0) (exps !! 1)
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
-      _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps)
+      _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps) ---- TODO: this causes "Gt holds for ..." etc
 
 funListFormula :: QIdent -> [GTerm] -> GFormula
 funListFormula ident terms = case ident of
@@ -239,6 +241,9 @@ exp2prop exp = case exp of
       EIdent conn | conn == identNeg -> case args of
         [a] -> case exp2prop a of
           GAdjProp adj x -> GNotAdjProp adj x
+          GAdj2Prop adj x y -> GNotAdj2Prop adj x y
+          GAdjCProp adj xy -> GNotAdjCProp adj xy
+          GAdjEProp adj xy -> GNotAdjEProp adj xy
           GVerbProp verb x -> GNotVerbProp verb x
           GVerb2Prop verb x y -> GNotVerb2Prop verb x y
           GNoun2Prop noun x y -> GNotNoun2Prop noun x y
@@ -377,6 +382,7 @@ ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Noun", c) -> GNounKind (LexNoun c)
+    Just ("Const", c) -> GTermKind (GConstTerm (LexConst c))
     _ -> GTermKind (GIdentTerm (ident2ident ident))
 
 bind2coreIdent :: Bind -> GIdent

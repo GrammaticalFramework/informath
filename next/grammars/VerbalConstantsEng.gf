@@ -39,7 +39,7 @@ lin
   complex_Noun = mkNoun "complex" "number" ;
 
   Eq_Adj2 = mkReladj "equal" "to" ;
-  Eq_AdjC = mkAP (mkA "equal") ;
+  Eq_AdjE = mkAP (mkA "equal") ;
   Lt_Adj2 = mkReladj "less" "than" ;
   Gt_Adj2 = mkReladj "greater" "than" ;
   Neq_Adj2 = mkReladj "distinct" "from" ;

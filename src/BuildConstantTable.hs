@@ -83,7 +83,7 @@ mismatchingTypes dktyp gftyp = arityMismatch dktyp (unType gftyp) where
   arityMismatch (dkhypos, _) (gfhypos, cid, _) = dkArity dkhypos /= gfArity gfhypos cid
   gfArity gfhypos cid = case showCId cid of
     s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
-    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2") -> 2
+    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2 FunC AdjC AdjE") -> 2  ---- C can be >2
     s | elem s (words "Adj3") -> 3
     _ -> length gfhypos
   dkArity dkhypos = foldl (+) 0 (map hypoArity dkhypos)
@@ -122,9 +122,30 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
     
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
--- annotate idents with cats and funs
-annotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
-annotateDkIdents table t = nub (symbs t ++ verbs t) where
+-- annotate idents with cats and funs, just the primary
+annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
+annotateDkIdents table = annot [] where
+
+  annot :: forall a. [QIdent] -> DkTree a -> DkTree a
+  annot bounds t = case t of
+    EIdent c | notElem c bounds -> EIdent (annotId c)
+    EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
+    EFun h exp -> EFun (annot bounds h) (annot (hypo2vars h ++ bounds) exp)
+    _ -> composOp (annot bounds) t
+
+  annotId c = case M.lookup c table of
+    Just entry -> annotIdent c (primary entry)
+    _ -> c
+
+annotIdent :: QIdent -> (Fun, Type) -> QIdent
+annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
+  where
+    valCat t = case unType t of (_, c, _) -> c
+    dk c = showCId c
+
+-- annotate idents with cats and funs, with all alternatives
+allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
+allAnnotateDkIdents table t = nub (symbs t ++ verbs t) where
 
   symbs :: forall a. DkTree a -> [DkTree a]
   symbs t = case t of
@@ -148,21 +169,16 @@ annotateDkIdents table t = nub (symbs t ++ verbs t) where
     _ -> composOpM verbs t
 
   annotId get c = case M.lookup c table of
-    Just entry -> withDefault c [annotIdent c t f | (f, t) <- get entry]
+    Just entry -> withDefault c [annotIdent c ft | ft <- get entry]
     _ -> [c]
     
   strictAnnotId get c = case M.lookup c table of
-    Just entry -> [annotIdent c t f | (f, t) <- get entry]
+    Just entry -> [annotIdent c ft | ft <- get entry]
     _ -> []
 
-  annotIdent :: QIdent -> Type -> Fun -> QIdent
-  annotIdent (QIdent s) t f = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
-
-  verbals e = primary e : symbolics e
+  verbals e = primary e : synonyms e ++ symbolics e
 
   withDefault d vs = if null vs then [d] else vs
-  valCat t = case unType t of (_, c, _) -> c
-  dk c = showCId c
 
   subsequence xss =
     let m = maximum (map length xss)
@@ -193,3 +209,4 @@ guessGFCat ident@(QIdent c) typ =
         _ -> "Fun2"
       (EIdent f, _) | f == identProof -> "Label"
       _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
+      

@@ -3,6 +3,9 @@
 
 module Main where
 
+import TopConversions
+---- this may replace most of the other imports
+
 import Core2Dedukti (jmt2dedukti)
 import Dedukti2Core
 import Environment
@@ -34,7 +37,7 @@ import qualified NextInformath as N
 
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
+import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
 ----import System.Random
 import Data.Char (isDigit, toUpper)
 import System.Environment (getArgs)
@@ -165,14 +168,14 @@ main = do
       MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
       
       let mkOne jmt = do
-            let djmts = annotateDkIdents table jmt 
+            let djmts = allAnnotateDkIdents table jmt 
             ifv env $ do
               putStrLn "# showing annotated Dedukti code"
               mapM_ (putStrLn . printTree) djmts 
 	
             let gfjmts = map DMC.jmt2core djmts
       
-            let nlgjmts = concatMap (MCI.nlg (flags env)) gfjmts
+            let nlgjmts = nub $ concatMap (MCI.nlg (flags env)) gfjmts
             let nlgtrees = map N.gf nlgjmts
 
             let gfts = [(gft, unlex env (linearize pgf (tolang env) gft)) | gft <- nlgtrees]

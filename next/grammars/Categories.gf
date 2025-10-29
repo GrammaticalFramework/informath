@@ -31,7 +31,8 @@ cat
   Noun2 ;   -- Exp -> Exp -> Prop   -- divisor of
   Adj ;     -- Exp -> Prop          -- even
   Adj2 ;    -- Exp -> Exp -> Prop   -- divisible by
-  AdjC ;    -- [Exp] -> Prop        -- linearly independent
+  AdjE ;    -- [Exp] -> Prop        -- equal (equivalence relation)
+  AdjC ;    -- [Exp] -> Prop        -- distinct (collective)
   Verb ;    -- Exp -> Exp           -- converge
   Verb2 ;   -- Exp -> Exp -> Prop   -- divide
   Name ;    -- Exp                  -- the empty set
