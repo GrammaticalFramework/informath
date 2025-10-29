@@ -68,7 +68,6 @@ denumerable denumerable_Adj
 Vector vector_Noun
 length length_Fun length_Oper norm_Fun
 norm length_Fun length_Oper norm_Fun
-perpendicular perpendicular_Adj2 orthogonal_Adj2 perpendicular_Compar
 square square_Fun square_Oper
 legendre legendre_symbol_Fun2 legendre_symbol_Oper2
 pi pi_Name pi_Const
@@ -82,9 +81,9 @@ sin sin_Fun sin_Oper
 cos cos_Fun cos_Oper
 tan tan_Fun tan_Oper
 arcsin arcsin_Fun arcsin_Oper
-arccos arccos_Fun arcsin_Oper
-arctan arctan_Fun arcsin_Oper
-orthogonal orthogonal_Adj2 orthogonal_Compar
+arccos arccos_Fun arccos_Oper
+arctan arctan_Fun arctan_Oper
+orthogonal orthogonal_Adj2 perpendicular_Adj2 orthogonal_AdjC perpendicular_AdjC orthogonal_Compar
 angleBetween angle_between_Fun2
 dotProduct dot_product_FunC dot_product_Oper2
 vectorPlus vector_plus_FunC resultant_FunC plus_Oper2

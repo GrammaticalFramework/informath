@@ -47,8 +47,8 @@ import qualified Data.Map as M
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
-core2dedukti :: GJmt -> Jmt
-core2dedukti jmt = undefined ----
+core2dedukti :: GJmt -> [Jmt]
+core2dedukti jmt = [] ----
 
 checkJmt :: Jmt -> Bool
 checkJmt jmt = True ----
@@ -56,8 +56,8 @@ checkJmt jmt = True ----
 core2ext :: GJmt -> [GJmt]
 core2ext jmt = [jmt] ---- baseline
 
-ext2core :: GJmt -> [GJmt]
-ext2core jmt = [] ---- to be revised
+ext2core :: GJmt -> GJmt
+ext2core jmt = jmt ---- to be revised
 
 core2nat :: PGF -> Language -> GJmt -> String
 core2nat pgf lang jmt = undefined ----

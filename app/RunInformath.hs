@@ -33,6 +33,8 @@ import Ranking
 import BuildConstantTable -- next version
 import qualified DMC
 import qualified MCI
+import qualified IMC
+import qualified MCD
 import qualified NextInformath as N
 
 import PGF
@@ -161,9 +163,12 @@ main = do
       pgf <- readPGF nextInformathPGF
       putStrLn "# building and checking constant table"
       table <- buildConstantTable filename dk pgf
+      let backtable = constantTableBack table
       ifv env $ do
         putStrLn "# showing constant table"
         putStrLn $ printConstantTable table 
+        putStrLn "# showing back table"
+        putStrLn $ printBackTable backtable 
       let inputfile = flagValue "inputfile" dkfile ff
       MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
       
@@ -176,15 +181,25 @@ main = do
             let gfjmts = map DMC.jmt2core djmts
       
             let nlgjmts = nub $ concatMap (MCI.nlg (flags env)) gfjmts
-            let nlgtrees = map N.gf nlgjmts
+            let nlgtrees = map N.gf nlgjmts 
 
-            let gfts = [(gft, unlex env (linearize pgf (tolang env) gft)) | gft <- nlgtrees]
-            let rgfts = [unlines ["%# " ++ printTree jmt, 
-	                          "%# " ++ showExpr [] t,
-				  "%# " ++ show sk,
-				  s] | ((t, s), sk) <- rankTreesAndStrings env gfts]
+            let semjmts = map IMC.semantics nlgjmts
+            let semtrees = map N.gf semjmts
+
+            let backjmts = concatMap (MCD.jmt2dedukti backtable) semjmts
+
+            let gfts = [(gft, unlex env (linearize pgf (tolang env) gft))
+                         | (gft, sem) <- zip nlgtrees semtrees]
+            let rgfts = [unlines ["%# DEDUKTI " ++ printTree jmt, 
+	                          "%# GF " ++ showExpr [] t,
+				  "%# SCORES " ++ show sk,
+				  s
+                                 ] | ((t, s), sk) <- rankTreesAndStrings env gfts
+                        ]
 	    let best_rgfts = maybe id take (nbest env) rgfts
             mapM_ putStrLn best_rgfts
+            mapM_ (putStrLn . ("%# GF-BACK "++) . showExpr []) (nub semtrees) 
+            mapM_ (putStrLn . ("%# DEDUKTI-BACK "++) . printTree) (nub backjmts) 
 	    
       mapM_ mkOne jmts
       

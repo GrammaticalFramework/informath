@@ -55,6 +55,17 @@ printConstantTable = concat . map prEntry . M.toList where
       ]
   prTyping (fun, typ) = showCId fun ++ " : " ++ showType [] typ ++ " ;"
 
+constantTableBack :: ConstantTable -> M.Map QIdent [QIdent]
+constantTableBack table = M.fromListWith (++) [
+  (QIdent (showCId fun), [qid]) | 
+    (qid, entry) <- M.toList table,
+    fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
+  ]
+
+printBackTable ::  M.Map QIdent [QIdent] -> String
+printBackTable = unlines . map prEntry . M.toList where
+  prEntry :: (QIdent, [QIdent]) -> String
+  prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
 buildConstantTable :: FilePath -> Module -> PGF -> IO ConstantTable
 buildConstantTable dkgf dk pgf = do
