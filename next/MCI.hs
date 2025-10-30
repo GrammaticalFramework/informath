@@ -292,14 +292,12 @@ varless t = case t of
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
   GOneExps e -> [e]
-  GAddExps e es -> e : exps2list es
+  GManyExps (GListExp es) -> es
 
 list2mexps :: [GExp] -> Maybe GExps
 list2mexps exps = case exps of
   [e] -> return $ GOneExps e
-  e : es -> do
-    jes <- list2mexps es
-    return $ GAddExps e jes
+  _ : _ -> return $ GManyExps (GListExp exps)
   [] -> Nothing
 
 flattenExps :: [GExps] -> Maybe GExps -- Nothing for empty list

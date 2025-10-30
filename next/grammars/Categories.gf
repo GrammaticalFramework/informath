@@ -6,6 +6,7 @@ cat
 -- syntax
   Jmt ;
   Exp ;
+  [Exp] {2} ;
   Exps ;
   Prop ;
   [Prop] {2} ;

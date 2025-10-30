@@ -16,6 +16,7 @@ lincat
   Prop = Proposition ;
   Jmt = Text ;
   Exps = {np : NP ; isPl : Bool} ;
+  [Exp] = Syntax.ListNP ;
   [Prop] = ListS ;
   ArgKind = {cn : CN ; adv : Adv ; isPl : Bool} ;  -- isPl = idents.isPl
   [ArgKind] = {sg, neg, pl : NP} ;  -- there exists an A / there exists no A / for all As
@@ -60,6 +61,9 @@ lin
       } ;
     isPl = True
     } ;
+
+  BaseExp a b = mkListNP a b ;
+  ConsExp a bs = mkListNP a bs ;
 
   BaseArgKind kind = {
     sg = case kind.isPl of {

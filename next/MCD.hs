@@ -250,8 +250,9 @@ prop2deduktiIdent prop = case prop of
 eUndefined :: Exp
 eUndefined = EIdent (QIdent "UNDEFINED")
 
+--- also in MCI
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
-  GOneExps exp -> [exp]
-  GAddExps exp exps -> exp : exps2list exps
+  GOneExps e -> [e]
+  GManyExps (GListExp es) -> es
 

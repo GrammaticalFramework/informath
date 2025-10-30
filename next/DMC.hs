@@ -399,5 +399,8 @@ bind2coreHypo bind = case bind of
     GBareVarsHypo (GListIdent [ident2ident var])
 
 gExps :: [GExp] -> GExps
-gExps exps = foldr GAddExps (GOneExps (last exps)) (init exps)
+gExps exps = case exps of
+  [exp] -> GOneExps exp
+  _ -> GManyExps (GListExp exps)
+
 

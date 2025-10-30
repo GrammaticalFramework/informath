@@ -5,7 +5,6 @@ abstract MathExtensions =
 
 cat
   [Adj] {2} ;
-  [Exp] {2} ;
 
 fun
   TermExp : Term -> Exp ;

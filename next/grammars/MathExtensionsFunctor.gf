@@ -15,7 +15,6 @@ in {
 
 lincat
   [Adj] = Syntax.ListAP ;
-  [Exp] = Syntax.ListNP ;
 
 lin
   TermExp term = latexNP (mkSymb term.s) ;
@@ -64,9 +63,6 @@ lin
 
   BaseAdj a b = mkListAP a b ;
   ConsAdj a bs = mkListAP a bs ;
-
-  BaseExp a b = mkListNP a b ;
-  ConsExp a bs = mkListNP a bs ;
 
   IndexedTermExp i = symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}")) ;
   IndexedFormulaProp i = simpleProp (symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}"))) ;

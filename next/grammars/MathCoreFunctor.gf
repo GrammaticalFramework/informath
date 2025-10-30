@@ -128,8 +128,8 @@ lin
 
   OneExps exp =
     {np = exp ; isPl = False} ;
-  AddExps exp exps =
-    {np = mkNP and_Conj exp exps.np ; isPl = True} ;
+  ManyExps listexp =
+    {np = mkNP and_Conj listexp ; isPl = True} ;
 
 
 -- using Constants

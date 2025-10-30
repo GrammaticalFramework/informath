@@ -69,7 +69,7 @@ fun
   AbsProofExp : [Hypo] -> ProofExp -> ProofExp ;
 
   OneExps : Exp -> Exps ;
-  AddExps : Exp -> Exps -> Exps ;
+  ManyExps : [Exp] -> Exps ;
 
 -- using Constants
 
