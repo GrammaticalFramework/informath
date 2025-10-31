@@ -78,7 +78,8 @@ helpMsg = unlines [
   "  -variations     when producing natural language, show all variations",
   "  -ranking        rank trees with possibly weighted scores (smaller better)",
   "  -nbest=<int>    take at most <int> best ranked variations",
-  "  -weights=<int>  weights of scores, default 1,1,1,1,1,1,1",
+  "  -nbestdk=<int>  take at most <int> best ranked annotated Dedukti terms (in -next)",
+  "  -weights=<ints> weights of scores, default 1,1,1,1,1,1,1",
   "  -test-ambiguity test for ambiguity when ranking (can be expensive)",
   "  -idents         show frequency list of idents in a Dedukti file",
   "  -dropdefs       drop definition parts of Dedukti code",
@@ -168,12 +169,15 @@ main = do
         putStrLn "# showing constant table"
         putStrLn $ printConstantTable table 
         putStrLn "# showing back table"
-        putStrLn $ printBackTable backtable 
+        putStrLn $ printBackTable backtable
+      let nbestdk = let fv = flagValue "nbestdk" "none" ff
+	            in if all isDigit fv then take (read fv) else id
+
       let inputfile = flagValue "inputfile" dkfile ff
       MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
       
       let mkOne jmt = do
-            let djmts = allAnnotateDkIdents table jmt 
+            let djmts = nbestdk (allAnnotateDkIdents table jmt) 
             let gfjmts = map DMC.jmt2core djmts      
             let nlgjmts = nub $ concatMap (MCI.nlg (flags env)) gfjmts
             let nlgtrees = map N.gf nlgjmts 

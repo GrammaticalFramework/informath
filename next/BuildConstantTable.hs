@@ -12,7 +12,7 @@ import DeduktiOperations
 import PGF
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, nub)
+import Data.List (partition, nub, sortOn)
 
 
 constant_table_file = "constants.dkgf"
@@ -156,7 +156,7 @@ annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
 
 -- annotate idents with cats and funs, with all alternatives
 allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
-allAnnotateDkIdents table t = nub (symbs t ++ verbs t) where
+allAnnotateDkIdents table t = rankDkTrees (nub (symbs t ++ verbs t)) where
 
   symbs :: forall a. DkTree a -> [DkTree a]
   symbs t = case t of
@@ -173,14 +173,14 @@ allAnnotateDkIdents table t = nub (symbs t ++ verbs t) where
     EApp _ _ -> case splitApp t of
       (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
 	  ac <- annotId verbals c,
-	  xx <- subsequence (map (\x -> symbs x ++ verbs x) xs)
+	  xx <- sequence (map (\x -> withDefaults (verbs x) (symbs x)) xs)
 	  ]
     EIdent c -> [EIdent ac | ac <- annotId verbals c]
     EAbs b exp -> [EAbs b aexp | aexp <- verbs exp]
     _ -> composOpM verbs t
 
   annotId get c = case M.lookup c table of
-    Just entry -> withDefault c [annotIdent c ft | ft <- get entry]
+    Just entry -> withDefaults [c] [annotIdent c ft | ft <- get entry]
     _ -> [c]
     
   strictAnnotId get c = case M.lookup c table of
@@ -189,11 +189,25 @@ allAnnotateDkIdents table t = nub (symbs t ++ verbs t) where
 
   verbals e = primary e : synonyms e ++ symbolics e
 
-  withDefault d vs = if null vs then [d] else vs
+  withDefaults ds vs = if null vs then ds else vs
 
+  -- kind of breadth-first slices of sequence
   subsequence xss =
     let m = maximum (map length xss)
     in [[xs !! mk | xs <- xss, let mk = min k (length xs - 1)] | k <- [0 .. m-1]]
+
+
+-- rank by the number of symbolic constants, more is better, except for Noun 
+rankDkTrees :: [DkTree a] -> [DkTree a]
+rankDkTrees = sortOn ((0-) . length . rank) where
+  rank :: forall a. DkTree a -> [()]
+  rank t = case t of
+    QIdent c -> case lookupConstant c of
+      Just ("Noun", _) -> []
+      Just (cat, _) | S.member (mkCId cat) symbolicCats -> [()]
+      _ -> []
+    _ -> composOpMPlus rank t
+
 
 -- deciding the kind of a new constant
 guessGFCat :: QIdent -> Exp -> String
