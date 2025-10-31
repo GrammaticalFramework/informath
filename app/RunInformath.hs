@@ -174,29 +174,24 @@ main = do
       
       let mkOne jmt = do
             let djmts = allAnnotateDkIdents table jmt 
-            ifv env $ do
-              putStrLn "# showing annotated Dedukti code"
-              mapM_ (putStrLn . printTree) djmts 
-	
-            let gfjmts = map DMC.jmt2core djmts
-      
+            let gfjmts = map DMC.jmt2core djmts      
             let nlgjmts = nub $ concatMap (MCI.nlg (flags env)) gfjmts
             let nlgtrees = map N.gf nlgjmts 
-
             let semjmts = map IMC.semantics nlgjmts
             let semtrees = map N.gf semjmts
-
             let backjmts = concatMap (MCD.jmt2dedukti backtable) semjmts
-
             let gfts = [(gft, unlex env (linearize pgf (tolang env) gft))
                          | (gft, sem) <- zip nlgtrees semtrees]
-            let rgfts = [unlines ["%# DEDUKTI " ++ printTree jmt, 
+            let rgfts = [unlines [
 	                          "%# GF " ++ showExpr [] t,
 				  "%# SCORES " ++ show sk,
 				  s
                                  ] | ((t, s), sk) <- rankTreesAndStrings env gfts
                         ]
 	    let best_rgfts = maybe id take (nbest env) rgfts
+	    
+	    putStrLn $ "%# ORIGINAL DEDUKTI " ++ printTree jmt
+	    mapM_ (putStrLn . ("%# ANNOTATED DEDUKTI " ++) . printTree) djmts 
             mapM_ putStrLn best_rgfts
             mapM_ (putStrLn . ("%# GF-BACK "++) . showExpr []) (nub semtrees) 
             mapM_ (putStrLn . ("%# DEDUKTI-BACK "++) . printTree) (nub backjmts) 
