@@ -67,12 +67,11 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: FilePath -> Module -> PGF -> IO ConstantTable
-buildConstantTable dkgf dk pgf = do
+buildConstantTable :: PGF -> FilePath -> IO ConstantTable
+buildConstantTable pgf dkgf = do
   entrylines <- readFile dkgf >>= return . map words . filter (not . null) . lines
   let table = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map mkCId gfids)) | qid:gfids <- entrylines]
-  checkConstantTable dk table
   return table
 
 
@@ -102,18 +101,18 @@ mismatchingTypes dktyp gftyp = arityMismatch dktyp (unType gftyp) where
     
 
  ---- TODO: check more than arity
- 
 
-checkConstantTable :: Module -> ConstantTable -> IO ()
-checkConstantTable dk table = do
+constantTableErrors :: Module -> PGF -> ConstantTable -> [String]
+constantTableErrors dk pgf table = 
   let funs = deduktiFunctions dk
-  let missing = [fun | (fun, _) <- funs, M.notMember fun table]
-  mapM_ putStrLn $ ["MISSING IN TABLE: " ++ printTree fun | fun <- missing]
-  let mismatches = [(dkfun, gffun) |
+      missing = [fun | (fun, _) <- funs, M.notMember fun table]
+      mismatches = [(dkfun, gffun) |
                       (dkfun, dktyp) <- funs,
 		      (gffun, gftyp) <- allGFFuns table dkfun,
 		      mismatchingTypes dktyp gftyp]
-  mapM_ putStrLn $ ["MISMATCHING TYPES: " ++ printTree dkfun ++ " <> " ++ showCId gffun |
+  in 
+    ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
+    ["MISMATCHING TYPES: " ++ printTree dkfun ++ " <> " ++ showCId gffun |
                       (dkfun, gffun) <- mismatches]
 		      
 
@@ -187,7 +186,7 @@ allAnnotateDkIdents table t = rankDkTrees (nub (symbs t ++ verbs t)) where
     Just entry -> [annotIdent c ft | ft <- get entry]
     _ -> []
 
-  verbals e = primary e : synonyms e ++ symbolics e
+  verbals e = primary e : synonyms e -- ++ symbolics e
 
   withDefaults ds vs = if null vs then ds else vs
 
@@ -203,7 +202,7 @@ rankDkTrees = sortOn ((0-) . length . rank) where
   rank :: forall a. DkTree a -> [()]
   rank t = case t of
     QIdent c -> case lookupConstant c of
-      Just ("Noun", _) -> []
+      Just ("Noun", _) -> [(), ()]
       Just (cat, _) | S.member (mkCId cat) symbolicCats -> [()]
       _ -> []
     _ -> composOpMPlus rank t
