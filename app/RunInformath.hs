@@ -23,9 +23,26 @@ main4 args = do
     Just (file, "dk") -> do
       mo <- readDeduktiModule file
       let results = processDeduktiModule env mo
-      mapM_ (putStrLn . printResult env) results
+      mapM_ (putStrLn . printGenResult env) results
+    Just (file, "tex") -> do
+      s <- readFile file
+      let results = processLatex env s
+      mapM_ (putStrLn . printParseResult env) results
+    _ -> putStrLn helpMsg4
+
+
+helpMsg4 = unlines [
+  "usage: RunInformath -next <option>* <file>.(dk|tex)",
+  "Options: ",
+  "  -variations",
+  "  -json",
+  "  -nbestdk=<int>",
+  "  -nbest=<int>",
+  "  -tolang=<lang>",
+  "  -fromlang=<lang>"
+  ]
 
   
-  
+
 
 

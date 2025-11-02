@@ -14,12 +14,14 @@ data Env = Env {
   grammar :: PGF,
   baseConstantModule :: Module,
   constantTable :: ConstantTable,
+  backConstantTable :: BackConstantTable,
   langs :: [Language],
   toLang :: Language,
   fromLang :: Language,
   nbestDedukti :: Maybe Int,
   nbestNLG :: Maybe Int,
-  scoreWeights :: [Int]
+  scoreWeights :: [Int],
+  morpho :: Morpho
   }
 
 -------------------------------------------

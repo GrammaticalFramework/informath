@@ -55,7 +55,9 @@ printConstantTable = concat . map prEntry . M.toList where
       ]
   prTyping (fun, typ) = showCId fun ++ " : " ++ showType [] typ ++ " ;"
 
-constantTableBack :: ConstantTable -> M.Map QIdent [QIdent]
+type BackConstantTable = M.Map QIdent [QIdent]
+
+constantTableBack :: ConstantTable -> BackConstantTable
 constantTableBack table = M.fromListWith (++) [
   (QIdent (showCId fun), [qid]) | 
     (qid, entry) <- M.toList table,

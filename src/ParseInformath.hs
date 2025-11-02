@@ -41,39 +41,33 @@ checkVariables expr = case unApp expr of
   _ -> True
 
 
-{-
-variableCallback :: (AbsName,[(Cat,LiteralCallback)])
-variableCallBack = ("Informath", [("Var", pvar)])
+unindexGFTree :: PGF -> Language -> [String] -> Expr -> Expr
+unindexGFTree pgf lang termindex expr = maybe expr id (unind  expr) where
+  unind expr = case unApp expr of
+    Just (f, [x]) -> case unInt x of
+      Just i -> case showCId f of
+        "IndexedTermExp" -> parsed "Exp" (look i)
+        "IndexedFormulaProp" -> parsed "Prop" (look i)
+        "IndexedLetFormulaHypo" -> do
+	   formula <- parsed "Formula" (filter (/='$') (look i))
+	   return $ mkApp (mkCId "LetFormulaHypo") [formula]
+        "IndexedDeclarationArgKind" -> do
+	   declaration <- parsed "Declaration" (filter (/='$') (look i))
+	   return $ mkApp (mkCId "DeclarationArgKind") [declaration]
+        _ -> return expr
+      _ -> do
+        ux <- unind x
+        return $ mkApp f [ux]
+    Just (f, xs) -> do
+       uxs <- mapM unind xs
+       return $ mkApp f uxs
+    _ -> return expr
 
--- = PGF -> (ConcName,Concr) -> String -> String -> Int -> Maybe (Expr,Float,Int)
 
-pvar :: LiteralCallback
-pvar pgf (lang, concr) sentence lin_idx offset = undefined ---- TODO: recognize variables
--}
-
-{-
--- a quick way to test e.g. on a file with jments line by line
-
-main = do
-  gr <- readPGF main_pgf
-  let Just eng = readLanguage "InformathEng"
-  doParse gr eng (startCat gr) (0, 0)
-
-doParse gr eng cat (success, failure) = do
-  s <- getLine
-  putStrLn s
-  if not (null s)
-    then do
-      let (mtree, msg) = parseJmt gr eng cat s
-      putStrLn msg
-      case mtree of
-        Just (tree:_) -> do
-	  putStrLn $ showExpr [] tree
-	  putStrLn $ "# SUCCEED " ++ show (success + 1) ++ " FAIL " ++ show failure
-          doParse gr eng cat (success + 1, failure)
-	_ -> do
-	  putStrLn $ "# SUCCEED " ++ show (success) ++ " FAIL " ++ show (failure + 1)
-          doParse gr eng cat (success, failure + 1)
-    else
-      doParse gr eng cat (success, failure)
--}
+  look i = termindex !! i
+  parsed c s = do
+    cat <- readType c
+    let (mts, msg) = parseJmt pgf lang cat s
+    case mts of
+      Just (t:ts) -> return t ---- todo: ambiguity if ts
+      _ -> Nothing
