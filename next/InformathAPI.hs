@@ -19,13 +19,14 @@ import Dedukti.ErrM
 --import Core2Informath (nlg)
 --import Informath2Core (semantics)
 --import ParseInformath (parseJmt)
---import Lexing
+import Lexing
 --import MkConstants (mkConstants)
 --import qualified Dedukti2Agda as DA
 --import qualified Dedukti2Rocq as DR
 --import qualified Dedukti2Lean as DL
---import Ranking
 
+import Ranking4
+import Environment4
 import BuildConstantTable
 import qualified DMC
 import qualified MCI
@@ -35,9 +36,9 @@ import qualified MCD
 import NextInformath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
+import Data.List (nub, partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
 ------import System.Random
-import Data.Char (isDigit, toUpper) --- low-level auxiliaries
+--import Data.Char (isDigit, toUpper) --- low-level auxiliaries
 --import System.Environment (getArgs)
 --import System.IO
 --import qualified Data.Map as M
@@ -48,26 +49,50 @@ grammarFile = "next/grammars/NextInformath.pgf"
 baseConstantFile = "src/BaseConstants.dk"
 constantTableFile = "next/constants.dkgf"
 
+-- main types involved
 
-data Env = Env {
-  grammar :: PGF,
-  baseConstantModule :: Module,
-  constantTable :: ConstantTable,
-  nbestDedukti :: Maybe Int
-  }
+type GFTree = Expr
+type DkTree a = Dedukti.AbsDedukti.Tree a
+type DkJmt = Jmt
+
+-- result of conversion, with intermediate phases 
 
 data Result = Result {
-  origDedukti :: Jmt,
-  annotDedukti :: [Jmt]
+  originalDedukti  :: Jmt,
+  annotatedDedukti :: [Jmt],
+  coreGF           :: [GFTree],
+  nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])]
   }
-  deriving Show
 
-type Flag = String
 
-dedukti2core :: Env -> Jmt -> [GJmt]
-dedukti2core env = map DMC.jmt2core . annotateDedukti env
+-- conversion that produces the whole line
 
-annotateDedukti :: Env -> DkTree a -> [DkTree a]
+processDeduktiModule :: Env -> Module -> [Result]
+processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
+
+processJmt :: Env -> Jmt -> Result
+processJmt env jmt =
+  let
+    flag = flags env
+    jmts = annotateDedukti env jmt
+    cores = map dedukti2core jmts
+    nlgs = nub $ map gf $ concatMap (core2ext env) cores
+    best = maybe id take (nbestNLG env)
+    nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
+    nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
+  in Result {
+    originalDedukti = jmt,
+    annotatedDedukti = jmts,
+    coreGF = map gf cores,
+    nlgResults = nlgranks
+    }
+
+-- conversions
+
+dedukti2core :: Jmt -> GJmt
+dedukti2core = DMC.jmt2core
+
+annotateDedukti :: Env -> Jmt -> [Jmt]
 annotateDedukti env t =
   maybe id take (nbestDedukti env)
     (allAnnotateDkIdents (constantTable env) t)
@@ -78,21 +103,31 @@ readConstantTable = buildConstantTable
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
 checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
 
-processDeduktiModule :: Env -> [Flag] -> Module -> [Result]
-processDeduktiModule env flags (MJmts jmts) = map (processJmt env flags) jmts
+printResult :: Env -> Result -> String
+printResult env result = case 0 of
+  _ | isFlag "-json" env -> mkJSONObject [
+    mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
+    mkJSONListField "annotatedDedukti" [stringJSON (printTree jmt) | jmt <- annotatedDedukti result],
+    mkJSONListField "coreGF" [stringJSON (showExpr [] t) | t <- coreGF result],
+    mkJSONListField "nlgResults" [
+      mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]
+    ]
+  _ -> unlines $ printNLGOutput env result
 
-processJmt :: Env -> [Flag] -> Jmt -> Result
-processJmt env flags jmt = Result {
-  origDedukti = jmt,
-  annotDedukti = annotateDedukti env jmt
-  }
+printRank :: ((GFTree, String), (Scores, Int)) -> String
+printRank ((tree, str), (scores, rank)) = mkJSONObject [
+  mkJSONField "tree" (stringJSON (showExpr [] tree)),
+  mkJSONField "lin" (stringJSON str),
+  mkJSONField "scores" (stringJSON (show scores)),
+  mkJSONField "penalty" (stringJSON (show rank))
+  ]
 
-printResult :: [Flag] -> Result -> String
-printResult flags result = unlines $
-  "{" :
-  mkJSONField "origDedukti" (printTree (origDedukti result)) :
-  mkJSONListField "annotDedukti" [printTree jmt | jmt <- annotDedukti result] :
-  ["}"]
+printNLGOutput :: Env -> Result -> [String]
+printNLGOutput env result =
+  maybe ["language not available"] (map (snd . fst))
+    (lookup (toLang env) (nlgResults result))
+--- [(Language, [((GFTree, String), (Scores, Int))])]
+
 
 readDeduktiModule :: FilePath -> IO Module
 readDeduktiModule file = readFile file >>= return . parseDeduktiModule
@@ -105,20 +140,28 @@ parseDeduktiModule s = case pModule (myLexer s) of
 readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
 
-core2dedukti :: GJmt -> [Jmt]
-core2dedukti jmt = [] ----
+mkLanguage :: PGF -> String -> Language
+mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
+  Just lang | elem lang (languages pgf) -> lang
+  _ -> error ("not a valid language: " ++ code)
 
 checkJmt :: Jmt -> Bool
 checkJmt jmt = True ----
 
-core2ext :: GJmt -> [GJmt]
-core2ext jmt = [jmt] ---- baseline
+core2ext :: Env -> GJmt -> [GJmt]
+core2ext env jmt = MCI.nlg (flags env) jmt
+
+gftree2nat :: Env -> Language -> GFTree -> String
+gftree2nat env lang tree = linearize (grammar env) lang tree
+
+unlex :: Env -> String -> String
+unlex env s = if (isFlag "-no-unlex" env) then s else unlextex s
+
+rankGFTreesAndNat :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))]
+rankGFTreesAndNat = rankTreesAndStrings
 
 ext2core :: GJmt -> GJmt
 ext2core jmt = jmt ---- to be revised
-
-core2nat :: PGF -> Language -> GJmt -> String
-core2nat pgf lang jmt = undefined ----
 
 nat2core :: PGF -> Language -> String -> Maybe GJmt
 nat2core pgf lang str = Nothing ----
@@ -128,6 +171,9 @@ ext2nat pgf lang jmt = Nothing ----
 
 nat2ext :: PGF -> Language -> String -> [GJmt]
 nat2ext pgf lang str = []
+
+core2dedukti :: GJmt -> [Jmt]
+core2dedukti jmt = [] ----
 
 ---- agda2dedukti :: AJmt -> Jmt
 ---- lean2dedukti :: LJmt -> Jmt
@@ -143,52 +189,24 @@ nat2ext pgf lang str = []
 ---- checkRocq :: RJmt -> Bool
 
 
-readEnv :: [String] -> IO Env
+readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValue "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
   ct <- readConstantTable gr (argValue "-constants" constantTableFile args)
-  let nbd = argValueMaybeInt "-nbestdk" args
   ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
   return Env {
+    flags = args,
     grammar = gr,
     constantTable = ct,
     baseConstantModule = mo,
-    nbestDedukti = nbd
+    langs = relevantLanguages gr args,
+    toLang = mkLanguage gr (argValue "-toLang" english args),
+    fromLang = mkLanguage gr (argValue "-fromLang" english args),
+    nbestDedukti = argValueMaybeInt "-nbestdk" args,
+    nbestNLG = argValueMaybeInt "-nbest" args,
+    scoreWeights = commaSepInts (argValue "weights" "1,1,1,1,1,1,1,1,1" args)
     }
 
 
--------------------------------------------
--- low level auxiliaries
-
-argValue flag df args = case [f | f <- args, isPrefixOf flag (tail f)] of
-  f:_ -> drop (length flag + 2) f   -- -<flag>=<value>
-  _ -> df
-  
-argValueMaybeInt flag args = case argValue flag "nothing" args of
-  v | all isDigit v -> Just (read v :: Int)
-  _ -> Nothing
-
-ifArg flag args msg = if elem flag args then putStrLn msg else return ()
-
-inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
-  [arg] -> Just (arg, fileSuffix arg)
-  _ -> Nothing
-
-fileSuffix = reverse . takeWhile (/= '.') . reverse
-
-mkJSONField :: String -> String -> String
-mkJSONField key value = show key ++ ": " ++ stringJSON value
-
-mkJSONListField :: String -> [String] -> String
-mkJSONListField key values =
-  show key ++ ": " ++ "[" ++ concat (intersperse ", " (map stringJSON values)) ++ "]"
-
-stringJSON = quote . escape where
-  quote s = "\"" ++ s ++ "\""
-  escape s = case s of
-    c:cs | elem c "\"\\" -> '\\':c:escape cs
-    '\n':cs -> '\\':'n':escape cs
-    c:cs -> c:escape cs
-    _ -> s
 
