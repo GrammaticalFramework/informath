@@ -6,6 +6,8 @@ module MCI where
 
 import NextInformath
 
+import Utils
+
 import Data.List (nub, sortOn)
 import Data.Char (isDigit)
 
@@ -14,7 +16,7 @@ type Opts = [String]
 nlg :: Opts -> Tree a -> [Tree a]
 nlg opts tree = case opts of
   _ | elem "-variations" opts ->
-         nub $ concatMap variations ([t, ut, aft, iaft, viaft] ++ coll)
+         concatMap variations ([t, ut, aft, iaft, viaft] ++ coll)
   _ -> [viaft]
  where
    t = unparenth tree

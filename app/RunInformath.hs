@@ -28,11 +28,15 @@ main4 args = do
       s <- readFile file
       let results = processLatex env s
       mapM_ (putStrLn . printParseResult env) results
+    Just (file, "dkgf") -> do
+      ct <- readConstantTable (grammar env) file
+      putStrLn (printConstantTable ct)
+      putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
     _ -> putStrLn helpMsg4
 
 
 helpMsg4 = unlines [
-  "usage: RunInformath -next <option>* <file>.(dk|tex)",
+  "usage: RunInformath -next <option>* <file>.(dk|tex|dkgf)",
   "Options: ",
   "  -variations",
   "  -json",
@@ -41,4 +45,4 @@ helpMsg4 = unlines [
   "  -tolang=<lang>",
   "  -fromlang=<lang>"
   ]
- 
+

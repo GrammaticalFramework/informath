@@ -37,8 +37,8 @@ relevantLanguages gr args = [
     elem lang (PGF.languages gr)
   ]
 
-argValue flag df args = case [f | f <- args, isPrefixOf flag (tail f)] of
-  f:_ -> drop (length flag + 2) f   -- -<flag>=<value>
+argValue flag df args = case [f | f <- args, isPrefixOf flag f] of
+  f:_ -> drop (length flag + 1) f   -- -<flag>=<value>
   _ -> df
   
 argValueMaybeInt flag args = case argValue flag "nothing" args of

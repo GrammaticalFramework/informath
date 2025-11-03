@@ -10,9 +10,12 @@ import CommonConcepts
 import DeduktiOperations
 
 import PGF
+
+import Utils
+
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, nub, sortOn)
+import Data.List (partition, sortOn)
 
 
 constant_table_file = "constants.dkgf"
@@ -41,8 +44,8 @@ allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
 
-printConstantTable :: ConstantTable -> String
-printConstantTable = concat . map prEntry . M.toList where
+showConstantTable :: ConstantTable -> String
+showConstantTable = concat . map prEntry . M.toList where
   prEntry :: (QIdent, ConstantTableEntry) -> String
   prEntry (QIdent q, entry) =
     unlines $ [
@@ -157,7 +160,7 @@ annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
 
 -- annotate idents with cats and funs, with all alternatives
 allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
-allAnnotateDkIdents table t = rankDkTrees (nub (symbs t ++ verbs t)) where
+allAnnotateDkIdents table t = rankDkTrees (setnub (symbs t ++ verbs t)) where
 
   symbs :: forall a. DkTree a -> [DkTree a]
   symbs t = case t of
@@ -166,7 +169,7 @@ allAnnotateDkIdents table t = rankDkTrees (nub (symbs t ++ verbs t)) where
 	  ac <- strictAnnotId symbolics c,
 	  xx <- sequence (map symbs xs)
 	  ]
-    EIdent c -> [EIdent ac | ac <- strictAnnotId symbolics c]
+    EIdent c -> [EIdent ac | ac <- annotId symbolics c]
     _ -> composOpM symbs t
     
   verbs :: forall a. DkTree a -> [DkTree a]
@@ -174,7 +177,8 @@ allAnnotateDkIdents table t = rankDkTrees (nub (symbs t ++ verbs t)) where
     EApp _ _ -> case splitApp t of
       (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
 	  ac <- annotId verbals c,
-	  xx <- sequence (map (\x -> withDefaults (verbs x) (symbs x)) xs)
+	  xx <- sequence (map (\x -> (verbs x ++ symbs x)) xs)
+----	  xx <- sequence (map (\x -> withDefaults (verbs x) (symbs x)) xs)
 	  ]
     EIdent c -> [EIdent ac | ac <- annotId verbals c]
     EAbs b exp -> [EAbs b aexp | aexp <- verbs exp]

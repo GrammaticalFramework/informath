@@ -32,11 +32,12 @@ import qualified DMC
 import qualified MCI
 import qualified IMC
 import qualified MCD
+import Utils
 
 import NextInformath
 import PGF
 
-import Data.List (nub, partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
+import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
 ------import System.Random
 --import Data.Char (isDigit, toUpper) --- low-level auxiliaries
 --import System.Environment (getArgs)
@@ -78,7 +79,7 @@ processJmt env jmt =
     jmts = annotateDedukti env jmt
     cores = map dedukti2core jmts
     exts = concatMap (core2ext env) cores
-    nlgs = nub $ map gf $ exts
+    nlgs = setnub $ map gf $ exts
     best = maybe id take (nbestNLG env)
     nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
     nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
@@ -152,6 +153,9 @@ readConstantTable = buildConstantTable
 
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
 checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
+
+printConstantTable :: ConstantTable -> String
+printConstantTable = showConstantTable
 
 printGenResult :: Env -> GenResult -> String
 printGenResult env result = case 0 of
@@ -290,7 +294,7 @@ readEnv args = do
     fromLang = fro,
     nbestDedukti = argValueMaybeInt "-nbestdk" args,
     nbestNLG = argValueMaybeInt "-nbest" args,
-    scoreWeights = commaSepInts (argValue "weights" "1,1,1,1,1,1,1,1,1" args),
+    scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro
     }
 

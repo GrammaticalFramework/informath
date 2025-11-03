@@ -163,7 +163,7 @@ main3 xx = do
       let backtable = constantTableBack table
       ifv env $ do
         putStrLn "# showing constant table"
-        putStrLn $ printConstantTable table 
+        putStrLn $ showConstantTable table 
         putStrLn "# showing back table"
         putStrLn $ printBackTable backtable
       let nbestdk = let fv = flagValue "nbestdk" "none" ff

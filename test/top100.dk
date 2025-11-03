@@ -18,7 +18,7 @@ Thm02 : (P : Polynomial) -> Proof (Gt (degree P) 0) ->
 Thm03 : Proof (denumerable Rat).
 Thm03a : Proof (Eq (cardinality Nat) (cardinality Rat)).
 
-Thm04 : (u : Elem Vector) -> (v : Elem Vector) -> Proof (perpendicular u v) ->
+Thm04 : (u : Elem Vector) -> (v : Elem Vector) -> Proof (orthogonal u v) ->
   Proof (Eq (length (vectorPlus u v)) (sqrt (plus (square (length u)) (square (length v))))).
 
 thm07 : (p : Elem Nat) -> (q : Elem Nat) -> Proof (and (prime p) (prime q)) ->
