@@ -41,8 +41,4 @@ helpMsg4 = unlines [
   "  -tolang=<lang>",
   "  -fromlang=<lang>"
   ]
-
-  
-
-
-
+ 

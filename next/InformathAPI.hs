@@ -55,15 +55,16 @@ type GFTree = Expr
 type DkTree a = Dedukti.AbsDedukti.Tree a
 type DkJmt = Jmt
 
+
 -- result of conversion from Dedukti, with intermediate phases for debugging
 
 data GenResult = GenResult {
   originalDedukti  :: Jmt,
   annotatedDedukti :: [Jmt],
   coreGF           :: [GFTree],
-  nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])]
+  nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])],
+  backToDedukti    :: [Jmt]  --- for debugging NLG and semantics
   }
-
 
 -- conversion that produces the whole line of generation from Dedukti
 
@@ -76,7 +77,8 @@ processJmt env jmt =
     flag = flags env
     jmts = annotateDedukti env jmt
     cores = map dedukti2core jmts
-    nlgs = nub $ map gf $ concatMap (core2ext env) cores
+    exts = concatMap (core2ext env) cores
+    nlgs = nub $ map gf $ exts
     best = maybe id take (nbestNLG env)
     nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
     nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
@@ -84,11 +86,13 @@ processJmt env jmt =
     originalDedukti = jmt,
     annotatedDedukti = jmts,
     coreGF = map gf cores,
-    nlgResults = nlgranks
+    nlgResults = nlgranks,
+    backToDedukti = concatMap (gjmt2dedukti env) exts
     }
 
 
 -- result of conversion from informal Latex text, with intermediate phases for debugging
+---- TODO: complete parseResults with type checking in Dedukti
 
 data ParseResult = ParseResult {
   originalLine  :: String,
@@ -100,8 +104,6 @@ data ParseResult = ParseResult {
   parseResults  :: [(GFTree, GFTree, GFTree, [Jmt])] -- parsed, unindexed, normalized
   }
 
-----correctDeduktiResults :: ParseResult -> [Jmt]
-----correctDeduktiResults result = [jmt | (_, _, _, jmts) <- parseResults result, (jmt, True) <- jmts]
 
 -- conversion that produces the whole line of parsing latex code and converting to Dedukti
 -- so far assuming that parsing units are single lines not starting with \ or %
@@ -126,9 +128,9 @@ processLatexLine env s =
     termIndex = tindex,
     indexedLine = ils,
     parseMessage = msg,
-    unknownWords = morphoMissing (morpho env) (words ils),
+    unknownWords = missingWords env ils,
     parseResults = [
-      (t, ut, gf ct, MCD.jmt2dedukti (backConstantTable env) ct) |
+      (t, ut, gf ct, gjmt2dedukti env ct) |
         t <- ts,
         let ut = unindexGFTree gr (fromLang env) tindex t,
         let ct = ext2core (fg ut)
@@ -154,13 +156,12 @@ checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
 printGenResult :: Env -> GenResult -> String
 printGenResult env result = case 0 of
   _ | isFlag "-json" env -> mkJSONObject [
-  
     mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
     mkJSONListField "annotatedDedukti" [stringJSON (printTree jmt) | jmt <- annotatedDedukti result],
     mkJSONListField "coreGF" [stringJSON (showExpr [] t) | t <- coreGF result],
-    mkJSONListField "nlgResults" [
-      mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]
-
+    mkJSONField "nlgResults" (mkJSONObject [
+      mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]),
+    mkJSONListField "backToDedukti" [stringJSON (printTree jmt) | jmt <- backToDedukti result]
     ]
   _ -> unlines $ printNLGOutput env result
 
@@ -237,8 +238,16 @@ rankGFTreesAndNat = rankTreesAndStrings
 ext2core :: GJmt -> GJmt
 ext2core = IMC.semantics
 
+gjmt2dedukti :: Env -> GJmt -> [Jmt] 
+gjmt2dedukti env = MCD.jmt2dedukti (backConstantTable env) . ext2core
+
 nat2core :: PGF -> Language -> String -> Maybe GJmt
 nat2core pgf lang str = Nothing ----
+
+missingWords :: Env -> String -> [String]
+missingWords env = morphoMissing (morpho env) . tokens
+ where
+   tokens = words ---- TODO: ignore symbols in $ $
 
 ext2nat :: PGF -> Language -> GJmt -> Maybe String
 ext2nat pgf lang jmt = Nothing ----
