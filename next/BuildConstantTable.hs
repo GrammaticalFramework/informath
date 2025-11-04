@@ -160,29 +160,30 @@ annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
 
 -- annotate idents with cats and funs, with all alternatives
 allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
-allAnnotateDkIdents table t = rankDkTrees (setnub (symbs t ++ verbs t)) where
+allAnnotateDkIdents table t = rankDkTrees (setnub (symbs [] t ++ verbs [] t)) where
 
-  symbs :: forall a. DkTree a -> [DkTree a]
-  symbs t = case t of
+  symbs :: forall a. [QIdent] -> DkTree a -> [DkTree a]
+  symbs bounds t = case t of
     EApp _ _ -> case splitApp t of
       (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
 	  ac <- strictAnnotId symbolics c,
-	  xx <- sequence (map symbs xs)
+	  xx <- sequence (map (symbs bounds) xs)
 	  ]
-    EIdent c -> [EIdent ac | ac <- annotId symbolics c]
-    _ -> composOpM symbs t
+    c@(QIdent _) | notElem c bounds -> [ac | ac <- annotId symbolics c]
+    EAbs b exp -> [EAbs b aexp | aexp <- symbs (bind2ident b : bounds) exp]
+    _ -> composOpM (symbs bounds) t
     
-  verbs :: forall a. DkTree a -> [DkTree a]
-  verbs t = case t of
+  verbs :: forall a. [QIdent] -> DkTree a -> [DkTree a]
+  verbs bounds t = case t of
     EApp _ _ -> case splitApp t of
       (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
 	  ac <- annotId verbals c,
-	  xx <- sequence (map (\x -> (verbs x ++ symbs x)) xs)
-----	  xx <- sequence (map (\x -> withDefaults (verbs x) (symbs x)) xs)
+	  xx <- sequence (map (\x -> (symbs bounds x ++ verbs bounds x)) xs)
 	  ]
-    EIdent c -> [EIdent ac | ac <- annotId verbals c]
-    EAbs b exp -> [EAbs b aexp | aexp <- verbs exp]
-    _ -> composOpM verbs t
+    c@(QIdent _) | notElem c bounds -> [ac | ac <- annotId verbals c]
+    EAbs b exp -> [EAbs b aexp | aexp <- let bbounds = (bind2ident b : bounds)
+                                         in symbs bbounds exp ++ verbs bbounds exp]
+    _ -> composOpM (verbs bounds) t
 
   annotId get c = case M.lookup c table of
     Just entry -> withDefaults [c] [annotIdent c ft | ft <- get entry]
@@ -192,7 +193,7 @@ allAnnotateDkIdents table t = rankDkTrees (setnub (symbs t ++ verbs t)) where
     Just entry -> [annotIdent c ft | ft <- get entry]
     _ -> []
 
-  verbals e = primary e : synonyms e -- ++ symbolics e
+  verbals e = primary e : synonyms e ++ symbolics e
 
   withDefaults ds vs = if null vs then ds else vs
 

@@ -100,7 +100,7 @@ lin
     } ;
   FunKind argkinds kind = {
     cn = mkCN function_N ;
-    adv = ccAdv (Syntax.mkAdv from_Prep argkinds.sg) (Syntax.mkAdv to_Prep (mkNP aPl_Det (useKind kind)))
+    adv = ccAdv (Syntax.mkAdv from_Prep argkinds.pl) (Syntax.mkAdv to_Prep (mkNP aPl_Det (useKind kind)))
     } ;
 
   KindArgKind kind = kind ** {isPl = False} ;
