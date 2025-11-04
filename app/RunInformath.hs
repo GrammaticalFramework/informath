@@ -25,7 +25,7 @@ main4 args = do
       let results = processDeduktiModule env mo
       mapM_ (putStrLn . printGenResult env) results
     Just (file, "tex") -> do
-      s <- readFile file
+      s <- readFile file 
       let results = processLatex env s
       mapM_ (putStrLn . printParseResult env) results
     Just (file, "dkgf") -> do

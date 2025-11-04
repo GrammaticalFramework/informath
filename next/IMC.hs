@@ -53,9 +53,24 @@ addParenth t = case t of
   GOrProp (GListProp props) -> foldl1 GCoreOrProp (map addParenth props)
   GIfProp a b -> GCoreIfProp (addParenth a) (addParenth b)
   GIffProp a b -> GCoreIffProp (addParenth a) (addParenth b)
-----  GAllProp argkinds prop -> 
+  GAllProp (GListArgKind argkinds) prop ->
+    foldr (\ (var, exp) y -> GCoreAllProp var exp y)
+        (addParenth prop)
+        (concatMap semArgkind argkinds)
+  GExistProp (GListArgKind argkinds) prop ->
+    foldr (\ (var, exp) y -> GCoreExistProp var exp y)
+        (addParenth prop)
+        (concatMap semArgkind argkinds)
   _ -> composOp addParenth t
-  
+
+semArgkind :: GArgKind -> [(GIdent, GKind)]
+semArgkind argkind = case argkind of
+  GIdentsArgKind kind (GListIdent idents) -> [(ident, kind) | ident <- idents]
+----  GIndexedDeclarationArgKind (GInt i) ->
+    ---- [(EIdent (unresolvedIndexIdent i), unresolvedIndexIdent i)]
+  -- GKindArgKind has been resolved in sem
+
+
 sem :: SEnv -> Tree a -> Tree a
 sem env t = case t of
 {- ----
@@ -175,23 +190,21 @@ sem env t = case t of
   GKindArgKind kind -> 
     let (var, nenv) = newVar env
     in GIdentsArgKind (sem nenv kind) (GListIdent [var])
-{- ----    
-  GFormulaProp (GFModulo term1 term2 term3) ->
-    GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
-      (sem env (GTermExp term1))
-  GFormulaProp (GFEquation (GEBinary (GComparEqsign compar) term1 term2)) ->
-    GAdjProp (GComparAdj compar (sem env (GTermExp term2))) (sem env (GTermExp term1))
-  GFormulaProp (GFEquation (GEBinary (GComparnounEqsign compar) term1 term2)) ->
-    GComparnounProp compar (sem env (GTermExp term1)) (sem env (GTermExp term2))
+
+{-
   GFormulaProp (GFEquation equation@(GEChain _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
       [sem env (GFormulaProp (GFEquation (GEBinary eqsign x y))) | (eqsign, x, y) <- triples])
   GFormulaProp (GElemFormula (GListTerm xs) y) -> case xs of
-  
     [x] -> GComparnounProp (LexComparnoun "element_Comparnoun")
               (sem env (GTermExp x)) (sem env (GTermExp y))
     _ -> GAndProp (GListProp [sem env (GFormulaProp (GElemFormula (GListTerm [x]) y)) | x <- xs])
-    
+        
+  GFormulaProp (GFModulo term1 term2 term3) ->
+    GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
+      (sem env (GTermExp term1))
+-}
+{-
   GTermExp (GConstTerm const) -> GConstExp const
   GTermExp (GAppOperTerm oper x y) ->
     GOperListExp oper (GManyExps (GListExp [sem env (GTermExp x), sem env (GTermExp y)]))
@@ -206,11 +219,11 @@ sem env t = case t of
     in sem nenv (GTermExp (iqTest var m m1 n)) 
   GTermExp (GTSigma i m n f) ->
     GSigmaExp i (sem env (GTermExp m)) (sem env (GTermExp n)) (sem env (GTermExp f))
-  GTermExp (GTTimes x y) -> sem env (GTermExp (GAppOperTerm (LexOper "times_Oper") x y))
   GTermExp (GTFrac x y) -> sem env (GTermExp (GAppOperTerm (LexOper "div_Oper") x y))
   GTermExp (GTNeg x) ->  sem env (GTermExp (GAppOperOneTerm (LexOper "neg_Oper") x))
   GTermExp (GTEnumSet (GListTerm xs)) -> sem env (GEnumSetExp (gExps (map GTermExp xs)))
 -}
+  GTermExp (Gtimes_Term x y) -> GTermExp (GOper2Term (LexOper2 "times_Oper2") (sem env x) (sem env y))
   GParenthTerm term -> sem env term
 
 

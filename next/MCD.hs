@@ -79,33 +79,27 @@ prop2dedukti prop = case prop of
   GProofProp p -> EApp (EIdent (QIdent "Proof")) (prop2dedukti p)
   GFalseProp -> propFalse
   GIdentProp ident -> EIdent (ident2ident ident)
-  GAndProp (GListProp props) -> foldl1 propAnd (map prop2dedukti props)
-  GOrProp (GListProp props) -> foldl1 propOr (map prop2dedukti props)
-  GIfProp a b -> propImp (prop2dedukti a) (prop2dedukti b)
+  GCoreAndProp a b -> foldl1 propAnd (map prop2dedukti [a, b])
+  GCoreOrProp a b -> foldl1 propOr (map prop2dedukti [a, b])
+  GCoreIfProp a b -> propImp (prop2dedukti a) (prop2dedukti b)
   GNotProp a -> propNeg (prop2dedukti a)
-  GIffProp a b -> propEquiv (prop2dedukti a) (prop2dedukti b)
-  GAllProp (GListArgKind argkinds) prop ->
-    foldr
-      (\ (exp, var) y -> propPi exp (EAbs (BVar var) y))
-        (prop2dedukti prop)
-        (concatMap argkind2dedukti argkinds)
-  GExistProp (GListArgKind argkinds) prop ->
-    foldr
-      (\ (exp, var) y -> propSigma exp (EAbs (BVar var) y))
-        (prop2dedukti prop)
-        (concatMap argkind2dedukti argkinds)
+  GCoreIffProp a b -> propEquiv (prop2dedukti a) (prop2dedukti b)
+  GCoreAllProp ident kind prop ->
+    propPi (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
+  GCoreExistProp ident kind prop ->
+    propSigma (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
   GAppProp ident exps ->
     foldl1 EApp ((EIdent (ident2ident ident)) : map exp2dedukti (exps2list exps))
   GAdj3Prop (LexAdj3 rel) a b c ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b, c])
   GAdj2Prop (LexAdj2 rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
- {- ----
-  GAdjCProp (LexAdjC rel) a b ->
+
+  GAdjCProp (LexAdjC rel) (GManyExps (GListExp [a, b])) ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
-  GAdjEProp (LexAdjE rel) a b ->
+  GAdjEProp (LexAdjE rel) (GManyExps (GListExp [a, b])) ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
--}
+    
   GAdjProp (LexAdj adj) exp ->
     EApp (EIdent (QIdent (adj))) (exp2dedukti exp)
   GVerbProp (LexVerb verb) exp ->
@@ -115,7 +109,16 @@ prop2dedukti prop = case prop of
   GNoun2Prop (LexNoun2 noun) x y ->
     EApp (EApp (EIdent (QIdent (noun))) (exp2dedukti x)) (exp2dedukti y)
   GIndexedFormulaProp (GInt i) -> EIdent (unresolvedIndexIdent i)
+  GFormulaProp formula -> formula2dedukti formula
   _ -> eUndefined ---- TODO complete Informath2Core
+
+formula2dedukti :: GFormula -> Exp
+formula2dedukti formula = case formula of
+----  GElemFormula terms term ->
+  GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
+    foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
+  ---- modulo_Formula : Term -> Term -> Term -> Formula
+  _ -> eUndefined ----
 
 hypo2dedukti :: GHypo -> [Hypo]
 hypo2dedukti hypo = case hypo of
@@ -160,15 +163,12 @@ kind2dedukti kind = case kind of
     EApp (EApp (EIdent (QIdent fam)) (kind2dedukti exp1)) (kind2dedukti exp2)
   GAppKind ident exps ->
     foldl1 EApp (EIdent (ident2ident ident) : map exp2dedukti (exps2list exps))
-  ---- still assuming GF fun is Dedukti ident
   GNounKind (LexNoun noun) ->
     EIdent (QIdent (noun))
   _ -> eUndefined ---- TODO
 
 exp2dedukti :: GExp -> Exp
 exp2dedukti exp = case exp of
-  GTermExp (GNumberTerm (GInt n)) -> int2exp n
-  GTermExp (GIdentTerm ident) -> EIdent (ident2ident ident)
   GAppExp exp exps ->
     foldl1 EApp (map exp2dedukti (exp : (exps2list exps)))
   GAbsExp (GListIdent idents) exp ->
@@ -178,23 +178,24 @@ exp2dedukti exp = case exp of
       idents
   GNameExp (LexName name) ->
     EIdent (QIdent (name))
-{- ----
-  GConstExp (LexConst name) ->
-    EIdent (QIdent (name))
-  GFunListExp (LexFun fun) (GOneExps x) ->
-    EApp (EIdent (QIdent (fun))) (exp2dedukti x)
-  GFunListExp (LexFun fun) (GAddExps x (GOneExps y)) ->
-    EApp (EApp (EIdent (QIdent (fun))) (exp2dedukti x)) (exp2dedukti y)
-  GOperListExp (LexOper oper) (GOneExps x) ->
-    EApp (EIdent (QIdent (oper))) (exp2dedukti x)
-  GOperListExp (LexOper oper) (GAddExps x (GOneExps y)) ->
-    EApp (EApp (EIdent (QIdent (oper))) (exp2dedukti x)) (exp2dedukti y)
-  GKindExp kind -> kind2dedukti kind
--}
+  GTermExp term -> term2dedukti term
+  
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
   GSigmaExp i m n f ->
     EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f))
+  _ -> eUndefined ---- TODO
+
+term2dedukti :: GTerm -> Exp
+term2dedukti term = case term of
+  GConstTerm (LexConst name) ->
+    EIdent (QIdent (name))
+  GOperTerm (LexOper oper) x ->
+    appIdent oper [term2dedukti x]
+  GOper2Term (LexOper2 oper) x y ->
+    appIdent oper (map term2dedukti [x, y])
+  GNumberTerm (GInt n) -> int2exp n
+  GIdentTerm ident -> EIdent (ident2ident ident)
   _ -> eUndefined ---- TODO
 
 exp2deduktiPatt :: GExp -> Patt
@@ -249,6 +250,10 @@ prop2deduktiIdent prop = case prop of
 
 eUndefined :: Exp
 eUndefined = EIdent (QIdent "UNDEFINED")
+
+appIdent :: String -> [Exp] -> Exp
+appIdent f exps = foldl EApp (EIdent (QIdent f)) exps
+
 
 --- also in MCI
 exps2list :: GExps -> [GExp]
