@@ -150,58 +150,7 @@ main3 xx = do
   case yy of
     _ | ifFlag "-help" env -> do
       putStrLn helpMsg
-
-    ---- Next version, to be merged
-    -- RunInformath -next -inputfile=test/top100.dk next/constants.dkgf
-    
-    filename:_ | ifFlag "-next" env && isSuffixOf ".dkgf" filename -> do
-      let dkfile = flagValue "dkfile" baseConstantFile ff
-      dk <- readFile dkfile >>= justParseDeduktiModule
-      pgf <- readPGF nextInformathPGF
-      putStrLn "# building and checking constant table"
-      table <- buildConstantTable pgf filename
-      let backtable = constantTableBack table
-      ifv env $ do
-        putStrLn "# showing constant table"
-        putStrLn $ showConstantTable table 
-        putStrLn "# showing back table"
-        putStrLn $ printBackTable backtable
-      let nbestdk = let fv = flagValue "nbestdk" "none" ff
-	            in if all isDigit fv then take (read fv) else id
-
-      let inputfile = flagValue "inputfile" dkfile ff
-      MJmts jmts <- readFile inputfile >>= justParseDeduktiModule
       
-      let mkOne jmt = do
-            let djmts = nbestdk (allAnnotateDkIdents table jmt) 
-            let gfjmts = map DMC.jmt2core djmts      
-            let nlgjmts = nub $ concatMap (MCI.nlg (flags env)) gfjmts
-            let nlgtrees = map N.gf nlgjmts 
-            let semjmts = map IMC.semantics nlgjmts
-            let semtrees = map N.gf semjmts
-            let backjmts = concatMap (MCD.jmt2dedukti backtable) semjmts
-            let gfts = [(gft, unlex env (linearize pgf (tolang env) gft))
-                         | (gft, sem) <- zip nlgtrees semtrees]
-            let rgfts = [unlines [
-	                          "%# GF " ++ showExpr [] t,
-				  "%# SCORES " ++ show sk,
-				  s
-                                 ] | ((t, s), sk) <- rankTreesAndStrings env gfts
-                        ]
-	    let best_rgfts = maybe id take (nbest env) rgfts
-	    
-	    putStrLn $ "%# ORIGINAL DEDUKTI " ++ printTree jmt
-	    mapM_ (putStrLn . ("%# ANNOTATED DEDUKTI " ++) . printTree) djmts 
-            mapM_ putStrLn best_rgfts
-            mapM_ (putStrLn . ("%# GF-BACK "++) . showExpr []) (nub semtrees) 
-            mapM_ (putStrLn . ("%# DEDUKTI-BACK "++) . printTree) (nub backjmts) 
-	    
-      mapM_ mkOne jmts
-      
-
-    ---- end next version 
-     
-
     filename:_ | isSuffixOf ".dkgf" filename -> do
       let gfname = flagValue "gfname" "UserConstants" ff
       mkConstants filename gfname

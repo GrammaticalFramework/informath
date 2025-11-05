@@ -146,7 +146,8 @@ dedukti2core = DMC.jmt2core
 annotateDedukti :: Env -> Jmt -> [Jmt]
 annotateDedukti env t =
   maybe id take (nbestDedukti env)
-    (allAnnotateDkIdents (constantTable env) t)
+    [annotateDkIdents (constantTable env) t]
+----    (allAnnotateDkIdents (constantTable env) t)
 
 readConstantTable :: PGF -> FilePath -> IO ConstantTable
 readConstantTable = buildConstantTable
@@ -228,7 +229,7 @@ checkJmt :: Jmt -> Bool
 checkJmt jmt = True ----
 
 core2ext :: Env -> GJmt -> [GJmt]
-core2ext env jmt = MCI.nlg (flags env) jmt
+core2ext env jmt = MCI.nlg env jmt
 
 gftree2nat :: Env -> Language -> GFTree -> String
 gftree2nat env lang tree = linearize (grammar env) lang tree
@@ -287,7 +288,9 @@ readEnv args = do
     flags = args,
     grammar = gr,
     constantTable = ct,
-    backConstantTable = constantTableBack ct,
+    synonymConstantTableNLG = buildSynonymConstantTableNLG ct,
+    synonymConstantTableSem = buildSynonymConstantTableSem ct,
+    backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
     langs = relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-tolang" english args),

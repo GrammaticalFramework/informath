@@ -58,10 +58,38 @@ showConstantTable = concat . map prEntry . M.toList where
       ]
   prTyping (fun, typ) = showCId fun ++ " : " ++ showType [] typ ++ " ;"
 
+-- looking for synonyms of primary constants in NLG
+--- strings, which are argumenst lf Lex* constructors
+type SFun = String
+type SCat = String
+
+type SynonymConstantTableNLG = M.Map SFun ([(SFun, SCat)], [(SFun, SCat)])
+
+buildSynonymConstantTableNLG :: ConstantTable -> SynonymConstantTableNLG
+buildSynonymConstantTableNLG table = M.fromList [
+  (showCId fun, (sfcs, vfcs)) | 
+    (_, entry) <- M.toList table,
+    let fun = fst (primary entry),
+    let sfcs = [(showCId f, showCId (valCat typ)) | (f, typ) <- symbolics entry],
+    let vfcs = [(showCId f, showCId (valCat typ)) | (f, typ) <- synonyms entry]
+  ]
+
+-- looking for core constants for their synonyms in semantics
+type SynonymConstantTableSem = M.Map SFun [(SFun, SCat)]
+
+buildSynonymConstantTableSem :: ConstantTable -> SynonymConstantTableSem
+buildSynonymConstantTableSem table = M.fromListWith (++) [
+  (showCId fun, [fc]) | 
+    (_, entry) <- M.toList table,
+    (fun, _) <- symbolics entry ++ synonyms entry,
+    let (f, typ) = primary entry,
+    let fc = (showCId f, showCId (valCat typ))
+  ]
+
 type BackConstantTable = M.Map QIdent [QIdent]
 
-constantTableBack :: ConstantTable -> BackConstantTable
-constantTableBack table = M.fromListWith (++) [
+buildBackConstantTable :: ConstantTable -> BackConstantTable
+buildBackConstantTable table = M.fromListWith (++) [
   (QIdent (showCId fun), [qid]) | 
     (qid, entry) <- M.toList table,
     fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
@@ -155,8 +183,10 @@ annotateDkIdents table = annot [] where
 annotIdent :: QIdent -> (Fun, Type) -> QIdent
 annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
   where
-    valCat t = case unType t of (_, c, _) -> c
     dk c = showCId c
+
+valCat :: Type -> Cat
+valCat t = case unType t of (_, c, _) -> c
 
 -- annotate idents with cats and funs, with all alternatives
 allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]

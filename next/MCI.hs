@@ -1,30 +1,34 @@
-{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE GADTs, KindSignatures, DataKinds, Rank2Types #-}
 {-# LANGUAGE LambdaCase #-}
 
 module MCI where
 --module Core2Informath where
 
 import NextInformath
-
+import Environment4
 import Utils
 
 import Data.List (nub, sortOn)
 import Data.Char (isDigit)
+import qualified Data.Map as M
 
 type Opts = [String]
 
-nlg :: Opts -> Tree a -> [Tree a]
-nlg opts tree = case opts of
-  _ | elem "-variations" opts ->
-         concatMap variations ([t, ut, aft, iaft, viaft] ++ coll)
-  _ -> [viaft]
+nlg :: Env -> Tree a -> [Tree a]
+nlg env tree = case () of
+  _ | elem "-mathcore" (flags env) -> [tree]
+  _  -> concat [[ft], sts, afts, iafts, viafts, cviafts, vcviafts]
+  ---- TODO more option combinations
  where
    t = unparenth tree
    ut = uncoerce t
-   aft = aggregate (flatten ut)
-   iaft = insitu aft
-   viaft = varless iaft
-   coll = collectivize viaft
+   ft = flatten ut
+   sts = synonyms env ut
+   afts = map aggregate sts
+   iafts = map insitu afts
+   viafts = map varless iafts
+   cviafts = concatMap collectivize viafts
+   vcviafts = concatMap variations cviafts
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
@@ -40,6 +44,78 @@ uncoerce t = case t of
   GElemKind kind -> uncoerce kind
   GCoercionExp coercion_ exp -> uncoerce exp
   _ -> composOp uncoerce t
+
+synonyms :: forall a. Env -> Tree a -> [Tree a]
+synonyms env t = symbs t ++ verbs t where
+
+  symbs :: forall a. Tree a -> [Tree a]
+  symbs t = case t of
+    GAdjCProp (LexAdjC c) exps ->
+      case exps2list exps of  --- currently 2 args from Dedukti ---- but not always
+         x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAdjCProp (LexAdjE c) exps ->
+      case exps2list exps of  --- always 2 args from Dedukti
+         x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAdj2Prop (LexAdj2 c) x y ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GFun2Exp _ _ _ -> map GTermExp (terms t)
+    GFunCExp _ _  -> map GTermExp (terms t)
+    GFunExp _ _ -> map GTermExp (terms t)
+    _ -> composOpM symbs t
+
+  terms :: GExp -> [GTerm]
+  terms exp = case exp of
+    GFunCExp (LexFun2 c) exps ->
+      case exps2list exps of  --- always 2 args from Dedukti
+         x:y:_ -> [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GFun2Exp (LexFun2 c) x y ->
+      [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GFunExp (LexFun c) x ->
+      [app alt [sx] | alt <- ssyns c, sx <- terms x]
+    GNameExp (LexName c) ->
+      [app alt [] | alt <- ssyns c]
+    GIdentExp x -> [GIdentTerm x]
+    GTermExp t -> [t]
+    _ -> []
+      
+
+  ssyns c = maybe [] fst (M.lookup c (synonymConstantTableNLG env))
+  
+  verbs :: forall a. Tree a -> [Tree a]
+  verbs t = case t of
+    GAdj2Prop (LexAdj2 c) x y ->
+      [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
+    GFun2Exp _ _ _ -> map GTermExp (terms t)
+    GFunCExp _ _  -> map GTermExp (terms t)
+    GFunExp _ _ -> map GTermExp (terms t)
+    _ -> composOpM verbs t
+
+  vsyns c = maybe [] snd (M.lookup c (synonymConstantTableNLG env))
+ 
+  pred (fun, cat) xs = case cat of
+    "Adj2" -> GAdj2Prop (LexAdj2 fun) (xs !! 0) (xs !! 1)
+    "AdjC" -> GAdjCProp (LexAdjC fun) (gExps xs)
+    "AdjE" -> GAdjEProp (LexAdjE fun) (gExps xs)
+    _ -> error $ "NOT YET: " ++ show cat
+
+  sympred (fun, cat) xs = case cat of
+    "Compar" -> GFormulaProp (GEquationFormula
+                  (GBinaryEquation (LexCompar fun) (xs !! 0) (xs !! 1)))
+    _ -> error $ "NOT YET: " ++ show cat
+ 
+  app (fun, cat) xs = case cat of
+    "Const" -> GConstTerm (LexConst fun)
+    "Oper" -> GOperTerm (LexOper fun) (xs !! 0)
+    "Oper2" -> GOper2Term (LexOper2 fun) (xs !! 0) (xs !! 1)
+    _ -> error $ "NOT YET: " ++ show cat
+     
+  ---- also in DMC, IMC
+  gExps :: [GExp] -> GExps
+  gExps exps = case exps of
+    [exp] -> GOneExps exp
+    _ -> GManyExps (GListExp exps)
+
+  
 
 aggregate :: Tree a -> Tree a
 aggregate t = case t of

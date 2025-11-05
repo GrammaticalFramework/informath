@@ -35,9 +35,10 @@ main4 args = do
     _ -> putStrLn helpMsg4
 
 
+
 helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|tex|dkgf)",
-  "Options: ",
+  "Options: ", 
   "  -variations",
   "  -json",
   "  -nbestdk=<int>",
