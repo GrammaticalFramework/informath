@@ -34,12 +34,10 @@ main4 args = do
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
     _ -> putStrLn helpMsg4
 
-
-
 helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|tex|dkgf)",
   "Options: ", 
-  "  -variations",
+  "  -mathcore",
   "  -json",
   "  -nbestdk=<int>",
   "  -nbest=<int>",

@@ -53,7 +53,7 @@ synonyms env t = symbs t ++ verbs t where
     GAdjCProp (LexAdjC c) exps ->
       case exps2list exps of  --- currently 2 args from Dedukti ---- but not always
          x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAdjCProp (LexAdjE c) exps ->
+    GAdjEProp (LexAdjE c) exps ->
       case exps2list exps of  --- always 2 args from Dedukti
          x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAdj2Prop (LexAdj2 c) x y ->
@@ -65,7 +65,7 @@ synonyms env t = symbs t ++ verbs t where
 
   terms :: GExp -> [GTerm]
   terms exp = case exp of
-    GFunCExp (LexFun2 c) exps ->
+    GFunCExp (LexFunC c) exps ->
       case exps2list exps of  --- always 2 args from Dedukti
          x:y:_ -> [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GFun2Exp (LexFun2 c) x y ->
@@ -85,7 +85,7 @@ synonyms env t = symbs t ++ verbs t where
   verbs t = case t of
     GAdj2Prop (LexAdj2 c) x y ->
       [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
-    GFun2Exp _ _ _ -> map GTermExp (terms t)
+    GFun2Exp _ _ _ -> map GTermExp (terms t) ---- also verbal synonyms
     GFunCExp _ _  -> map GTermExp (terms t)
     GFunExp _ _ -> map GTermExp (terms t)
     _ -> composOpM verbs t
