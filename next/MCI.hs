@@ -17,7 +17,7 @@ type Opts = [String]
 nlg :: Env -> Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [tree]
-  _  -> concat [[ft], sts, afts, iafts, viafts, cviafts, vcviafts]
+  _  -> concat [[ft], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts]
   ---- TODO more option combinations
  where
    t = unparenth tree
@@ -28,7 +28,8 @@ nlg env tree = case () of
    iafts = map insitu afts
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
-   vcviafts = concatMap variations cviafts
+   ncviafts = map negated cviafts  -- better do this at this late stage
+   vncviafts = concatMap variations ncviafts
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
@@ -83,11 +84,11 @@ synonyms env t = symbs t ++ verbs t where
   
   verbs :: forall a. Tree a -> [Tree a]
   verbs t = case t of
-    GAdj2Prop (LexAdj2 c) x y ->
-      [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
-    GFun2Exp _ _ _ -> map GTermExp (terms t) ---- also verbal synonyms
-    GFunCExp _ _  -> map GTermExp (terms t)
-    GFunExp _ _ -> map GTermExp (terms t)
+----    GAdj2Prop (LexAdj2 c) x y ->
+----      [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
+    GFun2Exp _ _ _ -> t : map GTermExp (terms t) ---- also verbal synonyms
+    GFunCExp _ _  -> t : map GTermExp (terms t)
+    GFunExp _ _ -> t : map GTermExp (terms t)
     _ -> composOpM verbs t
 
   vsyns c = maybe [] snd (M.lookup c (synonymConstantTableNLG env))
@@ -417,4 +418,11 @@ collectivize t = case t of
        collectArgs func (exps2list xs ++ ee)
      exp : ee -> exp : collectArgs func ee ---- TODO collectivize exp ?
      [] -> []
+
+
+---- TODO: move more of negation from earlier stages here
+negated :: Tree a -> Tree a
+negated t = case t of
+  GNotProp (GAdjEProp adj exps) -> GNotAdjEProp adj exps
+  _ -> composOp negated t
 

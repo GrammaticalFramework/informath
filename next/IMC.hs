@@ -19,28 +19,29 @@ semantics = addCoercions . addParenth . sem initSEnv . removeFonts
 
 addCoercions :: Tree a -> Tree a
 addCoercions t = case t of
-  GAxiomJmt label hypos prop -> GAxiomJmt label (addCoercions hypos) (proofProp prop)
-  {-
-  AxiomPropJmt : Label -> ListHypo -> Prop -> Jmt ;
-  DefPropJmt : Label -> ListHypo -> Prop -> Prop -> Jmt ;
-  SuchThatKind : Ident -> Kind -> Prop -> Kind ;
-  ThmJmt : Label -> ListHypo -> Prop -> Proof -> Jmt ;
-  AxiomExpJmt : Label -> ListHypo -> Exp -> Kind -> Jmt ;
-  AxiomKindJmt : Label -> ListHypo -> Kind -> Jmt ;
-  DefExpJmt : Label -> ListHypo -> Exp -> Kind -> Exp -> Jmt ;
-  DefKindJmt : Label -> ListHypo -> Kind -> Kind -> Jmt ;
-  ElemKind : Kind -> Kind ;
-  IdentsArgKind : Kind -> ListIdent -> ArgKind ;
-  KindArgKind : Kind -> ArgKind ;
-  TypedExp : Exp -> Kind -> Exp ;
-  -}
+  GAxiomJmt label hypos prop -> GAxiomJmt label (addCoercions hypos) (proofProp prop)  
+  GThmJmt label hypos prop proof -> GThmJmt label (addCoercions hypos) (proofProp prop) proof
+  GAxiomExpJmt label hypos exp kind -> GAxiomExpJmt label (addCoercions hypos) exp (elemKind kind)
+
+---- TODO: check where exactly coercions are needed
+  
+  --AxiomPropJmt : Label -> ListHypo -> Prop -> Jmt ;
+  --DefPropJmt : Label -> ListHypo -> Prop -> Prop -> Jmt ;
+  --SuchThatKind : Ident -> Kind -> Prop -> Kind ;
+  --AxiomKindJmt : Label -> ListHypo -> Kind -> Jmt ;
+  --DefExpJmt : Label -> ListHypo -> Exp -> Kind -> Exp -> Jmt ;
+  --DefKindJmt : Label -> ListHypo -> Kind -> Kind -> Jmt ;
+
   GPropHypo prop -> GPropHypo (proofProp prop)
-  GVarsHypo idents kind -> GVarsHypo idents (GElemKind kind)
+  GVarsHypo idents kind -> GVarsHypo idents (elemKind kind)
   _ -> composOp addCoercions t
  where
    proofProp prop = case prop of
      GProofProp _ -> prop
      _ -> GProofProp prop
+   elemKind kind = case kind of
+     GElemKind kind -> kind
+     _ -> GElemKind kind
 
 removeFonts :: Tree a -> Tree a
 removeFonts t = case t of
