@@ -16,6 +16,7 @@ main = do
   then main4 xx
   else main3 xx
 
+
 main4 args = do
   env <- readEnv args 
   let mfile = inputFileArgs args
@@ -24,7 +25,7 @@ main4 args = do
       mo <- readDeduktiModule file
       let results = processDeduktiModule env mo
       mapM_ (putStrLn . printGenResult env) results
-    Just (file, "tex") -> do
+    Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
       s <- readFile file 
       let results = processLatex env s
       mapM_ (putStrLn . printParseResult env) results

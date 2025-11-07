@@ -7,7 +7,6 @@ cat
   Declaration ;
   Equation ;
   Compar ;
-  Term ;
   [Term] {1} ;
   Function ;
   Const ;
@@ -31,9 +30,6 @@ fun
   EnumSetTerm : [Term] -> Term ;
   ComprehensionTerm : Term -> Term -> Formula -> Term ;
   
-  IdentTerm : Ident -> Term ;
-  NumberTerm : Int -> Term ; --- was float
-
   IdentFunction : Ident -> Function ;
   DerivativeFunction : Function -> Function ;
   

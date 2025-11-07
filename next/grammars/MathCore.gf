@@ -32,7 +32,7 @@ fun
 
   AppExp : Exp -> Exps -> Exp ;
   AbsExp : [Ident] -> Exp -> Exp ;
-  IdentExp : Ident -> Exp ; 
+  TermExp : Term -> Exp ; 
   KindExp : Kind -> Exp ;
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;

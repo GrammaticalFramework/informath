@@ -8,8 +8,10 @@ import Dedukti.AbsDedukti
 import NextInformath -- superset of MathCore
 import CommonConcepts
 import DeduktiOperations
+import PGF (showExpr)
 
 import Data.Char
+import Data.List (intersperse)
 import qualified Data.Map as M
 
 
@@ -110,7 +112,7 @@ prop2dedukti prop = case prop of
     EApp (EApp (EIdent (QIdent (noun))) (exp2dedukti x)) (exp2dedukti y)
   GIndexedFormulaProp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GFormulaProp formula -> formula2dedukti formula
-  _ -> eUndefined ---- TODO complete Informath2Core
+  _ -> eUndefinedDebug prop ---- TODO complete Informath2Core
 
 formula2dedukti :: GFormula -> Exp
 formula2dedukti formula = case formula of
@@ -118,7 +120,7 @@ formula2dedukti formula = case formula of
   GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
     foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
   ---- modulo_Formula : Term -> Term -> Term -> Formula
-  _ -> eUndefined ----
+  _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
 hypo2dedukti hypo = case hypo of
@@ -165,7 +167,7 @@ kind2dedukti kind = case kind of
     foldl1 EApp (EIdent (ident2ident ident) : map exp2dedukti (exps2list exps))
   GNounKind (LexNoun noun) ->
     EIdent (QIdent (noun))
-  _ -> eUndefined ---- TODO
+  _ -> eUndefinedDebug kind ---- TODO
 
 exp2dedukti :: GExp -> Exp
 exp2dedukti exp = case exp of
@@ -184,7 +186,7 @@ exp2dedukti exp = case exp of
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
   GSigmaExp i m n f ->
     EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f))
-  _ -> eUndefined ---- TODO
+  _ -> eUndefinedDebug exp ---- TODO
 
 term2dedukti :: GTerm -> Exp
 term2dedukti term = case term of
@@ -196,7 +198,7 @@ term2dedukti term = case term of
     appIdent oper (map term2dedukti [x, y])
   GNumberTerm (GInt n) -> int2exp n
   GIdentTerm ident -> EIdent (ident2ident ident)
-  _ -> eUndefined ---- TODO
+  _ -> eUndefinedDebug term ---- TODO
 
 exp2deduktiPatt :: GExp -> Patt
 exp2deduktiPatt exp = case exp of
@@ -250,6 +252,10 @@ prop2deduktiIdent prop = case prop of
 
 eUndefined :: Exp
 eUndefined = EIdent (QIdent "UNDEFINED")
+
+eUndefinedDebug :: Gf a => a -> Exp
+eUndefinedDebug t =
+  EIdent (QIdent (concat (intersperse "_" ("{|" : "UNDEFINED" : words (showExpr [] (gf t)))) ++ "|}"))
 
 appIdent :: String -> [Exp] -> Exp
 appIdent f exps = foldl EApp (EIdent (QIdent f)) exps

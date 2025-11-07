@@ -75,7 +75,6 @@ synonyms env t = symbs t ++ verbs t where
       [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GNameExp (LexName c) ->
       [app alt [] | alt <- ssyns c]
-    GIdentExp x -> [GIdentTerm x]
     GTermExp t -> [t]
     _ -> []
       

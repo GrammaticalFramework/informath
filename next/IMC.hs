@@ -67,8 +67,8 @@ addParenth t = case t of
 semArgkind :: GArgKind -> [(GIdent, GKind)]
 semArgkind argkind = case argkind of
   GIdentsArgKind kind (GListIdent idents) -> [(ident, kind) | ident <- idents]
-----  GIndexedDeclarationArgKind (GInt i) ->
-    ---- [(EIdent (unresolvedIndexIdent i), unresolvedIndexIdent i)]
+  GIndexedDeclarationArgKind (GInt i) ->
+     [((GStrIdent (GString ("UNRESOLVED_" ++ show i))), GIdentKind (GStrIdent (GString "UNRESOLVED_KIND")))]
   -- GKindArgKind has been resolved in sem
 
 
@@ -192,15 +192,16 @@ sem env t = case t of
     let (var, nenv) = newVar env
     in GIdentsArgKind (sem nenv kind) (GListIdent [var])
 
-{-
-  GFormulaProp (GFEquation equation@(GEChain _ _ _)) -> case chainedEquations equation of
+
+  GFormulaProp (GEquationFormula equation@(GChainEquation _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
-      [sem env (GFormulaProp (GFEquation (GEBinary eqsign x y))) | (eqsign, x, y) <- triples])
+      [sem env (GFormulaProp (GEquationFormula (GBinaryEquation eqsign x y))) | (eqsign, x, y) <- triples])
   GFormulaProp (GElemFormula (GListTerm xs) y) -> case xs of
-    [x] -> GComparnounProp (LexComparnoun "element_Comparnoun")
+    [x] -> GNoun2Prop (LexNoun2 "element_Noun2")
               (sem env (GTermExp x)) (sem env (GTermExp y))
     _ -> GAndProp (GListProp [sem env (GFormulaProp (GElemFormula (GListTerm [x]) y)) | x <- xs])
-        
+
+{-        
   GFormulaProp (GFModulo term1 term2 term3) ->
     GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
       (sem env (GTermExp term1))
@@ -224,7 +225,7 @@ sem env t = case t of
   GTermExp (GTNeg x) ->  sem env (GTermExp (GAppOperOneTerm (LexOper "neg_Oper") x))
   GTermExp (GTEnumSet (GListTerm xs)) -> sem env (GEnumSetExp (gExps (map GTermExp xs)))
 -}
-  GTermExp (Gtimes_Term x y) -> GTermExp (GOper2Term (LexOper2 "times_Oper2") (sem env x) (sem env y))
+  Gtimes_Term x y -> GOper2Term (LexOper2 "times_Oper2") (sem env x) (sem env y)
   GParenthTerm term -> sem env term
 
 

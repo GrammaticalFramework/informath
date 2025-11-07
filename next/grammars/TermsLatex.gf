@@ -6,7 +6,6 @@ lincat
   Declaration = {s : Str ; isPl : Bool} ;
   Equation = {s : Str} ;
   Compar = Str ;
-  Term = TermPrecNum ;
   [Term] = {s : Str ; isPl : Bool} ;
   Function = Str ;
   Const = Str ;
@@ -33,9 +32,6 @@ lin
     tconstant ("\\{" ++ top a ++ "\\in" ++ top b ++
                 ":" ++ top f ++ "\\}") ;
 
-  IdentTerm x =  constant x ** {isNumber = False} ;
-  NumberTerm n = constant n.s ** {isNumber = True} ;
-
   BaseTerm x = {s = top x ; isPl = False} ;
   ConsTerm x xs = {s = top x ++ "," ++ xs.s ; isPl = True} ;
 
@@ -60,7 +56,6 @@ lin
       
 
 oper
-  TermPrecNum = TermPrec ** {isNumber : Bool} ;
 
   tinfixl : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->
     infixl p op x y ** {isNumber = False} ;

@@ -17,7 +17,6 @@ lincat
   [Adj] = Syntax.ListAP ;
 
 lin
-  TermExp term = latexNP (mkSymb term.s) ;
   TermKind term = {
     cn = mkCN element_N ;
     adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb term.s))

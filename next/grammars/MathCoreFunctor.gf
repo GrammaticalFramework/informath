@@ -67,7 +67,7 @@ lin
   AbsExp idents exp =
     mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
   KindExp kind = mkNP the_Det (mkCN type_CN (Syntax.mkAdv possess_Prep (mkNP aPl_Det (useKind kind)))) ;
-  IdentExp ident = latexNP (mkSymb ident) ;
+  TermExp term = latexNP (mkSymb term.s) ;
   TypedExp exp kind = mkNP the_Det (mkCN (mkCN kind.cn exp) kind.adv) ;
   EnumSetExp exps = mkNP the_Det (mkCN set_N (Syntax.mkAdv possess_Prep exps.np)) ;
 
