@@ -21,9 +21,9 @@ import Dedukti.ErrM
 import ParseInformath (parseJmt, unindexGFTree)
 import Lexing
 --import MkConstants (mkConstants)
---import qualified Dedukti2Agda as DA
---import qualified Dedukti2Rocq as DR
---import qualified Dedukti2Lean as DL
+import qualified Dedukti2Agda as DA
+import qualified Dedukti2Rocq as DR
+import qualified Dedukti2Lean as DL
 
 import Ranking4
 import Environment4
@@ -61,11 +61,21 @@ type DkJmt = Jmt
 
 data GenResult = GenResult {
   originalDedukti  :: Jmt,
-  annotatedDedukti :: [Jmt],
-  coreGF           :: [GFTree],
+  annotatedDedukti :: Jmt,
+  coreGF           :: GFTree,
   nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])],
   backToDedukti    :: [Jmt]  --- for debugging NLG and semantics
   }
+
+-- when just converting form Dk to another formalism
+dummyGenResult :: Jmt -> GenResult
+dummyGenResult jmt = GenResult jmt jmt undefined [] []
+
+printResults :: Env -> [String] -> [String]
+printResults env ss = 
+  if isFlag "-to-latexdoc" env
+  then toLatexDoc (intersperse "" ss)
+  else ss
 
 -- conversion that produces the whole line of generation from Dedukti
 
@@ -73,27 +83,30 @@ processDeduktiModule :: Env -> Module -> [GenResult]
 processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 
 processJmt :: Env -> Jmt -> GenResult
-processJmt env jmt =
-  let
-    flag = flags env
-    jmts = annotateDedukti env jmt
-    cores = map dedukti2core jmts
-    exts = concatMap (core2ext env) cores
-    nlgs = setnub $ map gf $ exts
-    best = maybe id take (nbestNLG env)
-    nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
-    nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
-  in GenResult {
-    originalDedukti = jmt,
-    annotatedDedukti = jmts,
-    coreGF = map gf cores,
-    nlgResults = nlgranks,
-    backToDedukti = concatMap (gjmt2dedukti env) exts
-    }
+processJmt env djmt =
+  if toFormalism env /= "NONE"
+  then dummyGenResult djmt
+  else
+    let
+      flag = flags env
+      jmt = annotateDedukti env djmt
+      core = dedukti2core jmt
+      exts = core2ext env core
+      nlgs = setnub $ map gf $ exts
+      best = maybe id take (nbestNLG env)
+      nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
+      nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
+    in GenResult {
+      originalDedukti = djmt,
+      annotatedDedukti = jmt,
+      coreGF = gf core,
+      nlgResults = nlgranks,
+      backToDedukti = concatMap (gjmt2dedukti env) exts
+      }
 
 
 -- result of conversion from informal Latex text, with intermediate phases for debugging
----- TODO: complete parseResults with type checking in Dedukti
+---- TODO: complete formalResults with type checking in Dedukti
 
 data ParseResult = ParseResult {
   originalLine  :: String,
@@ -102,7 +115,9 @@ data ParseResult = ParseResult {
   indexedLine   :: String,
   parseMessage  :: String,
   unknownWords  :: [String],
-  parseResults  :: [(GFTree, GFTree, GFTree, [Jmt])] -- parsed, unindexed, normalized
+  parseResults  :: [GFTree],
+  formalResults :: [(GFTree, GFTree, GFTree, [Jmt])], -- parsed, unindexed, normalized
+  transResults  :: [String] -- back-translation or translation to another language
   }
 
 
@@ -118,6 +133,7 @@ processLatexLine :: Env -> String -> ParseResult
 processLatexLine env s =
   let
     gr = grammar env
+    trans = isFlag "-translate" env
     ls = lextex s
     (ils, tindex) = indexTex ls
     Just jmt = readType "Jmt"
@@ -130,12 +146,16 @@ processLatexLine env s =
     indexedLine = ils,
     parseMessage = msg,
     unknownWords = missingWords env ils,
-    parseResults = [
+    parseResults = ts,
+    formalResults = if trans then [] else [
       (t, ut, gf ct, gjmt2dedukti env ct) |
         t <- ts,
         let ut = unindexGFTree gr (fromLang env) tindex t,
         let ct = ext2core (fg ut)
-      ]
+      ],
+    transResults = [
+      unindexString tindex
+        (unlex env (gftree2nat env (toLang env) t)) | t <- ts]
     }
 
 -- conversions
@@ -143,11 +163,8 @@ processLatexLine env s =
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
-annotateDedukti :: Env -> Jmt -> [Jmt]
-annotateDedukti env t =
-  maybe id take (nbestDedukti env)
-    [annotateDkIdents (constantTable env) t]
-----    (allAnnotateDkIdents (constantTable env) t)
+annotateDedukti :: Env -> Jmt -> Jmt
+annotateDedukti env t = annotateDkIdents (constantTable env) t
 
 readConstantTable :: PGF -> FilePath -> IO ConstantTable
 readConstantTable = buildConstantTable
@@ -158,17 +175,19 @@ checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
 printConstantTable :: ConstantTable -> String
 printConstantTable = showConstantTable
 
-printGenResult :: Env -> GenResult -> String
+printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
-  _ | isFlag "-json" env -> mkJSONObject [
+  _ | toFormalism env /= "NONE" ->
+    [printFormalismJmt env (originalDedukti result)]
+  _ | isFlag "-json" env -> [mkJSONObject [
     mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
-    mkJSONListField "annotatedDedukti" [stringJSON (printTree jmt) | jmt <- annotatedDedukti result],
-    mkJSONListField "coreGF" [stringJSON (showExpr [] t) | t <- coreGF result],
+    mkJSONField "annotatedDedukti" (stringJSON (printTree (annotatedDedukti result))),
+    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
     mkJSONField "nlgResults" (mkJSONObject [
       mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]),
     mkJSONListField "backToDedukti" [stringJSON (printTree jmt) | jmt <- backToDedukti result]
-    ]
-  _ -> unlines $ printNLGOutput env result
+    ]]
+  _ -> printNLGOutput env result
 
 printRank :: ((GFTree, String), (Scores, Int)) -> String
 printRank ((tree, str), (scores, rank)) = mkJSONObject [
@@ -179,26 +198,39 @@ printRank ((tree, str), (scores, rank)) = mkJSONObject [
   ]
 
 printNLGOutput :: Env -> GenResult -> [String]
-printNLGOutput env result =
-  maybe ["language not available"] (map (snd . fst))
-    (lookup (toLang env) (nlgResults result))
+printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
+  Just phrases -> map (snd . fst) phrases
+  _ -> error $ "language not available: " ++ (showCId (toLang env)) ++
+               ". Available values: " ++ unwords (map showCId (langs env))
 
+printFormalismJmt :: Env -> Jmt -> String
+printFormalismJmt env jmt = case toFormalism env of
+  "agda" -> DA.printAgdaJmts (DA.transJmt jmt)
+  "lean" -> DL.printLeanJmt (DL.transJmt jmt)
+  "rocq" -> DR.printRocqJmt (DR.transJmt jmt)
+  "dedukti" -> printTree jmt
+  f -> error $ "formalism not available: " ++ f ++ ". Available values: agda dedukti lean rocq"
 
-printParseResult :: Env -> ParseResult -> String
+printParseResult :: Env -> ParseResult -> [String]
 printParseResult env result = case 0 of
-  _ | isFlag "-json" env -> mkJSONObject [
+  _ | toFormalism env /= "NONE" ->
+    [printFormalismJmt env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+  _ | isFlag "-translate" env ->
+    transResults result
+  _ | isFlag "-json" env -> [mkJSONObject [
     mkJSONField "originalLine" (stringJSON (originalLine result)),
     mkJSONField "lexedLine" (stringJSON (lexedLine result)),
     mkJSONListField "termIndex" (map stringJSON (termIndex result)),
     mkJSONField "indexedLine" (stringJSON (indexedLine result)),
     mkJSONField "parseMessage" (stringJSON (parseMessage result)),
     mkJSONListField "unknownWords" (map stringJSON (unknownWords result)),
-    mkJSONListField "parseResults" (map printFinalParseResult (parseResults result))
-    ]
-  _ -> unlines $ printDeduktiOutput env result
+    mkJSONListField "formalResults" (map printFinalParseResult (formalResults result))
+    ]]
+  _ -> printDeduktiOutput env result
 
 printDeduktiOutput :: Env -> ParseResult -> [String]
-printDeduktiOutput env result = [printTree jmt | (_,_,_,jmts) <- parseResults result, jmt <- jmts]
+printDeduktiOutput env result =
+  [printTree jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
 
 printFinalParseResult :: (GFTree, GFTree, GFTree, [Jmt]) -> String
 printFinalParseResult (t, ut, ct, jmts) = mkJSONObject [
@@ -207,7 +239,6 @@ printFinalParseResult (t, ut, ct, jmts) = mkJSONObject [
   mkJSONField "coreTree" (stringJSON (showExpr [] ct)),
   mkJSONListField "dedukti" (map (stringJSON . printTree) jmts)
   ]
-
 
 readDeduktiModule :: FilePath -> IO Module
 readDeduktiModule file = readFile file >>= return . parseDeduktiModule
@@ -294,8 +325,8 @@ readEnv args = do
     baseConstantModule = mo,
     langs = relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-tolang" english args),
+    toFormalism = argValue "-toformalism" "NONE" args,
     fromLang = fro,
-    nbestDedukti = argValueMaybeInt "-nbestdk" args,
     nbestNLG = argValueMaybeInt "-nbest" args,
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro

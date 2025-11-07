@@ -24,16 +24,16 @@ main4 args = do
     Just (file, "dk") -> do
       mo <- readDeduktiModule file
       let results = processDeduktiModule env mo
-      mapM_ (putStrLn . printGenResult env) results
+      mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
     Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
       s <- readFile file 
       let results = processLatex env s
-      mapM_ (putStrLn . printParseResult env) results
+      mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
       ct <- readConstantTable (grammar env) file
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
-    _ -> putStrLn helpMsg4
+    _ -> putStrLn helpMsg4 
     
 
 helpMsg4 = unlines [
@@ -43,6 +43,11 @@ helpMsg4 = unlines [
   "  -json",
   "  -nbest=<int>",
   "  -tolang=<lang>",
-  "  -fromlang=<lang>"
+  "  -fromlang=<lang>",
+  "  -toformalism=<formalism>",
+  "  -translate",
+  "  -no-unlex",
+  "  -to-latexdoc" 
   ]
+
 

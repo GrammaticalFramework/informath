@@ -20,6 +20,7 @@ data Env = Env {
   langs :: [Language],
   toLang :: Language,
   fromLang :: Language,
+  toFormalism :: String,
   nbestDedukti :: Maybe Int,
   nbestNLG :: Maybe Int,
   scoreWeights :: [Int],

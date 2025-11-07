@@ -24,8 +24,8 @@ lin
   minus_Oper2 = mkOper2 "-" <1 : Prec> <1 : Prec> <2 : Prec> ;
   times_Oper2 = mkOper2 "\\times"  <2 : Prec> <2 : Prec> <3 : Prec> ;
   div_Oper2 = mkOper2 "\\frac{" "} {" "}" <3 : Prec> <0 : Prec> <0 : Prec> ;
-  pow_Oper2 = mkOper2 "\\^" <3 : Prec> <4 : Prec> <2 : Prec> ;
-  neg_Oper = prefixOper "\\negated" <1 : Prec> <2 : Prec> ;
+  pow_Oper2 = mkOper2 "" "^ {" "}" <3 : Prec> <4 : Prec> <2 : Prec> ;
+  neg_Oper = prefixOper "-" <1 : Prec> <2 : Prec> ;
   logarithm_Oper2 = mkOper2 "\\log_{" "}" "" <3 : Prec> <1 : Prec> <3 : Prec> ;
   square_root_Oper = mkOper "\\sqrt{" "}" ;
 

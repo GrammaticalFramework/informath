@@ -456,9 +456,3 @@ latexPreamble = unlines [
   "\\newcommand{\\notmeets}{\\mathrel{\\not\\meets}}"
   ]
 
--- for LaTeX, Agda, etc
-snake2camel :: String -> String
-snake2camel = concat . capit . words . uncamel where
-  uncamel = map (\c -> if c == '_' then ' ' else c)
-  capit (w:ws) = w : [toUpper c : cs | (c:cs) <- ws]
-
