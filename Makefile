@@ -4,7 +4,7 @@ GF_FILES := $(wildcard grammars/*.gf)
 
 lang=Eng
 
-all: grammars/Informath.pgf Dedukti Agda Rocq Lean RunInformath
+all: grammars/Informath.pgf next/grammars/NextInformath.pgf Dedukti Agda Rocq Lean RunInformath 
 
 .PHONY: all Dedukti Agda Lean Rocq demo RunInformath
 
