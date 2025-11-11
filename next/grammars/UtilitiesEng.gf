@@ -15,6 +15,9 @@ in {
 
 oper
 
+  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
+  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
+
   strN : Str -> N = mkN ;
   strA : Str -> A = mkA ;
   strV : Str -> V = mkV ;

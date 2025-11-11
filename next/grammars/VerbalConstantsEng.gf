@@ -106,7 +106,7 @@ lin
   vector_Noun = mkNoun "vector" ;
   denumerable_Adj = mkAdj "denumerable" ;
   cardinality_Fun = mkFun "cardinality" ;
-  is_root_Noun2 = mkNoun2 "root" ;
+  root_Noun2 = mkNoun2 "root" ;
   degree_Fun = mkFun "degree" ;
   polynomial_Noun = mkNoun "polynomial" ;
   irrational_Adj = mkAdj "irrational" ;

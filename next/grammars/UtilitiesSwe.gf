@@ -16,6 +16,9 @@ in {
 
 oper
 
+  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
+  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
+
   strN : Str -> N = mkN ;
   strA : Str -> A = mkA ;
   strV : Str -> V = mkV ;
@@ -78,6 +81,7 @@ oper
     symb (mkSymb ("$" ++ x.s ++ "$")) ;
 
   tal_N : N = mkN "tal" "tal" ;
+  tom_A : A = mkA "tom" "tomt" "tomma" "tommare" "tommast" ;
 
   mängd_N = mkN "mängd" "mängder" ;
   element_N = mkN "element" "element" ;

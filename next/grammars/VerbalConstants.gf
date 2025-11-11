@@ -85,7 +85,7 @@ fun
   irrational_Adj : Adj ; -- top100
   polynomial_Noun : Noun ; -- top100
   degree_Fun : Fun ; -- top100
-  is_root_Noun2 : Noun2 ; -- top100
+  root_Noun2 : Noun2 ; -- top100
   cardinality_Fun : Fun ; -- top100
   denumerable_Adj : Adj ; -- top100
   vector_Noun : Noun ; -- top100

@@ -25,6 +25,7 @@ lin
   complex_Noun = mkNoun (mkA "komplex") tal_N ;
 
   list_Fam = mkFam "lista" ;  
+  set_Fam = mkFam mängd_N ;  
 
   Eq_Adj2 = mkAdj2  "lika" "med" ;
   Eq_AdjE = mkAP (mkA "lika") ;
@@ -56,75 +57,77 @@ lin
   successor_Fun = mkFun (mkN "efterföljare" neutrum) ;
   absolute_value_Fun = mkFun (mkN "absolutbelopp" neutrum) ;
   factorial_Fun = mkFun (mkN "fakultet" "fakulteter") ;
-  gcd_Fun = mkFun "störst" "gemensam" "delare" ;
+  gcd_FunC = mkFunC "störst" "gemensam" "delare" ;
 
   even_Adj = mkAdj "jämn" ;
   odd_Adj = mkAdj "udda" ;
   divisible_Adj2 = mkAdj2 "delbar" "med" ;
   prime_Adj = mkAdj "prim" ;
-{-
-  function_Fam2 = mkFam "function" from_Prep to_Prep ;
+
+  function_Fam2 = mkFam2 (mkN "funktion" "funktioner") from_Prep to_Prep ;
   union_FunC = mkFun "union" ;
-  intersection_FunC = mkFun "intersection" ;
+  intersection_FunC = mkFun (mkN "snitt" "snitt") ;
   difference_Fun2 = mkFun2 "difference" "from" ;
-  complement_Fun = mkFun "complement" ;
-  cartesian_FunC = mkFun "cartesian product" ;
-  powerset_Fun = mkFun "power set" ;
+  complement_Fun = mkFun (mkN "komplement" "komplement") ;
+  cartesian_FunC = mkFun (mkCN (mkA "kartesisk") (mkN "produkt")) ;
+  powerset_Fun = mkFun (mkN "potens" mängd_N) ;
 
-  subset_Noun2 = mkNoun2 "proper subset" ;  
-  subseteq_Noun2 = mkNoun2 "subset" ;  
-  superset_Noun2 = mkNoun2 "proper superset" ;  
-  superseteq_Noun2 = mkNoun2 "superset" ;  
-  equalset_Adj2 = mkAdj2 "equal" "to" ;
-  notequalset_Adj2 = mkAdj2 "distinct" "from" ; ----
-  element_Noun2 = mkNoun2 "element" ;
-  notelement_Noun2 = mkNoun2 "non-element" ; ----
+  subset_Noun2 = mkNoun2 (mkCN (mkA "äkta") (mkN "del" mängd_N)) ;
+  subseteq_Noun2 = mkNoun2 (mkN "del" mängd_N) ;  
+  superset_Noun2 = mkNoun2 (mkCN (mkA "äkta") (mkN "över" mängd_N)) ;
+  superseteq_Noun2 = mkNoun2 (mkN "över" mängd_N) ;
+  equalset_Adj2 = mkAdj2 (mkA "lika") with_Prep ;
+  notequalset_Adj2 = mkAdj2 (mkA "skild") from_Prep ;
+  element_Noun2 = mkNoun2 element_N ;
+  notelement_Noun2 = mkNoun2 (mkN "icke-" element_N) ; ----
 
-  emptyset_Name = mkNP the_Det (mkCN (mkA "empty") (mkN "set")) ;
-  universeset_Name = mkNP the_Det (mkCN (mkA "universal") (mkN "set")) ;
+  emptyset_Name = mkName (mkNP the_Det (mkCN tom_A mängd_N)) ;
+  universeset_Name = mkName (mkNP the_Det (mkN "universal" mängd_N)) ;
 
-  congruent_Pred3 = mkPred3 (mkAP (mkA "congruent")) to_Prep (mkPrep "modulo") ;
+  congruent_Adj3 = mkAdj3 (mkA "kongruent") with_Prep (mkPrep "modulo") ;
 
-  finite_Adj = mkAdj "finite" ;
-  infinite_Adj = mkAdj "infinite" ;
+  finite_Adj = mkAdj "ändlig" ;
+  infinite_Adj = mkAdj "oändlig" ;
 
-  combinationsFromSet_Fun2 = mkFun2 "number of combinations" "of size" ;
-  combinations_Fun2 = mkFun2 "set of combinations" "of size" ;
-  binomial_Fun2 = mkFun2 "binomial coefficient" "over" ;
+  combinationsFromSet_Fun2 = mkFun2 (mkCN (mkN "an" tal_N) (SyntaxSwe.mkAdv (mkPrep "") (mkNP aPl_Det (mkN "kombination")))) from_Prep (mkPrep "av storlek") ;
+  combinations_Fun2 = mkFun2 (mkCN mängd_N (SyntaxSwe.mkAdv possess_Prep (mkNP aPl_Det  (mkN "Kombination")))) from_Prep (mkPrep "av storlek") ;
+  binomial_Fun2 = mkFun2 (mkCN (mkN "binomialkoefficient" "binomialkoefficienter")) possess_Prep (mkPrep "över") ;
+
   area_Fun = mkFun "area" ;
-  radius_Fun = mkFun "radius" ;
-  circle_Noun = mkNoun "circle" ;
-  pi_Name = mkNP the_Det (mkCN (mkN "number") (symb "\\(\\pi\\)")) ;
-  legendre_symbol_Fun2 = mkFun2 "Legendre symbol" "over" ;
-  square_Fun = mkFun "square" ;
-  resultant_FunC = mkFun "resultant" ;
-  perpendicular_Adj2 = mkAdj2 "perpendicular" "to" ;
-  length_Fun = mkFun "length" ;
-  norm_Fun = mkFun "norm" ;
-  vector_Noun = mkNoun "vector" ;
-  denumerable_Adj = mkAdj "denumerable" ;
-  cardinality_Fun = mkFun "cardinality" ;
-  is_root_Noun2 = mkNoun2 "root" ;
-  degree_Fun = mkFun "degree" ;
-  polynomial_Noun = mkNoun "polynomial" ;
-  irrational_Adj = mkAdj "irrational" ;
-  rational_Adj = mkAdj "rational" ;
+  radius_Fun = mkFun "radie" ;
+  circle_Noun = mkNoun (mkN "cirkel" "cirklar") ;
+  pi_Name = mkName (mkNP the_Det (mkCN tal_N (symb "\\(\\pi\\)"))) ;
+  legendre_symbol_Fun2 = mkFun2 (mkN "Legendresymbol" "Legendresymboler") possess_Prep (mkPrep "över") ;
+  square_Fun = mkFun (mkN "kvadrat" "kvadrater") ;
+  resultant_FunC = mkFunC (mkN "resultant" "resultanter") ;
+  perpendicular_Adj2 = mkAdj2 "vinkelrät" "mot" ;
+  perpendicular_AdjC = mkAdjC "vinkelrät" ;
+  length_Fun = mkFun (mkN "längd" "längder") ;
+  norm_Fun = mkFun (mkN "norm" "normer") ;
+  vector_Noun = mkNoun (mkN "vektor" "vektorer") ;
+  denumerable_Adj = mkAdj "uppräknelig" ;
+  cardinality_Fun = mkFun (mkN "kardinalitet" "kardinaliteter") ;
+  root_Noun2 = mkNoun2 (mkN "rot" "rötter") ;
+  degree_Fun = mkFun (mkN "grad" "grader") ;
+  polynomial_Noun = mkNoun (mkN "polynom" "polynom") ;
+  irrational_Adj = mkAdj "irrationell" ;
+  rational_Adj = mkAdj "rationell" ;
+  
+  sin_Fun = mkFun "sinus" ;
+  cos_Fun = mkFun "cosinus" ;
+  tan_Fun = mkFun "tangens" ;
+  arcsin_Fun = mkFun (mkN "arcsinus") ;
+  arccos_Fun = mkFun (mkN "arccosinus") ;
+  arctan_Fun = mkFun (mkN "arctangens") ;
+  orthogonal_Adj2 = mkAdj2 "ortogonal" "till" ;
+  orthogonal_AdjC = mkAdjC "ortogonal" ;
+  angle_between_Fun2 = mkFun2 (mkN "vinkel") possess_Prep (mkPrep "med") ;
+  dot_product_FunC = mkFunC "punktprodukt" ;
+  vector_plus_FunC = mkFunC "summa" ;
+  
+  sphenic_Adj = mkAdj "sfenisk" ;
 
-  sin_Fun = mkFun "sine" ;
-  cos_Fun = mkFun "cosine" ;
-  tan_Fun = mkFun "tangent" ;
-  arcsin_Fun = mkFun "arcsine" ;
-  arccos_Fun = mkFun "arccosine" ;
-  arctan_Fun = mkFun "arctangent" ;
-  orthogonal_Adj2 = mkAdj2 "orthogonal" "to" ;
-  orthogonal_AdjC = mkAP (mkA "orthogonal") ;
-  perpendicular_Adj2 = mkAdj2 "perpendicular" "to" ;
-  perpendicular_AdjC = mkAP (mkA "perpendicular") ;
-  angle_between_Fun2 = mkFun2 "angle" "with" ;
-  dot_product_FunC = mkFun "dot product" ;
-  vector_plus_FunC = mkFun "sum" ;
-
-  sphenic_Adj = mkAdj "sphenic" ;
+{-
 
 -- special constants
 

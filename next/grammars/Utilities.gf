@@ -52,6 +52,8 @@ oper
 
   item_Label : Str = "\\item" ;
 
+  postAdvS : S -> Adv -> S ;
+  displayLatexS : Symb -> S ;
 
 
 -- type synonyms
@@ -214,6 +216,8 @@ oper
     } ;
 
   mkAdj3 = overload {
+    mkAdj3 : A -> Prep -> Prep -> Adj3T
+      = \a, p1, p2 -> {ap = mkAP a ; prep1 = p1 ; prep2 = p2} ;
     mkAdj3 : AP -> Prep -> Prep -> Adj3T
       = \ap, p1, p2 -> {ap = ap ; prep1 = p1 ; prep2 = p2} ;
     } ;

@@ -13,5 +13,4 @@ concrete MathExtensionsSwe of MathExtensions =
     Prelude
 in {
 
-  
 }

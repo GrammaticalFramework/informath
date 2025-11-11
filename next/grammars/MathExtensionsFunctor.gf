@@ -111,8 +111,4 @@ lin
     } ;
   NoKindExp kind = mkNP no_Quant (mkCN kind.cn kind.adv) ;
 
-
-oper
-  postAdvS : S -> Adv -> S = \s, adv -> lin S {s = s.s ++ adv.s} ;
-  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 }

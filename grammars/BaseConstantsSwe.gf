@@ -136,7 +136,7 @@ lin
   vector_Noun = mkNoun (mkN "vektor" "vektorer") ;
   denumerable_Adj = mkAdj "upräknelig" ;
   cardinality_Oper = mkOper L.absolute_value_Oper (mkN "kardinalitet" "kardinaliteter") ;
-  is_root_Relnoun = mkN2 (mkN "rot" "rötter") ;
+  root_Relnoun = mkN2 (mkN "rot" "rötter") ;
   degree_Fun = mkFun (mkN "grad" "grader") ;
   polynomial_Noun = mkNoun (mkN "polynom" "polynom") ;
   irrational_Adj = mkAdj "irrationell" ;
