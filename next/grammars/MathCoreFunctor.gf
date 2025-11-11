@@ -148,7 +148,7 @@ lin
   Fun2Exp f x y = mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y)) ;
   FunCExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
-  FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep1 (mkNP aPl_Det (useKind kind))} ;
+  FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep (mkNP aPl_Det (useKind kind))} ;
   Fam2Kind fam kind1 kind2 =
     let
       k1 = mkNP aPl_Det (useKind kind1) ;

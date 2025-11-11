@@ -30,24 +30,24 @@ lincat
   [Rule] = Text ;
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
-  Adj3 = Pred3T ;
+  Adj3 = Adj3T ;
 
 -- lexicon, verbal
   Noun = CN ;
-  Fam = FamilyT ;
-  Fam2 = FamilyT ;
+  Fam = FamT ;
+  Fam2 = Fam2T ;
   Noun1 = CN ;
-  Adj = AP ;
-  Adj2 = RelationT ;
-  AdjE = AP ;
-  AdjC = AP ;
-  Verb = VP ;
-  Verb2 = V2 ;
+  Adj = AdjT ;
+  Adj2 = Adj2T ;
+  AdjE = AdjT ;
+  AdjC = AdjT ;
+  Verb = VerbT ;
+  Verb2 = Verb2T ;
   Noun2 = {cn : CN ; prep : Prep} ;
   Name = NP ;
-  Fun = FunctionT ;
-  Fun2 = Function2T ;
-  FunC = FunctionT ;
+  Fun = FunT ;
+  Fun2 = Fun2T ;
+  FunC = FunT ;
   Label = LabelT ;
 
 lin

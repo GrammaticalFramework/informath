@@ -50,4 +50,3 @@ helpMsg4 = unlines [
   "  -to-latexdoc" 
   ]
 
-

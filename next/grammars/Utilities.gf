@@ -33,6 +33,9 @@ oper
 
   latexS : Symb -> S = \x ->
     symb (mkSymb ("$" ++ x.s ++ "$")) ;
+    
+  latexName : Str -> NP
+      = \s -> symb (mkSymb ("$" ++ s ++ "$")) ;
 
   simpleProp : S -> Proposition = \s -> {s = s ; isComplex = False} ;
   complexProp : S -> Proposition = \s -> {s = s ; isComplex = True} ;
@@ -50,109 +53,215 @@ oper
   item_Label : Str = "\\item" ;
 
 
+
 -- type synonyms
   Proposition : Type = {s : S ; isComplex : Bool} ;
 
-  RelationT : Type = {ap : AP ; prep : Prep} ;
-  RelnounT : Type = {cn : CN ; prep : Prep} ;
-  FunctionT : Type = {cn : CN ; prep : Prep} ;
-  Function2T : Type = {cn : CN ; prep1, prep2 : Prep} ;
-  FamilyT : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
+  Adj2T : Type = {ap : AP ; prep : Prep} ;
+  Noun2T : Type = {cn : CN ; prep : Prep} ;
+  FunT : Type = {cn : CN ; prep : Prep} ;
+  Fun2T : Type = {cn : CN ; prep1, prep2 : Prep} ;
+  FamT : Type = {cn : CN ; prep : Prep ; isCollective : Bool} ;
+  Fam2T : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
   LabelT = {np : NP ; isEmpty : Bool} ;
-  ComparnounT = {cn : CN ; prep : Prep ; op : Str} ;
-  Pred3T = {ap : AP ; prep1, prep2 : Prep} ;
+  Adj3T = {ap : AP ; prep1, prep2 : Prep} ;
+  AdjT = AP ;
+  NounT = CN ;
+  VerbT = VP ;
+  Verb2T = V2 ;
 
-
--- lintype constructors
+-- lintype constructors, language-independent
 
   mkNoun = overload {
-    mkNoun : Str -> CN
-      = \s -> mkCN (mkN s) ;
-    mkNoun : Str -> Str -> CN
-      = \a, n -> mkCN (mkA a) (mkN n) ;
+    mkNoun : Str -> NounT
+      = \s -> (mkCN (strN s)) ;
+    mkNoun : Str -> Str -> NounT
+      = \a, n -> (mkCN (strA a) (strN n)) ;
+    mkNoun : N -> NounT
+      = \n -> mkCN n ;
+    mkNoun : A -> N -> NounT
+      = \a, n -> mkCN a n ;
+    mkNoun : CN -> NounT
+      = \cn -> cn ;
+    } ;
+
+  mkNoun2 = overload {
+    mkNoun2 : Str -> Noun2T
+      = \s -> {cn = mkCN (strN s) ; prep = possess_Prep} ;
+    mkNoun2 : N -> Noun2T
+      = \n -> {cn = mkCN n ; prep = possess_Prep} ;
+    mkNoun2 : CN -> Noun2T
+      = \n -> {cn = n ; prep = possess_Prep} ;
+    mkNoun2 : N -> Prep -> Noun2T
+      = \n, p -> {cn = mkCN n ; prep = p} ;
+    mkNoun2 : CN -> Prep -> Noun2T
+      = \cn, p -> {cn = cn ; prep = p} ;
+    mkNoun2 : N -> Str -> Noun2T
+      = \n, s -> {cn = mkCN (mkCN n) (P.mkAdv s) ; prep = possess_Prep} ;
+    mkNoun2 : (a, n : Str) -> Noun2T
+      = \a, n -> {cn = mkCN (strA a) (strN n) ; prep = possess_Prep} ;
+    mkNoun2 : (a, b, n : Str) -> Noun2T
+      = \a, b, n -> {cn = mkCN (strA a) (mkCN (strA b) (strN n)) ; prep = possess_Prep} ;
     } ;
 
   mkFun = overload {
-    mkFun : Str -> FunctionT
-      = \s -> {cn = mkCN (mkN s) ; prep = possess_Prep} ;
-    mkFun : N -> FunctionT
+    mkFun : Str -> FunT
+      = \s -> {cn = mkCN (strN s) ; prep = possess_Prep} ;
+    mkFun : N -> FunT
       = \n -> {cn = mkCN n ; prep = possess_Prep} ;
-    mkFun : CN -> FunctionT
+    mkFun : CN -> FunT
       = \n -> {cn = n ; prep = possess_Prep} ;
-    mkFun : N -> Prep -> FunctionT
+    mkFun : N -> Prep -> FunT
       = \n, p -> {cn = mkCN n ; prep = p} ;
-    mkFun : N -> Str -> FunctionT
+    mkFun : CN -> Prep -> FunT
+      = \cn, p -> {cn = cn ; prep = p} ;
+    mkFun : N -> Str -> FunT
       = \n, s -> {cn = mkCN (mkCN n) (P.mkAdv s) ; prep = possess_Prep} ;
-    mkFun : (a, n : Str) -> FunctionT
-      = \a, n -> {cn = mkCN (mkA a) (mkN n) ; prep = possess_Prep} ;
-    mkFun : (a, b, n : Str) -> FunctionT
-      = \a, b, n -> {cn = mkCN (mkA a) (mkCN (mkA b) (mkN n)) ; prep = possess_Prep} ;
+    mkFun : (a, n : Str) -> FunT
+      = \a, n -> {cn = mkCN (strA a) (strN n) ; prep = possess_Prep} ;
+    mkFun : (a, b, n : Str) -> FunT
+      = \a, b, n -> {cn = mkCN (strA a) (mkCN (strA b) (strN n)) ; prep = possess_Prep} ;
     } ;
 
   mkFun2 = overload {
-    mkFun2 : Str -> Str -> Function2T
-      = \s, sprep2 -> {cn = mkCN (mkN s) ; prep1 = possess_Prep ; prep2 = mkPrep sprep2} ;
-    mkFun2 : CN -> Prep -> Prep -> Function2T
+    mkFun2 : Str -> Str -> Fun2T
+      = \s, sprep2 -> {cn = mkCN (strN s) ; prep1 = possess_Prep ; prep2 = strPrep sprep2} ;
+    mkFun2 : N -> Prep -> Prep -> Fun2T
+      = \n, prep1, prep2 -> {cn = mkCN n ; prep1 = prep1 ; prep2 = prep2} ;
+    mkFun2 : CN -> Prep -> Prep -> Fun2T
       = \cn, prep1, prep2 -> {cn = cn ; prep1 = prep1 ; prep2 = prep2} ;
     } ;
 
-  mkRelnoun = overload {
-    mkRelnoun : Str -> RelnounT
-      = \s -> {cn = mkCN (mkN s) ; prep = possess_Prep} ;
-    mkRelnoun : N -> RelnounT
+  mkFunC = overload {
+    mkFunC : Str -> FunT
+      = \s -> {cn = mkCN (strN s) ; prep = possess_Prep} ;
+    mkFunC : N -> FunT
       = \n -> {cn = mkCN n ; prep = possess_Prep} ;
-    mkRelnoun : CN -> RelnounT
+    mkFunC : CN -> FunT
       = \n -> {cn = n ; prep = possess_Prep} ;
-    mkRelnoun : N -> Prep -> RelnounT
+    mkFunC : N -> Prep -> FunT
       = \n, p -> {cn = mkCN n ; prep = p} ;
-    mkRelnoun : N -> Str -> RelnounT
+    mkFunC : CN -> Prep -> FunT
+      = \cn, p -> {cn = cn ; prep = p} ;
+    mkFunC : N -> Str -> FunT
       = \n, s -> {cn = mkCN (mkCN n) (P.mkAdv s) ; prep = possess_Prep} ;
-    mkRelnoun : (a, n : Str) -> RelnounT
-      = \a, n -> {cn = mkCN (mkA a) (mkN n) ; prep = possess_Prep} ;
-    mkRelnoun : (a, b, n : Str) -> RelnounT
-      = \a, b, n -> {cn = mkCN (mkA a) (mkCN (mkA b) (mkN n)) ; prep = possess_Prep} ;
+    mkFunC : (a, n : Str) -> FunT
+      = \a, n -> {cn = mkCN (strA a) (strN n) ; prep = possess_Prep} ;
+    mkFunC : (a, b, n : Str) -> FunT
+      = \a, b, n -> {cn = mkCN (strA a) (mkCN (strA b) (strN n)) ; prep = possess_Prep} ;
     } ;
 
   mkFam = overload {
-    mkFam : Str -> FamilyT = \s ->
-      {cn = mkCN (mkN s) ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : Str -> Prep -> Prep -> FamilyT = \s, p1, p2 ->
-      {cn = mkCN (mkN s) ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
-    mkFam : CN -> FamilyT = \cn ->
-      {cn = cn ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : CN -> Prep -> Prep -> FamilyT = \cn, p1, p2 ->
+    mkFam : Str -> FamT = \s ->
+      {cn = mkCN (strN s) ; prep = possess_Prep ; isCollective = True} ;
+    mkFam : Str -> Prep -> FamT = \s, p ->
+      {cn = mkCN (strN s) ; prep = p ; isCollective = False} ;
+    mkFam : N -> FamT = \n ->
+      {cn = mkCN n ; prep = possess_Prep ; isCollective = True} ;
+    mkFam : N -> Prep -> FamT = \n, p ->
+      {cn = mkCN n ; prep = p ; isCollective = False} ;
+    mkFam : CN -> FamT = \cn ->
+      {cn = cn ; prep = possess_Prep ; isCollective = True} ;
+    mkFam : CN -> Prep -> FamT = \cn, p ->
+      {cn = cn ; prep = p ; isCollective = False} ;
+    } ;
+
+  mkFam2 = overload {
+    mkFam2 : Str -> Fam2T = \s ->
+      {cn = mkCN (strN s) ; prep1, prep2 = possess_Prep ; isCollective = True} ;
+    mkFam2 : Str -> Prep -> Prep -> Fam2T = \s, p1, p2 ->
+      {cn = mkCN (strN s) ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
+    mkFam2 : N -> Prep -> Prep -> Fam2T = \n, p1, p2 ->
+      {cn = mkCN n ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
+    mkFam2 : CN -> Prep -> Prep -> Fam2T = \cn, p1, p2 ->
       {cn = cn ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
     } ;
 
   mkAdj = overload {
-    mkAdj : Str -> AP
-      = \s -> mkAP (mkA s) ;
+    mkAdj : Str -> AdjT
+      = \s -> mkAP (strA s) ;
+    mkAdj : A -> AdjT
+      = \a -> mkAP a ;
+    mkAdj : AP -> AdjT
+      = \ap -> ap ;
     } ;
     
-  mkReladj = overload {
-    mkRel : Str -> Str -> {ap : AP ; prep : Prep}
-      = \s, p -> {ap = mkAP (mkA s) ; prep = mkPrep p}
+  mkAdjC = overload {
+    mkAdjC : Str -> AdjT
+      = \s -> mkAP (strA s) ;
+    mkAdjC : A -> AdjT
+      = \a -> mkAP a ;
+    mkAdjC : AP -> AdjT
+      = \ap -> ap ;
     } ;
     
+  mkAdjE = overload {
+    mkAdjE : Str -> AdjT
+      = \s -> mkAP (strA s) ;
+    mkAdjE : A -> AdjT
+      = \a -> mkAP a  ;
+    mkAdjE : AP -> AdjT
+      = \ap -> ap ;
+    } ;
+    
+  mkAdj2 = overload {
+    mkAdj2 : Str -> Str -> Adj2T
+      = \s, p -> {ap = mkAP (strA s) ; prep = strPrep p} ;
+    mkAdj2 : A -> Prep -> Adj2T
+      = \a, p -> {ap = mkAP a ; prep = p} ;
+    mkAdj2 : AP -> Prep -> Adj2T
+      = \ap, p -> {ap = ap ; prep = p}
+    } ;
+
+  mkAdj3 = overload {
+    mkAdj3 : AP -> Prep -> Prep -> Adj3T
+      = \ap, p1, p2 -> {ap = ap ; prep1 = p1 ; prep2 = p2} ;
+    } ;
+
   mkName = overload {
     mkName : Str -> NP
-      = \s -> mkNP (mkPN s)
+      = \s -> mkNP (strPN s) ;
+    mkName : PN -> NP
+      = \pn -> mkNP pn ;
+    mkName : NP -> NP
+      = \np -> np ;
     } ;
 
   mkLabel = overload {
     mkLabel : Str -> LabelT
-      = \s -> {np = mkNP (mkPN s) ; isEmpty = False}
+      = \s -> {np = mkNP (mkPN s) ; isEmpty = False} ;
+    mkLabel : NP -> LabelT
+      = \np -> {np = np ; isEmpty = False}
     } ;
 
-  mkPred3 = overload {
-    mkPred3 : AP -> Prep -> Prep -> Pred3T
-      = \ap, p1, p2 -> {ap = ap ; prep1 = p1 ; prep2 = p2} ;
+  mkVerb = overload {
+    mkVerb : Str -> VerbT
+      = \s -> mkVP (strV s) ;
+    mkVerb : V -> VerbT
+      = \v -> mkVP v ;
+    mkVerb : VP -> VerbT
+      = \vp -> vp ;
     } ;
 
-  latexName : Str -> NP
-      = \s -> symb (mkSymb ("$" ++ s ++ "$")) ;
+  mkVerb2 = overload {
+    mkVerb2 : Str -> Verb2T
+      = \s -> mkV2 (strV s) ;
+    mkVerb2 : V -> Verb2T
+      = \v -> mkV2 v ;
+    mkVerb2 : V2 -> Verb2T
+      = \v -> v ;
+    } ;
 
--- often used words
+-- language-specific functions
+
+  strN : Str -> N ;
+  strA : Str -> A ;
+  strV : Str -> V ;
+  strPN : Str -> PN ;
+  strPrep : Str -> Prep ;
+
+
+-- often used words, language-dependent
 
   type_CN : CN ;
   case_N : N ;

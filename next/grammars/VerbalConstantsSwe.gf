@@ -18,22 +18,22 @@ lin
   number_Noun = mkNoun tal_N ;
   boolean_Noun = mkNoun "sanningsvärde" ;
   cardinal_Noun = mkNoun (mkN "kardinal" tal_N) ;
-  natural_Noun = mkNoun "naturlig" tal_N ;
+  natural_Noun = mkNoun (mkA "naturlig") tal_N ;
   integer_Noun = mkNoun (mkN "hel" tal_N) ;
-  rational_Noun = mkNoun "rationell" tal_N ;
-  real_Noun = mkNoun "reell" tal_N ;
-  complex_Noun = mkNoun "komplex" tal_N ;
+  rational_Noun = mkNoun (mkA "rationell") tal_N ;
+  real_Noun = mkNoun (mkA "reell") tal_N ;
+  complex_Noun = mkNoun (mkA "komplex") tal_N ;
 
   list_Fam = mkFam "lista" ;  
 
-  Eq_Adj2 = mkReladj  "lika" "med" ;
+  Eq_Adj2 = mkAdj2  "lika" "med" ;
   Eq_AdjE = mkAP (mkA "lika") ;
-  Lt_Adj2 = mkReladj "mindre" "än" ; 
-  Gt_Adj2 = mkReladj "större" "än" ; 
-  Neq_Adj2 = mkReladj "skild" "från" ;
+  Lt_Adj2 = mkAdj2 "mindre" "än" ; 
+  Gt_Adj2 = mkAdj2 "större" "än" ; 
+  Neq_Adj2 = mkAdj2 "skild" "från" ;
   Neq_AdjC = mkAP (mkA "olik") ;
-  Leq_Adj2 = mkReladj "mindre än eller lika" "med" ; 
-  Geq_Adj2 = mkReladj "större än eller lika" "med" ; 
+  Leq_Adj2 = mkAdj2 "mindre än eller lika" "med" ; 
+  Geq_Adj2 = mkAdj2 "större än eller lika" "med" ; 
 
   positive_Adj = mkAdj "positiv" ;
   negative_Adj = mkAdj "negativ" ;
@@ -41,28 +41,28 @@ lin
   converge_Verb = mkVP (mkV "konvergera") ;
   divide_Verb2 = mkV2 "dela" ;
   
-  member_Noun2 = mkRelnoun element_N ;
-  divisor_Noun2 = mkRelnoun (mkN "delare") ;
+  member_Noun2 = mkNoun2 element_N ;
+  divisor_Noun2 = mkNoun2 (mkN "delare") ;
+
+  plus_FunC = mkFunC "summa" ;
+  minus_Fun2 = mkFun2 (mkN "skillnad" "skillnader") (mkPrep "mellan") (mkPrep "och") ;
+  times_FunC = mkFunC (mkN "produkt" "produkter") ;
+  div_Fun2 = mkFun2 (mkN "kvot" "kvoter") (mkPrep "mellan") (mkPrep "och") ; ----
+  pow_Fun2 = mkFun2 (mkN "potens" "potenser") possess_Prep (mkPrep "upphöjt till") ; ----
+  neg_Fun = mkFun (mkN "negation" "negationer") ;
+  logarithm_Fun2 = mkFun2 (mkN "logaritm" "logaritmer") (mkPrep "i bas") possess_Prep ;
+  square_root_Fun = mkFun (mkN "kvadratrot" "kvadratrötter") ;
+
+  successor_Fun = mkFun (mkN "efterföljare" neutrum) ;
+  absolute_value_Fun = mkFun (mkN "absolutbelopp" neutrum) ;
+  factorial_Fun = mkFun (mkN "fakultet" "fakulteter") ;
+  gcd_Fun = mkFun "störst" "gemensam" "delare" ;
+
+  even_Adj = mkAdj "jämn" ;
+  odd_Adj = mkAdj "udda" ;
+  divisible_Adj2 = mkAdj2 "delbar" "med" ;
+  prime_Adj = mkAdj "prim" ;
 {-
-  plus_FunC = mkFun "sum" ;
-  minus_Fun2 = mkFun2 "subtraction" "from" ;
-  times_FunC = mkFun "product" ;
-  div_Fun2 = mkFun2 "division" "by" ;
-  pow_Fun2 = mkFun2 "exponentiation" "to";
-  neg_Fun = mkFun "negation" ;
-  logarithm_Fun2 = mkFun2 "logarithm" "in base" ;
-  square_root_Fun = mkFun "square root" ;
-
-  successor_Fun = mkFun "successor" ;
-  absolute_value_Fun = mkFun "absolute value" ;
-  factorial_Fun = mkFun "factorial" ;
-  gcd_FunC = mkFun "greatest" "common" "divisor" ;
-
-  even_Adj = mkAdj "even" ;
-  odd_Adj = mkAdj "odd" ;
-  divisible_Adj2 = mkReladj "divisible" "by" ;
-  prime_Adj = mkAdj "prime" ;
-
   function_Fam2 = mkFam "function" from_Prep to_Prep ;
   union_FunC = mkFun "union" ;
   intersection_FunC = mkFun "intersection" ;
@@ -71,14 +71,14 @@ lin
   cartesian_FunC = mkFun "cartesian product" ;
   powerset_Fun = mkFun "power set" ;
 
-  subset_Noun2 = mkRelnoun "proper subset" ;  
-  subseteq_Noun2 = mkRelnoun "subset" ;  
-  superset_Noun2 = mkRelnoun "proper superset" ;  
-  superseteq_Noun2 = mkRelnoun "superset" ;  
-  equalset_Adj2 = mkReladj "equal" "to" ;
-  notequalset_Adj2 = mkReladj "distinct" "from" ; ----
-  element_Noun2 = mkRelnoun "element" ;
-  notelement_Noun2 = mkRelnoun "non-element" ; ----
+  subset_Noun2 = mkNoun2 "proper subset" ;  
+  subseteq_Noun2 = mkNoun2 "subset" ;  
+  superset_Noun2 = mkNoun2 "proper superset" ;  
+  superseteq_Noun2 = mkNoun2 "superset" ;  
+  equalset_Adj2 = mkAdj2 "equal" "to" ;
+  notequalset_Adj2 = mkAdj2 "distinct" "from" ; ----
+  element_Noun2 = mkNoun2 "element" ;
+  notelement_Noun2 = mkNoun2 "non-element" ; ----
 
   emptyset_Name = mkNP the_Det (mkCN (mkA "empty") (mkN "set")) ;
   universeset_Name = mkNP the_Det (mkCN (mkA "universal") (mkN "set")) ;
@@ -98,13 +98,13 @@ lin
   legendre_symbol_Fun2 = mkFun2 "Legendre symbol" "over" ;
   square_Fun = mkFun "square" ;
   resultant_FunC = mkFun "resultant" ;
-  perpendicular_Adj2 = mkReladj "perpendicular" "to" ;
+  perpendicular_Adj2 = mkAdj2 "perpendicular" "to" ;
   length_Fun = mkFun "length" ;
   norm_Fun = mkFun "norm" ;
   vector_Noun = mkNoun "vector" ;
   denumerable_Adj = mkAdj "denumerable" ;
   cardinality_Fun = mkFun "cardinality" ;
-  is_root_Noun2 = mkRelnoun "root" ;
+  is_root_Noun2 = mkNoun2 "root" ;
   degree_Fun = mkFun "degree" ;
   polynomial_Noun = mkNoun "polynomial" ;
   irrational_Adj = mkAdj "irrational" ;
@@ -116,9 +116,9 @@ lin
   arcsin_Fun = mkFun "arcsine" ;
   arccos_Fun = mkFun "arccosine" ;
   arctan_Fun = mkFun "arctangent" ;
-  orthogonal_Adj2 = mkReladj "orthogonal" "to" ;
+  orthogonal_Adj2 = mkAdj2 "orthogonal" "to" ;
   orthogonal_AdjC = mkAP (mkA "orthogonal") ;
-  perpendicular_Adj2 = mkReladj "perpendicular" "to" ;
+  perpendicular_Adj2 = mkAdj2 "perpendicular" "to" ;
   perpendicular_AdjC = mkAP (mkA "perpendicular") ;
   angle_between_Fun2 = mkFun2 "angle" "with" ;
   dot_product_FunC = mkFun "dot product" ;

@@ -16,6 +16,12 @@ in {
 
 oper
 
+  strN : Str -> N = mkN ;
+  strA : Str -> A = mkA ;
+  strV : Str -> V = mkV ;
+  strPN : Str -> PN = mkPN ;
+  strPrep : Str -> Prep = mkPrep ;
+
   define_V2 : V2 = mkV2 (mkV "definiera") ;
   assume_VS : VS = mkVS (mkV "anta" "antar" "anta" "antog" "antagit" "antagen") ;
   type_CN : CN = mkCN (mkN "typ" "typer") ;

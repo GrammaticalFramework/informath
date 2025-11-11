@@ -14,7 +14,12 @@ open
 in {
 
 oper
-  commaConj : Conj = mkConj "," ;
+
+  strN : Str -> N = mkN ;
+  strA : Str -> A = mkA ;
+  strV : Str -> V = mkV ;
+  strPN : Str -> PN = mkPN ;
+  strPrep : Str -> Prep = mkPrep ;
 
   define_V2 : V2 = mkV2 (mkV "define") ;
   assume_VS : VS = mkVS (mkV "assume") ;

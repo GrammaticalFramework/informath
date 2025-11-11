@@ -76,7 +76,7 @@ fun
   emptyset_Name : Name ;
   universeset_Name : Name ;
 
-  congruent_Pred3 : Adj3 ;
+  congruent_Adj3 : Adj3 ;
 
   finite_Adj : Adj ;
   infinite_Adj : Adj ;
