@@ -101,7 +101,7 @@ processJmt env djmt =
       annotatedDedukti = jmt,
       coreGF = gf core,
       nlgResults = nlgranks,
-      backToDedukti = concatMap (gjmt2dedukti env) exts
+      backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
 
 
