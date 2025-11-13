@@ -1,7 +1,7 @@
 concrete MathCoreSwe of MathCore =
   CategoriesSwe
   **
-  MathCoreFunctor - [negPol] with
+  MathCoreFunctor with
     (Utilities=UtilitiesSwe),
     (Syntax=SyntaxSwe),
     (Grammar=GrammarSwe),
@@ -15,9 +15,5 @@ concrete MathCoreSwe of MathCore =
     (I=IrregSwe)
 
 in {
-
-oper
--- override
-  negPol : Pol = UncontractedNeg ;
 
 }
