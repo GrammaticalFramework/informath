@@ -126,6 +126,12 @@ oper
     } ;
 
   mkFun2 = overload {
+    mkFun2 : Str -> Fun2T
+      = \s -> {cn = mkCN (strN s) ; prep1, prep2 = possess_Prep ; isColl = True} ;
+    mkFun2 : N -> Fun2T
+      = \n -> {cn = mkCN n ; prep1, prep2 = possess_Prep ; isColl = True} ;
+    mkFun2 : CN -> Fun2T
+      = \cn -> {cn = cn ; prep1, prep2 = possess_Prep ; isColl = True} ;
     mkFun2 : Str -> Str -> Fun2T
       = \s, sprep2 -> {cn = mkCN (strN s) ; prep1 = possess_Prep ; prep2 = strPrep sprep2 ; isColl = False} ;
     mkFun2 : N -> Prep -> Prep -> Fun2T
