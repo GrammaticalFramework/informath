@@ -145,7 +145,10 @@ lin
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
   FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
-  Fun2Exp f x y = mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y)) ;
+  Fun2Exp f x y = case f.isColl of {
+    True => mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep1 (mkNP and_Conj x y))) ;
+    _ => mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y))
+    } ;
   FunCExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
   FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep (mkNP aPl_Det (useKind kind))} ;

@@ -47,9 +47,9 @@ lin
   divisor_Noun2 = mkNoun2 "divisor" ;
 
   plus_FunC = mkFun "sum" ;
-  minus_Fun2 = mkFun2 "subtraction" "from" ;
+  minus_Fun2 = mkFun2 (mkN "difference") (mkPrep "between") ;
   times_FunC = mkFun "product" ;
-  div_Fun2 = mkFun2 "division" "by" ;
+  div_Fun2 = mkFun2 (mkN "quotient") possess_Prep ;
   pow_Fun2 = mkFun2 "exponentiation" "to";
   neg_Fun = mkFun "negation" ;
   logarithm_Fun2 = mkFun2 "logarithm" "in base" ;
@@ -68,7 +68,7 @@ lin
   function_Fam2 = mkFam2 "function" from_Prep to_Prep ;
   union_FunC = mkFun "union" ;
   intersection_FunC = mkFun "intersection" ;
-  difference_Fun2 = mkFun2 "difference" "from" ;
+  difference_Fun2 = mkFun2 (mkN "difference") possess_Prep ;
   complement_Fun = mkFun "complement" ;
   cartesian_FunC = mkFun "cartesian product" ;
   powerset_Fun = mkFun "power set" ;
@@ -122,7 +122,7 @@ lin
   orthogonal_AdjC = mkAP (mkA "orthogonal") ;
   perpendicular_Adj2 = mkAdj2 "perpendicular" "to" ;
   perpendicular_AdjC = mkAdjC (mkA "perpendicular") ;
-  angle_between_Fun2 = mkFun2 "angle" "with" ;
+  angle_between_Fun2 = mkFun2 (mkN "angle") (mkPrep  "between") ;
   dot_product_FunC = mkFunC "dot product" ;
   vector_plus_FunC = mkFunC "sum" ;
 

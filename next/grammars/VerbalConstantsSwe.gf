@@ -46,9 +46,9 @@ lin
   divisor_Noun2 = mkNoun2 (mkN "delare") ;
 
   plus_FunC = mkFunC "summa" ;
-  minus_Fun2 = mkFun2 (mkN "skillnad" "skillnader") (mkPrep "mellan") (mkPrep "och") ;
+  minus_Fun2 = mkFun2 (mkN "skillnad" "skillnader") (mkPrep "mellan") ;
   times_FunC = mkFunC (mkN "produkt" "produkter") ;
-  div_Fun2 = mkFun2 (mkN "kvot" "kvoter") (mkPrep "mellan") (mkPrep "och") ; ----
+  div_Fun2 = mkFun2 (mkN "kvot" "kvoter") (mkPrep "mellan") ; ----
   pow_Fun2 = mkFun2 (mkN "potens" "potenser") possess_Prep (mkPrep "upphöjt till") ; ----
   neg_Fun = mkFun (mkN "negation" "negationer") ;
   logarithm_Fun2 = mkFun2 (mkN "logaritm" "logaritmer") (mkPrep "i bas") possess_Prep ;
@@ -67,7 +67,7 @@ lin
   function_Fam2 = mkFam2 (mkN "funktion" "funktioner") from_Prep to_Prep ;
   union_FunC = mkFun "union" ;
   intersection_FunC = mkFun (mkN "snitt" "snitt") ;
-  difference_Fun2 = mkFun2 "difference" "from" ;
+  difference_Fun2 = mkFun2 (mkN "skillnad" "skillnader") (mkPrep "mellan") ;
   complement_Fun = mkFun (mkN "komplement" "komplement") ;
   cartesian_FunC = mkFun (mkCN (mkA "kartesisk") (mkN "produkt")) ;
   powerset_Fun = mkFun (mkN "potens" mängd_N) ;
@@ -121,7 +121,7 @@ lin
   arctan_Fun = mkFun (mkN "arctangens") ;
   orthogonal_Adj2 = mkAdj2 "ortogonal" "till" ;
   orthogonal_AdjC = mkAdjC "ortogonal" ;
-  angle_between_Fun2 = mkFun2 (mkN "vinkel") possess_Prep (mkPrep "med") ;
+  angle_between_Fun2 = mkFun2 (mkN "vinkel" "vinklar") (mkPrep "mellan") ;
   dot_product_FunC = mkFunC "punktprodukt" ;
   vector_plus_FunC = mkFunC "summa" ;
   
