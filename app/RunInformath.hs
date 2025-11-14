@@ -41,12 +41,14 @@ helpMsg4 = unlines [
   "  -mathcore",
   "  -json",
   "  -nbest=<int>",
-  "  -tolang=<lang>",
-  "  -fromlang=<lang>",
-  "  -toformalism=<formalism>",
+  "  -to-lang=<lang>",
+  "  -from-lang=<lang>",
+  "  -to-formalism=<formalism>",
   "  -translate",
   "  -no-unlex",
-  "  -to-latexdoc" 
+  "  -to-latex-doc",
+  "  -variations"
   ]
+  
 
 

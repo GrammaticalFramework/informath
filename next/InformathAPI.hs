@@ -73,7 +73,7 @@ dummyGenResult jmt = GenResult jmt jmt undefined [] []
 
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
-  if isFlag "-to-latexdoc" env
+  if isFlag "-to-latex-doc" env
   then toLatexDoc (intersperse "" ss)
   else ss
 
@@ -93,7 +93,8 @@ processJmt env djmt =
       core = dedukti2core jmt
       exts = core2ext env core
       nlgs = setnub $ map gf $ exts
-      best = maybe id take (nbestNLG env)
+      vars = if elem "-variations" (flags env) then id else (take 1) 
+      best = maybe vars take (nbestNLG env)
       nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
       nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
     in GenResult {
@@ -206,8 +207,8 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
 printFormalismJmt :: Env -> Jmt -> String
 printFormalismJmt env jmt = case toFormalism env of
   "agda" -> dedukti2agda env jmt
-  "lean" -> DL.printLeanJmt (DL.transJmt jmt)
-  "rocq" -> DR.printRocqJmt (DR.transJmt jmt)
+  "lean" -> dedukti2lean env jmt
+  "rocq" -> dedukti2rocq env jmt
   "dedukti" -> printTree jmt
   f -> error $ "formalism not available: " ++ f ++ ". Available values: agda dedukti lean rocq"
 
@@ -295,16 +296,20 @@ core2dedukti :: Env -> GJmt -> [Jmt]
 core2dedukti env = MCD.jmt2dedukti (backConstantTable env)
 
 -- these are syntactic conversions, therefore total
+-- necessary imports have to be added to the generated files
+
 dedukti2agda :: Env -> Jmt -> String
 dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
   conv = maybe id alphaConvert (M.lookup "agda" (conversionTable env))
-  ---- TODO: only on first line
-  base = "open import " ++ takeWhile (/='.') (argValue "-base" baseConstantFile (flags env))
 
+dedukti2lean :: Env -> Jmt -> String
+dedukti2lean env jmt = unlines [DL.printLeanJmt (DL.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "lean" (conversionTable env))
 
---dedukti2lean :: Jmt -> LJmt
+dedukti2rocq :: Env -> Jmt -> String
+dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTable env))
 
---dedukti2rocq :: Jmt -> RJmt
 
 ---- checkAgda :: AJmt -> Bool
 ---- checkLean :: LJmt -> Bool
@@ -322,7 +327,7 @@ readEnv args = do
   mo <- readDeduktiModule (argValue "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
   (ct, cvt) <- readConstantTable gr (argValue "-constants" constantTableFile args)
-  let fro = mkLanguage gr (argValue "-fromlang" english args)
+  let fro = mkLanguage gr (argValue "-from-lang" english args)
   ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
   return Env {
     flags = args,
@@ -334,8 +339,8 @@ readEnv args = do
     backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
     langs = languages gr, ---- relevantLanguages gr args,
-    toLang = mkLanguage gr (argValue "-tolang" english args),
-    toFormalism = argValue "-toformalism" "NONE" args,
+    toLang = mkLanguage gr (argValue "-to-lang" english args),
+    toFormalism = argValue "-to-formalism" "NONE" args,
     fromLang = fro,
     nbestNLG = argValueMaybeInt "-nbest" args,
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),

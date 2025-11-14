@@ -17,7 +17,7 @@ type Opts = [String]
 nlg :: Env -> Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [tree]
-  _  -> concat [[ft], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts]
+  _  -> concat [[ft, t, tree], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts]
   ---- TODO more option combinations
  where
    t = unparenth tree

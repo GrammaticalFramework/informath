@@ -27,6 +27,7 @@ Lean:
 
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
+
 RunInformath:
 	stack install
 
@@ -67,24 +68,24 @@ demo:
 	echo "consider pdflatex out/sets.tex"
 
 nextdemo:
-	$(NEXTRUN) -tolang=Eng test/exx.dk
-	$(NEXTRUN) -tolang=Fre test/exx.dk
-	$(NEXTRUN) -tolang=Ger test/exx.dk
-	$(NEXTRUN) -tolang=Swe test/exx.dk
-	$(NEXTRUN) -tolang=Eng test/exx.dk >out/exx.txt
-	$(NEXTRUN) -fromlang=Eng exx.txt
-	$(NEXTRUN) -fromlang=Eng test/gflean-data.txt
+	$(NEXTRUN) -to-lang=Eng test/exx.dk
+	$(NEXTRUN) -to-lang=Fre test/exx.dk
+	$(NEXTRUN) -to-lang=Ger test/exx.dk
+	$(NEXTRUN) -to-lang=Swe test/exx.dk
+	$(NEXTRUN) -to-lang=Eng test/exx.dk >out/exx.txt
+	$(NEXTRUN) -from-lang=Eng exx.txt
+	$(NEXTRUN) -from-lang=Eng test/gflean-data.txt
 	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
 	dk check out/bexx.dk
-
-then:
-	$(NEXTRUN) -toformalism=agda test/exx.dk >out/exx.agda
+	echo "open import BaseConstants\n\n" >out/exx.agda
+	$(NEXTRUN) -to-formalism=agda test/exx.dk >>out/exx.agda
+	cp -p src/BaseConstants.agda out/
 	cd out ; agda --prop exx.agda
-	$(NEXTRUN) -toformalism=rocq test/exx.dk >out/exx.v
+	$(NEXTRUN) -to-formalism=rocq test/exx.dk >out/exx.v
 	cat src/BaseConstants.v out/exx.v >out/bexx.v
 	coqc out/bexx.v
-	$(NEXTRUN) -toformalism=lean test/exx.dk >exx.lean
-	cat src/BaseConstants.lean exx.lean >bexx.lean
+	$(NEXTRUN) -to-formalism=lean test/exx.dk >out/exx.lean
+	cat src/BaseConstants.lean out/exx.lean >out/bexx.lean
 	lean bexx.lean
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
