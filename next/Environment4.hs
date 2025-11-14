@@ -3,6 +3,7 @@ module Environment4 where
 import Dedukti.AbsDedukti
 import PGF
 import BuildConstantTable
+import Utils
 
 import Data.List (intersperse, isPrefixOf)
 import Data.Char (isDigit)
@@ -23,7 +24,6 @@ data Env = Env {
   toLang :: Language,
   fromLang :: Language,
   toFormalism :: String,
-  nbestDedukti :: Maybe Int,
   nbestNLG :: Maybe Int,
   scoreWeights :: [Int],
   morpho :: Morpho
@@ -58,29 +58,3 @@ inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
   [arg] -> Just (arg, fileSuffix arg)
   _ -> Nothing
 
-fileSuffix = reverse . takeWhile (/= '.') . reverse
-
-commaSep s = words (map (\c -> if c==',' then ' ' else c) s)
-
-commaSepInts :: String -> [Int]
-commaSepInts s =
-  let ws = commaSep s
-  in if all (all isDigit) ws then map read ws else error ("expected digits found " ++ s)
-
-mkJSONObject :: [String] -> String
-mkJSONObject fields = "{" ++ concat (intersperse ", " fields) ++ "}"
-
-mkJSONField :: String -> String -> String
-mkJSONField key value = show key ++ ": " ++ value
-
-mkJSONListField :: String -> [String] -> String
-mkJSONListField key values =
-  show key ++ ": " ++ "[" ++ concat (intersperse ", " values) ++ "]"
-
-stringJSON = quote . escape where
-  quote s = "\"" ++ s ++ "\""
-  escape s = case s of
-    c:cs | elem c "\"\\" -> '\\':c:escape cs
-    '\n':cs -> '\\':'n':escape cs
-    c:cs -> c:escape cs
-    _ -> s

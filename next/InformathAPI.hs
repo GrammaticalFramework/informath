@@ -12,7 +12,7 @@ import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
-import DeduktiOperations (alphaConvert)
+import DeduktiOperations (alphaConvert, identsInTypes)
 --import ConstantData 
 --import SpecialDeduktiConversions (specialDeduktiConversions)
 ------import Informath -- to be removed
@@ -39,9 +39,7 @@ import PGF
 
 import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
 ------import System.Random
---import Data.Char (isDigit, toUpper) --- low-level auxiliaries
---import System.Environment (getArgs)
---import System.IO
+import Data.Char (isDigit, toUpper) --- low-level auxiliaries
 import qualified Data.Map as M
 
 -- default source files
@@ -297,7 +295,12 @@ nat2core pgf lang str = Nothing ----
 missingWords :: Env -> String -> [String]
 missingWords env = morphoMissing (morpho env) . tokens
  where
-   tokens = words ---- TODO: ignore symbols in $ $
+   tokens = ordinary [] . words
+   ordinary acc ws = case ws of
+     "$" : ww -> let (_, _:ww2) = break (=="$") ww in ordinary acc ww2
+     "$$" : ww -> let (_, _:ww2) = break (=="$$") ww in ordinary acc ww2
+     w : ww -> ordinary (w:acc) ww
+     _ -> acc
 
 ext2nat :: PGF -> Language -> GJmt -> Maybe String
 ext2nat pgf lang jmt = Nothing ----
@@ -332,8 +335,19 @@ dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
 ---- lean2dedukti :: LJmt -> Jmt
 ---- rocq2dedukti :: RJmt -> Jmt
 
+-- statistics
+identsInDedukti :: Env -> Module -> [(String, Int)]
+identsInDedukti env mo = map stringify (mfilter freqs) where
+  stringify (c, i) = (printTree c, i)
+  freqs = sortOn (\ (_,i) -> -i) (M.toList (identsInTypes mo))
+  mfilter = if elem "-unknown-idents" (flags env) then filter (notInTable . fst) else id 
+  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printTree qid))
 
+unknownWordsInTex :: Env -> String -> [(String, Int)]
+unknownWordsInTex env = frequencyTable . missingWords env . lextex 
 
+showFreqs :: [(String, Int)] -> [String]
+showFreqs = map (\ (c, n) -> c ++ "\t" ++ show n)
 
 readEnv :: [Flag] -> IO Env
 readEnv args = do

@@ -34,7 +34,7 @@ lin
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
-  disjoint_AdjC = mkAP (mkA "empty") ;
+  disjoint_AdjC = mkAP (mkA "disjoint") ;
   disjoint_Compar = "\\notmeets" ;
   contain_Verb2 = mkV2 "contain" ;
   ni_Compar = "\\ni" ;

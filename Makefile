@@ -91,9 +91,9 @@ nextdemo:
 	dk check out/texx.dk
 	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
-	$(NEXTRUN) -to-latexdoc -variations test/top100.dk >out/top100.tex
+	$(NEXTRUN) -to-latex-doc -variations test/top100.dk >out/top100.tex
 	echo "consider pdflatex out/top100.tex"
-	$(NEXTRUN) -to-latexdoc -variations test/sets.dk >out/sets.tex
+	$(NEXTRUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
 
 top100:
