@@ -56,6 +56,22 @@ identTypes (MJmts jmts) = M.fromList (concatMap idtyp jmts) where
     _ -> []
 
 
+-- alpha conversion of constants
+alphaConvert :: M.Map QIdent QIdent -> Tree a -> Tree a
+alphaConvert convs = alpha [] where
+  alpha :: [QIdent] -> Tree a -> Tree a
+  alpha bs t = case t of
+    QIdent _ | elem t bs -> t
+    c@(QIdent _) -> maybe t id (M.lookup c convs)
+    BVar _ -> t
+    BTyped x exp -> BTyped x (alpha bs exp)
+    HVarExp x exp -> HVarExp x (alpha bs exp)
+    HParVarExp x exp -> HParVarExp x (alpha bs exp)
+    EAbs b exp -> EAbs (alpha bs b) (alpha (bind2var b : bs) exp)
+    EFun h exp -> EFun (alpha bs h) (alpha (hypo2vars h ++ bs) exp)
+    _ -> composOp (alpha bs) t
+
+---- will be obsolete in -next
 applyConstantData :: ConstantData -> Tree a -> Tree a
 applyConstantData cd = appConst []
  where

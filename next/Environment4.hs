@@ -14,6 +14,7 @@ data Env = Env {
   grammar :: PGF,
   baseConstantModule :: Module,
   constantTable :: ConstantTable,
+  conversionTable :: ConversionTable,
   synonymConstantTableNLG :: SynonymConstantTableNLG,
   synonymConstantTableSem :: SynonymConstantTableSem,
   backConstantTable :: BackConstantTable,

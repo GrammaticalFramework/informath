@@ -12,7 +12,7 @@ import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
---import DeduktiOperations
+import DeduktiOperations (alphaConvert)
 --import ConstantData 
 --import SpecialDeduktiConversions (specialDeduktiConversions)
 ------import Informath -- to be removed
@@ -42,7 +42,7 @@ import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
 --import Data.Char (isDigit, toUpper) --- low-level auxiliaries
 --import System.Environment (getArgs)
 --import System.IO
---import qualified Data.Map as M
+import qualified Data.Map as M
 
 -- default source files
 
@@ -166,7 +166,7 @@ dedukti2core = DMC.jmt2core
 annotateDedukti :: Env -> Jmt -> Jmt
 annotateDedukti env t = annotateDkIdents (constantTable env) t
 
-readConstantTable :: PGF -> FilePath -> IO ConstantTable
+readConstantTable :: PGF -> FilePath -> IO (ConstantTable, ConversionTable)
 readConstantTable = buildConstantTable
 
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
@@ -205,7 +205,7 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
 
 printFormalismJmt :: Env -> Jmt -> String
 printFormalismJmt env jmt = case toFormalism env of
-  "agda" -> DA.printAgdaJmts (DA.transJmt jmt)
+  "agda" -> dedukti2agda env jmt
   "lean" -> DL.printLeanJmt (DL.transJmt jmt)
   "rocq" -> DR.printRocqJmt (DR.transJmt jmt)
   "dedukti" -> printTree jmt
@@ -294,31 +294,41 @@ nat2ext pgf lang str = []
 core2dedukti :: Env -> GJmt -> [Jmt]
 core2dedukti env = MCD.jmt2dedukti (backConstantTable env)
 
----- agda2dedukti :: AJmt -> Jmt
----- lean2dedukti :: LJmt -> Jmt
----- rocq2dedukti :: RJmt -> Jmt
-
 -- these are syntactic conversions, therefore total
----- dedukti2agda :: Jmt -> AJmt
----- dedukti2lean :: Jmt -> LJmt
----- dedukti2rocq :: Jmt -> RJmt
+dedukti2agda :: Env -> Jmt -> String
+dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "agda" (conversionTable env))
+  ---- TODO: only on first line
+  base = "open import " ++ takeWhile (/='.') (argValue "-base" baseConstantFile (flags env))
+
+
+--dedukti2lean :: Jmt -> LJmt
+
+--dedukti2rocq :: Jmt -> RJmt
 
 ---- checkAgda :: AJmt -> Bool
 ---- checkLean :: LJmt -> Bool
 ---- checkRocq :: RJmt -> Bool
+
+---- agda2dedukti :: AJmt -> Jmt
+---- lean2dedukti :: LJmt -> Jmt
+---- rocq2dedukti :: RJmt -> Jmt
+
+
 
 
 readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValue "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  ct <- readConstantTable gr (argValue "-constants" constantTableFile args)
+  (ct, cvt) <- readConstantTable gr (argValue "-constants" constantTableFile args)
   let fro = mkLanguage gr (argValue "-fromlang" english args)
   ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
   return Env {
     flags = args,
     grammar = gr,
     constantTable = ct,
+    conversionTable = cvt,
     synonymConstantTableNLG = buildSynonymConstantTableNLG ct,
     synonymConstantTableSem = buildSynonymConstantTableSem ct,
     backConstantTable = buildBackConstantTable ct,

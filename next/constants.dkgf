@@ -97,3 +97,11 @@ empty empty_Adj
 inhabited inhabited_Adj
 
 
+#CONV agda forall all
+#CONV agda Type Set
+#CONV lean forall All
+#CONV lean exists Exist
+#CONV rocq forall All
+#CONV rocq exists Exist
+#CONV rocq Nat nat
+#CONV rocq _ x_

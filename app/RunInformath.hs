@@ -16,7 +16,6 @@ main = do
   then main4 xx
   else main3 xx
 
-
 main4 args = do
   env <- readEnv args 
   let mfile = inputFileArgs args
@@ -30,11 +29,11 @@ main4 args = do
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
-      ct <- readConstantTable (grammar env) file
+      (ct, _) <- readConstantTable (grammar env) file
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
     _ -> putStrLn helpMsg4 
-    
+  
 
 helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|tex|dkgf)",
@@ -49,4 +48,5 @@ helpMsg4 = unlines [
   "  -no-unlex",
   "  -to-latexdoc" 
   ]
+
 

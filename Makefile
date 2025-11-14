@@ -1,4 +1,5 @@
 RUN  := stack exec RunInformath --
+NEXTRUN := RunInformath -next
 OPEN := open  # pdf viewer command
 GF_FILES := $(wildcard grammars/*.gf)
 
@@ -63,6 +64,35 @@ demo:
 	$(RUN) -to-latex-file -variations test/top100.dk >out/top100.tex
 	echo "consider pdflatex out/top100.tex"
 	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
+	echo "consider pdflatex out/sets.tex"
+
+nextdemo:
+	$(NEXTRUN) -tolang=Eng test/exx.dk
+	$(NEXTRUN) -tolang=Fre test/exx.dk
+	$(NEXTRUN) -tolang=Ger test/exx.dk
+	$(NEXTRUN) -tolang=Swe test/exx.dk
+	$(NEXTRUN) -tolang=Eng test/exx.dk >out/exx.txt
+	$(NEXTRUN) -fromlang=Eng exx.txt
+	$(NEXTRUN) -fromlang=Eng test/gflean-data.txt
+	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
+	dk check out/bexx.dk
+
+then:
+	$(NEXTRUN) -toformalism=agda test/exx.dk >out/exx.agda
+	cd out ; agda --prop exx.agda
+	$(NEXTRUN) -toformalism=rocq test/exx.dk >out/exx.v
+	cat src/BaseConstants.v out/exx.v >out/bexx.v
+	coqc out/bexx.v
+	$(NEXTRUN) -toformalism=lean test/exx.dk >exx.lean
+	cat src/BaseConstants.lean exx.lean >bexx.lean
+	lean bexx.lean
+	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
+	dk check out/texx.dk
+	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
+	dk check out/sexx.dk
+	$(NEXTRUN) -to-latexdoc -variations test/top100.dk >out/top100.tex
+	echo "consider pdflatex out/top100.tex"
+	$(NEXTRUN) -to-latexdoc -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
 
 top100:

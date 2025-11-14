@@ -15,22 +15,19 @@ import Utils
 
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, sortOn)
+import Data.List (partition, sortOn, sort, groupBy)
 
-
-constant_table_file = "constants.dkgf"
-pgf_file = "grammars/Informath.pgf"
-dk_file = "../src/BaseConstants.dk"
 
 type Fun = CId
 type Cat = CId
+type Formalism = String
 
 symbolicCats :: S.Set Cat
 symbolicCats = S.fromList [mkCId c | c <- words "Formula Term Compar Const Oper Oper2"]
 
 
 type ConstantTable = M.Map QIdent ConstantTableEntry
-
+type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 
 data ConstantTableEntry = ConstantTableEntry {
   primary  :: (Fun, Type),
@@ -100,12 +97,20 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> FilePath -> IO ConstantTable
+buildConstantTable :: PGF -> FilePath -> IO (ConstantTable, ConversionTable)
 buildConstantTable pgf dkgf = do
-  entrylines <- readFile dkgf >>= return . map words . filter (not . null) . lines
-  let table = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map mkCId gfids)) | qid:gfids <- entrylines]
-  return table
+  entrylines <- readFile dkgf >>= return . filter (not . null) . map words . lines
+  let constantlines = filter isConstantEntry entrylines
+  let conversionlines = filter isConversion entrylines
+  let constantTable = M.fromList [
+        (QIdent qid, mkConstantTableEntry pgf (map mkCId gfids)) | qid:gfids <- constantlines]
+  let conversionTable = M.fromList [
+        (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
+	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
+  return (constantTable, conversionTable)
+ where
+   isConstantEntry line = head (head line) /= '#'
+   isConversion line = head line == "#CONV"
 
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
