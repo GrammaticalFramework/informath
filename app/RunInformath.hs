@@ -37,18 +37,24 @@ main4 args = do
 
 helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|tex|dkgf)",
+  "",
+  "Output is written to standard output.",
+  "Input is read line by line, except for .dk files",
   "Options: ", 
-  "  -mathcore",
-  "  -json",
-  "  -nbest=<int>",
-  "  -to-lang=<lang>",
-  "  -from-lang=<lang>",
-  "  -to-formalism=<formalism>",
-  "  -translate",
-  "  -no-unlex",
-  "  -to-latex-doc",
-  "  -variations"
+  just "-mathcore" "generate only the mathcore text",
+  just "-json" "show full information in jsonl",
+  just "-nbest=<int>" "show <int> best NLG results",
+  just "-to-lang=<lang>" "linearize to <lang>",
+  just "-from-lang=<lang>" "parse from <lang>",
+  just "-to-formalism=<formalism>" "convert to <formalism>",
+  just "-translate" "translate text without parsing parts in $...$",
+  just "-no-unlex" "linearize to tokens separated by spaces",
+  just "-to-latex-doc" "print valid LaTeX doc with preamble",
+  just "-variations" "show all variations",
+  just "-parallel-data" "print parallel data in jsonl"
   ]
+ where
+   just opt expl = concat [opt, replicate (28 - length opt) ' ', expl]
   
 
 

@@ -18,6 +18,7 @@ data Env = Env {
   synonymConstantTableNLG :: SynonymConstantTableNLG,
   synonymConstantTableSem :: SynonymConstantTableSem,
   backConstantTable :: BackConstantTable,
+  formalisms :: [String],
   langs :: [Language],
   toLang :: Language,
   fromLang :: Language,

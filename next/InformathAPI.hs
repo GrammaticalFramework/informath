@@ -179,15 +179,9 @@ printConstantTable = showConstantTable
 printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
-    [printFormalismJmt env (originalDedukti result)]
-  _ | isFlag "-json" env -> [mkJSONObject [
-    mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
-    mkJSONField "annotatedDedukti" (stringJSON (printTree (annotatedDedukti result))),
-    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
-    mkJSONField "nlgResults" (mkJSONObject [
-      mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]),
-    mkJSONListField "backToDedukti" [stringJSON (printTree jmt) | jmt <- backToDedukti result]
-    ]]
+    [printFormalismJmt env (toFormalism env) (originalDedukti result)]
+  _ | isFlag "-json" env -> [showJsonGenResult env result]
+  _ | isFlag "-parallel-data" env -> [showParallelData env result] 
   _ -> printNLGOutput env result
 
 printRank :: ((GFTree, String), (Scores, Int)) -> String
@@ -204,18 +198,37 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
   _ -> error $ "language not available: " ++ (showCId (toLang env)) ++
                ". Available values: " ++ unwords (map showCId (langs env))
 
-printFormalismJmt :: Env -> Jmt -> String
-printFormalismJmt env jmt = case toFormalism env of
+showJsonGenResult :: Env -> GenResult -> String
+showJsonGenResult env result = mkJSONObject [
+    mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
+    mkJSONField "annotatedDedukti" (stringJSON (printTree (annotatedDedukti result))),
+    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
+    mkJSONField "nlgResults" (mkJSONObject [
+      mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]),
+    mkJSONListField "backToDedukti" [stringJSON (printTree jmt) | jmt <- backToDedukti result]
+    ]
+
+showParallelData :: Env -> GenResult -> String
+showParallelData env result = mkJSONObject $ [
+    mkJSONField formalism (stringJSON (printFormalismJmt env formalism (originalDedukti result)))
+      | formalism <- formalisms env
+  ] ++ [  
+    mkJSONListField (showCId lang) (map (stringJSON . snd . fst) ranks)
+      | (lang, ranks) <- nlgResults result
+  ]
+
+printFormalismJmt :: Env -> String -> Jmt -> String
+printFormalismJmt env formalism jmt = case formalism of
   "agda" -> dedukti2agda env jmt
   "lean" -> dedukti2lean env jmt
   "rocq" -> dedukti2rocq env jmt
   "dedukti" -> printTree jmt
-  f -> error $ "formalism not available: " ++ f ++ ". Available values: agda dedukti lean rocq"
+  f -> error $ "formalism not available: " ++ f ++ ". Available values: " ++ unwords (formalisms env)
 
 printParseResult :: Env -> ParseResult -> [String]
 printParseResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
-    [printFormalismJmt env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+    [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
   _ | isFlag "-translate" env ->
     transResults result
   _ | isFlag "-json" env -> [mkJSONObject [
@@ -338,6 +351,7 @@ readEnv args = do
     synonymConstantTableSem = buildSynonymConstantTableSem ct,
     backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
+    formalisms = words "agda dedukti lean rocq",
     langs = languages gr, ---- relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
     toFormalism = argValue "-to-formalism" "NONE" args,
