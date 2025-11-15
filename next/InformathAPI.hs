@@ -165,7 +165,7 @@ dedukti2core = DMC.jmt2core
 annotateDedukti :: Env -> Jmt -> Jmt
 annotateDedukti env t = annotateDkIdents (constantTable env) t
 
-readConstantTable :: PGF -> FilePath -> IO (ConstantTable, ConversionTable)
+readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable)
 readConstantTable = buildConstantTable
 
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
@@ -252,8 +252,9 @@ printFinalParseResult (t, ut, ct, jmts) = mkJSONObject [
   mkJSONListField "dedukti" (map (stringJSON . printTree) jmts)
   ]
 
-readDeduktiModule :: FilePath -> IO Module
-readDeduktiModule file = readFile file >>= return . parseDeduktiModule
+-- read base constants from one or more files; in translations, only one file
+readDeduktiModule :: [FilePath] -> IO Module
+readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . unlines
 
 parseDeduktiModule :: String -> Module
 parseDeduktiModule s = case pModule (myLexer s) of
@@ -351,9 +352,9 @@ showFreqs = map (\ (c, n) -> c ++ "\t" ++ show n)
 
 readEnv :: [Flag] -> IO Env
 readEnv args = do
-  mo <- readDeduktiModule (argValue "-base" baseConstantFile args)
+  mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  (ct, cvt) <- readConstantTable gr (argValue "-constants" constantTableFile args)
+  (ct, cvt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
   return Env {

@@ -46,6 +46,8 @@ argValue flag df args = case [f | f <- args, isPrefixOf flag f] of
   f:_ -> drop (length flag + 1) f   -- -<flag>=<value>
   _ -> df
   
+argValues flag df args = commaSep (argValue flag df args)
+  
 argValueMaybeInt flag args = case argValue flag "nothing" args of
   v | all isDigit v -> Just (read v :: Int)
   _ -> Nothing
@@ -54,7 +56,11 @@ isFlag flag env = elem flag (flags env)
 
 ifArg flag args msg = if elem flag args then putStrLn msg else return ()
 
-inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
+inputFileArg args = case [arg | arg <- args, head arg /= '-'] of
   [arg] -> Just (arg, fileSuffix arg)
+  _ -> Nothing
+
+inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
+  arg@(f:fs) | and [fileSuffix g == fileSuffix f | g <- fs] -> Just (args, fileSuffix f)
   _ -> Nothing
 

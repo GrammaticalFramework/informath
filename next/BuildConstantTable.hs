@@ -97,9 +97,9 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> FilePath -> IO (ConstantTable, ConversionTable)
-buildConstantTable pgf dkgf = do
-  entrylines <- readFile dkgf >>= return . filter (not . null) . map words . lines
+buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable)
+buildConstantTable pgf dkgfs = do
+  entrylines <- mapM readFile dkgfs >>= return . filter (not . null) . map words . concatMap lines
   let constantlines = filter isConstantEntry entrylines
   let conversionlines = filter isConversion entrylines
   let constantTable = M.fromList [
