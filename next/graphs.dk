@@ -1,0 +1,13 @@
+Graph : Type.
+directed : (G : Graph) -> Prop.
+undirected : (G : Graph) -> Prop.
+Vertex : (G : Graph) -> Set.
+Edge : (G : Graph) -> Set.
+startpoint : (G : Graph) -> (e : Elem (Edge G)) -> Elem (Vertex G).
+endpoint : (G : Graph) -> (e : Elem (Edge G)) -> Elem (Vertex G).
+Path : (G : Graph) -> (a : Elem (Vertex G)) -> (b : Elem (Vertex G)) -> Set.
+
+def connected : Graph -> Prop := G =>
+  forall (Vertex G) (a => forall (Vertex G) (b => inhabited (Path G a b))).
+
+

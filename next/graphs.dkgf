@@ -1,0 +1,8 @@
+Graph graph_Noun
+directed directed_Adj
+undirected undirected_Adj
+Vertex vertex_Fam node_Fam
+Edge edge_Fam
+startpoint startpoint_Fun2
+endpoint endpoint_Fun2
+connected connected_Adj
