@@ -1,3 +1,4 @@
 abstract UserExtensions =
-  Naproche ;
+  Naproche,
+  Graphs ;
 

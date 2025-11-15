@@ -1,3 +1,5 @@
 concrete UserExtensionsEng of UserExtensions =
-  NaprocheEng ;
+  NaprocheEng,
+  GraphsEng ;
+  
 
