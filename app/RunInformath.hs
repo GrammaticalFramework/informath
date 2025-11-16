@@ -14,8 +14,8 @@ main = do
   xx <- getArgs
   if elem "-next" xx
   then main4 xx
-  else main3 xx
-
+  else main3 xx 
+ 
 main4 args = do
   env <- readEnv args 
   let mfile = inputFileArg args
@@ -67,7 +67,8 @@ helpMsg4 = unlines [
   just "-parallel-data" "print parallel data in jsonl",
   just "-idents" "show frequency table of non-variable idents in .dk file",
   just "-unknown-idents" "show idents in .dk file not in constant table",
-  just "-unknown-words" "show idents in text file not in grammar"
+  just "-unknown-words" "show idents in text file not in grammar",
+  just "-test-ambiguity" "test ambiguity when ranking NLG results"
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]

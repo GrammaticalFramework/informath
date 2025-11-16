@@ -209,11 +209,16 @@ splitType exp = case exp of
 addVarsToHypos :: Maybe Exp -> [Hypo] -> [Hypo]
 addVarsToHypos mexp = adds vars where
   adds :: [QIdent] -> [Hypo] -> [Hypo]
-  adds vs hypos = case hypos of
-    HExp exp : hh -> HVarExp (head vs) exp : adds (tail vs) hh
-    HVarExp _ exp  : hh ->  HVarExp (head vs) exp : adds (tail vs) hh
-    HParVarExp _ exp : hh ->  HParVarExp (head vs) exp : adds (tail vs) hh
-    _ -> []
+  adds vs hypos = case mexp of
+    Just _ -> case hypos of
+      HExp exp : hh -> HVarExp (head vs) exp : adds (tail vs) hh
+      HVarExp _ exp  : hh ->  HVarExp (head vs) exp : adds (tail vs) hh
+      HParVarExp _ exp : hh ->  HParVarExp (head vs) exp : adds (tail vs) hh
+      _ -> []
+    Nothing -> case hypos of
+      HExp exp : hh -> HVarExp (head vs) exp : adds (tail vs) hh
+      h  : hh ->  h : adds vs hh
+      _ -> []
   vars = case mexp of
     Just exp -> absIdents exp ++ newvars
     _ -> newvars

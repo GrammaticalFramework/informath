@@ -25,7 +25,7 @@ scoreString env s = Scores {
   characters = length s,
   tokens = length toks,
   subsequent_dollars = subdollars toks,
-  initial_dollars = initdollars toks + if head toks == "$" then 1 else 0,
+  initial_dollars = initdollars toks + if take 1 toks == ["$"] then 1 else 0,
   extra_parses =  -- can be expensive; return #parses -1 
     if (isFlag "-test-ambiguity" env)
     then maybe 0 ((+ (-1)) . length . take 3) (fst (parseJmt (grammar env) (toLang env) jmt inds))

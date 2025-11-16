@@ -192,8 +192,6 @@ def dotProduct : (u : Elem Vector) -> (v : Elem Vector) -> Elem Real := u => v =
 
 def orthogonal : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
   Eq (angleBetween u v) (div pi (nd 2)).
-def perpendicular : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
-  orthogonal u v.
 
 vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector.
 

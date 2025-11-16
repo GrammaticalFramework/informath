@@ -28,7 +28,8 @@ import qualified Dedukti2Lean as DL
 import Ranking4
 import Environment4
 import BuildConstantTable
-import qualified DMC
+--import qualified DMC
+import qualified Dedukti2MathCore as DMC
 import qualified MCI
 import qualified IMC
 import qualified MCD

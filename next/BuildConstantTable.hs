@@ -176,7 +176,7 @@ annotateDkIdents table = annot [] where
 
   annot :: forall a. [QIdent] -> DkTree a -> DkTree a
   annot bounds t = case t of
-    EIdent c | notElem c bounds -> EIdent (annotId c)
+    QIdent _ | notElem t bounds -> annotId t
     EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
     EFun h exp -> EFun (annot bounds h) (annot (hypo2vars h ++ bounds) exp)
     _ -> composOp (annot bounds) t
@@ -193,63 +193,6 @@ annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
 valCat :: Type -> Cat
 valCat t = case unType t of (_, c, _) -> c
 
--- annotate idents with cats and funs, with all alternatives
-allAnnotateDkIdents :: ConstantTable -> DkTree a -> [DkTree a]
-allAnnotateDkIdents table t = rankDkTrees (setnub (symbs [] t ++ verbs [] t)) where
-
-  symbs :: forall a. [QIdent] -> DkTree a -> [DkTree a]
-  symbs bounds t = case t of
-    EApp _ _ -> case splitApp t of
-      (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
-	  ac <- strictAnnotId symbolics c,
-	  xx <- sequence (map (symbs bounds) xs)
-	  ]
-    c@(QIdent _) | notElem c bounds -> [ac | ac <- annotId symbolics c]
-    EAbs b exp -> [EAbs b aexp | aexp <- symbs (bind2ident b : bounds) exp]
-    _ -> composOpM (symbs bounds) t
-    
-  verbs :: forall a. [QIdent] -> DkTree a -> [DkTree a]
-  verbs bounds t = case t of
-    EApp _ _ -> case splitApp t of
-      (EIdent c, xs) -> [foldl EApp (EIdent ac) xx |
-	  ac <- annotId verbals c,
-	  xx <- sequence (map (\x -> (symbs bounds x ++ verbs bounds x)) xs)
-	  ]
-    c@(QIdent _) | notElem c bounds -> [ac | ac <- annotId verbals c]
-    EAbs b exp -> [EAbs b aexp | aexp <- let bbounds = (bind2ident b : bounds)
-                                         in symbs bbounds exp ++ verbs bbounds exp]
-    _ -> composOpM (verbs bounds) t
-
-  annotId get c = case M.lookup c table of
-    Just entry -> withDefaults [c] [annotIdent c ft | ft <- get entry]
-    _ -> [c]
-    
-  strictAnnotId get c = case M.lookup c table of
-    Just entry -> [annotIdent c ft | ft <- get entry]
-    _ -> []
-
-  verbals e = primary e : synonyms e ++ symbolics e
-
-  withDefaults ds vs = if null vs then ds else vs
-
-  -- kind of breadth-first slices of sequence
-  subsequence xss =
-    let m = maximum (map length xss)
-    in [[xs !! mk | xs <- xss, let mk = min k (length xs - 1)] | k <- [0 .. m-1]]
-
-
--- rank by the number of symbolic constants, more is better, except for Noun 
-rankDkTrees :: [DkTree a] -> [DkTree a]
-rankDkTrees = sortOn ((0-) . length . rank) where
-  rank :: forall a. DkTree a -> [()]
-  rank t = case t of
-    QIdent c -> case lookupConstant c of
-      Just ("Noun", _) -> [(), ()]
-      Just (cat, _) | S.member (mkCId cat) symbolicCats -> [()]
-      _ -> []
-    _ -> composOpMPlus rank t
-
-
 -- deciding the kind of a new constant
 guessGFCat :: QIdent -> Exp -> String
 guessGFCat ident@(QIdent c) typ =
@@ -264,7 +207,7 @@ guessGFCat ident@(QIdent c) typ =
         1 -> "Adj"
         2 -> "Adj2"
         3 -> "Adj3"
-        _ -> "Fun"
+        _ -> "AdjC"
       (EIdent f, _) | elem f [identSet, identType] -> case arity of
         0 -> "Noun"
         1 -> "Fam"
@@ -272,7 +215,8 @@ guessGFCat ident@(QIdent c) typ =
       (EIdent f, _) | f == identElem -> case arity of
         0 -> "Name"
         1 -> "Fun"
-        _ -> "Fun2"
+        2 -> "Fun2"
+        _ -> "FunC"
       (EIdent f, _) | f == identProof -> "Label"
       _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
       

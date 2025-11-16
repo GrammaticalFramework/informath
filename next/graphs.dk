@@ -10,4 +10,6 @@ Path : (G : Graph) -> (a : Elem (Vertex G)) -> (b : Elem (Vertex G)) -> Set.
 def connected : Graph -> Prop := G =>
   forall (Vertex G) (a => forall (Vertex G) (b => inhabited (Path G a b))).
 
+thm1 : (G : Graph) -> Proof (if (directed G) (not (undirected G))).
+
 
