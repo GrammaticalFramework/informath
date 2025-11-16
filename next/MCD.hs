@@ -181,7 +181,9 @@ exp2dedukti exp = case exp of
   GNameExp (LexName name) ->
     EIdent (QIdent (name))
   GTermExp term -> term2dedukti term
-  
+  GFunExp (LexFun f) x -> appIdent f (map exp2dedukti [x])
+  GFun2Exp (LexFun2 f) x y -> appIdent f (map exp2dedukti [x, y])
+  GFunCExp (LexFunC f) (GManyExps (GListExp [x, y])) -> appIdent f (map exp2dedukti [x, y])
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
   GSigmaExp i m n f ->

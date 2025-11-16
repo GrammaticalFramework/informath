@@ -75,7 +75,14 @@ synonyms env t = symbs t ++ verbs t where
       [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GNameExp (LexName c) ->
       [app alt [] | alt <- ssyns c]
+    GSigmaExp i m n f ->
+      [Gsigma_Term i tm tn tf | tm <- terms m, tn <- terms n, tf <- terms f]
+    GSeriesExp i m f ->
+      [Gseries_Term i tm tf | tm <- terms m, tf <- terms f]
+    GIntegralExp i m n f ->
+      [Gintegral_Term i tm tn tf | tm <- terms m, tn <- terms n, tf <- terms f]
     GTermExp t -> [t]
+
     _ -> []
       
 
@@ -83,8 +90,8 @@ synonyms env t = symbs t ++ verbs t where
   
   verbs :: forall a. Tree a -> [Tree a]
   verbs t = case t of
-----    GAdj2Prop (LexAdj2 c) x y ->
-----      [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
+    GAdj2Prop (LexAdj2 c) x y ->
+      t : [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
     GFun2Exp _ _ _ -> t : map GTermExp (terms t) ---- also verbal synonyms
     GFunCExp _ _  -> t : map GTermExp (terms t)
     GFunExp _ _ -> t : map GTermExp (terms t)
@@ -294,6 +301,8 @@ variations tree = case tree of
     in tree : [Gsum3dots_Term (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
   GFormulaProp formula ->
     ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
+
+  GOper2Term (LexOper2 "times_Oper2") x y -> [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
 
   _ -> composOpM variations tree
 

@@ -192,7 +192,8 @@ sem env t = case t of
     let (var, nenv) = newVar env
     in GIdentsArgKind (sem nenv kind) (GListIdent [var])
 
-
+  GDisplayFormulaProp formula -> sem env (GFormulaProp formula)
+  
   GFormulaProp (GEquationFormula equation@(GChainEquation _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
       [sem env (GFormulaProp (GEquationFormula (GBinaryEquation eqsign x y))) | (eqsign, x, y) <- triples])

@@ -72,6 +72,5 @@ helpMsg4 = unlines [
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
-  
 
 

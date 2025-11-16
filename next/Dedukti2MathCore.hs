@@ -9,6 +9,7 @@ import NextInformath -- superset of MathCore
 import CommonConcepts
 import DeduktiOperations
 import BuildConstantTable
+import SpecialConstants
 
 import Data.Char
 
@@ -244,12 +245,16 @@ exp2prop exp = case exp of
     (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
 
 exp2exp :: Exp -> GExp
-exp2exp exp = case exp of
-  EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
-    Just ("Name", c) -> GNameExp (LexName c)
-    _ -> ident2exp ident
-  EApp _ _ -> case splitApp exp of
-    (fun, args) -> case fun of
+exp2exp exp = case specialDedukti2Informath bind2coreIdent exp2exp exp of
+  Just gexp -> gexp
+  _ -> case exp of
+    EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
+      Just ("Name", c) -> GNameExp (LexName c)
+      _ -> ident2exp ident
+  
+    EApp _ _ -> case splitApp exp of
+      (fun, args) -> case fun of
+   {-
       EIdent (QIdent "sigma") | length args == 3 ->
         let [m, n, EAbs b f] = args
         in GSigmaExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
@@ -263,23 +268,25 @@ exp2exp exp = case exp of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
 	Just [] -> GNameExp (LexName "emptyset_Name")
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-      EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
-        Just s -> GTermExp (GNumberTerm (GInt (read s)))
-	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-      EIdent ident@(QIdent f) -> case (f, args) of
-        _ -> case (lookupConstant f, args) of
-          (Just ("Fun", c), [exp]) -> GFunExp (LexFun c) (exp2exp exp)     
-          (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) (exp2exp x) (exp2exp y)     
-          (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (gExps [exp2exp x, exp2exp y])     
-          _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-      _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-  EAbs _ _ -> case splitAbs exp of
-    (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
-  EFun _ _ -> 
-    case splitType exp of
-      (hypos, valexp) ->
-        GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
-  _ -> error ("not yet exp2exp: " ++ printTree exp)
+   -}
+        EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
+          Just s -> GTermExp (GNumberTerm (GInt (read s)))
+	  _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+        EIdent ident@(QIdent f) -> case (f, args) of
+          _ -> case (lookupConstant f, args) of
+            (Just ("Fun", c), [exp]) -> GFunExp (LexFun c) (exp2exp exp)     
+            (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) (exp2exp x) (exp2exp y)     
+            (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (gExps [exp2exp x, exp2exp y])     
+            _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+        _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+      
+    EAbs _ _ -> case splitAbs exp of
+      (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
+    EFun _ _ -> 
+      case splitType exp of
+        (hypos, valexp) ->
+          GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
+    _ -> error ("not yet exp2exp: " ++ printTree exp)
 
 
 exp2proof :: Exp -> GProof
@@ -345,7 +352,3 @@ bind2coreHypo bind = case bind of
   BVar var ->  
     GBareVarsHypo (GListIdent [ident2ident var])
 
-gExps :: [GExp] -> GExps
-gExps exps = case exps of
-  [exp] -> GOneExps exp
-  _ -> GManyExps (GListExp exps)
