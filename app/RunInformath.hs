@@ -16,7 +16,7 @@ main = do
   then main4 xx
   else main3 xx 
  
-main4 args = do
+main4 args = if elem "-help" args then putStrLn helpMsg4 else do
   env <- readEnv args 
   let mfile = inputFileArg args
   case mfile of

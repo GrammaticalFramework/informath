@@ -45,8 +45,8 @@ demo:
 	$(RUN) -lang=Fre test/exx.dk
 	$(RUN) -lang=Ger test/exx.dk
 	$(RUN) -lang=Swe test/exx.dk
-	$(RUN) -lang=Eng test/exx.dk >exx.txt
-	$(RUN) -lang=Eng exx.txt
+	$(RUN) -lang=Eng test/exx.dk >out/exx.txt
+	$(RUN) -lang=Eng out/exx.txt
 	$(RUN) -lang=Eng test/gflean-data.txt
 	cat src/BaseConstants.dk test/exx.dk >bexx.dk
 	dk check bexx.dk
@@ -73,7 +73,7 @@ nextdemo:
 	$(NEXTRUN) -to-lang=Ger test/exx.dk
 	$(NEXTRUN) -to-lang=Swe test/exx.dk
 	$(NEXTRUN) -to-lang=Eng test/exx.dk >out/exx.txt
-	$(NEXTRUN) -from-lang=Eng exx.txt
+	$(NEXTRUN) -from-lang=Eng out/exx.txt
 	$(NEXTRUN) -from-lang=Eng test/gflean-data.txt
 	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
 	dk check out/bexx.dk
