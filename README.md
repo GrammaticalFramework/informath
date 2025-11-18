@@ -4,6 +4,8 @@
 
 ## NEW
 
+A refactored -next version is coming soon. You can already test it with the flag -next, see `RunInformath -next -help`.
+
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
 
 [Updated slides shown in Saclay, Prague, and some other places in 2025](./doc/dedukti-gf-2025.pdf)
