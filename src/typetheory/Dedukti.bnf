@@ -61,7 +61,3 @@ token QIdent ((letter | digit | '_' | '!' | '?' | '\'')+ ('.' (letter | digit | 
 -- https://github.com/Deducteam/Dedukti/blob/3dbbffdb5c8af3be15bb2c7a59ba263505c3a360/parsing/lexer.mll#L25
 -- ['a'-'z' 'A'-'Z' '0'-'9' '_' '!' '?']['a'-'z' 'A'-'Z' '0'-'9' '_' '!' '?' '\'' ]*
 
--- for annotations: dkid, gfid, symbolics, synonyms
-internal EAnnotIdent. Exp9 ::= "<" QIdent GFIdent "/" [GFIdent] "/" [GFIdent] ">" ;
-GFFunCat. GFIdent ::= QIdent QIdent ;
-separator GFIdent ","

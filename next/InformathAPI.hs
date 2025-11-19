@@ -12,7 +12,7 @@ import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
-import DeduktiOperations (alphaConvert, identsInTypes)
+import DeduktiOperations (alphaConvert, identsInTypes, deduktiTokens)
 --import ConstantData 
 --import SpecialDeduktiConversions (specialDeduktiConversions)
 ------import Informath -- to be removed
@@ -52,7 +52,6 @@ constantTableFile = "next/constants.dkgf"
 -- main types involved
 
 type GFTree = Expr
-type DkTree a = Dedukti.AbsDedukti.Tree a
 type DkJmt = Jmt
 
 
@@ -179,7 +178,7 @@ printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
     [printFormalismJmt env (toFormalism env) (originalDedukti result)]
-  _ | isFlag "-json" env -> [showJsonGenResult env result]
+  _ | isFlag "-json" env || isFlag "-v" env -> [showJsonGenResult env result]
   _ | isFlag "-parallel-data" env -> [showParallelData env result] 
   _ -> printNLGOutput env result
 
@@ -199,12 +198,12 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
 
 showJsonGenResult :: Env -> GenResult -> String
 showJsonGenResult env result = mkJSONObject [
-    mkJSONField "originalDedukti" (stringJSON (printTree (originalDedukti result))),
-    mkJSONField "annotatedDedukti" (stringJSON (printTree (annotatedDedukti result))),
+    mkJSONField "originalDedukti" (stringJSON (printDeduktiEnv env (originalDedukti result))),
+    mkJSONField "annotatedDedukti" (stringJSON (printDeduktiEnv env (annotatedDedukti result))),
     mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
     mkJSONField "nlgResults" (mkJSONObject [
       mkJSONListField (showCId lang) (map printRank ranks) | (lang, ranks) <- nlgResults result]),
-    mkJSONListField "backToDedukti" [stringJSON (printTree jmt) | jmt <- backToDedukti result]
+    mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]
     ]
 
 showParallelData :: Env -> GenResult -> String
@@ -221,7 +220,7 @@ printFormalismJmt env formalism jmt = case formalism of
   "agda" -> dedukti2agda env jmt
   "lean" -> dedukti2lean env jmt
   "rocq" -> dedukti2rocq env jmt
-  "dedukti" -> printTree jmt
+  "dedukti" -> printDeduktiEnv env jmt
   f -> error $ "formalism not available: " ++ f ++ ". Available values: " ++ unwords (formalisms env)
 
 printParseResult :: Env -> ParseResult -> [String]
@@ -230,27 +229,27 @@ printParseResult env result = case 0 of
     [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
   _ | isFlag "-translate" env ->
     transResults result
-  _ | isFlag "-json" env -> [mkJSONObject [
+  _ | isFlag "-json" env || isFlag "-v" env -> [mkJSONObject [
     mkJSONField "originalLine" (stringJSON (originalLine result)),
     mkJSONField "lexedLine" (stringJSON (lexedLine result)),
     mkJSONListField "termIndex" (map stringJSON (termIndex result)),
     mkJSONField "indexedLine" (stringJSON (indexedLine result)),
     mkJSONField "parseMessage" (stringJSON (parseMessage result)),
     mkJSONListField "unknownWords" (map stringJSON (unknownWords result)),
-    mkJSONListField "formalResults" (map printFinalParseResult (formalResults result))
+    mkJSONListField "formalResults" (map (printFinalParseResult env) (formalResults result))
     ]]
   _ -> printDeduktiOutput env result
 
 printDeduktiOutput :: Env -> ParseResult -> [String]
 printDeduktiOutput env result =
-  [printTree jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+  [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
 
-printFinalParseResult :: (GFTree, GFTree, GFTree, [Jmt]) -> String
-printFinalParseResult (t, ut, ct, jmts) = mkJSONObject [
+printFinalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> String
+printFinalParseResult env (t, ut, ct, jmts) = mkJSONObject [
   mkJSONField "parseTree" (stringJSON (showExpr [] t)),
   mkJSONField "unindexedTree" (stringJSON (showExpr [] ut)),
   mkJSONField "coreTree" (stringJSON (showExpr [] ct)),
-  mkJSONListField "dedukti" (map (stringJSON . printTree) jmts)
+  mkJSONListField "dedukti" (map (stringJSON . printDeduktiEnv env) jmts)
   ]
 
 -- read base constants from one or more files; in translations, only one file
@@ -261,6 +260,13 @@ parseDeduktiModule :: String -> Module
 parseDeduktiModule s = case pModule (myLexer s) of
   Bad e -> error ("parse error: " ++ e)
   Ok mo -> mo
+
+--printDeduktiEnv :: Env -> DkTree a -> String
+printDeduktiEnv env t =
+  if (isFlag "-dedukti-tokens" env)
+  then unwords (deduktiTokens (printTree t))
+  else printTree t
+
     
 readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
@@ -340,10 +346,10 @@ dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
 -- statistics
 identsInDedukti :: Env -> Module -> [(String, Int)]
 identsInDedukti env mo = map stringify (mfilter freqs) where
-  stringify (c, i) = (printTree c, i)
+  stringify (c, i) = (printDeduktiEnv env c, i)
   freqs = sortOn (\ (_,i) -> -i) (M.toList (identsInTypes mo))
   mfilter = if elem "-unknown-idents" (flags env) then filter (notInTable . fst) else id 
-  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printTree qid))
+  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printDeduktiEnv env qid))
 
 unknownWordsInTex :: Env -> String -> [(String, Int)]
 unknownWordsInTex env = frequencyTable . missingWords env . lextex 

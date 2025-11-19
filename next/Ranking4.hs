@@ -56,7 +56,7 @@ treeDepth t = case unApp t of
   Just (f, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
   _ -> 1
 
--- returns all scores and their sum
+-- returns all scores and their weighted sum
 scoreTreeAndString :: Env -> (Expr, String) -> (Scores, Int)
 scoreTreeAndString env (t, s) =
   let scores = (scoreString env s){

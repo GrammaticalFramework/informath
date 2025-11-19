@@ -45,31 +45,63 @@ helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|dkgf|tex|txt|md|...)",
   "",
   "Depending on file suffix, the following is done:",
+  "",
   just ".dk" "convert to natural language or to another formalism",
   just ".dkgf" "check the consistency of Dedukti to GF mapping",
   just ".tex|.txt|.md" "parse and convert to Dedukti or another formalism",
+  "",
   "Output is written to standard output.",
   "Input is read line by line, except for .dk files",
   "Options: ",
+  "",
+  "* Source files for building the environment:",
+  "",
   just "-base <file.dk>+" ("base Dedukti constants, default " ++ baseConstantFile),
   just "-constants <file.dkgf>+" ("map from Dedukti to GF, default " ++ constantTableFile),
   just "-grammar <file.pgf>" ("GF grammar used, default " ++ grammarFile),
+  "",
+  "* Translating from Dedukti:",
+  "",
   just "-mathcore" "generate only the mathcore text",
-  just "-json" "show full information in jsonl",
-  just "-nbest=<int>" "show <int> best NLG results",
-  just "-to-lang=<lang>" "linearize to <lang>",
-  just "-from-lang=<lang>" "parse from <lang>",
-  just "-to-formalism=<formalism>" "convert to <formalism>",
-  just "-translate" "translate text without parsing parts in $...$",
-  just "-no-unlex" "linearize to tokens separated by spaces",
-  just "-to-latex-doc" "print valid LaTeX doc with preamble",
   just "-variations" "show all variations",
-  just "-parallel-data" "print parallel data in jsonl",
-  just "-idents" "show frequency table of non-variable idents in .dk file",
-  just "-unknown-idents" "show idents in .dk file not in constant table",
+  just "-nbest=<int>" "show <int> best NLG results",
+  just "-to-latex-doc" "print valid LaTeX doc with preamble",
+  just "-weights=<ints>" "weights of scores, default 1,1,1,1,1,1,1",
+  just "-parallel-data" "print complete parallel data in jsonl",
+  just "-to-lang=<lang>" "linearize to natural language <lang>",
+  just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",
+  "",
+  "* Translating from informal language:",
+  "",
+  just "-from-lang=<lang>" "parse from <lang>",
+  just "-translate" "translate text without parsing parts in $...$",
   just "-unknown-words" "show idents in text file not in grammar",
-  just "-test-ambiguity" "test ambiguity when ranking NLG results"
+  just "-test-ambiguity" "test ambiguity when ranking NLG results",
+  "",
+  "* General output options:",
+  "",
+  just "-json" "show full information in jsonl (same as -v)",
+  just "-v" "show full information in jsonl (same as -json)",
+  just "-no-unlex" "linearize to tokens separated by spaces",
+  just "-dedukti-tokens" "print Dedukti code with tokens separated by spaces",
+  "",
+  "* Analysing and converting Dedukti:",
+  "",
+  just "-idents" "show frequency table of non-variable idents in .dk file",
+  just "-unknown-idents" "show idents in .dk file not in constant table"
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
 
+{- TODO from previous version
+
+  -conv=<ident>+  special dedukti conversions from defined in a separate file
+  -test-ambiguity test for ambiguity when ranking (can be expensive)
+  -dropdefs       drop definition parts of Dedukti code
+  -dropqualifs    strip qualifiers of idents
+  -dropcoercions  strip named coercions, only leaving their last arguments
+  -dropfirstargs  drop first k arguments of given functions (usually type arguments)
+  -peano2int      convert succ/0 natural numbers to sequences of digits
+  -idtypes        print the types identifiers in a .dk file
+
+-}
