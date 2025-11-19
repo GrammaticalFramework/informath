@@ -15,7 +15,8 @@ main = do
   if elem "-next" xx
   then main4 xx
   else main3 xx 
- 
+
+
 main4 args = if elem "-help" args then putStrLn helpMsg4 else do
   env <- readEnv args 
   let mfile = inputFileArg args
@@ -39,7 +40,6 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
     _ -> putStrLn helpMsg4 
-
 
 helpMsg4 = unlines [
   "usage: RunInformath -next <option>* <file>.(dk|dkgf|tex|txt|md|...)",
@@ -72,5 +72,4 @@ helpMsg4 = unlines [
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
-
 

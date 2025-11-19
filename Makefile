@@ -86,7 +86,7 @@ nextdemo:
 	coqc out/bexx.v
 	$(NEXTRUN) -to-formalism=lean test/exx.dk >out/exx.lean
 	cat src/BaseConstants.lean out/exx.lean >out/bexx.lean
-	lean bexx.lean
+	lean out/bexx.lean
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk

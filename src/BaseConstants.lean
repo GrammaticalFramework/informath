@@ -13,7 +13,7 @@ def Num : Type := Int
 def Dig : Type := Num
 --def Nat : Set := Num
 --def Int : Type := Num
-def Rat : Type := Num
+--def Rat : Type := Num
 def Real : Type := Num
 def Complex : Type := Num
 

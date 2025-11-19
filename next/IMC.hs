@@ -5,6 +5,7 @@ module IMC where
 --module Informath2Core where
 
 import NextInformath
+import PGF (showExpr)
 
 data SEnv = SEnv {varlist :: [String]}
 initSEnv = SEnv {varlist = []}
@@ -101,7 +102,7 @@ sem env t = case t of
   GFormulaImpliesProp cond prop ->
     sem env (GIfProp (GFormulaProp cond) (GFormulaProp prop))
 
-  GPostQuantProp prop exp -> case exp of
+  GPostQuantProp prop exp -> case sem env exp of
     GEveryIdentKindExp ident kind ->
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [ident])]) prop)
     GIndefIdentKindExp ident kind ->
@@ -112,6 +113,7 @@ sem env t = case t of
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) prop)
     GNoIdentsKindExp idents kind ->
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) (GNotProp prop))
+    _ -> t ----TODO some cases: error ("sem not yet: " ++ showExpr [] (gf t))
 
   GAllProp argkinds prop -> case argkinds of
     GListArgKind [GIdentsArgKind (GAdjKind adj kind) vars@(GListIdent xs)] ->
