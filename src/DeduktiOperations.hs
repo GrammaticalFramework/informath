@@ -34,15 +34,19 @@ identsInTypes t = M.fromListWith (+) [(x, 1) | x <- ids t] where
 
 
 -- consider only typings, for instance when generating natural language
-dropDefinitions :: Module -> Module
-dropDefinitions (MJmts jmts) = MJmts (concatMap drops jmts) where
-  drops :: Jmt -> [Jmt]
-  drops jmt = case jmt of
-    JDef qident (MTExp typ) _ -> [JStatic qident typ]
-    JThm qident (MTExp typ) _ -> [JStatic qident typ]
-    JInj qident (MTExp typ) _ -> [JStatic qident typ]
-    JStatic _ _ -> [jmt]
-    _ -> []
+dropDefinitions :: Tree a -> Tree a
+dropDefinitions t = case t of
+  MJmts jmts -> MJmts (filter isNotRules jmts)
+  JDef qident (MTExp typ) _ -> JStatic qident typ
+  JThm qident (MTExp typ) _ -> JStatic qident typ
+  JInj qident (MTExp typ) _ -> JStatic qident typ
+  JStatic _ _ -> t
+  _ -> t
+ where
+  isNotRules :: Jmt -> Bool
+  isNotRules jmt = case jmt of
+    JRules _ -> False
+    _ -> True
 
 -- collect types of idents
 identTypes :: Module -> M.Map QIdent Exp

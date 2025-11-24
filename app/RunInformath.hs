@@ -12,9 +12,9 @@ import System.Environment (getArgs)
 
 main = do
   xx <- getArgs
-  if elem "-next" xx
-  then main4 xx
-  else main3 xx 
+  if elem "-previous" xx
+  then main3 xx
+  else main4 xx 
 
 
 main4 args = if elem "-help" args then putStrLn helpMsg4 else do
@@ -42,7 +42,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
     _ -> putStrLn helpMsg4 
 
 helpMsg4 = unlines [
-  "usage: RunInformath -next <option>* <file>.(dk|dkgf|tex|txt|md|...)",
+  "usage: RunInformath <option>* <file>.(dk|dkgf|tex|txt|md|...)",
   "",
   "Depending on file suffix, the following is done:",
   "",
@@ -84,22 +84,17 @@ helpMsg4 = unlines [
   just "-v" "show full information in jsonl (same as -json)",
   just "-no-unlex" "linearize to tokens separated by spaces",
   just "-dedukti-tokens" "print Dedukti code with tokens separated by spaces",
+  just "-help" "show this help message",
+  just "-previous" "use the previous version of Informath (to be deprecated)",
   "",
   "* Analysing and converting Dedukti:",
   "",
   just "-idents" "show frequency table of non-variable idents in .dk file",
-  just "-unknown-idents" "show idents in .dk file not in constant table"
+  just "-unknown-idents" "show idents in .dk file not in constant table",
+  just "-drop-definitions" "drop definiens parts of judgements",
+  just "-drop-qualifs" "drop qualifiers of identifiers",
+  just "-peano2int" "convert succ/0 expressions to sequences of digits"
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
 
-{- TODO from previous version
-
-  -conv=<ident>+  special dedukti conversions from defined in a separate file
-  -dropdefs       drop definition parts of Dedukti code
-  -dropqualifs    strip qualifiers of idents
-  -dropcoercions  strip named coercions, only leaving their last arguments
-  -peano2int      convert succ/0 natural numbers to sequences of digits
-  -idtypes        print the types identifiers in a .dk file
-
--}

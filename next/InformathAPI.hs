@@ -12,7 +12,7 @@ import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
-import DeduktiOperations (alphaConvert, identsInTypes, deduktiTokens)
+import DeduktiOperations
 --import ConstantData 
 --import SpecialDeduktiConversions (specialDeduktiConversions)
 ------import Informath -- to be removed
@@ -83,11 +83,10 @@ processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 processJmt :: Env -> Jmt -> GenResult
 processJmt env djmt =
   if toFormalism env /= "NONE"
-  then dummyGenResult djmt
+  then dummyGenResult (applyDeduktiConversions env djmt)
   else
     let
-      flag = flags env
-      jmt = annotateDedukti env djmt
+      jmt = annotateDedukti env (applyDeduktiConversions env djmt)
       core = dedukti2core jmt
       exts = core2ext env core
       nlgs = setnub $ map gf $ exts
@@ -158,6 +157,17 @@ processLatexLine env s =
     }
 
 -- conversions
+
+applyDeduktiConversions :: Env -> DkTree a -> DkTree a
+applyDeduktiConversions env t = foldl (flip ($)) t fs where
+  fs :: [DkTree a -> DkTree a]
+  fs = [f | (flag, f) <- [
+          ("-peano2int", peano2int),
+          ("-drop-qualifs", stripQualifiers),
+	  ("-drop-definitions", dropDefinitions)
+         ], isFlag flag env
+       ]
+
 
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
