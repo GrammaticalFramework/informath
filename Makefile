@@ -14,7 +14,7 @@ grammars/Informath.pgf: $(GF_FILES)
 
 # if you want to use the -previous option, also do this
 previous/grammars/PreviousInformath.pgf: $(GF_FILES)
-	cd previous/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 -name=PreviousInformath --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
+	cd previous/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 -name=PreviousInformath --probs=Informath.probs InformathEng.gf # InformathFre.gf InformathSwe.gf InformathGer.gf
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
