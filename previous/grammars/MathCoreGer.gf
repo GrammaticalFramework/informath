@@ -1,30 +1,30 @@
-instance UtilitiesGer of Utilities =
-
-open
-  SyntaxGer,
-  ParadigmsGer,
-  (P=ParadigmsGer),
-  SymbolicGer,
-  MarkupGer,
-  (I=IrregGer),
-  (E=ExtendGer),
-  (M=MakeStructuralGer),
-  Formal,
-  Prelude
+concrete MathCoreGer of MathCore =
+  TermsLatex, 
+  UserConstantsGer **
+  MathCoreFunctor - [Pred3Prop] --- takes a long time
+    with
+    (Syntax=SyntaxGer),
+    (Grammar=GrammarGer),
+    (Markup=MarkupGer),
+    (Extend=ExtendGer),
+    (Symbolic=SymbolicGer)
+  ** open
+    UtilitiesGer,
+    Prelude,
+    ParadigmsGer,
+    (M=MakeStructuralGer),
+    (I=IrregGer)
 
 in {
 
+-- exceptions from functor
+--lin
+  --Pred3Prop pred x y z =
+    --simpleProp (mkS (mkCl x (AdvAP pred.ap (Syntax.mkAdv pred.prep1 (mkNP y (Syntax.mkAdv pred.prep2 z)))))) ; --- fake structure
+
+
 oper
-
-  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
-  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
-
-  strN : Str -> N = mkN ;
-  strA : Str -> A = mkA ;
-  strV : Str -> V = mkV ;
-  strPN : Str -> PN = mkPN ;
-  strPrep : Str -> Prep = \s -> mkPrep s dative ; ---
-
+  alle_Det = M.mkWeakDet "all" plural ;
 
   define_V2 : V2 = mkV2 (mkV "definieren") (mkPrep "als" nominative) ;
   assume_VS : VS = mkVS (mkV "an" I.nehmen_V) ;
@@ -59,32 +59,9 @@ oper
   
   as_Prep : Prep = mkPrep "als" nominative ;
 
-  alle_Det = M.mkWeakDet "all" plural ;
-
   let_Str : Bool => Str = \\_ => "sei" ;
   assuming_Str = "Unter folgender Annahme:" ;
 
   mkSubj : Str -> Subj = \s -> lin Subj {s = s} ; ---- should be in RGL
-  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
-  imply_V2 : V2 = mkV2 (mkV "implizieren") ;
-  only_if_Subj : Subj = mkSubj "nur dann , wenn" ;
 
-{-
-  number_Noun = mkNoun (mkN "tal" "tal") ;
-  range_V3 = mkV3 (mkV "löper") from_Prep to_Prep ;
-  sum_N = mkN "summa" ;
-  where_Subj = mkSubj "där" ;
-  given_A2 = mkA2 (mkA "given") as_Prep ;
-  infinity_NP = mkNP (mkN "oändlighet") ;
-  series_N = mkN "serie" "serier" ;
-  integral_N = mkN "integral" ;
--}
-
-  leer_A : A = mkA "leer" ;
-
-  zahl_N : N = mkN "Zahl" feminine ;
-
-  menge_N = mkN "Menge" ;
-  element_N = mkN "Element" "Elemente" neuter ;
-  
 }

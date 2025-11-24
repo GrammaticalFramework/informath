@@ -1,28 +1,23 @@
-instance UtilitiesEng of Utilities =
-
-open
-  SyntaxEng,
-  ParadigmsEng,
-  (P=ParadigmsEng),
-  SymbolicEng,
-  MarkupEng,
-  (I=IrregEng),
-  (E=ExtendEng),
-  Formal,
-  Prelude
+concrete MathCoreEng of MathCore =
+  TermsLatex, 
+  UserConstantsEng **
+  MathCoreFunctor - [negPol] with
+    (Syntax=SyntaxEng),
+    (Grammar=GrammarEng),
+    (Markup=MarkupEng),
+    (Extend=ExtendEng),
+    (Symbolic=SymbolicEng)
+  ** open
+    UtilitiesEng,
+    Prelude,
+    ParadigmsEng,
+    (I=IrregEng)
 
 in {
 
 oper
-
-  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
-  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
-
-  strN : Str -> N = mkN ;
-  strA : Str -> A = mkA ;
-  strV : Str -> V = mkV ;
-  strPN : Str -> PN = mkPN ;
-  strPrep : Str -> Prep = mkPrep ;
+-- override
+  negPol : Pol = Extend.UncontractedNeg ;
 
   define_V2 : V2 = mkV2 (mkV "define") ;
   assume_VS : VS = mkVS (mkV "assume") ;
@@ -56,27 +51,10 @@ oper
   instance_N = mkN "instance" ;
   prove_VS = mkVS (mkV "prove") ;
 
-  as_Prep : Prep = mkPrep "as" ;
+--  as_Prep : Prep = mkPrep "as" ;
 
   let_Str : Bool => Str = \\_ => "let" ;
 
   assuming_Str = "assuming:" ;
-  
-  imply_V2 : V2 = mkV2 (mkV "imply") ;
-  only_if_Subj : Subj = mkSubj "only if" ;
-
-  range_V3 = mkV3 (mkV "range") from_Prep to_Prep ;
-  sum_N = mkN "sum" ;
-  where_Subj = mkSubj "where" ;
-  number_N = mkN "number" ;
-  given_A2 = mkA2 (mkA "given") as_Prep ;
-  as_Prep = mkPrep "as" ;
-  infinity_NP = mkNP (mkN "infinity") ;
-  series_N = mkN "series" ;
-  integral_N = mkN "integral" ;
-
-  latexSymbNP : Symb -> NP = \x ->
-    symb (mkSymb ("$" ++ x.s ++ "$")) ;
-
 
 }

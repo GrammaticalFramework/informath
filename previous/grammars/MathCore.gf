@@ -1,8 +1,28 @@
 abstract MathCore =
-  Categories
+  Terms,
+  UserConstants   -- notations, BaseConstants + user-defined with MkConstants.hs
   ** {
 
 flags startcat = Jmt ;
+
+cat
+  Jmt ;
+  Exps ;
+  Prop ;
+  [Prop] {2} ;
+  Kind ;
+  ArgKind ;
+  [ArgKind] {1} ;
+  Hypo ;
+  [Hypo] ;
+  Local ;
+  [Ident] {1} ;
+  Proof ;
+  [Proof] {0} ;
+  ProofExp ;
+  Rule ;
+  [Rule] {1} ;
+  Coercion ;
 
 fun
   ThmJmt : Label -> [Hypo] -> Prop -> Proof -> Jmt ;
@@ -32,23 +52,23 @@ fun
 
   AppExp : Exp -> Exps -> Exp ;
   AbsExp : [Ident] -> Exp -> Exp ;
-  TermExp : Term -> Exp ; 
+  TermExp : Term -> Exp ;
   KindExp : Kind -> Exp ;
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;
 
-  CoreAndProp : Prop -> Prop -> Prop ;
-  CoreOrProp : Prop -> Prop -> Prop ;
-  CoreIfProp : Prop -> Prop -> Prop ;
-  CoreIffProp : Prop -> Prop -> Prop ;
+  AndProp : [Prop] -> Prop ;
+  OrProp : [Prop] -> Prop ;
+  IfProp : Prop -> Prop -> Prop ;
+  IffProp : Prop -> Prop -> Prop ;
   NotProp : Prop -> Prop ;
   FalseProp : Prop ;
-  CoreAllProp : Ident -> Kind -> Prop -> Prop ;
-  CoreExistProp : Ident -> Kind -> Prop -> Prop ; 
+  AllProp : [ArgKind] -> Prop -> Prop ;
+  ExistProp : [ArgKind] -> Prop -> Prop ; 
   IdentProp : Ident -> Prop ;
   AppProp : Ident -> Exps -> Prop ;
 
-  IdentKind : Ident -> Kind ; 
+  TermKind : Term -> Kind ;
   SuchThatKind : Ident -> Kind -> Prop -> Kind ;
   AppKind : Ident -> Exps -> Kind ;
   FunKind : [ArgKind] -> Kind -> Kind ;
@@ -69,35 +89,31 @@ fun
   AbsProofExp : [Hypo] -> ProofExp -> ProofExp ;
 
   OneExps : Exp -> Exps ;
-  ManyExps : [Exp] -> Exps ;
+  AddExps : Exp -> Exps -> Exps ;
 
 -- using Constants
 
   AdjProp : Adj -> Exp -> Prop ;
   NotAdjProp : Adj -> Exp -> Prop ;
-  Adj2Prop : Adj2 -> Exp -> Exp -> Prop ;
-  AdjCProp : AdjC -> Exps -> Prop ;
-  NotAdjCProp : AdjC -> Exps -> Prop ;
-  AdjEProp : AdjE -> Exps -> Prop ;
-  NotAdjEProp : AdjE -> Exps -> Prop ;
+  ReladjProp : Reladj -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
+  SetKind : Set -> Kind ;
   NameExp : Name -> Exp ;
-  FunExp : Fun -> Exp -> Exp ;
-  Fun2Exp : Fun2 -> Exp -> Exp -> Exp ;
-  FunCExp : FunC -> Exps -> Exp ;
+  FunListExp : Fun -> Exps -> Exp ;
   LabelProofExp : Label -> ProofExp ;
+  ConstExp : Const -> Exp ;
+  OperListExp : Oper -> Exps -> Exp ; -- binary operation applied collectively
+  ComparAdj : Compar -> Exp -> Adj ;
   FamKind : Fam -> Kind -> Kind ;
-  Fam2Kind : Fam2 -> Kind -> Kind -> Kind ;
-  Noun1Prop : Noun1 -> Exp -> Prop ;
+  Fam2Kind : Fam -> Kind -> Kind -> Kind ;
   VerbProp : Verb -> Exp -> Prop ;
-  Verb2Prop : Verb2 -> Exp -> Exp -> Prop ;
-  Noun2Prop : Noun2 -> Exp -> Exp -> Prop ;
+  RelverbProp : Relverb -> Exp -> Exp -> Prop ;
+  RelnounProp : Relnoun -> Exp -> Exp -> Prop ;
   NotVerbProp : Verb -> Exp -> Prop ;
-  NotNoun1Prop : Noun1 -> Exp -> Prop ;
-  NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
-  NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
-  NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
-  Adj3Prop : Adj3 -> Exp -> Exp -> Exp -> Prop ;
+  NotRelverbProp : Relverb -> Exp -> Exp -> Prop ;
+  NotRelnounProp : Relnoun -> Exp -> Exp -> Prop ;
+  ComparnounProp : Comparnoun -> Exp -> Exp -> Prop ;
+  Pred3Prop : Pred3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
@@ -107,5 +123,6 @@ fun
   ElemKind : Kind -> Kind ;
 
   CoercionExp : Coercion -> Exp -> Exp ;
+
 
 }

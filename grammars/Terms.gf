@@ -1,56 +1,42 @@
 -- mathematical terms as they appear in "normal" mathematical text
 
-abstract Terms = {
+abstract Terms = Identifiers ** {
 
 cat
   Formula ;
   Declaration ;
   Equation ;
-  Eqsign ;
-  Term ;
+  Compar ;
   [Term] {1} ;
-  Ident ;
   Function ;
+  Const ;
+  Oper ;
+  Oper2 ;
 
 fun
-  FEquation : Equation -> Formula ;
-  FElem : [Term] -> Term -> Formula ;
-  FModulo : Term -> Term -> Term -> Formula ;
+  EquationFormula : Equation -> Formula ;
+  ElemFormula : [Term] -> Term -> Formula ;
   
-  DElem : [Term] -> Term -> Declaration ;
-  DFunction : Ident -> Term -> Term -> Declaration ;
+  ElemDeclaration : [Term] -> Term -> Declaration ;
+  FunctionDeclaration : Ident -> Term -> Term -> Declaration ;
 
-  EChain : Eqsign -> Term -> Equation -> Equation ;
-  EBinary : Eqsign -> Term -> Term -> Equation ;
+  ChainEquation : Compar -> Term -> Equation -> Equation ;
+  BinaryEquation : Compar -> Term -> Term -> Equation ;
 
-  TParenth : Term -> Term ; -- extra parentheses
+  ParenthTerm : Term -> Term ; -- extra parentheses
 
-  TTimes : Term -> Term -> Term ;
-  TNeg : Term -> Term ;
-  TApp : Function -> [Term] -> Term ;
+  AppFunctionTerm : Function -> [Term] -> Term ;
 
-  TSigma : Ident -> Term -> Term -> Term -> Term ;
-  TSum3dots : Term -> Term -> Term -> Term ;
-
-  TSeries : Ident -> Term -> Term -> Term ;
-  TIntegral : Ident -> Term -> Term -> Term -> Term ;
-
-  TEnumSet : [Term] -> Term ;
-
-  TIdent : Ident -> Term ;
-  TNumber : Int -> Term ; --- was float
-
-  FIdent : Ident -> Function ;
-  FDerivative : Function -> Function ;
-
-  StrIdent : String -> Ident ;
+  EnumSetTerm : [Term] -> Term ;
+  ComprehensionTerm : Term -> Term -> Formula -> Term ;
   
-  TFrac : Term -> Term -> Term ;
-  TComprehension : Term -> Term -> Formula -> Term ;
-  TPositive : Term -> Term ; -- R^+
-  TNegative : Term -> Term ;
-
-  TLog : Term -> Term -> Term ;
+  IdentFunction : Ident -> Function ;
+  DerivativeFunction : Function -> Function ;
   
   TextbfTerm : Term -> Term ;
+
+  ConstTerm : Const -> Term ;
+  OperTerm : Oper -> Term -> Term ;
+  Oper2Term : Oper2 -> Term -> Term -> Term ;
+  
 }

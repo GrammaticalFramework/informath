@@ -1,8 +1,8 @@
 incomplete concrete MathCoreFunctor of MathCore =
-  Categories
+  Terms,
+  UserConstants
 
  ** open
-    Utilities,
     Syntax,
     Grammar,
     Markup,
@@ -12,6 +12,24 @@ incomplete concrete MathCoreFunctor of MathCore =
 
 in {
 
+lincat
+  Kind = {cn : CN ; adv : Adv} ;
+  Prop = Proposition ;
+  Jmt = Text ;
+  Exps = {np : NP ; isPl : Bool} ;
+  [Prop] = Grammar.ListS ;
+  ArgKind = {cn : CN ; adv : Adv ; isPl : Bool} ;  -- isPl = idents.isPl
+  [ArgKind] = {sg, neg, pl : NP} ;  -- there exists an A / there exists no A / for all As
+  Hypo = Utt ;
+  [Hypo] = {text : Text ; isEmpty : Bool} ;
+  Local = {name, value : NP} ;
+  [Ident] = {np : NP ; isPl : Bool} ;
+  Proof = Text ;
+  [Proof] = Text ;
+  ProofExp = NP ;
+  Rule = Utt ;
+  [Rule] = Text ;
+  Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
 
 lin
   AxiomJmt label hypos prop =
@@ -71,24 +89,24 @@ lin
   TypedExp exp kind = mkNP the_Det (mkCN (mkCN kind.cn exp) kind.adv) ;
   EnumSetExp exps = mkNP the_Det (mkCN set_N (Syntax.mkAdv possess_Prep exps.np)) ;
 
-  CoreAndProp A B = complexProp (mkS and_Conj (partProp A) (partProp B)) ;
-  CoreOrProp A B = complexProp (mkS or_Conj (partProp A) (partProp B)) ;
-  CoreIfProp A B = complexProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
-  CoreIffProp A B = complexProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
+  AndProp props = complexProp (mkS and_Conj props) ;
+  OrProp props = complexProp (mkS or_Conj props) ;
+  IfProp A B = complexProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
+  IffProp A B = complexProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
   NotProp prop =
     simpleProp (mkS negPol (mkCl 
           (mkVP (mkNP the_Quant (mkCN case_N (Syntax.mkAdv that_Subj (partProp prop))))))) ;
-  CoreAllProp ident kind prop =
-    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (allNP (identKindCN ident kind))) (partProp prop)) ;
-  CoreExistProp ident kind prop =
-    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP (mkNP a_Det ((identKindCN ident kind))))) such_that_Subj (partProp prop)) ; 
+  AllProp argkinds prop =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet argkinds.pl)) (partProp prop)) ;
+  ExistProp argkinds prop =
+    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.sg)) such_that_Subj (partProp prop)) ; 
   IdentProp f = simpleProp (latexS (mkSymb f)) ;
   FalseProp = simpleProp (mkS (mkCl we_NP have_V2 (mkNP a_Det contradiction_N))) ;
   AppProp f exps = simpleProp (mkS (mkCl (latexNP (mkSymb f)) hold_V2 exps.np)) ;
 
-  IdentKind ident = {
+  TermKind term = {
     cn = mkCN element_N ;
-    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb ident))
+    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb term.s))
     } ;
   SuchThatKind ident kind prop = {
     cn = mkCN kind.cn (latexNP (mkSymb ident)) ;
@@ -100,7 +118,7 @@ lin
     } ;
   FunKind argkinds kind = {
     cn = mkCN function_N ;
-    adv = ccAdv (Syntax.mkAdv from_Prep argkinds.pl) (Syntax.mkAdv to_Prep (mkNP aPl_Det (useKind kind)))
+    adv = ccAdv (Syntax.mkAdv from_Prep argkinds.sg) (Syntax.mkAdv to_Prep (mkNP aPl_Det (useKind kind)))
     } ;
 
   KindArgKind kind = kind ** {isPl = False} ;
@@ -126,32 +144,70 @@ lin
   AbsProofExp hypos proofexp =
     mkNP proofexp <lin Adv (prefixText assuming_Str hypos.text) : Adv> ; ---- quick hack for completeness
 
+  BaseIdent ident =
+    {np = latexNP (mkSymb ident) ; isPl = False} ;
+  ConsIdent ident idents = {
+    np = case idents.isPl of {
+      False => mkNP and_Conj (latexNP (mkSymb ident)) idents.np ;
+      True => mkNP commaConj (latexNP (mkSymb ident)) idents.np 
+      } ;
+    isPl = True
+    } ;
+
   OneExps exp =
     {np = exp ; isPl = False} ;
-  ManyExps listexp =
-    {np = mkNP and_Conj listexp ; isPl = True} ;
+  AddExps exp exps =
+    {np = mkNP and_Conj exp exps.np ; isPl = True} ;
 
+  BaseArgKind kind = {
+    sg = case kind.isPl of {
+      True => mkNP aPl_Det (useKind kind) ;
+      False => mkNP aSg_Det (useKind kind)
+      } ;
+    neg = case kind.isPl of {
+      True => mkNP (mkDet no_Quant pluralNum) (useKind kind) ;
+      False => mkNP no_Quant (useKind kind)
+      } ;
+    pl = mkNP aPl_Det (useKind kind)
+    } ;
+  ConsArgKind kind kinds = {
+    sg = case kind.isPl of {
+      True => mkNP and_Conj (mkNP aPl_Det (useKind kind)) kinds.sg ;
+      False => mkNP and_Conj (mkNP aSg_Det (useKind kind)) kinds.sg
+      } ;
+    neg = case kind.isPl of {
+      True => mkNP and_Conj (mkNP (mkDet no_Quant pluralNum) (useKind kind)) kinds.neg ;
+      False => mkNP and_Conj (mkNP no_Quant (useKind kind)) kinds.neg
+      } ;
+    pl = mkNP and_Conj (mkNP aPl_Det (useKind kind)) kinds.pl 
+    } ;
+    
+  BaseHypo = {text = emptyText ; isEmpty = True} ;
+  ConsHypo hypo hypos = {text = mkText hypo hypos.text ; isEmpty = False} ;
+  
+  BaseProp a b = mkListS (partProp a) (partProp b) ;
+  ConsProp a bs = mkListS (partProp a) bs ;
+
+  BaseProof = emptyText ;
+  ConsProof proof proofs = mkText proof proofs ;
+
+  BaseRule rule = prefixText item_Label (mkText rule) ;
+  ConsRule rule rules = mkText (prefixText "\\item" (mkText rule)) rules ;
 
 -- using Constants
 
   AdjProp adj exp = simpleProp (mkS (mkCl exp adj)) ;
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
-  Adj2Prop rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
-  AdjCProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
-  AdjEProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
-  
+  ReladjProp rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
+  ComparAdj compar exp = Grammar.AdvAP compar.rel.ap (Syntax.mkAdv compar.rel.prep exp) ;
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
+  SetKind set = {cn = set.cn ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
-  FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
-  Fun2Exp f x y = case f.isColl of {
-    True => mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep1 (mkNP and_Conj x y))) ;
-    _ => mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y))
-    } ;
-  FunCExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
+  FunListExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
   LabelProofExp label = label.np ;
-  FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep (mkNP aPl_Det (useKind kind))} ;
+  ConstExp const = const.np ;
+  OperListExp op exps = mkNP the_Det (mkCN op.f.cn (Syntax.mkAdv op.f.prep exps.np)) ;
+  FamKind fam kind = {cn = fam.cn ; adv = Syntax.mkAdv fam.prep1 (mkNP aPl_Det (useKind kind))} ;
   Fam2Kind fam kind1 kind2 =
     let
       k1 = mkNP aPl_Det (useKind kind1) ;
@@ -162,16 +218,14 @@ lin
       True => Syntax.mkAdv fam.prep1 (mkNP and_Conj k1 k2)  
       }
     } ;
-  Noun1Prop noun exp = simpleProp (mkS (mkCl exp noun)) ; 
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
-  Verb2Prop verb x y = simpleProp (mkS (mkCl x verb y)) ; 
-  Noun2Prop rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  RelverbProp verb x y = simpleProp (mkS (mkCl x verb y)) ; 
+  RelnounProp rel x y = simpleProp (mkS (mkCl x (mkVP (mkCN rel y)))) ; 
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
-  NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
-  NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
-  NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
-  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
-  Adj3Prop pred x y z =
+  NotRelverbProp verb x y = simpleProp (mkS negPol (mkCl x verb y)) ; 
+  NotRelnounProp rel x y = simpleProp (mkS negPol (mkCl x (mkVP (mkCN rel y)))) ; 
+  ComparnounProp rel x y = simpleProp (mkS (mkCl x (mkVP ((mkCN rel.cn (Syntax.mkAdv rel.prep y)))))) ;
+  Pred3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 
 -- coercions, to disappear in Core2Informath
@@ -191,6 +245,29 @@ lin
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
 oper
+  prefixText : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s} ;
+
+  labelText : LabelT -> Text -> Text = \label, text ->
+    let period = if_then_Str label.isEmpty "" "." in
+    lin Text {s = (mkUtt label.np).s ++ period ++ text.s} ;
+
+  thenText : {text : Text ; isEmpty : Bool} -> S -> Text = \hypos, s ->
+    case hypos.isEmpty of {
+      True => mkText hypos.text (mkText (mkUtt s)) ;
+      False => mkText hypos.text (mkText (mkUtt (mkS thenText_Adv s)))
+	     | mkText hypos.text (mkText (mkUtt s))    ---- variants !!??
+      } ;
+
+  Proposition : Type = {s : S ; isComplex : Bool} ;
+
+  simpleProp : S -> Proposition = \s -> {s = s ; isComplex = False} ;
+  complexProp : S -> Proposition = \s -> {s = s ; isComplex = True} ;
+
+  topProp : Proposition -> S = \prop -> prop.s ;
+  partProp : Proposition -> S = \prop -> case prop.isComplex of {
+    True => parenthS prop.s ;
+    False => prop.s
+    } ;
 
   notionNP : {np : NP ; isPl : Bool} -> {cn : CN ; adv : Adv} -> NP = \idents, kind ->
     let det = case idents.isPl of {
@@ -205,17 +282,24 @@ oper
   definedAdv : NP -> Adv = \df ->
     Syntax.mkAdv defined_as_Prep df ;
 
+  useKind : {cn : CN ; adv : Adv} -> CN = \kind -> mkCN kind.cn kind.adv ;
+
+  latexNP : Symb -> NP = \x ->
+    symb (mkSymb ("$" ++ x.s ++ "$")) ;
+  latexS : Symb -> S = \x ->
+    symb (mkSymb ("$" ++ x.s ++ "$")) ;
+
+  parenthS : S -> S = \s -> Markup.MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
+
   by_Prep : Prep = by8means_Prep ;
 
   ccAdv : Adv -> Adv -> Adv = \x, y -> lin Adv {s = x.s ++ y.s} ;
 
-  identKindCN : Str -> {cn : CN ; adv : Adv} -> CN = \ident, kind ->
-    mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv ;
-
-  allNP : CN -> NP = \cn ->
-    mkNP all_Predet (mkNP aPl_Det cn) ;
+  item_Label : Str = "\\item" ;
 
 -- non-functor
   negPol : Pol = negativePol ;
+
+
 
 }

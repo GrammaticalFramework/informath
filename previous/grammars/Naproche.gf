@@ -1,4 +1,4 @@
-abstract Naproche = Categories, Terms ** {
+abstract Naproche = MathCore ** {
 
 -- extensions from Naproche-ZF
 
@@ -18,9 +18,7 @@ fun
 -- lexicon
   inhabited_Adj : Adj ;
   empty_Adj : Adj ;
-  disjoint_AdjC : AdjC ;
   disjoint_Compar : Compar ;
-  contain_Verb2 : Verb2 ;
   ni_Compar : Compar ;
   
 }

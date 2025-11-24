@@ -1,4 +1,4 @@
-concrete NaprocheEng of Naproche = CategoriesEng, TermsLatex **
+concrete NaprocheEng of Naproche = MathCoreEng **
 
   open
     SyntaxEng,
@@ -15,6 +15,8 @@ lin
   IffIffProp a b = simpleProp (lin S {s = a.s.s ++ "iff" ++ b.s.s}) ;
   WeHaveProp prop =
     simpleProp (mkS (mkCl we_NP (E.ComplBareVS have_VS prop.s))) ;
+---  WeHaveFormulaProp formula =
+---    simpleProp (mkS (mkCl we_NP have_V2 (latexNP (mkSymb formula.s)))) ;
   NoCommaAllProp argkinds prop =
     simpleProp (lin S {s = (SyntaxEng.mkAdv for_Prep (mkNP all_Predet argkinds.pl)).s ++ (partProp prop).s}) ;
   BareIdentsArgKind idents =
@@ -34,10 +36,8 @@ lin
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
-  disjoint_AdjC = mkAP (mkA "disjoint") ;
-  disjoint_Compar = "\\notmeets" ;
-  contain_Verb2 = mkV2 "contain" ;
-  ni_Compar = "\\ni" ;
+  disjoint_Compar = mkCompar "\\notmeets" "disjoint" "from" ;
+  ni_Compar = mkCompar "\\ni" "containing" "" ; ---- should be Relverb "contain"
   
 
 oper

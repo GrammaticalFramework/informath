@@ -1,4 +1,4 @@
-concrete NaprocheFre of Naproche = MathCoreFre **
+concrete NaprocheFre of Naproche = CategoriesFre, TermsLatex **
 
   open
     SyntaxFre,
@@ -12,10 +12,8 @@ in {
 lin
   -- we only need the lexicon, because we don't translate Naproche directly
   
-  inhabited_Adj = mkAP (mkA "habité") ;
-  empty_Adj = mkAP (mkA "vide") ;
-  disjoint_Compar = mkCompar "\\notmeets" (mkA "disjoint") genitive ;
-  ni_Compar = mkCompar "\\ni" "contenant" "" ; ---- should be Relverb "contenir"
-  
+  inhabited_Adj = mkAdj (mkA "habité") ;
+  empty_Adj = mkAdj (mkA "vide") ;
+  disjoint_AdjC = mkAdjC (mkA "disjoint") ;
   
 }

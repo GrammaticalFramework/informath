@@ -1,150 +1,91 @@
-resource UtilitiesFre =
+instance UtilitiesFre of Utilities =
 
 open
   SyntaxFre,
   ParadigmsFre,
   (P=ParadigmsFre),
   SymbolicFre,
-  (L=BaseConstantsLatex),
+  MarkupFre,
+  (I=IrregFre),
+  (E=ExtendFre),
+  (Mk=MakeStructuralFre),
   Formal,
   Prelude
 
 in {
+
 oper
-  RelationT : Type = {ap : AP ; prep : Prep} ;
-  FunctionT : Type = {cn : CN ; prep : Prep} ;
-  ConstantT : Type = {np : NP ; c : Str} ;
-  OperatorT : Type = {op : L.OperT ; f : FunctionT} ; 
-  ComparisonT : Type = {rel : RelationT ; op :  Str} ;
-  SetT : Type = {cn : CN ; c : Str} ;
-  FamilyT : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
-  LabelT = {np : NP ; isEmpty : Bool} ;
-  ComparnounT = {cn : CN ; prep : Prep ; op : Str} ;
-  Pred3T = {ap : AP ; prep1, prep2 : Prep} ;
 
-  mkNoun = overload {
-    mkNoun : Str -> CN
-      = \s -> mkCN (mkN s) ;
-    mkNoun : N -> CN
-      = \n -> mkCN n ;
-    mkNoun : CN -> CN
-      = \n -> n ;
-    mkNoun : Str -> Str -> CN
-      = \a, n -> mkCN (mkA a) (mkN n) ;
-    } ;
-    
-  mkSet = overload {
-    mkSet : Str -> Str -> SetT
-      = \c, s -> {cn = mkCN (mkN s) ; c = c} ;
-    mkSet : Str -> N -> SetT
-      = \c, n -> {cn = mkCN n ; c = c} ;
-    mkSet : Str -> Str -> Str -> SetT
-      = \c, a, n -> {cn = mkCN (mkA a) (mkN n) ; c = c} ;
-    mkSet : Str -> Str -> N -> SetT
-      = \c, a, n -> {cn = mkCN (mkA a) n ; c = c} ;
-    } ;
-    
-  mkFun = overload {
-    mkFun : Str -> FunctionT
-      = \s -> {cn = mkCN (mkN s) ; prep = possess_Prep} ;
-    mkFun : N -> FunctionT
-      = \n -> {cn = mkCN n ; prep = possess_Prep} ;
-    mkFun : CN -> FunctionT
-      = \n -> {cn = n ; prep = possess_Prep} ;
-    mkFun : N -> Prep -> FunctionT
-      = \n, p -> {cn = mkCN n ; prep = p} ;
-    mkFun : N -> Str -> FunctionT
-      = \n, s -> {cn = mkCN (mkCN n) (P.mkAdv s) ; prep = possess_Prep} ;
-    mkFun : (a, n : Str) -> FunctionT
-      = \a, n -> {cn = mkCN (mkA a) (mkN n) ; prep = possess_Prep} ;
-    mkFun : (a, b, n : Str) -> FunctionT
-      = \a, b, n -> {cn = mkCN (mkA a) (mkCN (mkA b) (mkN n)) ; prep = possess_Prep} ;
-    } ;
+  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
+  displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
-  mkFam = overload {
-    mkFam : Str -> FamilyT = \s ->
-      {cn = mkCN (mkN s) ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : Str -> Prep -> Prep -> FamilyT = \s, p1, p2 ->
-      {cn = mkCN (mkN s) ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
-    mkFam : CN -> FamilyT = \cn ->
-      {cn = cn ; prep1, prep2 = possess_Prep ; isCollective = True} ;
-    mkFam : CN -> Prep -> Prep -> FamilyT = \cn, p1, p2 ->
-      {cn = cn ; prep1 = p1 ; prep2 = p2 ; isCollective = False} ;
-    } ;
+  strN : Str -> N = mkN ;
+  strA : Str -> A = mkA ;
+  strV : Str -> V = mkV ;
+  strPN : Str -> PN = mkPN ;
+  strPrep : Str -> Prep = mkPrep ;
 
-  mkAdj = overload {
-    mkAdj : Str -> AP
-      = \s -> mkAP (mkA s) ;
-    } ;
-    
-  mkRel = overload {
-    mkRel : Str -> Str -> {ap : AP ; prep : Prep}
-      = \s, p -> {ap = mkAP (mkA s) ; prep = mkPrep p} ;
-    mkRel : AP -> Prep -> {ap : AP ; prep : Prep}
-      = \ap, prep -> {ap = ap ; prep = prep}
-    } ;
-    
-  mkName = overload {
-    mkName : Str -> NP
-      = \s -> mkNP (mkPN s) ;
-    mkName : N -> NP
-      = \n -> mkNP n
-    } ;
-
-  mkLabel = overload {
-    mkLabel : Str -> LabelT
-      = \s -> {np = mkNP (mkPN s) ; isEmpty = False}
-    } ;
-
-  mkConst = overload {
-    mkConst : Str -> Str -> ConstantT
-      = \c, w -> {np = mkName w ; c = c} ;
-    mkConst : Str -> NP -> ConstantT
-      = \c, np -> {np = np ; c = c} ;
-    } ;
-    
-  mkOper = overload {
-    mkOper : L.OperT -> Str -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> N -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> CN -> OperatorT
-      = \op, w -> {op = op ; f = mkFun w} ;
-    mkOper : L.OperT -> N -> Prep -> OperatorT
-      = \op, w, prep -> {op = op ; f = mkFun w prep} ; 
-    } ;
-
-  mkCompar = overload {
-    mkCompar : Str -> Str -> Str -> ComparisonT
-      = \op, s, p -> {rel = mkRel s p ; op = op} ;
-    mkCompar : Str -> A -> Prep -> ComparisonT
-      = \op, a, prep -> {rel = mkRel (mkAP a) prep ; op = op} ;
-    mkCompar : Str -> AP -> Prep -> ComparisonT
-      = \op, ap, prep -> {rel = mkRel ap prep ; op = op} ;
-    } ;
-
-  mkComparnoun = overload {
-    mkComparnoun : Str -> Str -> ComparnounT
-      = \op, s -> {cn = mkCN (mkN s) ; prep = possess_Prep ; op = op} ;
-    mkComparnoun : Str -> N -> ComparnounT
-      = \op, n -> {cn = mkCN n ; prep = possess_Prep ; op = op} ;
-    mkComparnoun : Str -> CN -> ComparnounT
-      = \op, cn -> {cn = cn ; prep = possess_Prep ; op = op} ;
-    mkComparnoun : Str -> CN -> Prep -> ComparnounT
-      = \op, cn, prep -> {cn = cn ; prep = prep ; op = op} ;
-    } ;
-
-  mkPred3 = overload {
-    mkPred3 : AP -> Prep -> Prep -> Pred3T
-      = \ap, p1, p2 -> {ap = ap ; prep1 = p1 ; prep2 = p2} ;
-    } ;
-
-  latexName : Str -> NP
-      = \s -> symb (mkSymb ("$" ++ s ++ "$")) ;
-
-  nombre_N : N = mkN "nombre" masculine ;
-  type_N = mkN "type" masculine ;
-  ensemble_N = mkN "ensemble" masculine ;
+  define_V2 : V2 = mkV2 (mkV "définir") ;
+  assume_VS : VS = mkVS (mkV "supposer") ;
+  type_CN : CN = mkCN (mkN "type" masculine) ;
+  element_N : N = mkN "élément" ;
+  case_N : N = mkN "cas" ;
+  contradiction_N : N = mkN "contradiction" ;
+  then_Adv : Adv = ParadigmsFre.mkAdv "alors" ;
+  thenText_Adv : Adv = ParadigmsFre.mkAdv "alors" ;
+  such_that_Subj : Subj = Mk.mkSubjSubj "tel que" ; -----
+  applied_to_Prep : Prep = mkPrep "appliqué à" ; ----
+  defined_as_Prep : Prep = mkPrep "défini comme" ; ----
+  function_N : N = mkN "fonction" ;
+  basic_type_CN : CN = mkCN type_CN (ParadigmsFre.mkAdv "de base") ;
+  map_V3 = mkV3 I.envoyer_V accusative dative ; ----
+  say_VS = mkVS I.dire_V ;
+  hold_V2 = mkV2 I.tenir_V for_Prep ; ----
+  arbitrary_A = mkA "arbitraire" ;
+  set_N = mkN "ensemble" masculine ;
   combinaison_N = mkN "combinaison" feminine ;
 
+  iff_Subj : Subj = Mk.mkSubj "si et seulement si" ;
+  commaConj : Conj = Mk.mkConj "," ;
+
+  by_cases_Str = "par des cas" ;
+  proof_Str = "démonstration" ;
+  axiom_Str = "axiome" ;
+  theorem_Str = "théorème" ;
+  definition_Str = "définition" ;
+  basic_concept_Str = "concept de base" ;
+
+  instance_N = mkN "instance" ;
+  prove_VS = mkVS (mkV "démontrer") ;
+  
+  as_Prep : Prep = mkPrep "comme" ;
+
+  let_Str : Bool => Str = table {False => "soit" ; True => "soient"} ;
+  assuming_Str = "en supposant :" ;
+
+  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
+  imply_V2 : V2 = mkV2 (mkV "impliquer") ;
+  only_if_Subj : Subj = Mk.mkSubj "seulement si" ;
+
+{-
+  number_Noun = mkCN (mkN "tal" "tal") ;
+  range_V3 = mkV3 (mkV "löper") from_Prep to_Prep ;
+  sum_N = mkN "summa" ;
+  where_Subj = mkSubj "där" ;
+
+  given_A2 = mkA2 (mkA "given") as_Prep ;
+  infinity_NP = mkNP (mkN "oändlighet") ;
+  series_N = mkN "serie" "serier" ;
+  integral_N = mkN "integral" ;
+-}
+
+  latexSymbNP : Symb -> NP = \x ->
+    symb (mkSymb ("$" ++ x.s ++ "$")) ;
+
+  nombre_N : N = mkN "nombre" masculine ;
+  tom_A : A = mkA "vide" ;
+
+  ensemble_N = mkN "ensemble" masculine ;
+  element_N = mkN "élément" ;
+  
 }

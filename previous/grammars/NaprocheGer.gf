@@ -1,11 +1,10 @@
-concrete NaprocheGer of Naproche = CategoriesGer, TermsLatex **
+concrete NaprocheGer of Naproche = MathCoreGer **
 
   open
     SyntaxGer,
     ParadigmsGer,
     UtilitiesGer,
     SymbolicGer,
-    IrregGer,
     Prelude,
     (E = ExtendGer)
 in {
@@ -15,8 +14,8 @@ lin
   
   inhabited_Adj = mkAP (mkA "nichtleer") ;
   empty_Adj = mkAP (mkA "leer") ;
-  disjoint_AdjC = mkAdjC (mkAP (mkA "disjunkt")) ;
-  contain_Verb2 = mkVerb2 (fixprefixV "ent" halten_V) ;
-  ni_Compar = "\\ni" ;
-
+  disjoint_Compar = mkCompar "\\notmeets" (mkAP (mkA "disjunkt")) von_Prep ;
+  ni_Compar = mkCompar "\\ni" "enthaltend" "" ; ---- should be Relverb "enthalten"
+  
+  
 }

@@ -5,16 +5,16 @@ GF_FILES := $(wildcard grammars/*.gf)
 
 lang=Eng
 
-all: grammars/Informath.pgf next/grammars/NextInformath.pgf Dedukti Agda Rocq Lean RunInformath 
+all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda Rocq Lean RunInformath 
 
 .PHONY: all Dedukti Agda Lean Rocq demo RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
 
-# if you want to use the -next option, also do this
-next/grammars/NextInformath.pgf: $(GF_FILES)
-	cd next/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 -name=NextInformath InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
+# if you want to use the -previous option, also do this
+previous/grammars/PreviousInformath.pgf: $(GF_FILES)
+	cd previous/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 -name=PreviousInformath --probs=Informath.probs InformathEng.gf InformathFre.gf InformathSwe.gf InformathGer.gf
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
@@ -64,10 +64,10 @@ demo:
 	dk check out/texx.dk
 	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
-	$(RUN) -to-latex-doc -variations test/top100.dk >out/top100.tex
-	echo "consider pdflatex out/top100.tex"
-	$(RUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
+	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
+	make top100
+
 
 top100:
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
@@ -141,4 +141,3 @@ previousdemo:
 	echo "consider pdflatex out/top100.tex"
 	$(PREVIOUSRUN) -to-latex-file -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
-
