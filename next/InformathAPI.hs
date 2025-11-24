@@ -163,9 +163,9 @@ dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
 annotateDedukti :: Env -> Jmt -> Jmt
-annotateDedukti env t = annotateDkIdents (constantTable env) t
+annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 
-readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable)
+readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
 readConstantTable = buildConstantTable
 
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
@@ -295,7 +295,7 @@ ext2core :: GJmt -> GJmt
 ext2core = IMC.semantics
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
-gjmt2dedukti env = MCD.jmt2dedukti (backConstantTable env) . ext2core
+gjmt2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env) . ext2core
 
 nat2core :: PGF -> Language -> String -> Maybe GJmt
 nat2core pgf lang str = Nothing ----
@@ -317,7 +317,7 @@ nat2ext :: PGF -> Language -> String -> [GJmt]
 nat2ext pgf lang str = []
 
 core2dedukti :: Env -> GJmt -> [Jmt]
-core2dedukti env = MCD.jmt2dedukti (backConstantTable env)
+core2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env)
 
 -- these are syntactic conversions, therefore total
 -- necessary imports have to be added to the generated files
@@ -361,7 +361,7 @@ readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  (ct, cvt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
+  (ct, cvt, dt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
   return Env {
@@ -373,6 +373,7 @@ readEnv args = do
     synonymConstantTableSem = buildSynonymConstantTableSem ct,
     backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
+    dropTable = dt,
     formalisms = words "agda dedukti lean rocq",
     langs = languages gr, ---- relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
@@ -382,6 +383,4 @@ readEnv args = do
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro
     }
-
-
 

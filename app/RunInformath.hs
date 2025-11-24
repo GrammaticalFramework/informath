@@ -36,7 +36,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
-      (ct, _) <- readConstantTable (grammar env) [file]
+      (ct, _, _) <- readConstantTable (grammar env) [file]
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
     _ -> putStrLn helpMsg4 
@@ -96,11 +96,9 @@ helpMsg4 = unlines [
 {- TODO from previous version
 
   -conv=<ident>+  special dedukti conversions from defined in a separate file
-  -test-ambiguity test for ambiguity when ranking (can be expensive)
   -dropdefs       drop definition parts of Dedukti code
   -dropqualifs    strip qualifiers of idents
   -dropcoercions  strip named coercions, only leaving their last arguments
-  -dropfirstargs  drop first k arguments of given functions (usually type arguments)
   -peano2int      convert succ/0 natural numbers to sequences of digits
   -idtypes        print the types identifiers in a .dk file
 

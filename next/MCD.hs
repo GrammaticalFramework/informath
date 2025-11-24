@@ -15,8 +15,12 @@ import Data.List (intersperse)
 import qualified Data.Map as M
 
 
-jmt2dedukti :: M.Map QIdent [QIdent] -> GJmt -> [Jmt]
-jmt2dedukti lb = map eliminateLocalDefinitions . applyLookBack lb . jmt2jmt
+jmt2dedukti :: M.Map QIdent [QIdent] -> M.Map QIdent Int -> GJmt -> [Jmt]
+jmt2dedukti lb dt =
+  map eliminateLocalDefinitions .
+  map (restoreFirstArguments dt) .
+  applyLookBack lb .
+  jmt2jmt
 
 -- this is where the GF identifier ambiguity is resolved
 applyLookBack ::  M.Map QIdent [QIdent] -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]

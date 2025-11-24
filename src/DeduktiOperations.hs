@@ -112,14 +112,27 @@ ignoreCoercions cs t = case t of
   _ -> composOp (ignoreCoercions cs) t
 
 -- typically, ignore explicit type arguments to form a polymorphic expression
-ignoreFirstArguments ::[(QIdent, Int)] -> Tree a -> Tree a
+ignoreFirstArguments ::M.Map QIdent Int -> Tree a -> Tree a
 ignoreFirstArguments cns t = case t of
   EApp _ _ -> case splitApp t of
-    (EIdent f, xs@(_:_)) -> case lookup f cns of
+    (EIdent f, xs@(_:_)) -> case M.lookup f cns of
       Just n -> foldl EApp (EIdent f) (map (ignoreFirstArguments cns) (drop n xs))
       _ -> foldl EApp (EIdent f) (map (ignoreFirstArguments cns) xs)
     (f, xs) -> foldl EApp (ignoreFirstArguments cns f) (map (ignoreFirstArguments cns) xs)
   _ -> composOp (ignoreFirstArguments cns) t
+
+restoreFirstArguments ::M.Map QIdent Int -> Tree a -> Tree a
+restoreFirstArguments cns t = case t of
+  EApp _ _ -> case splitApp t of
+    (EIdent f, xs@(_:_)) -> case M.lookup f cns of
+      Just n -> foldl EApp (EIdent f) (replicate n metaExp ++ map (restoreFirstArguments cns) xs)
+      _ -> foldl EApp (EIdent f) (map (restoreFirstArguments cns) xs)
+    (f, xs) -> foldl EApp (restoreFirstArguments cns f) (map (restoreFirstArguments cns) xs)
+  _ -> composOp (restoreFirstArguments cns) t
+
+
+metaExp :: Exp
+metaExp = EIdent (QIdent "{|?|}")
 
 
 eliminateLocalDefinitions :: Tree a -> Tree a

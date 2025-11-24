@@ -217,5 +217,7 @@ def empty : Set -> Prop :=
 def inhabited : Set -> Prop :=
   A => not (empty A).
  
+(; next ;)
 
+Equ : (A : Set) -> Elem A -> Elem A -> Prop.
 

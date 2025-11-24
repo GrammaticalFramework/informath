@@ -25,9 +25,14 @@ type Formalism = String
 symbolicCats :: S.Set Cat
 symbolicCats = S.fromList [mkCId c | c <- words "Formula Term Compar Const Oper Oper2"]
 
-
+-- conversion from Dk to GF, with synonyms and category information
 type ConstantTable = M.Map QIdent ConstantTableEntry
+
+-- conversion from Dk to other formalisms
 type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
+
+-- conversions in Dk that drop a number of initial arguments
+type DropTable = M.Map QIdent Int
 
 data ConstantTableEntry = ConstantTableEntry {
   primary  :: (Fun, Type),
@@ -97,20 +102,23 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable)
+buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
 buildConstantTable pgf dkgfs = do
   entrylines <- mapM readFile dkgfs >>= return . filter (not . null) . map words . concatMap lines
   let constantlines = filter isConstantEntry entrylines
   let conversionlines = filter isConversion entrylines
+  let droplines = filter isDrop entrylines
   let constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map mkCId gfids)) | qid:gfids <- constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
-  return (constantTable, conversionTable)
+  let dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
+  return (constantTable, conversionTable, dropTable)
  where
    isConstantEntry line = head (head line) /= '#'
    isConversion line = head line == "#CONV"
+   isDrop line = head line == "#DROP"
 
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
@@ -171,8 +179,8 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate idents with cats and funs, just the primary
-annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
-annotateDkIdents table = annot [] where
+annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> DkTree a
+annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
 
   annot :: forall a. [QIdent] -> DkTree a -> DkTree a
   annot bounds t = case t of

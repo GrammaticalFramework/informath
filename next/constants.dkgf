@@ -105,3 +105,7 @@ inhabited inhabited_Adj
 #CONV rocq exists Exist
 #CONV rocq Nat nat
 #CONV rocq _ x_
+
+Equ Eq_Adj2 Eq_AdjE Eq_Compar
+#DROP Equ 1
+
