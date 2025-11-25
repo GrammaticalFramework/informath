@@ -4,9 +4,15 @@
 
 ## NEW
 
+24 November 2025: The "-next" version is now default and "-previous" must be invoked with a flag. The previous version will be deprecated very soon, as all its functionality is available in the default version.
+
+## Documentation
+
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
 
 [Updated slides shown in Saclay, Prague, and some other places in 2025](./doc/dedukti-gf-2025.pdf)
+
+[InformathAPI haddock-generated documentation](./doc/InformathAPI.html)
 
 ## The Informath project
 
@@ -63,7 +69,7 @@ The [src](./src/) directory contains
 - a translator from MathCore to Dedukti and vice-versa
 - translations between MathCore and Informath
 - [BaseConstants.dk](./src/BaseConstants.dk) of logical and numeric operations assumed in the translations, and correspoonding files for Agda, Rocq, and Lean
-- [base_constants.dkgf](./src/base_constants.dkgf), a symbol table for converting Dedukti constants to GF abstract syntax functions, read from this file by the conversion program
+- [baseconstants.dkgf](./src/baseconstants.dkgf), a symbol table for converting Dedukti constants to GF abstract syntax functions, read from this file by the conversion program
 
 The [test/](./test/) directory contains
 - some test material and scripts 
@@ -242,7 +248,7 @@ _Under construction, will work in a different way in -next_
 
 The lexicon part part of the GF grammar (files grammars/VerbalConstants*, SymbolicConstants*, UserConstants*) give verbalizations to defined constants in .dk files.
 
-The mapping between Dedukti and GF is defined in .dkgf files, by default in [base_constants.dkgf](src/base_constants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files recognizes three kinds of lines;
+The mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files recognizes three kinds of lines;
 - `<DeduktiIdent> <GFFunction>+`: different GF functions usable for expressing the Dedukti concept
 - `#CONV <formalism> <DeduktiIdent> <FormalismIdent>`: conversion of Dedukti identifier to another formalism (e.g. its standard library function) 
 - `#DROP <DeduktiIdent> <int>`: drop a number of initial arguments from the Dedukti function application
@@ -262,29 +268,27 @@ The following categories of new constants are currently supported by the grammar
 ```
   -- GF cat         usage                           example
 —-------------------------------------------------------------------
-  Noun ;    -- Kind                 -- integer
-  Fam ;     -- Kind -> Kind         -- list of integers
-  Fam2 ;    -- Kind -> Kind -> Kind -- function from reals to integers
-  Noun1 ;   -- Exp -> Prop          -- (a) prime
-  Noun2 ;   -- Exp -> Exp -> Prop   -- divisor of
   Adj ;     -- Exp -> Prop          -- even
   Adj2 ;    -- Exp -> Exp -> Prop   -- divisible by
-  AdjE ;    -- [Exp] -> Prop        -- equal (equivalence relation)
+  Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
   AdjC ;    -- [Exp] -> Prop        -- distinct (collective)
-  Verb ;    -- Exp -> Exp           -- converge
-  Verb2 ;   -- Exp -> Exp -> Prop   -- divide
-  Name ;    -- Exp                  -- the empty set
+  AdjE ;    -- [Exp] -> Prop        -- equal (equivalence relation)
+  Compar ;  -- Term -> Term -> Term -- <
+  Const ;   -- Term                 -- \pi
+  Fam ;     -- Kind -> Kind         -- list of integers
+  Fam2 ;    -- Kind -> Kind -> Kind -- function from reals to integers
   Fun ;     -- Exp -> Exp           -- the square of
   Fun2 ;    -- Exp -> Exp -> Exp    -- the quotient of
   FunC ;    -- [Exp] -> Exp         -- the sum of
-  Label ;   -- Exp                  -- theorem 1
-  Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
-  Compar ;  -- Term -> Term -> Term -- <
-  Const ;   -- Term                 -- \pi
+  Label ;   -- ProofExp             -- theorem 1
+  Name ;    -- Exp                  -- the empty set
+  Noun ;    -- Kind                 -- integer
+  Noun1 ;   -- Exp -> Prop          -- (a) prime
+  Noun2 ;   -- Exp -> Exp -> Prop   -- divisor of
   Oper ;    -- Term -> Term         -- \sqrt
   Oper2 ;   -- Term -> Term -> Term -- +
-
-
+  Verb ;    -- Exp -> Exp           -- converge
+  Verb2 ;   -- Exp -> Exp -> Prop   -- divide
 ```
 
 
