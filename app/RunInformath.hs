@@ -7,6 +7,7 @@ import Informath3 (main3) ---- to be deprecated
 
 import Environment
 import InformathAPI
+import Utils (showFreqs)
 
 import System.Environment (getArgs) 
 

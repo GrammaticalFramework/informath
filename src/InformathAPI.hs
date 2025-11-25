@@ -1,7 +1,11 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 
--- top-level conversions between formats
+{-| This file defines top-level conversions between different formats.
+The main directions are from Dedukti to Agda, Lean, and Rocq on the formal side
+and English, French, German, and Swedish on the natural language side.
+Also translations directly between natural languages are possible.
+-}
 
 module InformathAPI where
 
@@ -29,46 +33,71 @@ import Informath
 import PGF
 
 import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
-------import System.Random
-import Data.Char (isDigit, toUpper) --- low-level auxiliaries
+import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 
--- default source files
 
-grammarFile = "grammars/Informath.pgf"
-baseConstantFile = "src/BaseConstants.dk"
+-- * Default source files, which can be changed in Env flags (see RunInformath -help)
+
+grammarFile = "grammars/Informath.pgf" 
+baseConstantFile = "src/BaseConstants.dk"  
 constantTableFile = "src/baseconstants.dkgf"
 
--- main types involved
+-- * Main types involved
 
+-- | GF abstract syntax tree
 type GFTree = Expr
-type DkJmt = Jmt
+
+-- | Dedukti judgement
+type DkJmt = Jmt   
+
+-- * Main conversion steps
+
+-- | The whole line of generation from Dedukti to formal and natural languages.
+
+processDeduktiModule :: Env -> Module -> [GenResult]
+processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
+
+-- | The whole line of parsing latex code and converting to Dedukti.
+-- | This assumes that parsing units are single lines not starting with \ or %
+
+processLatex :: Env -> String -> [ParseResult]
+processLatex env = map (processLatexLine env) . filter parsable . lines
+ where
+   parsable line = not (null line) && notElem (head line) "\\%" 
 
 
--- result of conversion from Dedukti, with intermediate phases for debugging
+-- * Conversion outcomes
+
+-- | The result of conversion from Dedukti, with intermediate phases available for debugging.
 
 data GenResult = GenResult {
   originalDedukti  :: Jmt,
   annotatedDedukti :: Jmt,
   coreGF           :: GFTree,
   nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])],
-  backToDedukti    :: [Jmt]  --- for debugging NLG and semantics
+  backToDedukti    :: [Jmt]  --- | for debugging NLG and semantics
   }
 
--- when just converting form Dk to another formalism
-dummyGenResult :: Jmt -> GenResult
-dummyGenResult jmt = GenResult jmt jmt undefined [] []
+-- | The result of conversion from informal Latex text, with intermediate phases for debugging.
+---- | TODO: complete formalResults with type checking in Dedukt.
 
-printResults :: Env -> [String] -> [String]
-printResults env ss = 
-  if isFlag "-to-latex-doc" env
-  then toLatexDoc (intersperse "" ss)
-  else ss
+data ParseResult = ParseResult {
+  originalLine  :: String,
+  lexedLine     :: String,
+  termIndex     :: [String],
+  indexedLine   :: String,
+  parseMessage  :: String,
+  unknownWords  :: [String],
+  parseResults  :: [GFTree],
+  formalResults :: [(GFTree, GFTree, GFTree, [Jmt])], -- | parsed, unindexed, normalized
+  transResults  :: [String] -- | back-translation or translation to another language
+  }
 
--- conversion that produces the whole line of generation from Dedukti
 
-processDeduktiModule :: Env -> Module -> [GenResult]
-processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
+-- * The conversions in more detail
+
+-- | Processing a single Dedukti judgement.
 
 processJmt :: Env -> Jmt -> GenResult
 processJmt env djmt =
@@ -92,30 +121,12 @@ processJmt env djmt =
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
 
-
--- result of conversion from informal Latex text, with intermediate phases for debugging
----- TODO: complete formalResults with type checking in Dedukti
-
-data ParseResult = ParseResult {
-  originalLine  :: String,
-  lexedLine     :: String,
-  termIndex     :: [String],
-  indexedLine   :: String,
-  parseMessage  :: String,
-  unknownWords  :: [String],
-  parseResults  :: [GFTree],
-  formalResults :: [(GFTree, GFTree, GFTree, [Jmt])], -- parsed, unindexed, normalized
-  transResults  :: [String] -- back-translation or translation to another language
-  }
+-- | When just converting form Dk to another formalism, no GF is needed.
+dummyGenResult :: Jmt -> GenResult
+dummyGenResult jmt = GenResult jmt jmt undefined [] []
 
 
--- conversion that produces the whole line of parsing latex code and converting to Dedukti
--- so far assuming that parsing units are single lines not starting with \ or %
-
-processLatex :: Env -> String -> [ParseResult]
-processLatex env = map (processLatexLine env) . filter parsable . lines
- where
-   parsable line = not (null line) && notElem (head line) "\\%" 
+-- | Processing a single line of LaTeX.
 
 processLatexLine :: Env -> String -> ParseResult
 processLatexLine env s =
@@ -146,7 +157,10 @@ processLatexLine env s =
         (unlex env (gftree2nat env (toLang env) t)) | t <- ts]
     }
 
--- conversions
+
+-- * Dedukti-internal onversions
+
+-- | Selected by flags in the environment, see -help.
 
 applyDeduktiConversions :: Env -> DkTree a -> DkTree a
 applyDeduktiConversions env t = foldl (flip ($)) t fs where
@@ -158,12 +172,16 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
          ], isFlag flag env
        ]
 
+-- * Phases of the conversion pipeline
 
+-- | Annotate Dedukti with GF information.
+annotateDedukti :: Env -> Jmt -> Jmt
+annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
+
+-- | From annotated Dedukti to MathCore.
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
-annotateDedukti :: Env -> Jmt -> Jmt
-annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 
 readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
 readConstantTable = buildConstantTable
@@ -174,6 +192,12 @@ checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
 printConstantTable :: ConstantTable -> String
 printConstantTable = showConstantTable
 
+
+-- * Printing conversions
+
+-- ** Conversions starting from Dedukti
+
+-- | With or without intermediate phases, as selected by flags in Env.
 printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
@@ -182,14 +206,8 @@ printGenResult env result = case 0 of
   _ | isFlag "-parallel-data" env -> [showParallelData env result] 
   _ -> printNLGOutput env result
 
-printRank :: ((GFTree, String), (Scores, Int)) -> String
-printRank ((tree, str), (scores, rank)) = mkJSONObject [
-  mkJSONField "tree" (stringJSON (showExpr [] tree)),
-  mkJSONField "lin" (stringJSON str),
-  mkJSONField "scores" (stringJSON (show scores)),
-  mkJSONField "penalty" (stringJSON (show rank))
-  ]
 
+-- | Just the filan NLG results.
 printNLGOutput :: Env -> GenResult -> [String]
 printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
   Just phrases -> map (snd . fst) phrases
@@ -206,15 +224,27 @@ showJsonGenResult env result = mkJSONObject [
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]
     ]
 
+-- | The scores for each tree an string, in JSON.
+printRank :: ((GFTree, String), (Scores, Int)) -> String
+printRank ((tree, str), (scores, rank)) = mkJSONObject [
+  mkJSONField "tree" (stringJSON (showExpr [] tree)),
+  mkJSONField "lin" (stringJSON str),
+  mkJSONField "scores" (stringJSON (show scores)),
+  mkJSONField "penalty" (stringJSON (show rank))
+  ]
+
+-- | Parallel data, usable for extracting pairs for trainingan an LLN.
 showParallelData :: Env -> GenResult -> String
 showParallelData env result = mkJSONObject $ [
-    mkJSONField formalism (stringJSON (printFormalismJmt env formalism (originalDedukti result)))
-      | formalism <- formalisms env
+    mkJSONField formalism
+      (stringJSON (printFormalismJmt env formalism (originalDedukti result)))
+        | formalism <- formalisms env
   ] ++ [  
     mkJSONListField (showCId lang) (map (stringJSON . snd . fst) ranks)
       | (lang, ranks) <- nlgResults result
   ]
 
+-- | Converting Dedukti code to different formalisms.
 printFormalismJmt :: Env -> String -> Jmt -> String
 printFormalismJmt env formalism jmt = case formalism of
   "agda" -> dedukti2agda env jmt
@@ -223,6 +253,29 @@ printFormalismJmt env formalism jmt = case formalism of
   "dedukti" -> printDeduktiEnv env jmt
   f -> error $ "formalism not available: " ++ f ++ ". Available values: " ++ unwords (formalisms env)
 
+
+-- | These are syntactic conversions, therefore total but may fail to typecheck in the targets.
+-- | Notice: imports may have to be added to the generated files.
+
+dedukti2agda :: Env -> Jmt -> String
+dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "agda" (conversionTable env))
+
+dedukti2lean :: Env -> Jmt -> String
+dedukti2lean env jmt = unlines [DL.printLeanJmt (DL.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "lean" (conversionTable env))
+
+dedukti2rocq :: Env -> Jmt -> String
+dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
+  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTable env))
+
+-- | TODO: type-check a Dedukti judgement.
+checkJmt :: Jmt -> Bool
+checkJmt jmt = True ----
+
+-- ** Conversions starting from natural language
+
+-- | Print the parse results with all intermediate phases.
 printParseResult :: Env -> ParseResult -> [String]
 printParseResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
@@ -240,10 +293,12 @@ printParseResult env result = case 0 of
     ]]
   _ -> printDeduktiOutput env result
 
+-- | Print just the resulting Dedukti code.
 printDeduktiOutput :: Env -> ParseResult -> [String]
 printDeduktiOutput env result =
   [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
 
+-- | Print both GF trees and resulting Dedukti, in JSON. 
 printFinalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> String
 printFinalParseResult env (t, ut, ct, jmts) = mkJSONObject [
   mkJSONField "parseTree" (stringJSON (showExpr [] t)),
@@ -252,41 +307,28 @@ printFinalParseResult env (t, ut, ct, jmts) = mkJSONObject [
   mkJSONListField "dedukti" (map (stringJSON . printDeduktiEnv env) jmts)
   ]
 
--- read base constants from one or more files; in translations, only one file
-readDeduktiModule :: [FilePath] -> IO Module
-readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . unlines
 
-parseDeduktiModule :: String -> Module
-parseDeduktiModule s = case pModule (myLexer s) of
-  Bad e -> error ("parse error: " ++ e)
-  Ok mo -> mo
+-- ** General printing facilities
 
---printDeduktiEnv :: Env -> DkTree a -> String
+-- | Results are printed line by line, or with a Latex preamble in a document environment. 
+printResults :: Env -> [String] -> [String]
+printResults env ss = 
+  if isFlag "-to-latex-doc" env
+  then toLatexDoc (intersperse "" ss)
+  else ss
+
+-- | To print Dedukti under environment options, given in flags. 
+printDeduktiEnv :: Print a => Env -> a -> String
 printDeduktiEnv env t =
   if (isFlag "-dedukti-tokens" env)
   then unwords (deduktiTokens (printTree t))
   else printTree t
 
-    
-readGFGrammar :: FilePath -> IO PGF
-readGFGrammar = readPGF
 
-mkLanguage :: PGF -> String -> Language
-mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
-  Just lang | elem lang (languages pgf) -> lang
-  _ -> error ("not a valid language: " ++ code)
-
-checkJmt :: Jmt -> Bool
-checkJmt jmt = True ----
+-- ** Seldom explicitly needed one-step conversion.
 
 core2ext :: Env -> GJmt -> [GJmt]
 core2ext env jmt = MCI.nlg env jmt
-
-gftree2nat :: Env -> Language -> GFTree -> String
-gftree2nat env lang tree = linearize (grammar env) lang tree
-
-unlex :: Env -> String -> String
-unlex env s = if (isFlag "-no-unlex" env) then s else unlextex s
 
 rankGFTreesAndNat :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))]
 rankGFTreesAndNat = rankTreesAndStrings
@@ -297,11 +339,48 @@ ext2core = IMC.semantics
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
 gjmt2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env) . ext2core
 
-nat2core :: PGF -> Language -> String -> Maybe GJmt
-nat2core pgf lang str = Nothing ----
+core2dedukti :: Env -> GJmt -> [Jmt]
+core2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env)
 
+
+-- * Reading input for processing
+
+-- | Tp read a Dedukti module from one or more files; in translations, only from one file.
+readDeduktiModule :: [FilePath] -> IO Module
+readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . unlines
+
+-- | To parse a Dedukti file into its AST.
+parseDeduktiModule :: String -> Module
+parseDeduktiModule s = case pModule (myLexer s) of
+  Bad e -> error ("parse error: " ++ e)
+  Ok mo -> mo
+
+-- | To linearize a GF tree.
+gftree2nat :: Env -> Language -> GFTree -> String
+gftree2nat env lang tree = linearize (grammar env) lang tree
+
+-- | To unlex in a latex-like style, overridded by flag -no-unlex.
+unlex :: Env -> String -> String
+unlex env s = if (isFlag "-no-unlex" env) then s else unlextex s
+
+-- * Statistics about data.
+
+-- | Statistics of unknown identifiers in Dedukti (not listed in .dkgf)
+identsInDedukti :: Env -> Module -> [(String, Int)]
+identsInDedukti env mo = map stringify (mfilter freqs) where
+  stringify (c, i) = (printDeduktiEnv env c, i)
+  freqs = sortOn (\ (_,i) -> -i) (M.toList (identsInTypes mo))
+  mfilter = if elem "-unknown-idents" (flags env) then filter (notInTable . fst) else id 
+  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printDeduktiEnv env qid))
+
+
+-- | Statistics of unknown words in text (not recognized in .pgf).
+unknownWordsInTex :: Env -> String -> [(String, Int)]
+unknownWordsInTex env = frequencyTable . missingWords env . lextex
+
+-- | List of missing words on a line.
 missingWords :: Env -> String -> [String]
-missingWords env = morphoMissing (morpho env) . tokens
+missingWords env = morphoMissing (morpho env) . words . lextex
  where
    tokens = ordinary [] . words
    ordinary acc ws = case ws of
@@ -310,53 +389,9 @@ missingWords env = morphoMissing (morpho env) . tokens
      w : ww -> ordinary (w:acc) ww
      _ -> acc
 
-ext2nat :: PGF -> Language -> GJmt -> Maybe String
-ext2nat pgf lang jmt = Nothing ----
+-- * Reading the environment
 
-nat2ext :: PGF -> Language -> String -> [GJmt]
-nat2ext pgf lang str = []
-
-core2dedukti :: Env -> GJmt -> [Jmt]
-core2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env)
-
--- these are syntactic conversions, therefore total
--- necessary imports have to be added to the generated files
-
-dedukti2agda :: Env -> Jmt -> String
-dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "agda" (conversionTable env))
-
-dedukti2lean :: Env -> Jmt -> String
-dedukti2lean env jmt = unlines [DL.printLeanJmt (DL.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "lean" (conversionTable env))
-
-dedukti2rocq :: Env -> Jmt -> String
-dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTable env))
-
-
----- checkAgda :: AJmt -> Bool
----- checkLean :: LJmt -> Bool
----- checkRocq :: RJmt -> Bool
-
----- agda2dedukti :: AJmt -> Jmt
----- lean2dedukti :: LJmt -> Jmt
----- rocq2dedukti :: RJmt -> Jmt
-
--- statistics
-identsInDedukti :: Env -> Module -> [(String, Int)]
-identsInDedukti env mo = map stringify (mfilter freqs) where
-  stringify (c, i) = (printDeduktiEnv env c, i)
-  freqs = sortOn (\ (_,i) -> -i) (M.toList (identsInTypes mo))
-  mfilter = if elem "-unknown-idents" (flags env) then filter (notInTable . fst) else id 
-  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printDeduktiEnv env qid))
-
-unknownWordsInTex :: Env -> String -> [(String, Int)]
-unknownWordsInTex env = frequencyTable . missingWords env . lextex 
-
-showFreqs :: [(String, Int)] -> [String]
-showFreqs = map (\ (c, n) -> c ++ "\t" ++ show n)
-
+-- | The environment is read using a list of flags and opptions, which can be empty; see RunInformath -help.
 readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
@@ -375,7 +410,7 @@ readEnv args = do
     baseConstantModule = mo,
     dropTable = dt,
     formalisms = words "agda dedukti lean rocq",
-    langs = languages gr, ---- relevantLanguages gr args,
+    langs = languages gr, ---- | relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
     toFormalism = argValue "-to-formalism" "NONE" args,
     fromLang = fro,
@@ -383,4 +418,16 @@ readEnv args = do
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro
     }
+
+-- | To read the PGF grammar from a file.    
+readGFGrammar :: FilePath -> IO PGF
+readGFGrammar = readPGF
+
+-- | To construct a concrete syntax name from a 3-letter language code.
+mkLanguage :: PGF -> String -> Language
+mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
+  Just lang | elem lang (languages pgf) -> lang
+  _ -> error ("not a valid language: " ++ code)
+
+
 

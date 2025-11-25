@@ -27,6 +27,9 @@ snake2camel = concat . capit . words . uncamel where
 frequencyTable :: Ord a => [a] -> [(a, Int)]
 frequencyTable xs = sortOn (\ (_, i) -> -i) $ M.toList $ M.fromListWith (+) [(x, 1) | x <- xs]
 
+showFreqs :: [(String, Int)] -> [String]
+showFreqs = map (\ (c, n) -> c ++ "\t" ++ show n)
+
 commaSepInts :: String -> [Int]
 commaSepInts s =
   let ws = commaSep s
