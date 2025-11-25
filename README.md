@@ -85,7 +85,6 @@ The structure of the project is shown in the following picture:
 
 ![Informath](informath-dedukti-core.png)
 
-(to be updated with Rocq and German).
 Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Both MathCore and Informath could also be used as source, by parsing them and converting to Dedukti.
 ```
 Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
