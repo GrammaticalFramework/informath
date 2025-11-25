@@ -17,7 +17,6 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (partition, sortOn, sort, groupBy)
 
-
 type Fun = CId
 type Cat = CId
 type Formalism = String

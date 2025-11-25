@@ -5,7 +5,7 @@ module Informath3 where
 
 import Core2Dedukti (jmt2dedukti)
 import Dedukti2Core
-import Environment
+import Environment3
 import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
@@ -25,7 +25,7 @@ import MkConstants (mkConstants)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
-import Ranking
+import Ranking3
 
 import PGF
 

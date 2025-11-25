@@ -46,6 +46,13 @@ executable RunInformath
     Lean.ComposOp
     Lean.PrintLean
     BuildConstantTable
+    Dedukti2MathCore
+    MathCore2Informath
+    Informath2MathCore
+    MathCore2Dedukti
+    InformathAPI
+    Utils
+
   hs-source-dirs:      app src src/typetheory grammars previous previous/grammars
   ghc-options:         -O2
   build-depends:       base >=4.18 && <5,

@@ -5,34 +5,24 @@
 
 module InformathAPI where
 
---import Core2Dedukti (jmt2dedukti)
---import Dedukti2Core
---import Environment
 import Dedukti.PrintDedukti
 import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
---import ConstantData 
---import SpecialDeduktiConversions (specialDeduktiConversions)
-------import Informath -- to be removed
---import Core2Informath (nlg)
---import Informath2Core (semantics)
 import ParseInformath (parseJmt, unindexGFTree)
 import Lexing
---import MkConstants (mkConstants)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
 
-import Ranking4
-import Environment4
+import Ranking
+import Environment
 import BuildConstantTable
---import qualified DMC
 import qualified Dedukti2MathCore as DMC
-import qualified MCI
-import qualified IMC
-import qualified MCD
+import qualified MathCore2Informath as MCI
+import qualified Informath2MathCore as IMC
+import qualified MathCore2Dedukti as MCD
 import Utils
 
 import Informath

@@ -5,7 +5,7 @@ module Main where
 
 import Informath3 (main3) ---- to be deprecated
 
-import Environment4
+import Environment
 import InformathAPI
 
 import System.Environment (getArgs) 

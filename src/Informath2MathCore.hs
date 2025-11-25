@@ -1,8 +1,7 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 
-module IMC where
---module Informath2Core where
+module Informath2MathCore where
 
 import Informath
 import PGF (showExpr)

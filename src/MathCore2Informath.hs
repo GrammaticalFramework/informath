@@ -1,11 +1,10 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds, Rank2Types #-}
 {-# LANGUAGE LambdaCase #-}
 
-module MCI where
---module Core2Informath where
+module MathCore2Informath where
 
 import Informath
-import Environment4
+import Environment
 import Utils
 
 import Data.List (nub, sortOn)

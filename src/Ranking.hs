@@ -1,4 +1,4 @@
-module Ranking (rankTreesAndStrings) where
+module Ranking (rankTreesAndStrings, Scores) where
 
 import PGF
 import Environment
@@ -25,10 +25,10 @@ scoreString env s = Scores {
   characters = length s,
   tokens = length toks,
   subsequent_dollars = subdollars toks,
-  initial_dollars = initdollars toks + if head toks == "$" then 1 else 0,
+  initial_dollars = initdollars toks + if take 1 toks == ["$"] then 1 else 0,
   extra_parses =  -- can be expensive; return #parses -1 
-    if (ifFlag "-test-ambiguity" env)
-    then maybe 0 ((+ (-1)) . length . take 3) (fst (parseJmt (cpgf env) (tolang env) jmt inds))
+    if (isFlag "-test-ambiguity" env)
+    then maybe 0 ((+ (-1)) . length . take 3) (fst (parseJmt (grammar env) (toLang env) jmt inds))
     else 1
   }
  where
@@ -56,7 +56,7 @@ treeDepth t = case unApp t of
   Just (f, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
   _ -> 1
 
--- returns all scores and their sum
+-- returns all scores and their weighted sum
 scoreTreeAndString :: Env -> (Expr, String) -> (Scores, Int)
 scoreTreeAndString env (t, s) =
   let scores = (scoreString env s){

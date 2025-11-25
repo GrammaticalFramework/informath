@@ -1,4 +1,4 @@
-module Environment4 where
+module Environment where
 
 import Dedukti.AbsDedukti
 import PGF

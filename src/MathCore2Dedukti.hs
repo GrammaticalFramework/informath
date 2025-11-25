@@ -1,8 +1,7 @@
 {-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
 {-# LANGUAGE LambdaCase #-}
 
-module MCD where
----- module Core2Dedukti where
+module MathCore2Dedukti where
 
 import Dedukti.AbsDedukti
 import Informath -- superset of MathCore
