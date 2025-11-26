@@ -37,6 +37,69 @@ import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 
 
+-- * The environment
+
+{- |
+The environment, of type Env, is a large record of data and methods that affect
+the conversions and the way they are displayed. It is defined in the module Environment,
+which is not exported by the API. Most of the functions here presuppose an Env, which
+is read using a list of flags. This list can empty, which results in a default environment.
+
+Flags are strings of the forms -<option> of -<flag>=<value>.
+The actual flags can be seen with RunInformath -help.
+The same flags can be written in the [Flag] list when calling readEnv as an API function.
+-}
+
+readEnv :: [Flag] -> IO Env
+readEnv args = do
+  mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
+  gr <- readGFGrammar (argValue "-grammar" grammarFile args)
+  (ct, cvt, dt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
+  let fro = mkLanguage gr (argValue "-from-lang" english args)
+  ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
+  return Env {
+    flags = args,
+    grammar = gr,
+    constantTable = ct,
+    conversionTable = cvt,
+    synonymConstantTableNLG = buildSynonymConstantTableNLG ct,
+    synonymConstantTableSem = buildSynonymConstantTableSem ct,
+    backConstantTable = buildBackConstantTable ct,
+    baseConstantModule = mo,
+    dropTable = dt,
+    formalisms = words "agda dedukti lean rocq",
+    langs = languages gr, ---- | relevantLanguages gr args,
+    toLang = mkLanguage gr (argValue "-to-lang" english args),
+    toFormalism = argValue "-to-formalism" "NONE" args,
+    fromLang = fro,
+    nbestNLG = argValueMaybeInt "-nbest" args,
+    scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
+    morpho = buildMorpho gr fro
+    }
+
+
+-- ** Low-level access to data sources
+
+{- | The most important data source are a GF grammar (file .pgf)
+and a ConstantTable (file .dkgf).
+Both of these can be customized and passed as values of flags.
+The following functions read them directly, but need hardly be called explicitly.
+-}
+
+-- | To read the GF grammar from a .pgf file.    
+readGFGrammar :: FilePath -> IO PGF
+readGFGrammar = readPGF
+
+-- | To read a constant table from a .dkgf file. 
+readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
+readConstantTable = buildConstantTable
+
+-- | To construct a concrete syntax name from a 3-letter language code.
+mkLanguage :: PGF -> String -> Language
+mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
+  Just lang | elem lang (languages pgf) -> lang
+  _ -> error ("not a valid language: " ++ code)
+
 -- * Default source files, which can be changed in Env flags (see RunInformath -help)
 
 grammarFile = "grammars/Informath.pgf" 
@@ -59,7 +122,7 @@ processDeduktiModule :: Env -> Module -> [GenResult]
 processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 
 -- | The whole line of parsing latex code and converting to Dedukti.
--- | This assumes that parsing units are single lines not starting with \ or %
+-- This assumes that parsing units are single lines not starting with a backslash \ or % 
 
 processLatex :: Env -> String -> [ParseResult]
 processLatex env = map (processLatexLine env) . filter parsable . lines
@@ -181,10 +244,6 @@ annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 -- | From annotated Dedukti to MathCore.
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
-
-
-readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
-readConstantTable = buildConstantTable
 
 checkConstantTable :: Module -> PGF -> ConstantTable -> String
 checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
@@ -388,46 +447,5 @@ missingWords env = morphoMissing (morpho env) . words . lextex
      "$$" : ww -> let (_, _:ww2) = break (=="$$") ww in ordinary acc ww2
      w : ww -> ordinary (w:acc) ww
      _ -> acc
-
--- * Reading the environment
-
--- | The environment is read using a list of flags and opptions, which can be empty; see RunInformath -help.
-readEnv :: [Flag] -> IO Env
-readEnv args = do
-  mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
-  gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  (ct, cvt, dt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
-  let fro = mkLanguage gr (argValue "-from-lang" english args)
-  ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
-  return Env {
-    flags = args,
-    grammar = gr,
-    constantTable = ct,
-    conversionTable = cvt,
-    synonymConstantTableNLG = buildSynonymConstantTableNLG ct,
-    synonymConstantTableSem = buildSynonymConstantTableSem ct,
-    backConstantTable = buildBackConstantTable ct,
-    baseConstantModule = mo,
-    dropTable = dt,
-    formalisms = words "agda dedukti lean rocq",
-    langs = languages gr, ---- | relevantLanguages gr args,
-    toLang = mkLanguage gr (argValue "-to-lang" english args),
-    toFormalism = argValue "-to-formalism" "NONE" args,
-    fromLang = fro,
-    nbestNLG = argValueMaybeInt "-nbest" args,
-    scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
-    morpho = buildMorpho gr fro
-    }
-
--- | To read the PGF grammar from a file.    
-readGFGrammar :: FilePath -> IO PGF
-readGFGrammar = readPGF
-
--- | To construct a concrete syntax name from a 3-letter language code.
-mkLanguage :: PGF -> String -> Language
-mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
-  Just lang | elem lang (languages pgf) -> lang
-  _ -> error ("not a valid language: " ++ code)
-
 
 
