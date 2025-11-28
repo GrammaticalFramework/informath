@@ -18,6 +18,10 @@ data Scores = Scores {
   extra_parses :: Int
   } deriving Show
 
+-- for cases where (possibly expensive) scoring is not needed
+noScores :: Scores
+noScores = Scores 0 0 0 0 0 0 0
+
 scoreString :: Env -> String -> Scores
 scoreString env s = Scores {
   tree_length = 0, -- computed separately
@@ -71,6 +75,9 @@ scoreTreeAndString env (t, s) =
 
 -- sorts trees from lowest to highest total score
 rankTreesAndStrings :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))] 
-rankTreesAndStrings env tss = sortOn (snd . snd) [(ts, scoreTreeAndString env ts) | ts <- tss]
+rankTreesAndStrings env tss =
+  if isFlag "-no-ranking" env
+  then [(ts, (noScores, 0)) | ts <- tss]
+  else sortOn (snd . snd) [(ts, scoreTreeAndString env ts) | ts <- tss]
 
 

@@ -101,13 +101,13 @@ parallel:
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	cat test/top100.dk >>tmp/parallel.dk
-	$(RUN) -parallel-data tmp/parallel.dk >tmp/parallel-informath.jsonl
+	$(RUN) -parallel-data -variations -no-ranking tmp/parallel.dk >tmp/parallel-informath.jsonl
 
 parallel-def:
 	tail -150 src/BaseConstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
-	$(RUN) -parallel-data -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl
+	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl
 
 matita:
 	$(RUN) test/mini-matita.dk
