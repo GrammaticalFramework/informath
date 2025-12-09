@@ -5,6 +5,7 @@ import Data.List (intersperse)
 import qualified Data.Set as S
 import qualified Data.Map as M
 import Data.List (sortOn)
+import Text.JSON
 
 setnub :: Ord a => [a] -> [a]
 setnub = S.toList . S.fromList
@@ -56,20 +57,18 @@ latexPreamble = [
   "\\newcommand{\\notmeets}{\\mathrel{\\not\\meets}}"
   ]
 
-mkJSONObject :: [String] -> String
-mkJSONObject fields = "{" ++ concat (intersperse ", " fields) ++ "}"
+mkJSONObject :: [(String, JSValue)] -> JSValue
+mkJSONObject fields = makeObj fields
 
-mkJSONField :: String -> String -> String
-mkJSONField key value = show key ++ ": " ++ value
+mkJSONField :: String -> JSValue -> (String, JSValue)
+mkJSONField key value = (key, value)
 
-mkJSONListField :: String -> [String] -> String
-mkJSONListField key values =
-  show key ++ ": " ++ "[" ++ concat (intersperse ", " values) ++ "]"
+mkJSONListField :: String -> [JSValue] -> (String, JSValue)
+mkJSONListField key values = mkJSONField key (JSArray values)
 
-stringJSON = quote . escape where
-  quote s = "\"" ++ s ++ "\""
-  escape s = case s of
-    c:cs | elem c "\"\\" -> '\\':c:escape cs
-    '\n':cs -> '\\':'n':escape cs
-    c:cs -> c:escape cs
-    _ -> s
+stringJSON :: String -> JSValue
+stringJSON s = JSString (toJSString s)
+
+encodeJSON :: JSON a => a -> String
+encodeJSON = encode
+
