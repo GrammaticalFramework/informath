@@ -80,7 +80,7 @@ readEnv args = do
 
 -- ** Low-level access to data sources
 
-{- | The most important data source are a GF grammar (file .pgf)
+{- | The most important data sources are a GF grammar (file .pgf)
 and a ConstantTable (file .dkgf).
 Both of these can be customized and passed as values of flags.
 The following functions read them directly, but need hardly be called explicitly.
@@ -231,7 +231,8 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
   fs = [f | (flag, f) <- [
           ("-peano2int", peano2int),
           ("-drop-qualifs", stripQualifiers),
-	  ("-drop-definitions", dropDefinitions)
+	  ("-drop-definitions", dropDefinitions),
+	  ("-hide-arguments", ignoreFirstArguments (dropTable env))
          ], isFlag flag env
        ]
 

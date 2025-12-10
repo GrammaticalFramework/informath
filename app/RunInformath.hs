@@ -95,6 +95,7 @@ helpMsg4 = unlines [
   just "-unknown-idents" "show idents in .dk file not in constant table",
   just "-drop-definitions" "drop definiens parts of judgements",
   just "-drop-qualifs" "drop qualifiers of identifiers",
+  just "-hide-arguments" "hide arguments in accordance with the constant table",
   just "-peano2int" "convert succ/0 expressions to sequences of digits"
   ]
  where

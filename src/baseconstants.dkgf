@@ -109,3 +109,8 @@ inhabited inhabited_Adj
 Equ Eq_Adj2 Eq_AdjE Eq_Compar
 #DROP Equ 1
 
+#DROP id 3
+#DROP {|!_∘_|} 6
+#DROP const 4
+#DROP Π-swap 6
+
