@@ -1,0 +1,58 @@
+(; many-sorted predicate calculus with natural deduction proofs ;)
+
+Set : Type.
+Prop : Type.
+
+(; ignored in Dedukti2Core ;) 
+Elem : (A : Set) -> Type.
+Proof : (A : Prop) -> Type.
+
+(; logical operators, hard-coded in MathCore ;)
+false : Prop.
+and : (A : Prop) -> (B : Prop) -> Prop.
+or : (A : Prop) -> (B : Prop) -> Prop.
+if : (A : Prop) -> (B : Prop) -> Prop.
+forall : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
+exists : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
+
+def not : Prop -> Prop := A => if A false.
+def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
+
+falseE : (C : Prop) -> Proof false -> Proof C.
+
+andI : (A : Prop) -> (B : Prop) -> Proof A -> Proof B -> Proof (and A B).
+
+def andEl : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof A.
+[A, B, a] andEl _ _ (andI A B a _) --> a. 
+
+def andEr : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof B.
+[A, B, b] andEr _ _ (andI A B _ b) --> b. 
+
+orIl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (or A B).
+orIr : (A : Prop) -> (B : Prop) -> Proof B -> Proof (or A B).
+
+def orE : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof (or A B) -> (Proof A -> Proof C) -> (Proof B -> Proof C) -> Proof C.
+[a, d] orE _ _ _ (orIl _ _ a) d _ --> d a.
+[b, e] orE _ _ _ (orIr _ _ b) _ e --> e b.
+
+ifI : (A : Prop) -> (B : Prop) -> (Proof A -> Proof B) -> Proof (if A B).
+
+def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
+[c, a] ifE _ _ (ifI _ _ c) a --> c a.
+
+forallI : (A : Set) -> (B : (Elem A -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A B).
+
+def forallE : (A : Set) -> (B : (Elem A -> Prop)) -> Proof (forall A B) -> (a : Elem A) -> Proof (B a).
+[c, a] forallE _ _ (forallI _ _ c) a --> c a.
+
+existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> Proof (exists A B).
+
+def existsE : (A : Set) -> (B : (Elem A -> Prop)) -> (C : Prop) -> Proof (exists A B) -> ((x : Elem A) -> Proof (B x) -> Proof C) -> Proof C.
+[a, b, c] existsE _ _ _ (existsI _ _ a b) c --> c a b.
+
+
+
+
+
+
+
