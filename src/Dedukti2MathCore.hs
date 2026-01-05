@@ -221,7 +221,7 @@ exp2prop exp = case exp of
         [a, b] -> GCoreIfProp (exp2prop a) (exp2prop b) 
       EIdent conn | conn == identEquiv -> case args of
         [a, b] -> GCoreIffProp (exp2prop a) (exp2prop b) 
-      EIdent conn | conn == identSigma -> case args of
+      EIdent conn | conn == identSigma -> case args of ---- TODO: add cases with eta expansion
         [kind, EAbs bind prop] ->
           GCoreExistProp (ident2ident (bind2var bind)) (exp2kind kind) (exp2prop prop)
       EIdent conn | conn == identPi -> case args of

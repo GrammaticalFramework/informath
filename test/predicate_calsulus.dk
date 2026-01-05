@@ -40,14 +40,14 @@ ifI : (A : Prop) -> (B : Prop) -> (Proof A -> Proof B) -> Proof (if A B).
 def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
 [c, a] ifE _ _ (ifI _ _ c) a --> c a.
 
-forallI : (A : Set) -> (B : (Elem A -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A B).
+forallI : (A : Set) -> (B : (Elem A -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A (x => B x)).
 
-def forallE : (A : Set) -> (B : (Elem A -> Prop)) -> Proof (forall A B) -> (a : Elem A) -> Proof (B a).
+def forallE : (A : Set) -> (B : (Elem A -> Prop)) -> Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
 [c, a] forallE _ _ (forallI _ _ c) a --> c a.
 
-existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> Proof (exists A B).
+existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> Proof (exists A (x => B x)).
 
-def existsE : (A : Set) -> (B : (Elem A -> Prop)) -> (C : Prop) -> Proof (exists A B) -> ((x : Elem A) -> Proof (B x) -> Proof C) -> Proof C.
+def existsE : (A : Set) -> (B : (Elem A -> Prop)) -> (C : Prop) -> Proof (exists A (x => B x)) -> ((x : Elem A) -> Proof (B x) -> Proof C) -> Proof C.
 [a, b, c] existsE _ _ _ (existsI _ _ a b) c --> c a b.
 
 
