@@ -1,0 +1,13 @@
+Set set_Noun
+Prop proposition_Noun
+Elem ElemKind
+Proof ProofProp
+false FalseProp
+and CoreAndProp
+or CoreOrProp
+if CoreIfProp
+forall CoreAllProp
+exists CoreExistProp
+not NotProp
+iff CoreIffProp
+
