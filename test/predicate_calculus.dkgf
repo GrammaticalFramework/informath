@@ -8,6 +8,6 @@ or CoreOrProp
 if CoreIfProp
 forall CoreAllProp
 exists CoreExistProp
-not NotProp
+not CoreNotProp
 iff CoreIffProp
 

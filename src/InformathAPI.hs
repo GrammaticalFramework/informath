@@ -229,6 +229,8 @@ applyDeduktiConversions :: Env -> DkTree a -> DkTree a
 applyDeduktiConversions env t = foldl (flip ($)) t fs where
   fs :: [DkTree a -> DkTree a]
   fs = [f | (flag, f) <- [
+          ---- TODO the first entry is to experiment with generalized annotations
+          ("-new-annot", annotateDkIdentsNew (constantTable env) . lambdaFlatten),
           ("-peano2int", peano2int),
           ("-drop-qualifs", stripQualifiers),
 	  ("-drop-definitions", dropDefinitions),
