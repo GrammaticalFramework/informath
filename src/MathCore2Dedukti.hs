@@ -100,9 +100,9 @@ prop2dedukti prop = case prop of
   GAdj2Prop (LexAdj2 rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
 
-  GAdjCProp (LexAdjC rel) (GManyExps (GListExp [a, b])) ->
+  GAdjCProp (LexAdjC rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
-  GAdjEProp (LexAdjE rel) (GManyExps (GListExp [a, b])) ->
+  GAdjEProp (LexAdjE rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
     
   GAdjProp (LexAdj adj) exp ->
@@ -186,7 +186,7 @@ exp2dedukti exp = case exp of
   GTermExp term -> term2dedukti term
   GFunExp (LexFun f) x -> appIdent f (map exp2dedukti [x])
   GFun2Exp (LexFun2 f) x y -> appIdent f (map exp2dedukti [x, y])
-  GFunCExp (LexFunC f) (GManyExps (GListExp [x, y])) -> appIdent f (map exp2dedukti [x, y])
+  GFunCExp (LexFunC f) x y -> appIdent f (map exp2dedukti [x, y])
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
   GSigmaExp i m n f ->

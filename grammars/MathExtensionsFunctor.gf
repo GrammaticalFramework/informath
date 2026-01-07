@@ -120,4 +120,8 @@ lin
     } ;
   NoKindExp kind = mkNP no_Quant (mkCN kind.cn kind.adv) ;
 
+  AdjCCollProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
+  AdjECollProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
+  FunCCollExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
+  
 }

@@ -97,7 +97,7 @@ funListExp ident exps = case ident of
     (Just ("Name", c), []) -> GNameExp (LexName c)
     (Just ("Fun", c), [x]) -> GFunExp (LexFun c) x
     (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) x y
-    (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (gExps [x, y])
+    (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) x y
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps exps)
@@ -120,9 +120,9 @@ funListProp ident exps = case ident of
     Just ("Adj2", c) | length exps == 2 ->
       GAdj2Prop (LexAdj2 c) (exps !! 0) (exps !! 1)
     Just ("AdjC", c) | length exps == 2 ->
-      GAdjCProp (LexAdjC c) (gExps [exps !! 0, exps !! 1])
+      GAdjCProp (LexAdjC c) (exps !! 0) (exps !! 1)
     Just ("AdjE", c) | length exps == 2 ->
-      GAdjEProp (LexAdjE c) (gExps [exps !! 0, exps !! 1])
+      GAdjEProp (LexAdjE c) (exps !! 0) (exps !! 1)
     Just ("Adj3", c) | length exps == 3 ->
       GAdj3Prop (LexAdj3 c) (exps !! 0) (exps !! 1) (exps !! 2)
     Just ("Verb", c) | length exps == 1 ->
@@ -268,7 +268,7 @@ exp2exp exp = case specialDedukti2Informath bind2coreIdent exp2exp exp of
           _ -> case (lookupConstant f, args) of
             (Just ("Fun", c), [exp]) -> GFunExp (LexFun c) (exp2exp exp)     
             (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) (exp2exp x) (exp2exp y)     
-            (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (gExps [exp2exp x, exp2exp y])     
+            (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) (exp2exp x) (exp2exp y)     
             _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
         _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
       

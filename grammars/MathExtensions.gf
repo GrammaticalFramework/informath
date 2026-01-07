@@ -86,4 +86,8 @@ fun
   NoKindExp : Kind -> Exp ;
 ----  NoIdentsSetExp : [Ident] -> Set -> Exp ;
 
+  AdjCCollProp : AdjC -> Exps -> Prop ;
+  AdjECollProp : AdjE -> Exps -> Prop ;
+  FunCCollExp : FunC -> Exps -> Exp ;
+
 }

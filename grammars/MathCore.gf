@@ -75,13 +75,13 @@ fun
 
   AdjProp : Adj -> Exp -> Prop ;
   Adj2Prop : Adj2 -> Exp -> Exp -> Prop ;
-  AdjCProp : AdjC -> Exps -> Prop ;
-  AdjEProp : AdjE -> Exps -> Prop ;
+  AdjCProp : AdjC -> Exp -> Exp -> Prop ;
+  AdjEProp : AdjE -> Exp -> Exp -> Prop ;
   NounKind : Noun -> Kind ;
   NameExp : Name -> Exp ;
   FunExp : Fun -> Exp -> Exp ;
   Fun2Exp : Fun2 -> Exp -> Exp -> Exp ;
-  FunCExp : FunC -> Exps -> Exp ;
+  FunCExp : FunC -> Exp -> Exp -> Exp ;
   LabelProofExp : Label -> ProofExp ;
   FamKind : Fam -> Kind -> Kind ;
   Fam2Kind : Fam2 -> Kind -> Kind -> Kind ;

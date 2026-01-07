@@ -50,25 +50,22 @@ synonyms env t = symbs t ++ verbs t where
 
   symbs :: forall a. Tree a -> [Tree a]
   symbs t = case t of
-    GAdjCProp (LexAdjC c) exps ->
-      case exps2list exps of  --- currently 2 args from Dedukti ---- but not always
-         x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAdjEProp (LexAdjE c) exps ->
-      case exps2list exps of  --- always 2 args from Dedukti
-         x:y:_ -> [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAdj2Prop (LexAdj2 c) x y ->
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAdjCProp (LexAdjC c) x y ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAdjEProp (LexAdjE c) x y ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GFun2Exp _ _ _ -> map GTermExp (terms t)
-    GFunCExp _ _  -> map GTermExp (terms t)
+    GFunCExp _ _ _ -> map GTermExp (terms t)
     GFunExp _ _ -> map GTermExp (terms t)
     _ -> composOpM symbs t
 
   terms :: GExp -> [GTerm]
   terms exp = case exp of
-    GFunCExp (LexFunC c) exps ->
-      case exps2list exps of  --- always 2 args from Dedukti
-         x:y:_ -> [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GFun2Exp (LexFun2 c) x y ->
+      [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GFunCExp (LexFunC c) x y ->
       [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GFunExp (LexFun c) x ->
       [app alt [sx] | alt <- ssyns c, sx <- terms x]
@@ -92,7 +89,7 @@ synonyms env t = symbs t ++ verbs t where
     GAdj2Prop (LexAdj2 c) x y ->
       t : [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
     GFun2Exp _ _ _ -> t : map GTermExp (terms t) ---- also verbal synonyms
-    GFunCExp _ _  -> t : map GTermExp (terms t)
+    GFunCExp _ _ _ -> t : map GTermExp (terms t)
     GFunExp _ _ -> t : map GTermExp (terms t)
     _ -> composOpM verbs t
 
@@ -100,8 +97,8 @@ synonyms env t = symbs t ++ verbs t where
  
   pred (fun, cat) xs = case cat of
     "Adj2" -> GAdj2Prop (LexAdj2 fun) (xs !! 0) (xs !! 1)
-    "AdjC" -> GAdjCProp (LexAdjC fun) (gExps xs)
-    "AdjE" -> GAdjEProp (LexAdjE fun) (gExps xs)
+    "AdjC" -> GAdjCProp (LexAdjC fun) (xs !! 0) (xs !! 1)
+    "AdjE" -> GAdjEProp (LexAdjE fun) (xs !! 0) (xs !! 1)
     _ -> error $ "NOT YET: " ++ show cat
 
   sympred (fun, cat) xs = case cat of
@@ -115,11 +112,11 @@ synonyms env t = symbs t ++ verbs t where
     "Oper2" -> GOper2Term (LexOper2 fun) (xs !! 0) (xs !! 1)
     _ -> error $ "NOT YET: " ++ show cat
      
-  ---- also in DMC, IMC
-  gExps :: [GExp] -> GExps
-  gExps exps = case exps of
-    [exp] -> GOneExps exp
-    _ -> GManyExps (GListExp exps)
+---- also in DMC, IMC
+gExps :: [GExp] -> GExps
+gExps exps = case exps of
+  [exp] -> GOneExps exp
+  _ -> GManyExps (GListExp exps)
 
   
 
@@ -396,24 +393,24 @@ collectivize t = case t of
   GAndProp (GListProp props) -> maybe [t] return $ do
     (adjc, expss) <- commonRel props
     nexps <- list2mexps $ nub $ expss 
-    return $ GAdjEProp adjc nexps
+    return $ GAdjECollProp adjc nexps
 
   -- put together arguments of collective functions
-  GFunCExp func exps -> do
-    let args = collectArgs func (exps2list exps)
+  GFunCExp func x y -> do
+    let args = collectArgs func [x, y]
     let Just margs = list2mexps args
-    return $ GFunCExp func margs
+    return $ GFunCCollExp func margs
 
   _ -> composOpM collectivize t
   
  where
    commonRel :: [GProp] -> Maybe (GAdjE, [GExp])
    commonRel props = case props of
-     GAdjEProp adjc exps : [] ->
-       return (adjc, exps2list exps)
-     GAdjEProp adjc exps : pp -> do
+     GAdjEProp adjc x y : [] ->
+       return (adjc, [x, y])
+     GAdjEProp adjc x y : pp -> do
        (adjc2, expss) <- commonRel pp
-       let lexp = exps2list exps
+       let lexp = [x, y]
        if adjc2 == adjc && any (flip elem expss) lexp
          then return (adjc, lexp ++ expss)
          else Nothing
@@ -421,8 +418,8 @@ collectivize t = case t of
 
    collectArgs :: GFunC -> [GExp] -> [GExp]
    collectArgs func exps = case exps of
-     GFunCExp f xs : ee | f == func ->
-       collectArgs func (exps2list xs ++ ee)
+     GFunCExp f x y : ee | f == func ->
+       collectArgs func ([x, y] ++ ee)
      exp : ee -> exp : collectArgs func ee ---- TODO collectivize exp ?
      [] -> []
 
@@ -432,8 +429,8 @@ negated :: Tree a -> Tree a
 negated t = case t of
   GCoreNotProp (GAdjProp adj x) -> GNotAdjProp adj x
   GCoreNotProp (GAdj2Prop adj x y) -> GNotAdj2Prop adj x y
-  GCoreNotProp (GAdjCProp adj exps) -> GNotAdjCProp adj exps
-  GCoreNotProp (GAdjEProp adj exps) -> GNotAdjEProp adj exps
+  GCoreNotProp (GAdjCProp adj x y) -> GNotAdjCProp adj (gExps [x, y])
+  GCoreNotProp (GAdjEProp adj x y) -> GNotAdjEProp adj (gExps [x, y])
   GCoreNotProp (GNoun1Prop adj x) -> GNotNoun1Prop adj x
   GCoreNotProp (GNoun2Prop adj x y) -> GNotNoun2Prop adj x y
   GCoreNotProp (GVerbProp adj x) -> GNotVerbProp adj x
