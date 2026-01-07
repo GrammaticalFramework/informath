@@ -75,12 +75,12 @@ lin
   CoreOrProp A B = complexProp (mkS or_Conj (partProp A) (partProp B)) ;
   CoreIfProp A B = complexProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;
   CoreIffProp A B = complexProp (Grammar.SSubjS (partProp A) iff_Subj (partProp B)) ;
-  NotProp prop =
+  CoreNotProp prop =
     simpleProp (mkS negPol (mkCl 
           (mkVP (mkNP the_Quant (mkCN case_N (Syntax.mkAdv that_Subj (partProp prop))))))) ;
-  CoreAllProp ident kind prop =
+  CoreAllProp kind ident prop =
     simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (allNP (identKindCN ident kind))) (partProp prop)) ;
-  CoreExistProp ident kind prop =
+  CoreExistProp kind ident prop =
     simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP (mkNP a_Det ((identKindCN ident kind))))) such_that_Subj (partProp prop)) ; 
   IdentProp f = simpleProp (latexS (mkSymb f)) ;
   FalseProp = simpleProp (mkS (mkCl we_NP have_V2 (mkNP a_Det contradiction_N))) ;
@@ -135,13 +135,10 @@ lin
 -- using Constants
 
   AdjProp adj exp = simpleProp (mkS (mkCl exp adj)) ;
-  NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
   Adj2Prop rel x y = simpleProp (mkS (mkCl x (Grammar.AdvAP rel.ap (Syntax.mkAdv rel.prep y)))) ;
   AdjCProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
   AdjEProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
-  
+    
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
   FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
@@ -166,11 +163,6 @@ lin
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
   Verb2Prop verb x y = simpleProp (mkS (mkCl x verb y)) ; 
   Noun2Prop rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
-  NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
-  NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
-  NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
-  NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
-  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   Adj3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 
@@ -214,8 +206,5 @@ oper
 
   allNP : CN -> NP = \cn ->
     mkNP all_Predet (mkNP aPl_Det cn) ;
-
--- non-functor
-  negPol : Pol = negativePol ;
 
 }

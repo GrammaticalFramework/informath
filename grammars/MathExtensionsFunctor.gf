@@ -37,6 +37,15 @@ lin
   ExistProp argkinds prop =
     simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.sg)) such_that_Subj (partProp prop)) ; 
 
+  NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
+  NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
+  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
+  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
+  NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
+  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
+  NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x verb y)) ;
+
   AndAdj adjs = mkAP and_Conj adjs | mkAP both7and_DConj adjs ;
   OrAdj adjs = mkAP or_Conj adjs  | mkAP either7or_DConj adjs ;
 

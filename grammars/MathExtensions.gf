@@ -20,6 +20,15 @@ fun
   AllProp : [ArgKind] -> Prop -> Prop ;
   ExistProp : [ArgKind] -> Prop -> Prop ; 
 
+  NotAdjProp : Adj -> Exp -> Prop ;
+  NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
+  NotAdjCProp : AdjC -> Exps -> Prop ;
+  NotAdjEProp : AdjE -> Exps -> Prop ;
+  NotNoun1Prop : Noun1 -> Exp -> Prop ;
+  NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
+  NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
+  NotVerbProp : Verb -> Exp -> Prop ;
+
   AndAdj : [Adj] -> Adj ;
   OrAdj : [Adj] -> Adj ;
 

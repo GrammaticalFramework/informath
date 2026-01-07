@@ -1,7 +1,7 @@
 concrete MathCoreEng of MathCore =
   CategoriesEng
   **
-  MathCoreFunctor - [negPol] with
+  MathCoreFunctor with
     (Utilities=UtilitiesEng),
     (Syntax=SyntaxEng),
     (Grammar=GrammarEng),
@@ -15,9 +15,5 @@ concrete MathCoreEng of MathCore =
     (I=IrregEng)
 
 in {
-
-oper
--- override
-  negPol : Pol = UncontractedNeg ;
 
 }

@@ -223,20 +223,12 @@ exp2prop exp = case exp of
         [a, b] -> GCoreIffProp (exp2prop a) (exp2prop b) 
       EIdent conn | conn == identSigma -> case args of ---- TODO: add cases with eta expansion
         [kind, EAbs bind prop] ->
-          GCoreExistProp (ident2ident (bind2var bind)) (exp2kind kind) (exp2prop prop)
+          GCoreExistProp (exp2kind kind) (ident2ident (bind2var bind)) (exp2prop prop)
       EIdent conn | conn == identPi -> case args of
         [kind, EAbs bind prop] ->
-          GCoreAllProp (ident2ident (bind2var bind)) (exp2kind kind) (exp2prop prop)
+          GCoreAllProp (exp2kind kind) (ident2ident (bind2var bind)) (exp2prop prop)
       EIdent conn | conn == identNeg -> case args of
-        [a] -> case exp2prop a of
-          GAdjProp adj x -> GNotAdjProp adj x
-          GAdj2Prop adj x y -> GNotAdj2Prop adj x y
-          GAdjCProp adj xy -> GNotAdjCProp adj xy
-          GAdjEProp adj xy -> GNotAdjEProp adj xy
-          GVerbProp verb x -> GNotVerbProp verb x
-          GVerb2Prop verb x y -> GNotVerb2Prop verb x y
-          GNoun2Prop noun x y -> GNotNoun2Prop noun x y
-          p -> GNotProp p
+        [a] -> GCoreNotProp (exp2prop a)
       EIdent ident -> funListProp ident (map exp2exp args)
   EFun _ _ -> case splitType exp of
     (hypos, exp) ->
@@ -323,6 +315,7 @@ ident2ident ident = case ident of
 
 ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of
+  QIdent [d] | isDigit d -> GTermExp (GNumberTerm (GInt (read [d])))
   QIdent s -> case lookupConstant s of
     Just ("Name", c) -> GNameExp (LexName c)
     _ -> GTermExp (GIdentTerm (ident2ident ident))

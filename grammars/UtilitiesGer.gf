@@ -19,6 +19,8 @@ oper
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
+  negPol = negativePol ;
+  
   strN : Str -> N = mkN ;
   strA : Str -> A = mkA ;
   strV : Str -> V = mkV ;

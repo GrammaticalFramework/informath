@@ -274,6 +274,8 @@ oper
   strPN : Str -> PN ;
   strPrep : Str -> Prep ;
 
+-- negation, needs to be overwritten in Eng
+  negPol : Pol ; -- = negativePol ;
 
 -- often used words, language-dependent
 

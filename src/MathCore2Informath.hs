@@ -125,9 +125,9 @@ synonyms env t = symbs t ++ verbs t where
 
 aggregate :: Tree a -> Tree a
 aggregate t = case t of
-  GNotProp prop -> case aggregate prop of
+  GCoreNotProp prop -> case aggregate prop of
     GAdjProp adj x -> GNotAdjProp adj x
-    aprop -> GNotProp aprop
+    aprop -> GCoreNotProp aprop
   GAndProp (GListProp props) ->
     case groupProps "and" props of
       [p] -> p
@@ -136,9 +136,9 @@ aggregate t = case t of
     case groupProps "or" props of
       [p] -> p
       pp -> GOrProp (GListProp pp)
-  GCoreAllProp x kind prop -> case getAlls kind prop of
+  GCoreAllProp kind x prop -> case getAlls kind prop of
     (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
-  GCoreExistProp x kind prop -> case getExists kind prop of
+  GCoreExistProp kind x prop -> case getExists kind prop of
     (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
   GListHypo hypos -> GListHypo (aggregateHypos hypos)
   _ -> composOp aggregate t
@@ -170,14 +170,14 @@ getAdjArgs props a = case props of
 
 getExists :: GKind -> GProp -> ([GIdent], GProp)
 getExists kind prop = case prop of
-  GCoreExistProp x k body | k == kind ->
+  GCoreExistProp k x body | k == kind ->
     case getExists kind body of
       (ys, bd) -> (x : ys, bd)
   _ -> ([], prop)
   
 getAlls :: GKind -> GProp -> ([GIdent], GProp)
 getAlls kind prop = case prop of
-  GCoreAllProp x k body | k == kind ->
+  GCoreAllProp k x body | k == kind ->
     case getAlls kind body of
       (ys, bd) -> (x : ys, bd)
   _ -> ([], prop)
@@ -265,7 +265,7 @@ variations tree = case tree of
     tree : [GPostQuantProp prop exp | exp <- allExpVariations argkind]
   GExistProp (GListArgKind [argkind]) prop ->
     tree : [GPostQuantProp prop exp | exp <- existExpVariations argkind]
-  GNotProp (GExistProp argkinds prop) ->
+  GCoreNotProp (GExistProp argkinds prop) ->
     tree : [GExistNoProp argkinds prop]
 ----  GAndProp (GListProp [GFormulaProp (GFEquation (GEBinary lt a b)), GFormulaProp (GFEquation (GEBinary eq b' c))]) | b == b' ->
 ----    tree : [GFormulaProp (GFEquation (GEChain lt a (GEBinary eq b c)))] ---- TODO: generalize to longer chains
@@ -430,6 +430,13 @@ collectivize t = case t of
 ---- TODO: move more of negation from earlier stages here
 negated :: Tree a -> Tree a
 negated t = case t of
-  GNotProp (GAdjEProp adj exps) -> GNotAdjEProp adj exps
+  GCoreNotProp (GAdjProp adj x) -> GNotAdjProp adj x
+  GCoreNotProp (GAdj2Prop adj x y) -> GNotAdj2Prop adj x y
+  GCoreNotProp (GAdjCProp adj exps) -> GNotAdjCProp adj exps
+  GCoreNotProp (GAdjEProp adj exps) -> GNotAdjEProp adj exps
+  GCoreNotProp (GNoun1Prop adj x) -> GNotNoun1Prop adj x
+  GCoreNotProp (GNoun2Prop adj x y) -> GNotNoun2Prop adj x y
+  GCoreNotProp (GVerbProp adj x) -> GNotVerbProp adj x
+  GCoreNotProp (GVerb2Prop adj x y) -> GNotVerb2Prop adj x y
   _ -> composOp negated t
 

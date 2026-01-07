@@ -87,11 +87,11 @@ prop2dedukti prop = case prop of
   GCoreAndProp a b -> foldl1 propAnd (map prop2dedukti [a, b])
   GCoreOrProp a b -> foldl1 propOr (map prop2dedukti [a, b])
   GCoreIfProp a b -> propImp (prop2dedukti a) (prop2dedukti b)
-  GNotProp a -> propNeg (prop2dedukti a)
+  GCoreNotProp a -> propNeg (prop2dedukti a)
   GCoreIffProp a b -> propEquiv (prop2dedukti a) (prop2dedukti b)
-  GCoreAllProp ident kind prop ->
+  GCoreAllProp kind ident prop ->
     propPi (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
-  GCoreExistProp ident kind prop ->
+  GCoreExistProp kind ident prop ->
     propSigma (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
   GAppProp ident exps ->
     foldl1 EApp ((EIdent (ident2ident ident)) : map exp2dedukti (exps2list exps))

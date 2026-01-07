@@ -41,10 +41,10 @@ fun
   CoreOrProp : Prop -> Prop -> Prop ;
   CoreIfProp : Prop -> Prop -> Prop ;
   CoreIffProp : Prop -> Prop -> Prop ;
-  NotProp : Prop -> Prop ;
+  CoreNotProp : Prop -> Prop ;
   FalseProp : Prop ;
-  CoreAllProp : Ident -> Kind -> Prop -> Prop ;
-  CoreExistProp : Ident -> Kind -> Prop -> Prop ; 
+  CoreAllProp : Kind -> Ident -> Prop -> Prop ;
+  CoreExistProp : Kind -> Ident -> Prop -> Prop ; 
   IdentProp : Ident -> Prop ;
   AppProp : Ident -> Exps -> Prop ;
 
@@ -74,12 +74,9 @@ fun
 -- using Constants
 
   AdjProp : Adj -> Exp -> Prop ;
-  NotAdjProp : Adj -> Exp -> Prop ;
   Adj2Prop : Adj2 -> Exp -> Exp -> Prop ;
   AdjCProp : AdjC -> Exps -> Prop ;
-  NotAdjCProp : AdjC -> Exps -> Prop ;
   AdjEProp : AdjE -> Exps -> Prop ;
-  NotAdjEProp : AdjE -> Exps -> Prop ;
   NounKind : Noun -> Kind ;
   NameExp : Name -> Exp ;
   FunExp : Fun -> Exp -> Exp ;
@@ -92,11 +89,6 @@ fun
   VerbProp : Verb -> Exp -> Prop ;
   Verb2Prop : Verb2 -> Exp -> Exp -> Prop ;
   Noun2Prop : Noun2 -> Exp -> Exp -> Prop ;
-  NotVerbProp : Verb -> Exp -> Prop ;
-  NotNoun1Prop : Noun1 -> Exp -> Prop ;
-  NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
-  NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
-  NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
   Adj3Prop : Adj3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath

@@ -18,6 +18,8 @@ oper
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
+  negPol : Pol = E.UncontractedNeg ;
+  
   strN : Str -> N = mkN ;
   strA : Str -> A = mkA ;
   strV : Str -> V = mkV ;

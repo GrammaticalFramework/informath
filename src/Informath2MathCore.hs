@@ -55,11 +55,11 @@ addParenth t = case t of
   GIfProp a b -> GCoreIfProp (addParenth a) (addParenth b)
   GIffProp a b -> GCoreIffProp (addParenth a) (addParenth b)
   GAllProp (GListArgKind argkinds) prop ->
-    foldr (\ (var, exp) y -> GCoreAllProp var exp y)
+    foldr (\ (var, exp) y -> GCoreAllProp exp var y)
         (addParenth prop)
         (concatMap semArgkind argkinds)
   GExistProp (GListArgKind argkinds) prop ->
-    foldr (\ (var, exp) y -> GCoreExistProp var exp y)
+    foldr (\ (var, exp) y -> GCoreExistProp exp var y)
         (addParenth prop)
         (concatMap semArgkind argkinds)
   _ -> composOp addParenth t
@@ -111,7 +111,7 @@ sem env t = case t of
     GAllIdentsKindExp idents kind ->
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) prop)
     GNoIdentsKindExp idents kind ->
-      sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) (GNotProp prop))
+      sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) (GCoreNotProp prop))
     _ -> t ----TODO some cases: error ("sem not yet: " ++ showExpr [] (gf t))
 
   GAllProp argkinds prop -> case argkinds of
@@ -186,8 +186,8 @@ sem env t = case t of
   GEitherOrAdj a b -> GOrAdj (GListAdj [sem env a, sem env b])
   GEitherOrExp a b -> GOrExp (GListExp [sem env a, sem env b])
 
-
-  GNotAdjProp adj exp -> GNotProp (sem env (GAdjProp adj exp))
+  GNotAdjProp adj exp -> GCoreNotProp (sem env (GAdjProp adj exp))
+  ---- TODO: more cases here
 
   GKindArgKind kind -> 
     let (var, nenv) = newVar env

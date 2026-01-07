@@ -1,3 +1,6 @@
+{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
+
 module SpecialConstants where
 
 import Dedukti.AbsDedukti
