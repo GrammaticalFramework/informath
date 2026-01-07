@@ -15,7 +15,7 @@ import Utils
 
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, sortOn, sort, groupBy)
+import Data.List (partition, sortOn, sort, groupBy, intersperse)
 
 type Fun = CId
 type Cat = CId
@@ -251,14 +251,17 @@ annotateDkIdentsNew table = annot [] . ignoreFirst where
 
   annot :: forall a. [QIdent] -> DkTree a -> DkTree a
   annot bounds t = case t of
-    QIdent _ | notElem t bounds -> annotId t
+    EIdent f | notElem f bounds -> case annotId f of
+      (Just appl, c) -> EApp (EIdent appl) (EIdent c)
+      (_, c) -> EIdent c
+    QIdent _ | notElem t bounds -> snd (annotId t)
     EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
-    EFun h exp -> EFun (annot bounds h) (annot (hypo2vars h ++ bounds) exp)
+    EFun h exp -> EFun (annot bounds h) (annot (hypo2vars h ++ bounds) exp) ---- in h??
     _ -> composOp (annot bounds) t
 
   annotId c = case M.lookup c table of
     Just entry -> annotIdent c (primary entry)
-    _ -> c
+    _ -> (Nothing, c)
 
   ignoreFirst :: DkTree a -> DkTree a
   ignoreFirst t = case t of
@@ -277,14 +280,35 @@ annotateDkIdentsNew table = annot [] . ignoreFirst where
           _ -> drop (length xs - length hypos) xs
     _ -> xs
 
-  annotIdent :: QIdent -> (Fun, Type) -> QIdent
-  annotIdent (QIdent s) (f, t) = QIdent ("GF&" ++ showCId f)
-
+  annotIdent :: QIdent -> (Fun, Type) -> (Maybe QIdent, QIdent)
+  annotIdent (QIdent s) (f, t) = (appl, QIdent (":" ++ showCId f)) --- cannot lex as QIdent
+    where
+      appl = maybe Nothing (Just . QIdent . (":"++) . showCId) $ applicator (valCat t)
+      
   getArity :: Cat -> Maybe Int
   getArity cat = case showCId cat of
-    s | elem s ["Adj2", "AdjC", "AdjE", "Noun2", "Verb2", "Fun2", "FunC"] -> Just 2
-    s | elem s ["Adj", "Noun", "Verb", "Fun"] -> Just 1
+    s | elem s ["Adj2", "AdjC", "AdjE", "Noun2", "Verb2", "Fam2", "Fun2", "FunC"] -> Just 2
+    s | elem s ["Adj", "Noun1", "Verb", "Fam", "Fun"] -> Just 1
     s | elem s ["Adj3"] -> Just 3
     s | elem s ["Noun", "Name", "Label"] -> Just 0
     _ -> Nothing
 
+  applicator :: Cat -> Maybe Fun
+  applicator cat = M.lookup cat $ M.fromList [(mkCId c, mkCId f) | (c, f) <- [
+    ("Adj", "AdjProp"),
+    ("Adj2", "Adj2Prop"),
+    ("Adj3", "Adj3Prop"),
+    ("AdjC", "AdjCProp"),
+    ("AdjE", "AdjEProp"),
+    ("Fam", "FamKind"),
+    ("Fam2", "Fam2Kind"),
+    ("Fun", "FunExp"),
+    ("Fun2", "Fun2Exp"),
+    ("FunC", "FunCExp"),
+    ("Label", "LabelProofExp"),
+    ("Noun", "NounKind"),
+    ("Noun1", "Noun1Prop"),
+    ("Noun2", "Noun2Prop"),
+    ("Verb", "VerbProp"),
+    ("Verb2", "Verb2Prop")
+    ]]

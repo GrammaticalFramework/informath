@@ -88,9 +88,9 @@ angleBetween angle_between_Fun2
 dotProduct dot_product_FunC dot_product_Oper2
 vectorPlus vector_plus_FunC resultant_FunC plus_Oper2
 sphenic sphenic_Adj
-#sigma SigmaExp sigma_Term
-#series SeriesExp series_Term
-#integral IntegralExp integral_Term
+sigma SigmaExp sigma_Term
+series SeriesExp series_Term
+integral IntegralExp integral_Term
 ni contain_Verb2 ni_Compar
 disjoint disjoint_AdjC disjoint_Compar
 empty empty_Adj
