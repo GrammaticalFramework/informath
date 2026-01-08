@@ -1,7 +1,7 @@
 Set set_Noun
 Prop proposition_Noun
-Elem ElemKind
-Proof ProofProp
+#Elem ElemKind
+#Proof ProofProp
 
 false FalseProp
 and CoreAndProp
@@ -12,6 +12,13 @@ exists CoreExistProp
 not CoreNotProp
 iff CoreIffProp
 
+andI AndIProof
+andEl AndElProof
+andEr AndErProof
+ifI IfIProof
+ifE IfEProof
+#hypo HypoProof
+
 Eq Eq_Adj2 Eq_AdjE Eq_Compar
 Nat natural_Noun natural_Const
 Succ successor_Fun
@@ -20,3 +27,5 @@ times times_FunC times_Oper2
 divisible divisible_Adj2
 even even_Adj
 odd odd_Adj
+
+#DROP Eq 1

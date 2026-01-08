@@ -6,26 +6,17 @@ module SpecialConstants where
 import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import DeduktiOperations
+import CommonConcepts
 import Informath
+import BuildConstantTable (mainCats)
 
 import PGF
 import qualified Data.Map as M
+import qualified Data.Set as S
 
 -- special constants that don't belong to lexical categories
 
----- TODO: read constant table from dkgf
 ---- TODO: apply to all conversions, not just Dedukti2MathCore
-
-
-specialDeduktiConstants :: M.Map QIdent CId
-specialDeduktiConstants = M.fromList [
-  (QIdent "sigma", mkCId "SigmaExp"),
-  (QIdent "series", mkCId "SeriesExp"),
-  (QIdent "integral", mkCId "IntegralExp")
-  ]
-
-type DkTree a = Dedukti.AbsDedukti.Tree a
-
 
 lambdaFlatten :: Exp -> (Exp, [Either Bind Exp])
 lambdaFlatten exp = case splitApp exp of
@@ -36,43 +27,30 @@ lambdaFlatten exp = case splitApp exp of
    flatten exp = case splitAbs exp of
      (xs, body) -> map Left xs ++ [Right body]
 
-convertArg ::  (Bind -> Expr) -> (Exp -> Expr) -> Either Bind Exp -> Expr
-convertArg bident egexp arg = case arg of
-  Left bind -> bident bind
-  Right exp -> egexp exp
+data CallBacks =  CallBacks {
+  callBind :: Bind -> Expr,
+  callExp  :: Exp -> Expr,
+  callKind  :: Exp -> Expr,
+  callProp  :: Exp -> Expr,
+  callProof :: Exp -> Expr
+  }
 
+convertArg ::  CallBacks -> (String, Either Bind Exp) -> Expr
+convertArg callbacks arg = case arg of
+  (_, Left bind) -> callBind callbacks bind
+  ("Exp", Right exp) -> callExp callbacks exp
+  ("Kind", Right exp) -> callKind callbacks exp
+  ("Prop", Right exp) -> callProp callbacks exp
+  ("Proof", Right exp) -> callProof callbacks exp
+  (_, Right exp) -> callExp callbacks exp ---- ??
 
-specialDedukti2Informath :: (Bind -> Expr) -> (Exp -> Expr) -> Exp -> Maybe GExp
-specialDedukti2Informath bident egexp exp = case lambdaFlatten exp of
-  (EIdent fun, args) -> case M.lookup fun specialDeduktiConstants of
-    Just gffun -> return $ fg $ mkApp gffun (map (convertArg bident egexp) args)
+specialDedukti2Informath :: CallBacks -> Exp -> Maybe Expr
+specialDedukti2Informath callbacks exp = case lambdaFlatten exp of
+  (EIdent (QIdent s), args) -> case lookupConstantFull s of
+    Just (cat, fun, argcats) | S.member (mkCId cat) mainCats ->
+      return $ mkApp (mkCId fun) (map (convertArg callbacks) (zip argcats args))
     _ -> Nothing
   _ -> Nothing
-
-
-{-
-specialDedukti2InformathOld :: (Bind -> GIdent) -> (Exp -> GExp) -> Exp -> Maybe GExp
-specialDedukti2InformathOld bident egexp exp = case exp of
-  EApp _ _ -> case splitApp exp of
-    (fun, args) -> case fun of
-      EIdent (QIdent "sigma") | length args == 3 ->
-        let [m, n, EAbs b f] = args
-        in return $ GSigmaExp (bident b) (egexp m) (egexp n) (egexp f)  
-      EIdent (QIdent "series") | length args == 2 ->
-        let [m, EAbs b f] = args
-        in return $ GSeriesExp (bident b) (egexp m) (egexp f)  
-      EIdent (QIdent "integral") | length args == 3 ->
-        let [m, n, EAbs b f] = args
-        in return $ GIntegralExp (bident b) (egexp m) (egexp n) (egexp f)  
-      EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of
-        Just exps@(_:_) -> return $ GEnumSetExp (gExps (map egexp exps))
-	Just [] -> return $ GNameExp (LexName "emptyset_Name")
-	_ -> return $ GAppExp (egexp fun) (gExps (map egexp args))
-      _ -> Nothing
-  _ -> Nothing
-
--}
-
 
 --- this should be on a more general level
 

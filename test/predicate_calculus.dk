@@ -12,14 +12,15 @@ false : Prop.
 and : (A : Prop) -> (B : Prop) -> Prop.
 or : (A : Prop) -> (B : Prop) -> Prop.
 if : (A : Prop) -> (B : Prop) -> Prop.
+(;
 forall : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
 exists : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
-
+;)
 def not : Prop -> Prop := A => if A false.
 def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
-
+(;
 falseE : (C : Prop) -> Proof false -> Proof C.
-
+;)
 andI : (A : Prop) -> (B : Prop) -> Proof A -> Proof B -> Proof (and A B).
 
 def andEl : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof A.
@@ -40,9 +41,9 @@ ifI : (A : Prop) -> (B : Prop) -> (Proof A -> Proof B) -> Proof (if A B).
 def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
 [c, a] ifE _ _ (ifI _ _ c) a --> c a.
 
-forallI : (A : Set) -> (B : (Elem A -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A (x => B x)).
+forallI : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A (x => B x)).
 
-def forallE : (A : Set) -> (B : (Elem A -> Prop)) -> Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
+def forallE : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
 [c, a] forallE _ _ (forallI _ _ c) a --> c a.
 
 existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> Proof (exists A (x => B x)).
@@ -56,6 +57,14 @@ def hypo : (A : Prop) -> Proof A -> Proof A := A => a => a.
 
 Eq : (A : Set) -> Elem A -> Elem A -> Prop.
 refl : (A : Set) -> (a : Elem A) -> Proof (Eq A a a).
+
+
+(; some theorems of logic ;)
+
+(; A |- B -> A ;)
+thm nd1 : (A : Prop) -> (B : Prop) -> Proof A -> Proof (if B A) :=
+  A => B => h => ifI B A (k => hypo A h).
+
 
 
 (; natural numbers ;)
@@ -100,7 +109,6 @@ thm prop3 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
 	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x))) y
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
 	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (hypo (odd x) h)))).
-
 
 
 

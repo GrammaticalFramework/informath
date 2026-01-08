@@ -72,23 +72,29 @@ expTyped x t = EApp (EApp (EIdent (QIdent "typed")) x) t
 expNegated x = EApp (EIdent (QIdent "neg")) x
 
 -- lookup after annotation from dynamically loaded file
+lookupConstantFull :: String -> Maybe (String, String, [String])
+lookupConstantFull f = case splitConstant f of
+  Right (_ : cat : fun : args) -> return (cat, fun, args)
+  _ -> Nothing
+  
+-- lookup just fun and cat
 lookupConstant :: String -> Maybe (String, String)
 lookupConstant f = case splitConstant f of
-  Right (_, cat, fun) -> return (cat, fun)
+  Right (_ : cat : fun : _) -> return (cat, fun)
   _ -> Nothing
 
--- split at &s; they can occur spuriously inside {|...|} but not elsewhere
-splitConstant :: String -> Either String (String, String, String) 
+-- split at # ; they can occur spuriously inside {|...|} but not elsewhere
+splitConstant :: String -> Either String [String]
 splitConstant f
   | isSuffixOf "|}" f = Left f
-  | otherwise = case reverse (words (map (\c -> if c=='&' then ' ' else c) f)) of
-      fun:cat:xs -> Right (concat xs, cat, fun) 
+  | otherwise = case words (map (\c -> if c=='#' then ' ' else c) f) of
+      ws@(_:_:_) -> Right ws
       _ -> Left f
 
 stripConstant :: String -> String
 stripConstant f = case splitConstant f of
   Left _ -> f
-  Right (h, _, _) -> h
+  Right (h:_) -> h
 
 -- deal with {|ident|}
 unescapeConstant :: String -> String

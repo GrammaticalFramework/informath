@@ -21,8 +21,21 @@ type Fun = CId
 type Cat = CId
 type Formalism = String
 
+
+mainCats :: S.Set Cat
+mainCats = S.fromList [mkCId c | c <- words
+  "Exp Prop Kind Proof ProofExp"
+  ]
+
 symbolicCats :: S.Set Cat
-symbolicCats = S.fromList [mkCId c | c <- words "Formula Term Compar Const Oper Oper2"]
+symbolicCats = S.fromList [mkCId c | c <- words
+  "Formula Term Compar Const Oper Oper2"
+  ]
+
+verbalCats :: S.Set Cat
+verbalCats = S.fromList [mkCId c | c <- words
+  "Name Noun Noun1 Noun2 Fam Fam2 Adj Adj2 Adj3 AdjC AdjE Fun Fun2 FunC Verb Verb2 Label"
+  ]
 
 -- conversion from Dk to GF, with synonyms and category information
 type ConstantTable = M.Map QIdent ConstantTableEntry
@@ -193,12 +206,16 @@ annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
     _ -> c
 
 annotIdent :: QIdent -> (Fun, Type) -> QIdent
-annotIdent (QIdent s) (f, t) = QIdent (s ++ "&" ++ dk (valCat t) ++ "&" ++ dk f)
-  where
-    dk c = showCId c
+annotIdent (QIdent s) (f, t) =
+  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dk f] ++ map dk (argCats t)
+    where
+      dk c = showCId c
 
 valCat :: Type -> Cat
 valCat t = case unType t of (_, c, _) -> c
+
+argCats :: Type -> [Cat]
+argCats t = case unType t of (hs, _, _) -> [valCat h | (_, _, h) <- hs]
 
 -- deciding the kind of a new constant
 guessGFCat :: QIdent -> Exp -> String
