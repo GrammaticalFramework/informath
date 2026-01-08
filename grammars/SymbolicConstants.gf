@@ -73,10 +73,10 @@ fun
 
   modulo_Formula : Term -> Term -> Term -> Formula ;
 
-  sigma_Term : Ident -> Term -> Term -> Term -> Term ;
+  sigma_Term : Term -> Term -> Ident -> Term -> Term ;
   sum3dots_Term : Term -> Term -> Term -> Term ;
-  series_Term : Ident -> Term -> Term -> Term ;
-  integral_Term : Ident -> Term -> Term -> Term -> Term ;
+  series_Term : Term -> Ident -> Term -> Term ;
+  integral_Term : Term -> Term -> Ident -> Term -> Term ;
 
 
 }

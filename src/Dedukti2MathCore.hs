@@ -237,7 +237,7 @@ exp2prop exp = case exp of
     (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
 
 exp2exp :: Exp -> GExp
-exp2exp exp = case specialDedukti2Informath bind2coreIdent exp2exp exp of
+exp2exp exp = case specialDedukti2Informath (gf . bind2coreIdent) (gf . exp2exp) exp of
   Just gexp -> gexp
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
@@ -247,15 +247,6 @@ exp2exp exp = case specialDedukti2Informath bind2coreIdent exp2exp exp of
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of
    {-
-      EIdent (QIdent "sigma") | length args == 3 ->
-        let [m, n, EAbs b f] = args
-        in GSigmaExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
-      EIdent (QIdent "series") | length args == 2 ->
-        let [m, EAbs b f] = args
-        in GSeriesExp (bind2coreIdent b) (exp2exp m) (exp2exp f)  
-      EIdent (QIdent "integral") | length args == 3 ->
-        let [m, n, EAbs b f] = args
-        in GIntegralExp (bind2coreIdent b) (exp2exp m) (exp2exp n) (exp2exp f)  
       EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
 	Just [] -> GNameExp (LexName "emptyset_Name")

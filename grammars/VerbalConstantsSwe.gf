@@ -131,7 +131,7 @@ lin
 
 -- special constants
 
-  SigmaExp i m n exp =
+  SigmaExp m n i exp =
     mkNP the_Det (mkCN (mkCN sum_N)
       (SyntaxSwe.mkAdv possess_Prep
         (mkNP all_Predet

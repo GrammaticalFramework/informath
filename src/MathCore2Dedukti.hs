@@ -189,8 +189,8 @@ exp2dedukti exp = case exp of
   GFunCExp (LexFunC f) x y -> appIdent f (map exp2dedukti [x, y])
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
-  GSigmaExp i m n f ->
-    EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f))
+  GSigmaExp m n i f ->
+    EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f)) ---- TODO: in SpecialConstants
   _ -> eUndefinedDebug exp ---- TODO
 
 term2dedukti :: GTerm -> Exp

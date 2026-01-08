@@ -71,12 +71,12 @@ synonyms env t = symbs t ++ verbs t where
       [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GNameExp (LexName c) ->
       [app alt [] | alt <- ssyns c]
-    GSigmaExp i m n f ->
-      [Gsigma_Term i tm tn tf | tm <- terms m, tn <- terms n, tf <- terms f]
-    GSeriesExp i m f ->
-      [Gseries_Term i tm tf | tm <- terms m, tf <- terms f]
-    GIntegralExp i m n f ->
-      [Gintegral_Term i tm tn tf | tm <- terms m, tn <- terms n, tf <- terms f]
+    GSigmaExp m n i f ->
+      [Gsigma_Term tm tn i tf | tm <- terms m, tn <- terms n, tf <- terms f]
+    GSeriesExp m i f ->
+      [Gseries_Term tm i tf | tm <- terms m, tf <- terms f]
+    GIntegralExp m n i f ->
+      [Gintegral_Term tm tn i tf | tm <- terms m, tn <- terms n, tf <- terms f]
     GTermExp t -> [t]
 
     _ -> []
@@ -283,14 +283,14 @@ variations tree = case tree of
   GOrExp (GListExp [a, b]) ->
     tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
-  GSigmaExp i (GTermExp m) (GTermExp n) (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gsigma_Term i m n f)]
-  GSeriesExp i (GTermExp m) (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gseries_Term i m f)]
-  GIntegralExp i (GTermExp m) (GTermExp n) (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gintegral_Term i m n f)]
+  GSigmaExp (GTermExp m) (GTermExp n) i (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gsigma_Term m n i f)]
+  GSeriesExp (GTermExp m) i (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gseries_Term m i f)]
+  GIntegralExp (GTermExp m) (GTermExp n) i (GTermExp f) ->
+    tree : [GTermExp term | term <- variations (Gintegral_Term m n i f)]
   
-  Gsigma_Term i m n f ->
+  Gsigma_Term m n i f ->
     let m1s = case m of
                 GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]
 	        _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]  --- not to be included with GInt m 

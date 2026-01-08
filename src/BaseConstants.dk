@@ -196,14 +196,11 @@ def orthogonal : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
 vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector.
 
 (; summer school ;)
-sigma : (m : Elem Nat) ->
-  (n : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
+sigma : (m : Elem Nat) -> (n : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
 
-series : (m : Elem Nat) ->
-                    (Elem Nat -> Elem Num) -> Elem Num.
+series : (m : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
 
-integral : (m : Elem Real) ->
-  (n : Elem Real) -> (Elem Real -> Elem Real) -> Elem Real.
+integral : (m : Elem Real) -> (n : Elem Real) -> (Elem Real -> Elem Real) -> Elem Real.
 
 
 (; Naproche-zf ;)

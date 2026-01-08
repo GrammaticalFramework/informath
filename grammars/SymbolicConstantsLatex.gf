@@ -84,7 +84,7 @@ lin
   modulo_Formula a b m =
     constant (top a ++ "\\equiv" ++ top b ++ "\\pmod{" ++ top m ++ "}") ;
 
-  sigma_Term i m n t = {
+  sigma_Term m n i t = {
     s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ top n ++ "}{" ++ usePrec 2 t ++ "}" ;
     p = 1 ;
     isNumber = False
@@ -96,13 +96,13 @@ lin
     isNumber = False
     } ;
     
-  series_Term i m t = {
+  series_Term m i t = {
     s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ "\\infty" ++ "}{" ++ usePrec 2 t ++ "}" ;
     p = 1 ;
     isNumber = False
     } ;
 
-  integral_Term x a b t = {
+  integral_Term a b x t = {
     s = "\\int_{" ++ top a ++ "}^{" ++ top b ++ "}" ++ usePrec 2 t ++ "\\, d" ++ x ;
     p = 1 ;
     isNumber = False
