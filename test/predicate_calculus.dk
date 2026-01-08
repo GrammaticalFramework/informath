@@ -50,6 +50,58 @@ existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> 
 def existsE : (A : Set) -> (B : (Elem A -> Prop)) -> (C : Prop) -> Proof (exists A (x => B x)) -> ((x : Elem A) -> Proof (B x) -> Proof C) -> Proof C.
 [a, b, c] existsE _ _ _ (existsI _ _ a b) c --> c a b.
 
+def hypo : (A : Prop) -> Proof A -> Proof A := A => a => a.
+
+(; identity ;)
+
+Eq : (A : Set) -> Elem A -> Elem A -> Prop.
+refl : (A : Set) -> (a : Elem A) -> Proof (Eq A a a).
+
+
+(; natural numbers ;)
+
+Nat : Set.
+Zero : Elem Nat.
+Succ : Elem Nat -> Elem Nat.
+
+def NatE : (n : Elem Nat) -> (C : (Elem Nat -> Prop)) ->
+  Proof (C Zero) -> ((n : Elem Nat) -> Proof (C n) -> Proof (C (Succ n))) -> Proof (C n).
+[d] NatE Zero _ d _ --> d.
+[n, C, d, e] NatE (Succ n) C d e --> e n (NatE n C d e).
+
+def plus : Elem Nat -> Elem Nat -> Elem Nat.
+[m] plus m Zero --> m.
+[m, n] plus m (Succ n) --> Succ (plus m n).
+
+def times : Elem Nat -> Elem Nat -> Elem Nat.
+[m] times m Zero --> Zero.
+[m, n] times m (Succ n) --> plus (times m n) m.
+
+def divisible : Elem Nat -> Elem Nat -> Prop := n => m => exists Nat (k => Eq Nat n (times k m)).
+
+def 0 : Elem Nat := Zero.
+def 1 : Elem Nat := Succ 0.
+def 2 : Elem Nat := Succ 1.
+
+even : Elem Nat -> Prop.
+odd : Elem Nat -> Prop.
+
+evenZero : Proof (even Zero).
+evenSucc : (n : Elem Nat) -> Proof (odd n) -> Proof (even (Succ n)).
+oddSucc : (n : Elem Nat) -> Proof (even n) -> Proof (odd (Succ n)).
+
+thm prop1 : Proof (odd 1) := oddSucc 0 evenZero.
+
+prop2 : (n : Elem Nat) -> Proof (iff (even n) (divisible n 2)).
+
+thm prop3 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
+  n => NatE n (x => or (even x) (odd x))
+         (orIl (even Zero) (odd Zero) evenZero)
+	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x))) y
+	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
+	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (hypo (odd x) h)))).
+
+
 
 
 
