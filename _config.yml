@@ -1,0 +1,13 @@
+# GitHub Pages config
+exclude:
+  - app
+  - data
+  - exper
+  - grammars
+  - next
+  - old
+  - out
+  - previous
+  - src
+  - test
+title: Informath
