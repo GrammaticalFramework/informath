@@ -12,13 +12,25 @@ exists CoreExistProp
 not CoreNotProp
 iff CoreIffProp
 
-#andI AndIProof
-#andEl AndElProof
-#andEr AndErProof
-#ifI IfIProof
-#ifE IfEProof
-#falseE FalseEProof
-#hypo HypoProof
+falseE falseEProof
+andI andIProof
+andEl andElProof
+andEr andErProof
+orIl orIlProof
+orIr orIrProof
+orE orEProof
+ifI ifIProof
+ifE ifEProof
+forallI forallIProof
+forallE forallEProof
+existI existIProof
+existE existEProof
+hypo HypoProof
+refl reflProof
+NatE NatEProof
+evenZero evenZeroProof
+evenSucc evenSuccProof
+addSucc addSuccProof
 
 Eq Eq_Adj2 Eq_AdjE Eq_Compar
 Nat natural_Noun natural_Const

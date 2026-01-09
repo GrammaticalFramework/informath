@@ -32,23 +32,29 @@ def andEr : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof B.
 orIl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (or A B).
 orIr : (A : Prop) -> (B : Prop) -> Proof B -> Proof (or A B).
 
-def orE : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof (or A B) -> (Proof A -> Proof C) -> (Proof B -> Proof C) -> Proof C.
+def orE : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof (or A B) ->
+  (d : ((x : Proof A) -> Proof C)) -> (e : ((y : Proof B) -> Proof C)) -> Proof C.
 [a, d] orE _ _ _ (orIl _ _ a) d _ --> d a.
 [b, e] orE _ _ _ (orIr _ _ b) _ e --> e b.
 
-ifI : (A : Prop) -> (B : Prop) -> (Proof A -> Proof B) -> Proof (if A B).
+ifI : (A : Prop) -> (B : Prop) -> (b : ((x : Proof A) -> Proof B)) -> Proof (if A B).
 
 def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
 [c, a] ifE _ _ (ifI _ _ c) a --> c a.
 
-forallI : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> ((x : Elem A) -> Proof (B x)) -> Proof (forall A (x => B x)).
+forallI : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  (b : ((x : Elem A) -> Proof (B x))) -> Proof (forall A (x => B x)).
 
-def forallE : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
+def forallE : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
 [c, a] forallE _ _ (forallI _ _ c) a --> c a.
 
-existsI : (A : Set) -> (B : (Elem A -> Prop)) -> (a : Elem A) -> Proof (B a) -> Proof (exists A (x => B x)).
+existsI : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  (a : Elem A) -> (b : Proof (B a)) -> Proof (exists A (x => B x)).
 
-def existsE : (A : Set) -> (B : (Elem A -> Prop)) -> (C : Prop) -> Proof (exists A (x => B x)) -> ((x : Elem A) -> Proof (B x) -> Proof C) -> Proof C.
+def existsE : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> (C : Prop) ->
+  Proof (exists A (x => B x)) ->
+    (d : ((x : Elem A) -> (y : Proof (B x)) -> Proof C)) -> Proof C.
 [a, b, c] existsE _ _ _ (existsI _ _ a b) c --> c a b.
 
 def hypo : (A : Prop) -> Proof A -> Proof A := A => a => a.
@@ -73,8 +79,10 @@ Nat : Set.
 Zero : Elem Nat.
 Succ : Elem Nat -> Elem Nat.
 
-def NatE : (n : Elem Nat) -> (C : (Elem Nat -> Prop)) ->
-  Proof (C Zero) -> ((n : Elem Nat) -> Proof (C n) -> Proof (C (Succ n))) -> Proof (C n).
+def NatE : (n : Elem Nat) -> (C : ((x : Elem Nat) -> Prop)) ->
+  (d : Proof (C Zero)) ->
+  (e : ((n : Elem Nat) -> (h : Proof (C n) -> Proof (C (Succ n))))) ->
+  Proof (C n).
 [d] NatE Zero _ d _ --> d.
 [n, C, d, e] NatE (Succ n) C d e --> e n (NatE n C d e).
 
