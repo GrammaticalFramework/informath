@@ -30,56 +30,34 @@ jmt2jmt jmt = case jmt of
           MEExp exp -> Just exp
           _ -> Nothing
     in case (splitType typ, guessGFCat ident typ) of
-      ((hypos, kind), c) | elem c ["Label", "Proof"] -> 
-        (maybe GAxiomJmt (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
-          (ident2label ident)
-          (GListHypo (hypos2hypos hypos))
-          (exp2prop kind)
-{-	  
-      ((hypos, kind), c) | elem c ["Noun"] -> 
-          (maybe (GAxiomKindJmt axiomLabel)
-               (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
-            (GListHypo (hypos2hypos hypos))
-            (ident2kind ident)
--}
-      ((hypos, kind), c) | elem c ["Fam", "Fam2", "Noun", "Kind"] ->
+      ((hypos, kind), c) -> 
         let vhypos = addVarsToHypos mexp hypos
             chypos = hypos2hypos vhypos
-        in (maybe (GAxiomKindJmt axiomLabel)
+	in case () of
+	  _ | elem c ["Label", "Proof"] -> 
+            (maybe GAxiomJmt
+	        (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
+              (ident2label ident)
+              (GListHypo (hypos2hypos hypos))
+              (exp2prop kind)
+          _ | elem c ["Fam", "Fam2", "Noun", "Kind"] ->
+            (maybe (GAxiomKindJmt axiomLabel)
 	        (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
-             (GListHypo chypos)
-	     (exp2kind (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-{-
-      ((hypos, kind), c) | elem c ["Name", "Unknown"] ->
-          (maybe (GAxiomExpJmt axiomLabel)
-	         (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp exp)) mexp)
-            (GListHypo (hypos2hypos hypos))
-	    (ident2exp ident)
-            (exp2kind kind)
--}
-      ((hypos, kind), c) | elem c ["Fun", "Fun2", "FunC", "Exp", "Name", "Unknown"] ->
-        let vhypos = addVarsToHypos mexp hypos
-            chypos = hypos2hypos vhypos
-        in (maybe (GAxiomExpJmt axiomLabel)
-	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
-             (GListHypo chypos)
-             (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-             (exp2kind kind)
-      ((hypos, kind), c) | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "AdjE", "Verb2", "Noun2", "Adj3", "Prop"] ->
-        let vhypos = addVarsToHypos mexp hypos
-            chypos = hypos2hypos vhypos
-        in (maybe (GAxiomPropJmt axiomLabel)
+              (GListHypo chypos)
+	      (exp2kind (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
+          _ | elem c ["Fun", "Fun2", "FunC", "Exp", "Name", "Unknown"] ->
+            (maybe (GAxiomExpJmt axiomLabel)
+	        (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
+              (GListHypo chypos)
+              (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
+              (exp2kind kind)
+          _ | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "AdjE",
+	              "Verb2", "Noun2", "Adj3", "Prop"] ->
+            (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
-             (GListHypo chypos)
-	     (exp2prop (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-      ((hypos, kind), c) -> ----error ("cannot convert category " ++ c)      
-        let vhypos = addVarsToHypos mexp hypos
-            chypos = hypos2hypos vhypos
-        in (maybe (GAxiomExpJmt axiomLabel)
-	          (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
-             (GListHypo chypos)
-	     (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-             (exp2kind kind)
+              (GListHypo chypos)
+	      (exp2prop (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
+          _ -> error ("cannot convert category " ++ c)
 
   JStatic ident typ ->
     jmt2jmt (JDef ident (MTExp typ) MENone)
@@ -222,15 +200,17 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
 	_ -> GAppKind (ident2ident ident) (gExps (map exp2exp xs))
       _ -> GAppKind (ident2ident ident) (gExps (map exp2exp xs))
     (fun, args) -> case fun of
-      EIdent ident ->
-        GAppKind (ident2ident ident) (gExps (map exp2exp args))
+      EIdent ident -> GAppKind (ident2ident ident) (gExps (map exp2exp args))
+  EFun _ _ -> case splitType exp of
+    (hypos, body) ->
+        GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind body)
+  _ -> error $ "exp2kind not defined for " ++ show exp
 
 
 exp2prop :: Exp -> GProp
 exp2prop exp = case specialDedukti2Informath callBacks exp of
   Just expr -> fg expr
   _ -> case exp of
----    _ | exp == propFalse -> GFalseProp ----
     EIdent ident -> GIdentProp (ident2ident ident)
     EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
     EApp _ _ -> case splitApp exp of

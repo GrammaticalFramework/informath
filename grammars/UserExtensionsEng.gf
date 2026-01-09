@@ -1,6 +1,6 @@
 concrete UserExtensionsEng of UserExtensions =
   NaprocheEng,
-  NaturalDeductionEng,
+----  NaturalDeductionEng,
   GraphsEng ;
   
 

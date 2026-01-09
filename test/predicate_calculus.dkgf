@@ -12,11 +12,12 @@ exists CoreExistProp
 not CoreNotProp
 iff CoreIffProp
 
-andI AndIProof
-andEl AndElProof
-andEr AndErProof
-ifI IfIProof
-ifE IfEProof
+#andI AndIProof
+#andEl AndElProof
+#andEr AndErProof
+#ifI IfIProof
+#ifE IfEProof
+#falseE FalseEProof
 #hypo HypoProof
 
 Eq Eq_Adj2 Eq_AdjE Eq_Compar

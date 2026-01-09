@@ -1,5 +1,5 @@
 abstract UserExtensions =
   Naproche,
-  NaturalDeduction,
+----  NaturalDeduction,
   Graphs ;
 

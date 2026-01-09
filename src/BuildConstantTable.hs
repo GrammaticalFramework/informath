@@ -226,7 +226,7 @@ valCat t = case unType t of (_, c, _) -> c
 argCats :: Type -> [Cat]
 argCats t = case unType t of (hs, _, _) -> [valCat h | (_, _, h) <- hs]
 
--- deciding the kind of a new constant
+-- deciding the kind of a new constant introduced in a judgement
 guessGFCat :: QIdent -> Exp -> String
 guessGFCat ident@(QIdent c) typ =
   let
@@ -251,6 +251,6 @@ guessGFCat ident@(QIdent c) typ =
         2 -> "Fun2"
         _ -> "FunC"
       (EIdent f, _) | f == identProof -> "Label"
-      _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
+      _ -> "Exp"
       
 

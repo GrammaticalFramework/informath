@@ -179,36 +179,12 @@ list2enum xs = case xs of
   x:xx -> EApp (EApp (EIdent (QIdent "cons")) x) (list2enum xx)
   _ -> EIdent (QIdent "nil")
 
--- deciding the kind of a new constant
-guessCat :: QIdent -> Exp -> String
-guessCat ident@(QIdent c) typ =
-  let
-    (hypos, val) = splitType typ
-    arity = length hypos
-  in case lookupConstant c of
-    Just (cat, _) -> cat
-    _ -> case splitApp val of
-      (EIdent f, _) | f == identProp -> case arity of
-        0 -> "Name" --- not really
-        1 -> "Adj"
-        2 -> "Reladj"
-        _ -> "Fun"
-      (EIdent f, _) | elem f [identSet, identType] -> case arity of
-        0 -> "Noun"
-        _ -> "Fun"
-      (EIdent f, _) | f == identElem -> case arity of
-        0 -> "Name"
-        _ -> "Fun"
-      (EIdent f, _) | f == identProof -> "Label"
-      _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
-
-
 -- to begin with, to decide how to render a hypo
 catExp :: Exp -> String
 catExp e = case e of
   EApp _ _ -> case splitApp e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
-      Just (k, _) | elem k ["Adj", "Rel", "Compar"] -> "Prop"
+      Just (k, _) | elem k ["Adj", "Adj2", "AdjC", "AdjE", "Adj3", "Noun1", "Noun2", "Verb","Verb2"] -> "Prop"
       _ | elem f [identConj, identDisj, identImpl,
                   identEquiv, identPi, identSigma, identNeg] -> "Prop"
       _ -> "Kind"
@@ -367,3 +343,29 @@ stripQualifiers t = case t of
 
 deduktiTokens :: String -> [String]
 deduktiTokens = map prToken . myLexer
+
+--------- only needed in previous
+-- deciding the kind of a new constant
+guessCat :: QIdent -> Exp -> String
+guessCat ident@(QIdent c) typ =
+  let
+    (hypos, val) = splitType typ
+    arity = length hypos
+  in case lookupConstant c of
+    Just (cat, _) -> cat
+    _ -> case splitApp val of
+      (EIdent f, _) | f == identProp -> case arity of
+        0 -> "Name" --- not really
+        1 -> "Adj"
+        2 -> "Reladj"
+        _ -> "Fun"
+      (EIdent f, _) | elem f [identSet, identType] -> case arity of
+        0 -> "Noun"
+        _ -> "Fun"
+      (EIdent f, _) | f == identElem -> case arity of
+        0 -> "Name"
+        _ -> "Fun"
+      (EIdent f, _) | f == identProof -> "Label"
+      _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
+
+
