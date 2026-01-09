@@ -198,7 +198,16 @@ annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
   annot bounds t = case t of
     QIdent _ | notElem t bounds -> annotId t
     EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
-    EFun h exp -> EFun (annot bounds h) (annot (hypo2vars h ++ bounds) exp)
+    EFun h exp -> EFun (annot bounds h) (annot (hypo2topvars h ++ bounds) exp)
+    
+    -- don't annotate bound variables
+    BVar _ -> t
+    BTyped v ty -> BTyped v (annot bounds ty)
+    HVarExp v ty -> HVarExp v (annot bounds ty)
+    HParVarExp v ty -> HParVarExp v (annot bounds ty)
+    HLetExp v ty -> HLetExp v (annot bounds ty)
+    HLetTyped v ty exp -> HLetTyped v (annot bounds ty) (annot bounds exp)
+
     _ -> composOp (annot bounds) t
 
   annotId c = case M.lookup c table of

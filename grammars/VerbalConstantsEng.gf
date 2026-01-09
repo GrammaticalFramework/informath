@@ -148,4 +148,9 @@ lin
     mkNP the_Det (mkCN (mkCN integral_N)
       (SyntaxEng.mkAdv possess_Prep
         (mkNP exp (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))) ;
+
+  sameParityProp x y =
+    simpleProp (mkS (mkCl (mkNP and_Conj x y)
+      (SyntaxEng.mkAdv possess_Prep (mkNP the_Det (mkCN (mkA "same") (mkN "parity")))))) ;
+      
 }

@@ -29,6 +29,7 @@ lambdaFlatten exp = case splitApp exp of
 
 data CallBacks =  CallBacks {
   callBind :: Bind -> Expr,
+  callIdent :: Exp -> Expr,
   callExp  :: Exp -> Expr,
   callKind  :: Exp -> Expr,
   callProp  :: Exp -> Expr,
@@ -42,6 +43,7 @@ convertArg callbacks arg = case arg of
   ("Kind", Right exp) -> callKind callbacks exp
   ("Prop", Right exp) -> callProp callbacks exp
   ("Proof", Right exp) -> callProof callbacks exp
+  ("Ident", Right exp) -> callIdent callbacks exp
   (_, Right exp) -> callExp callbacks exp ---- ??
 
 specialDedukti2Informath :: CallBacks -> Exp -> Maybe Expr

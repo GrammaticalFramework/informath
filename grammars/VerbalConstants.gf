@@ -122,5 +122,7 @@ fun
   SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp ;
   SeriesExp : Exp -> Ident -> Exp -> Exp ;
   IntegralExp : Exp -> Exp -> Ident -> Exp -> Exp ;
+  
+  sameParityProp : Exp -> Exp -> Prop ;
 
 }

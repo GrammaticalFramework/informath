@@ -26,13 +26,13 @@ prop120 : (a : Elem Int) -> (b : Elem Int) -> Proof (iff (even (times a b)) (or 
 
 prop130 :  (x : Elem Int) -> (y : Elem Int) -> Proof (if (odd (times x y)) (and (odd x) (odd y))).
 
-def same_parity : Elem Int -> Elem Int -> Prop := x => y => or (and (even x) (even y)) (and (odd x) (odd y)).
+def sameParity : Elem Int -> Elem Int -> Prop := x => y => or (and (even x) (even y)) (and (odd x) (odd y)).
 
-prop140 : (x : Elem Int) -> (y : Elem Int) -> Proof (iff (same_parity x y) (even (plus x y))).
+prop140 : (x : Elem Int) -> (y : Elem Int) -> Proof (iff (sameParity x y) (even (plus x y))).
 
 prop150 : (n : Elem Nat) -> Proof (even (minus (pow n 3) n)).
 
-prop160 : (a : Elem Int) -> (b : Elem Int) -> Proof (if (same_parity (plus a b) (times a b)) (and (even a) (even b))).
+prop160 : (a : Elem Int) -> (b : Elem Int) -> Proof (if (sameParity (plus a b) (times a b)) (and (even a) (even b))).
 
 prop170 : Proof (forall Nat (x => not (and (even x) (odd x)))).
 

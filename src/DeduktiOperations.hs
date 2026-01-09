@@ -322,8 +322,18 @@ bind2var bind = case bind of
   BVar v -> v
   BTyped v _ -> v
 
+-- in HOAS, include variables from next-level hypos
 hypo2vars :: Hypo -> [QIdent]
-hypo2vars hypo = case hypo of
+hypo2vars hypo = maybe [] typevars (hypo2type hypo) ++ hypo2topvars hypo where
+  typevars :: Exp -> [QIdent]
+  typevars ty = case ty of
+    EFun h body -> hypo2topvars h ++ typevars body
+    _ -> []
+    ---- TODO: what about h with no variable?
+
+-- top-level variables only
+hypo2topvars :: Hypo -> [QIdent]
+hypo2topvars hypo = case hypo of
   HVarExp v _ -> [v]
   HParVarExp v _ -> [v]
   HLetExp v _ -> [v]

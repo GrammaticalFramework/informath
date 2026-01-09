@@ -30,7 +30,7 @@ jmt2jmt jmt = case jmt of
           MEExp exp -> Just exp
           _ -> Nothing
     in case (splitType typ, guessGFCat ident typ) of
-      ((hypos, kind), c) | elem c ["Label"] -> 
+      ((hypos, kind), c) | elem c ["Label", "Proof"] -> 
         (maybe GAxiomJmt (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
           (ident2label ident)
           (GListHypo (hypos2hypos hypos))
@@ -191,8 +191,9 @@ rule2rule rule = case rule of
       (GListIdent (map ident2ident (pattbindIdents pattbinds)))
       (patt2exp patt) (exp2exp exp)
 
-exp2kind :: Exp -> GKind
-exp2kind exp = case specialDedukti2Informath callBacks exp of
+---- TODO
+exp2kindNext :: Exp -> GKind
+exp2kindNext exp = case specialDedukti2Informath callBacks exp of
   Just expr -> fg expr
   _ -> case exp of
     EFun _ _ -> 
@@ -204,8 +205,10 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
         EIdent ident -> funListKind ident (map exp2exp args)
     _ -> error $ "exp2kind not defined for " ++ show exp
 
-{-
-exp2kind exp = case exp of
+exp2kind :: Exp -> GKind
+exp2kind exp = case specialDedukti2Informath callBacks exp of
+ Just expr -> fg expr
+ _ -> case exp of
   EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
     Just ("Noun", c) -> GNounKind (LexNoun c)
     _ -> ident2kind ident
@@ -221,13 +224,13 @@ exp2kind exp = case exp of
     (fun, args) -> case fun of
       EIdent ident ->
         GAppKind (ident2ident ident) (gExps (map exp2exp args))
--}
 
-exp2propNext :: Exp -> GProp
-exp2propNext exp = case specialDedukti2Informath callBacks exp of
+
+exp2prop :: Exp -> GProp
+exp2prop exp = case specialDedukti2Informath callBacks exp of
   Just expr -> fg expr
   _ -> case exp of
-    _ | exp == propFalse -> GFalseProp ----
+---    _ | exp == propFalse -> GFalseProp ----
     EIdent ident -> GIdentProp (ident2ident ident)
     EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
     EApp _ _ -> case splitApp exp of
@@ -239,7 +242,7 @@ exp2propNext exp = case specialDedukti2Informath callBacks exp of
     EAbs _ _ -> case splitAbs exp of
       (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
 
-
+{-
 exp2prop :: Exp -> GProp
 exp2prop exp = case exp of
   _ | exp == propFalse -> GFalseProp
@@ -269,23 +272,29 @@ exp2prop exp = case exp of
       GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
   EAbs _ _ -> case splitAbs exp of
     (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
-
+-}
 
 
 callBacks :: CallBacks
 callBacks = CallBacks {
   callBind = gf . bind2coreIdent,
+  callIdent = gf . findExpIdent,
   callExp  = gf . exp2exp,
   callKind = gf . exp2kind,
   callProp = gf . exp2prop,
   callProof = gf . exp2proof
   }
 
+findExpIdent :: Exp -> GIdent
+findExpIdent exp = case exp of
+  EIdent x -> ident2ident x
+  _ -> error $ "no ident from Exp " ++ printTree exp
+
 exp2exp :: Exp -> GExp
 exp2exp exp = case specialDedukti2Informath callBacks exp of
   Just expr -> fg expr
   _ -> case exp of
-    EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
+    EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
       Just ("Name", c) -> GNameExp (LexName c)
       _ -> ident2exp ident
   

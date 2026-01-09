@@ -12,15 +12,15 @@ false : Prop.
 and : (A : Prop) -> (B : Prop) -> Prop.
 or : (A : Prop) -> (B : Prop) -> Prop.
 if : (A : Prop) -> (B : Prop) -> Prop.
-(;
-forall : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
-exists : (A : Set) -> (B : (Elem A -> Prop)) -> Prop.
-;)
+
+forall : (A : Set) -> (B : (x : Elem A -> Prop)) -> Prop.
+exists : (A : Set) -> (B : (x : Elem A -> Prop)) -> Prop.
+
 def not : Prop -> Prop := A => if A false.
 def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
-(;
+
 falseE : (C : Prop) -> Proof false -> Proof C.
-;)
+
 andI : (A : Prop) -> (B : Prop) -> Proof A -> Proof B -> Proof (and A B).
 
 def andEl : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof A.
