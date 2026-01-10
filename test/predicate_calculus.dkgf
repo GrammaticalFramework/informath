@@ -1,7 +1,7 @@
 Set set_Noun
 Prop proposition_Noun
-Elem ElemKind
-Proof ProofProp
+#Elem ElemKind
+#Proof ProofProp
 
 false FalseProp
 and CoreAndProp
@@ -25,7 +25,7 @@ forallI forallIProof
 forallE forallEProof
 existI existIProof
 existE existEProof
-hypo HypoProof
+hypo hypoProof
 refl reflProof
 NatE NatEProof
 evenZero evenZeroProof
@@ -42,3 +42,4 @@ even even_Adj
 odd odd_Adj
 
 # #DROP Eq 1
+

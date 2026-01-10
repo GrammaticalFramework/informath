@@ -251,6 +251,6 @@ guessGFCat ident@(QIdent c) typ =
         2 -> "Fun2"
         _ -> "FunC"
       (EIdent f, _) | f == identProof -> "Label"
-      _ -> "Exp"
+      _ -> "Label"  --- default, assuming proof labels are often not linearized 
       
 

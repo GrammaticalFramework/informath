@@ -13,7 +13,7 @@ fun
   orEProof : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof ->
     (x : Ident) -> (d : Proof) -> (y : Ident) -> Proof -> Proof ;
   
-  iIProof : Prop -> Prop -> Ident -> Proof -> Proof ;
+  ifIProof : Prop -> Prop -> Ident -> Proof -> Proof ;
   ifEProof : Prop -> Prop -> Proof -> Proof -> Proof ;
 
   forallIProof : (A : Kind) -> (x : Ident) -> (B : Prop) -> (z : Ident) -> (b : Proof) -> Proof ;

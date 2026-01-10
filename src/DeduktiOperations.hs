@@ -186,7 +186,7 @@ catExp e = case e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
       Just (k, _) | elem k ["Adj", "Adj2", "AdjC", "AdjE", "Adj3", "Noun1", "Noun2", "Verb","Verb2"] -> "Prop"
       _ | elem f [identConj, identDisj, identImpl,
-                  identEquiv, identPi, identSigma, identNeg] -> "Prop"
+                  identEquiv, identPi, identSigma, identNeg, identProof] -> "Prop"
       _ -> "Kind"
   _ -> "Kind"
 

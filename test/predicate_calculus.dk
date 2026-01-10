@@ -67,9 +67,9 @@ refl : (A : Set) -> (a : Elem A) -> Proof (Eq A a a).
 
 (; some theorems of logic ;)
 
-(; A |- B -> A ;)
-thm nd1 : (A : Prop) -> (B : Prop) -> Proof A -> Proof (if B A) :=
-  A => B => h => ifI B A (k => hypo A h).
+(; A -> B -> A ;)
+thm nd1 : (A : Prop) -> (B : Prop) -> Proof (if A (if B A)) :=
+  A => B => ifI A (if B A) (h => ifI B A (k => hypo A h)).
 
 
 
@@ -84,7 +84,7 @@ def NatE : (n : Elem Nat) -> (C : ((x : Elem Nat) -> Prop)) ->
   (e : ((n : Elem Nat) -> (h : Proof (C n) -> Proof (C (Succ n))))) ->
   Proof (C n).
 [d] NatE Zero _ d _ --> d.
-[n, C, d, e] NatE (Succ n) C d e --> e n (NatE n C d e).
+[n, C, d, e] NatE (Succ n) C d e --> e n (NatE n C d e). 
 
 def plus : Elem Nat -> Elem Nat -> Elem Nat.
 [m] plus m Zero --> m.
