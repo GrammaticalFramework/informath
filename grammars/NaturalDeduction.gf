@@ -30,7 +30,7 @@ fun
 
   reflProof : (A : Kind) -> (a : Exp) -> Proof ;
 
-  NatEProof : (n : Exp) -> (x : Ident) -> (C : Prop) -> 
+  NatIndProof : (x : Ident) -> (C : Prop) -> 
     (d : Proof) -> (n : Ident) -> (h : Ident) -> Proof -> Proof ;
 
   evenZeroProof : Proof ;

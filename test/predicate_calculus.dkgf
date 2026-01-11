@@ -27,10 +27,10 @@ existI existIProof
 existE existEProof
 hypo hypoProof
 refl reflProof
-NatE NatEProof
+NatInd NatIndProof
 evenZero evenZeroProof
 evenSucc evenSuccProof
-addSucc addSuccProof
+oddSucc oddSuccProof
 
 Eq Eq_Adj2 Eq_AdjE Eq_Compar
 Nat natural_Noun natural_Const

@@ -21,7 +21,7 @@ lin
     labelText label
       (mkText
         (thenText hypos (topProp prop))
-        (prefixText proof_Str proof)) ;
+        (prefixTextFullStop proof_Str proof)) ;
   DefPropJmt label hypos prop df =
     labelText label
       (thenText hypos (Grammar.SSubjS (partProp prop) if_Subj (partProp df))) ;

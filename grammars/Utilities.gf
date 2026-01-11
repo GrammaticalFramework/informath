@@ -49,6 +49,7 @@ oper
   parenthS : S -> S = \s -> MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
 
   prefixText : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s} ;
+  prefixTextFullStop : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s ++ "."} ;
 
   item_Label : Str = "\\item" ;
 
