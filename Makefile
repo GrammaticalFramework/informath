@@ -5,11 +5,16 @@ GF_FILES := $(wildcard grammars/*.gf)
 
 lang=Eng
 
-all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda Rocq Lean RunInformath 
-
-usual: grammars/Informath.pgf RunInformath
-
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
+
+all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda Rocq Lean RunInformath grammar
+
+grammar: grammars/Informath.pgf
+
+RunInformath:
+	stack install
+
+devel: grammar RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
@@ -29,9 +34,6 @@ Lean:
 
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
-
-RunInformath:
-	stack install
 
 clean:
 	cd src/typetheory && \
