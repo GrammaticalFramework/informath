@@ -49,9 +49,12 @@ oper
   parenthS : S -> S = \s -> MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
 
   prefixText : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s} ;
-  prefixTextFullStop : Str -> Text -> Text = \s, t -> lin Text {s = s ++ t.s ++ "."} ;
+  prefixTextFullStop : Str -> Text -> Text = \s, t -> lin Text {s = s ++ "." ++ t.s} ;
+  embedText : Str -> Str -> Text -> Text = \b, e, t -> lin Text {s = b ++ t.s ++ e} ;
 
-  item_Label : Str = "\\item" ;
+  item_str : Str = "\\item" ;
+  begin_itemize_str : Str = "\\begin{itemize}" ;
+  end_itemize_str : Str = "\\end{itemize}" ;
 
   postAdvS : S -> Adv -> S ;
   displayLatexS : Symb -> S ;

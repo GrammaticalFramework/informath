@@ -47,7 +47,8 @@ lin
     labelText label
       (mkText (mkS (mkCl exp (definedAdv df)))) ;
 
-  RewriteJmt rules = prefixText by_cases_Str rules ;
+  RewriteJmt rules =
+    prefixText by_cases_Str (embedText begin_itemize_str end_itemize_str rules) ;
   RewriteRule idents patt exp =
     mkUtt (Grammar.ExtAdvS (Syntax.mkAdv for_Prep idents.np) (mkS (mkCl patt exp))) ;
   NoVarRewriteRule patt exp =

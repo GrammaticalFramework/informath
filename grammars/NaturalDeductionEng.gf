@@ -20,10 +20,13 @@ lin
   orIrProof A B b = mkText b (prefixText "a fortiori" (mkText (mkS or_Conj A.s B.s))) ;
 
   orEProof A B C c x d y e =
-    mkText c (prefixText "Hence we have two cases . First, " 
-      (mkText (assumeText x A.s) (mkText d (prefixText "Second"
-      (mkText (assumeText y B.s) (mkText e (prefixText "Thus"
-        (mkText (mkText C.s) (strText "in both cases ,"))))))))) ;
+    ccText c
+      (embedText ("Hence we have two cases . " ++ begin_itemize_str) end_itemize_str
+        (mkText
+          (prefixText (item_str ++ "First ,") (mkText (assumeText x A.s) d))
+          (prefixText (item_str ++ "Second ,") (mkText (assumeText y B.s) e))))
+        (prefixText "Thus"
+          (mkText (mkText C.s) (strText "in both cases ,"))) ;
   
   ifIProof A B h b =
     mkText (assumeText h (topProp A)) (mkText b (prefixText "we conclude" (mkText
@@ -67,5 +70,13 @@ oper
   strText : Str -> Text = \s -> lin Text {s = s} ;
 
   succNP : NP -> NP = \x -> mkNP the_Det (mkCN (P.mkN "successor") (mkAdv possess_Prep x)) ;  
+  ccText = overload {    
+    ccText : (a, b : Text) -> Text = \a, b -> mkText a b ;
+    ccText : (a, b, c : Text) -> Text = \a, b, c -> mkText a (mkText b c) ;
+    ccText : (a, b, c, d : Text) -> Text = \a, b, c, d -> mkText a (mkText b (mkText c d)) ;
+    ccText : (a, b, c, d, e : Text) -> Text = \a, b, c, d, e ->
+      mkText a (mkText b (mkText c (mkText d e))) ;
+    } ;
+
 
 }

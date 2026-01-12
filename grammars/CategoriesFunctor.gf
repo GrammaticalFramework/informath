@@ -97,8 +97,8 @@ lin
   BaseProof = emptyText ;
   ConsProof proof proofs = mkText proof proofs ;
 
-  BaseRule rule = prefixText item_Label (mkText rule) ;
-  ConsRule rule rules = mkText (prefixText "\\item" (mkText rule)) rules ;
+  BaseRule rule = prefixText item_str (mkText rule) ;
+  ConsRule rule rules = mkText (prefixText item_str (mkText rule)) rules ;
 
 
 }

@@ -7,7 +7,9 @@ lang=Eng
 
 all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda Rocq Lean RunInformath 
 
-.PHONY: all Dedukti Agda Lean Rocq demo RunInformath
+usual: grammars/Informath.pgf RunInformath
+
+.PHONY: all usual Dedukti Agda Lean Rocq demo RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
@@ -82,8 +84,12 @@ top100single:
 	dk check out/texx.dk
 
 sigma:
-	$(RUN) -variations -to-latex-doc -variations test/sigma.dk >out/sigma.tex
+	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
+
+natural_deduction:
+	$(RUN) -to-latex-doc -constants=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex
+	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
 naproche:
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
@@ -110,7 +116,7 @@ parallel-def:
 	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl
 
 matita:
-	$(RUN) test/mini-matita.dk
+	$(RUN) -constants=test/empty.dkgf test/mini-matita.dk
 
 gflean:
 	$(RUN) test/gflean-data.txt
