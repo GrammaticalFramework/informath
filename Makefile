@@ -9,7 +9,7 @@ all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda
 
 usual: grammars/Informath.pgf RunInformath
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo RunInformath
+.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
@@ -43,31 +43,82 @@ cleangrammars:
 	cd grammars && rm *.gfo *.pgf *.hs
 
 demo:
+	echo "## The main user demo, only requiring Informath and Latex"
+	echo "## converting some simple arithmetic statements to English"
 	$(RUN) -to-lang=Eng test/exx.dk
+	echo "## converting some simple arithmetic statements to French"
 	$(RUN) -to-lang=Fre test/exx.dk
+	echo "## converting some simple arithmetic statements to German"
 	$(RUN) -to-lang=Ger test/exx.dk
+	echo "## converting some simple arithmetic statements to Swedish"
 	$(RUN) -to-lang=Swe test/exx.dk
+	echo "## parsing generated English with conversions back to Dedukti"
 	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
 	$(RUN) -from-lang=Eng out/exx.txt
+	echo "## parsing some natural English with conversions back to Dedukti"
 	$(RUN) -from-lang=Eng test/gflean-data.txt
 	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
+	echo "## converting some simple arithmetic statements to Agda"
+	$(RUN) -to-formalism=agda test/exx.dk
+	echo "## converting some simple arithmetic statements to Rocq"
+	$(RUN) -to-formalism=rocq test/exx.dk
+	echo "## converting some simple arithmetic statements to Lean"
+	$(RUN) -to-formalism=lean test/exx.dk
+	echo "# converting some set theory statements to LaTeX"
+	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
+	echo "consider pdflatex out/sets.tex"
+	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
+	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
+
+
+devdemo:
+	echo "## The development demo, needs Dedukti, Agda, Lean, Rocq"
+	echo "## checking some simple arithmetic statements in Dedukti"
 	dk check out/bexx.dk
+	echo "## converting some simple arithmetic statements to English"
+	$(RUN) -to-lang=Eng test/exx.dk
+	echo "## converting some simple arithmetic statements to French"
+	$(RUN) -to-lang=Fre test/exx.dk
+	echo "## converting some simple arithmetic statements to German"
+	$(RUN) -to-lang=Ger test/exx.dk
+	echo "## converting some simple arithmetic statements to Swedish"
+	$(RUN) -to-lang=Swe test/exx.dk
+	echo "## parsing generated English with conversions back to Dedukti"
+	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
+	$(RUN) -from-lang=Eng out/exx.txt
+	echo "## parsing some natural English with conversions back to Dedukti"
+	$(RUN) -from-lang=Eng test/gflean-data.txt
+	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
+	echo "## converting some simple arithmetic statements to Agda"
 	echo "open import BaseConstants\n\n" >out/exx.agda
 	$(RUN) -to-formalism=agda test/exx.dk >>out/exx.agda
 	cp -p src/BaseConstants.agda out/
+	echo "## checking the generated file in Agda"
 	cd out ; agda --prop exx.agda
+	echo "## converting some simple arithmetic statements to Rocq"
 	$(RUN) -to-formalism=rocq test/exx.dk >out/exx.v
 	cat src/BaseConstants.v out/exx.v >out/bexx.v
+	echo "## checking the generated file in Rocq"
 	coqc out/bexx.v
+	echo "## converting some simple arithmetic statements to Lean"
 	$(RUN) -to-formalism=lean test/exx.dk >out/exx.lean
+	echo "## checking the generated file in Lean"
 	cat src/BaseConstants.lean out/exx.lean >out/bexx.lean
 	lean out/bexx.lean
-	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
-	dk check out/texx.dk
+	echo "# checking some set theory statements and generating LaTeX"
 	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
 	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
+	echo "## checking a selection of 100 theorems in Dedukti"
+	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
+	dk check out/texx.dk
+	echo "## parsing and regenerating a Naproche document"
+	make naproche
+	echo "## generating some natural deduction proofs"
+	make natural_deduction
+	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
 	make top100
 
 
@@ -82,6 +133,10 @@ top100single:
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
+
+sets:
+	$(RUN) -variations -to-latex-doc -to-lang=$(lang) test/sets.dk >out/sets.tex
+	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
 sigma:
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex

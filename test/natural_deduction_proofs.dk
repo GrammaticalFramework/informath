@@ -1,0 +1,28 @@
+
+(; some theorems of logic ;)
+
+(; A -> B -> A ;)
+thm nd1 : (A : Prop) -> (B : Prop) -> Proof (if A (if B A)) :=
+  A => B => ifI A (if B A) (h => ifI B A (k => hypo A h)).
+
+
+(; natural numbers ;)
+
+thm prop1 : Proof (odd 1) := oddSucc 0 evenZero.
+
+prop2 : (n : Elem Nat) -> Proof (iff (even n) (divisible n 2)).
+
+thm prop3 : Proof (forall Nat (n => (or (even n) (odd n)))) :=
+  NatInd (x => or (even x) (odd x))
+         (orIl (even 0) (odd 0) evenZero)
+	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
+	                (hypo (or (even x) (odd x)) y)
+	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
+	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (hypo (odd x) h)))).
+
+
+
+
+
+
+

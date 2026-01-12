@@ -6,7 +6,7 @@
 
 ## NEWS
 
-12 January 2026: a very rudimentary proof-of-concept [Dedukti implementation](./test/natural_deduction.dk) and [GF grammar](./test/natural_deduction.dkgf) for natural deduction proofs. You can test this with `make natural_deduction`.
+12 January 2026: a very rudimentary proof-of-concept [Dedukti implementation](./test/natural_deduction.dk) and [GF grammar](./grammars/NaturalDeduction.gf) for natural deduction proofs. You can test this with `make natural_deduction`.
 
 19 December 2025: paper [Multilingual Autoformalization via Fine-tuning Large Language Models with Symbolically Generated Data](https://epub.jku.at/doi/10.35011/risc-proceedings-scml.1) appeared. Its focus is on the use of Informath in training data generation.
 
@@ -46,9 +46,11 @@ to build `RunInformath` and all its dependencies. After that, you can do
 ```
   $ make demo
 ```
-which illustrates different functionalities: translating between Dedukti and natural languages, as well as from Dedukti to Agda, Rocq, and Lean. Building the system requires some more software, as discribed below in [Requirements](#requirements). For a quick start, here is just a bare list of them:
+which illustrates different functionalities: translating between Dedukti and natural languages, as well as from Dedukti to Agda, Rocq, and Lean. 
 
-**Requirements**: you need
+Building the system requires some software, as discribed below in [Requirements](#requirements). For a quick start, here is just a bare list of them:
+
+**Minimal requirements**: to build Informath, you need
 - [GF](https://www.grammaticalframework.org/) >= 3.12 (both as executable and as the PGF library)
 - [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source)
 - [BNFC](https://bnfc.digitalgrammars.com/) >= 2.9 (executable)
@@ -56,7 +58,32 @@ which illustrates different functionalities: translating between Dedukti and nat
 - [alex](https://www.haskell.org/alex/) (executable, tested with 3.5.4)
 - [happy](https://www.haskell.org/happy/) (executable)
 
-to build Informath.
+
+## Some test datasets
+
+The following datasets can be processed with `RunInformath <filename>` to generate text or code eveb without additional options; see `RunInformath -help` to see what can be done with various options.
+
+- [test/exx.dk](./test/exx.dk) is a set of simple arithmetic statements.
+
+- [test/gf-lean.data](./test/gflean-data.txt) is a set of arithmetic statements in natural language, extracted from a textbook in Shashank Pathak's GFLean project.
+
+- [test/naproche-zf-set.tex](./test/naproche-zf-set.tex) is a set of Naproche-ZF statements. Try `make naproche` to directly display a LaTeX document. Use `make lang=Fre naproche` to generate French (and similarly for Ger, Swe).
+
+- [test/sets.dk](./test/sets.dk) contains set algebra statements from a Wikipedia article. Try `make sets` to directly display a LaTeX document. Use `make lang=Fre sets` to generate French (and similarly for Ger, Swe).
+
+- [test/sigma.dk](./test/sigma.dk) contains some examples of variable-binding constructs (sums, integrals). Try `make sigma` to directly display a LaTeX document.
+
+- [test/top100.dk](./test/top100.dk) contains a selection of Wiedijk's "100 theorems". Try `make top100` to directly display a LaTeX document. Use `make lang=Fre top100` to generate French (and similarly for Ger, Swe).
+
+## Your own data
+
+You can in principle generate from any Dedukti (`.dk`) file, at least if it is well typed in Dedukti (which is not always necessary). However, the result will be quite bad unless you provide a symbol table with a `.dkgf` file, converting Dedukti identifiers to GF functions; see below about the structure of this file. 
+
+There is a default symbol table, which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table. An example is the conversion of a Matita dump:
+```
+RunInformath -constants=test/empty.dkgf test/mini-matita.dk
+```
+
 
 ## Generating synthetic data
 
