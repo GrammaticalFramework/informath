@@ -9,14 +9,17 @@ import Environment
 import InformathAPI
 import Utils (showFreqs)
 
+---- import InformathServer --- TODO-server
+
 import System.Environment (getArgs) 
 
 main = do
   xx <- getArgs
   if elem "-previous" xx
   then main3 xx
+----  else if elem "-server" xx  --- TODO-server
+----  then informathServer xx  --- TODO-server
   else main4 xx 
-
 
 main4 args = if elem "-help" args then putStrLn helpMsg4 else do
   env <- readEnv args 

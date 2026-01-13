@@ -52,8 +52,9 @@ executable RunInformath
     MathCore2Dedukti
     InformathAPI
     Utils
+    SpecialConstants
 
-  hs-source-dirs:      app src src/typetheory grammars previous previous/grammars
+  hs-source-dirs:      app src web src/typetheory grammars previous previous/grammars
   ghc-options:         -O2
   build-depends:       base >=4.18 && <5,
                        containers,
