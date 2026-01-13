@@ -11,7 +11,8 @@ import Utils (showFreqs)
 
 ---- import InformathServer --- TODO-server
 
-import System.Environment (getArgs) 
+import System.Environment (getArgs)
+import System.IO (stdout, hFlush)
 
 main = do
   xx <- getArgs
@@ -43,6 +44,8 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       (ct, _, _) <- readConstantTable (grammar env) [file]
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
+    Nothing | elem "-loop" args -> do
+      loopInformath env
     Nothing | elem "-formalize" args -> do
       s <- getContents 
       let results = processLatex env s
@@ -58,6 +61,7 @@ helpMsg4 = unlines [
   "",
   "If no file is given, read standard input and process as following:",
   just "-formalize" "formalize the string like a .txt or .tex file",
+  just "-loop" "start a loop with input in either dedukti or '?' followed by tex",
   just "[no flag]" "informalize the string like a .dk file",
   "If a file is given, do the following depending on the file suffix:",
   "",
@@ -114,4 +118,19 @@ helpMsg4 = unlines [
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
+
+
+loopInformath env = do
+  putStr "> "
+  hFlush stdout
+  s <- getLine
+  case s of
+    '?':cs -> do
+      let results = processLatex env cs
+      mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
+    _ -> do
+      let mo = parseDeduktiModule s
+      let results = processDeduktiModule env mo
+      mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
+  loopInformath env
 
