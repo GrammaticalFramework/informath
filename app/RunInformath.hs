@@ -40,12 +40,23 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       (ct, _, _) <- readConstantTable (grammar env) [file]
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
+    Nothing | elem "-formalize" args -> do
+      s <- getContents 
+      let results = processLatex env s
+      mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
+    Nothing -> do
+      mo <- getContents >>= return . parseDeduktiModule
+      let results = processDeduktiModule env mo
+      mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
     _ -> putStrLn helpMsg4 
 
 helpMsg4 = unlines [
-  "usage: RunInformath <option>* <file>.(dk|dkgf|tex|txt|md|...)",
+  "usage: RunInformath <option>* <file>.(dk|dkgf|tex|txt|md|...)*",
   "",
-  "Depending on file suffix, the following is done:",
+  "If no file is given, read standard input and process as following:",
+  just "-formalize" "formalize the string like a .txt or .tex file",
+  just "[no flag]" "informalize the string like a .dk file",
+  "If a file is given, do the following depending on the file suffix:",
   "",
   just ".dk" "convert to natural language or to another formalism",
   just ".dkgf" "check the consistency of Dedukti to GF mapping",
