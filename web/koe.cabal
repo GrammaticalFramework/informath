@@ -1,0 +1,20 @@
+cabal-version:       3.6
+name:                informath
+version:             0.1.0.0
+-- synopsis:
+-- description:
+license:             BSD-3-Clause
+author:              Aarne Ranta
+maintainer:          aarne.ranta@gmail.com
+category:            Development
+build-type:          Simple
+
+
+executable Koe
+  main-is:             Koe.hs
+
+  build-depends: base >=4.18,
+                 http-slim,
+		 network-uri
+		 
+		     
