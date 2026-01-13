@@ -6,6 +6,8 @@
 
 ## NEWS
 
+13 January 2026: this document is being edited with more technical details. After the practical "quick start" type sections, there is an expanding part entitled "Under the hood", which will probably be moved to a separate document later. 
+
 12 January 2026: a very rudimentary proof-of-concept [Dedukti implementation](./test/natural_deduction.dk) and [GF grammar](./grammars/NaturalDeduction.gf) for natural deduction proofs. You can test this with `make natural_deduction`.
 
 19 December 2025: paper [Multilingual Autoformalization via Fine-tuning Large Language Models with Symbolically Generated Data](https://epub.jku.at/doi/10.35011/risc-proceedings-scml.1) appeared. Its focus is on the use of Informath in training data generation.
@@ -29,14 +31,14 @@
 
 The Informath project addresses the problem of translating between formal and informal languages for mathematics. It aims to translate between multiple formal and informal languages in all directions: 
 
-- formal to informal (informalization)
-- informal to formal (autoformalization)
+- formal to informal (**informalization**)
+- informal to formal (**autoformalization**)
 - informal to informal (translation, via formal)
 - formal to formal (works in special cases)
 
-The formal languages included are Agda, Rocq (formerly Coq), Dedukti, and Lean. The informal languages are English, French, German, and Swedish. Here is an example:
+The formal languages included are Agda, Rocq (formerly Coq), Dedukti, and Lean. The informal languages are English, French, German, and Swedish. 
 
-Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Also any of the natural languages could be used as a source:
+Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Also any of the natural languages could be used as the source:
 ```
 Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
   Proof (and (odd a) (odd c)) ->
@@ -71,7 +73,7 @@ The software included in this repository supports the translation of text and co
 ```
   $ make
 ```
-to build `RunInformath` and all its dependencies. After that, you can do
+to build the executable `RunInformath` and all its dependencies. After that, you can do
 ```
   $ make demo
 ```
@@ -93,15 +95,19 @@ The following datasets can be processed with `RunInformath <filename>` to genera
 
 - [test/exx.dk](./test/exx.dk) is a set of simple arithmetic statements.
 
-- [test/gf-lean.data](./test/gflean-data.txt) is a set of arithmetic statements in natural language, extracted from a textbook in Shashank Pathak's GFLean project.
+- [test/gf-lean.data](./test/gflean-data.txt) is a set of arithmetic statements in natural language, extracted from the textbook [*Mathematical Proofs: A Transition to Advanced Mathematics*](https://pdfcoffee.com/mathematical-proofs-3rd-edition-chartrand-pdf-free.html) by Chartrand et al, used in [Pathak's GFLean project](https://arxiv.org/abs/2404.01234). Some statements in this set are not yet parsed or interpreted correctly.
 
-- [test/naproche-zf-set.tex](./test/naproche-zf-set.tex) is a set of Naproche-ZF statements. Try `make naproche` to directly display a LaTeX document. Use `make lang=Fre naproche` to generate French (and similarly for Ger, Swe).
+- [test/naproche-zf-set.tex](./test/naproche-zf-set.tex) is a set of de Lon's [Naproche-ZF](https://adelon.net/naproche-zf) statements. Try `make naproche` to directly display a LaTeX document. Use `make lang=Fre naproche` to generate French (and similarly for Ger, Swe). Some statements are not yet parsed or interpreted correctly.
 
-- [test/sets.dk](./test/sets.dk) contains set algebra statements from a Wikipedia article. Try `make sets` to directly display a LaTeX document. Use `make lang=Fre sets` to generate French (and similarly for Ger, Swe).
+- [test/sets.dk](./test/sets.dk) contains set algebra statements from a [Wikipedia article](https://en.wikipedia.org/wiki/Algebra_of_sets). Try `make sets` to directly display a LaTeX document. Use `make lang=Fre sets` to generate French (and similarly for Ger, Swe).
 
 - [test/sigma.dk](./test/sigma.dk) contains some examples of variable-binding constructs (sums, integrals). Try `make sigma` to directly display a LaTeX document.
 
-- [test/top100.dk](./test/top100.dk) contains a selection of Wiedijk's "100 theorems". Try `make top100` to directly display a LaTeX document. Use `make lang=Fre top100` to generate French (and similarly for Ger, Swe).
+- [test/top100.dk](./test/top100.dk) contains a selection of [Wiedijk's "100 theorems"](https://www.cs.ru.nl/~freek/100/). Try `make top100` to directly display a LaTeX document. Use `make lang=Fre top100` to generate French (and similarly for Ger, Swe).
+  
+- [datasets/smad.tar.bz2](./datasets/smad.tar.bz2) contains the synthetic data used in the [autoformalization experiment of Huang et al.](https://epub.jku.at/doi/10.35011/risc-proceedings-scml.1)
+
+- [test/natural.tex](./test/natural.tex) contains the manually written top100-statements used for evaluating autoformalization in Huang et al. 
 
 ## Your own data
 
@@ -111,7 +117,7 @@ There is a default symbol table, which works for the examples listed above. But 
 ```
   $ RunInformath -constants=test/empty.dkgf test/mini-matita.dk
 ```
-
+Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-constants` flag, unless you use some other `.dkgf` file.
 
 ## Generating synthetic data
 
@@ -125,10 +131,11 @@ After that, select the desired formal and informal languages to generate a new `
 ```
 The currently available values of `<formal>` and `<informal>` are the keys in `<file>.jsonl` - for example, `agda` and `InformathEng`, respectively.
 
+An example is [datasets/smad.tar.bz2](./datasets/smad.tar.bz2), which contains the synthetic data used in the [autoformalization experiment of Huang et al.](https://epub.jku.at/doi/10.35011/risc-proceedings-scml.1). It was generated with an earlier version of Informath in Spring 2025. But the Dedukti statements contained in it can be used for generating data with later versions.
 
 ## The files in this repository
 
-The [`src`](./src/) directory contains
+The [src](./src/) directory contains
 - Haskell and other sources
 - subdirectory in [typetheory](./src/typetheory/) with generated parser and printer for the proof systems [Dedukti](https://deducteam.github.io/), Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) 
 - a translator from MathCore to Dedukti and vice-versa
@@ -136,10 +143,10 @@ The [`src`](./src/) directory contains
 - file [BaseConstants.dk](./src/BaseConstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
 - file [baseconstants.dkgf](./src/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
 
-The [`test`](./test/) directory contains
+The [test](./test/) directory contains
 - some test data as `.dk`, `.tex`, and `.txt` files (see above)
 
-The [`grammars`](./grammars) directory contains
+The [grammars](./grammars) directory contains
 
 - [MathCore](./grammars/MathCore.gf), the abstract syntax of a minimal CNL for mathematics
 - [MathCoreEng](./grammars/MathCoreEng.gf), Fre, Ger, Swe - concrete syntaxes of MathCore 
@@ -151,7 +158,11 @@ The [`grammars`](./grammars) directory contains
 - [Utilities](./grammars/Utilities.gf), auxiliary functions and type synonyms used in other modules, also usable in user extensions
 - [Informath](./grammars/Informath.gf), the top module that puts everything together
 
-The [`scripts`](./test/) directory contains
+In addition to the above grammars, which are used in the actual runtime, there are directories that can be used as libraries for implementing new constants:
+- [grammars/mathterms](./grammars/mathterms/), multilingual mathematics lexicon extracted from Wikidata
+- [grammars/extraction](./grammars/extraction/), auxiliary grammars used for the extraction task and also imported in the lexicon modules
+  
+The [scripts](./test/) directory contains 
 - Python scripts for various related tasks
 
 
@@ -161,14 +172,88 @@ The structure of Informath is shown in the following picture:
 
 ![Informath](informath-dedukti-core.png)
 
-The diagram has four kinds of arrowheads. Solid ones mean that the operation is a total function, giving exactly one result for every input (triangular arrowheads) or possibly many (diamond). Hollow arrowheads mean partial functions which can give many results to some input:
+The diagram has four kinds of arrowheads. Solid ones mean that the operation is a total function, giving exactly one result for every input (triangular arrowheads) or possibly many (diamond). Hollow arrowheads mean partial functions which can likewise give at most one result (triangular) or many results (diamond):
 
- - Conversions from Dedukti to Agda, Rocq, and Lean are partial, because Dedukti is more permissive than these formalisms (see Section ? below).
+ - Conversions from Dedukti to Agda, Rocq, and Lean are partial, because Dedukti is more permissive than these formalisms.
  - Conversion from MathCore to Dedukti may fail because MathCore is more permissive than Dedukti; this is because we delegate dependent type checking to Dedukti.
  - Conversion from MathCore to Informath is one-to-many, and always results in at least one value, the MathCore expression itself.
  - Conversions from English and other natural languages to Informath may fail, because the input is not covered by the grammar. They can also give many results, because the grammar accepts ambiguity; the idea is that ambiguity is ultimately checked on semantic grounds in Dedukti.
 
-Conversions between MathCore and Informath, and extending the Informath language itself, are the most open-ended parts of the project and hence the main research focus. Conversions from Dedukti to Agda, Coq, and Lean and back are mostly engineering (although tricky in some cases) and has to a large extent been done for the kind of code needed in Informath. Conversions from these type theories to Dedukti rely on already existing third-party tools. Those tools are not always up to date with the latest versions of the systems, but they have their own development teams that have goals independent of Informath.
+Conversions between MathCore and Informath, and extending the Informath language itself, are the most open-ended parts of the project and hence the main research focus. 
+
+Conversions from Dedukti to Agda, Coq, and Lean and back are mostly engineering (although tricky in some cases) that has to a large extent been done for the kind of code needed in Informath. Conversions from these type theories to Dedukti rely on already existing third-party tools. Those tools are not always up to date with the latest versions of the systems, but they have their own development teams that have goals independent of Informath.
+
+## Processing in type theory
+
+### Type checking in Dedukti
+
+The type checking is based on the file [BaseConstants.dk](./src/BaseConstants.dk), which is meant to be extended as the project grows. This file type checks in Dedukti with the command
+```
+  $ dk check BaseConstants.dk
+```
+The example file [test/exx.dk](./src/test/exx.dk) assumes this file. As shown in `make demo`, it must at the moment be appended to the base file to type check:
+```
+$ cat BaseConstants.dk test/exx.dk >bexx.dk
+$ dk check bexx.dk
+```
+Since this is cumbersome, we will need to implement something more automatic in the future. We also plan to use Dedukti for type selecting among ambiguous parse results by type checking, and Lambdapi (a syntactically richer version of Dedukti with implicit arguments) to restore implicit arguments.
+
+
+### Generating other type theories
+
+Each of Agda, Rocq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./src/BaseConstants.dk), with the format as in
+```
+#CONV agda forall all
+#CONV rocq forall All
+#CONV lean forall All
+```
+The purpose of these conversions is to
+- avoid clashes of the target systems' reserved words
+- map Dedukti to standard libraries of these systems
+- comply to the identifier syntax of each system
+
+The last purpose might be better served by a generic conversion, but that remains to be done.
+
+### Generating and type checking Agda
+
+There a simple generation of Agda from Dedukti. At the moment, it is only reliable for generating Agda "postulates". The usage is
+```
+$ RunInformath -to-formalism=agda <file>
+```
+where the file can be either a .dk or a text file.
+As shown by `make demo`, this process can produce valid Agda code:
+```
+$ RunInformath -to-formalixm=agda test/exx.dk >exx.agda
+$ agda --prop exx.agda
+```
+The base file [BaseConstants.agda](./src/BaseConstants.agda) is accessed by an `open import` statement.
+
+### Generating and type checking Rocq
+
+Generation from Dedukti is similar to Agda, but type checking requires at the moment concatenation with [BaseConstants.v](BaseConstants.v):
+```
+$ RunInformath -to-formalism=rocq test/exx.dk >exx.v
+$ cat BaseConstants.v exx.v >bexx.v
+$ coqc bexx.lean
+```
+This should be made less cumbersome in the future.
+
+### Generating and type checking Lean
+
+Just like in Rocq, type checking requires at the moment concatenation with [BaseConstants.lean](BaseConstants.lean):
+```
+$ RunInformath -to-formalism=lean test/exx.dk >exx.lean
+$ cat BaseConstants.lean exx.lean >bexx.lean
+$ lean bexx.lean
+```
+This should be made less cumbersome in the future.
+
+## Under the hood
+
+The rest of this document goes deeper to the internals of Informath. It has two goals:
+
+- to help understand how Informath works and what its limits are
+- to enable user-defined extensions of the Informath grammar 
 
 ### Dedukti
 
@@ -181,7 +266,66 @@ Technically, Dedukti is described as an implementation of Lambda-Pi-calculus wit
 It is similar to Martin-Löf's logical framework from the 1980's, except for a more liberal syntax of rewrite rules.
 Thereby, it is also similar to the ALF system of 1990's and to the abstract syntax of GF, Grammatical Framework.
 
-Due to its simplicity and expressivity, together with an existing implementation and conversions, we have chosen Dedukti as the interlingua for other proof systems.
+Due to its simplicity and expressivity, together with a powerful implementation and existing conversions from other formalisms, we have chosen Dedukti as the interlingua for formal proof systems.
+
+#### The syntax of Dedukti
+
+The complete grammar of Dedukti used in Informath is defined in [Dedukti.bnf](./src/typetheory/Dedukti.bnf). In this section, we will give an overview aimed to help get started. 
+
+Type theory, as defined for instance by [Martin-Löf 1979](https://www.cse.chalmers.se/~peterd/papers/MartinL%C3%B6f1979.pdf), has four **forms of judgement**:
+
+- *A : Type*
+- *A = B : Type*, where *A* and *B* are types
+- *a : A*, where *A* is a type
+- *a = b : A*, where *A* is a type and *a, b : A*
+
+In Dedukti, all of these can be expressed syntactically by just two forms,
+```
+  a : A.
+  def a : A := b.
+```
+because *Type* is itself a type. Dedukti also has some other forms of judgements, in particular
+```
+  [x, y, z ...] a := b.
+```
+for **rewrite rules**. They can be used for **definitions by cases**, where $a$ is a **pattern** that matches certain expressions where the variables $x, y, z, \ldots$ may occur. The `def` form of judgement is actually syntactic sugar for a combination of a typing judgement and a single rewrite rule without variables:
+```
+  def a : A.
+  [] a := b.
+```
+The other forms of judgement in Dedukti, using keywords `thm` and `inj` instead of `def`, need not concern us here. They are only different in how they are handled in computations and not how they express mathematical content.
+
+The parts of judgements are **expressions**, of some of the following forms:
+```
+  Ident                 (; variable, constant ;)
+  Exp Exp               (; application ;)
+  Ident => Exp          (; abstraction ;)
+  (Ident : Exp) -> Exp  (; dependent function type ;)
+  Exp -> Exp            (; non-dependent function type ;)
+```
+Comments in Dedukti are enclosed between `(;` and `;)`.
+
+Here are some examples of how Dedukti has been used in Informath:
+```
+  Set : Type.
+  Prop : Type.
+  Elem : Set -> Type.
+  Proof : Set -> Type.
+
+  false : Prop.
+  and : Prop -> Prop -> Prop.
+  or  : Prop -> Prop -> Prop.
+  if  : Prop -> Prop -> Prop.
+  def not : Prop -> Prop := A => if A false.
+
+  forall : (A : Set) -> (Elem A -> Prop) -> Prop.
+  exists : (A : Set) -> (Elem A -> Prop) -> Prop.
+
+  Num : Set.
+  plus : Elem Num -> Elem Num -> Elem Num.
+  Eq : Elem Num -> Elem Num -> Prop.
+```
+For more examples, we recommend to start with [BaseConstants.dk](./src/BaseConstants.dk).
 
 ### Agda, Rocq, and Lean
 
@@ -231,6 +375,60 @@ The rationale of this design is modularity and an optimal use of existing resour
 - Type checking is delegated to Dedukti.
 - Conversions to different frameworks are also delegated to Dedukti.
 - Variation of natural language input and output is delegated to Informath.
+
+
+#### The syntax of MathCore
+
+The syntactic categories of MathCore are defined in the module [Categories](./grammars/Categories.gf). Here are some of the main ones:
+```
+category   name           linguistic type     example
+—-------------------------------------------------------------------
+Exp        expression     NP (noun phrase)    the empty set
+Ident      identifier     Symb (symbol)       x
+Jmt        judgement      Text                N is a set.
+Hypo       hypothesis     Text                Assume A.
+Kind       kind           CN (commoun noun)   integer
+Prop       proposition    S (sentence)        2 is even
+Proof      proof text     Text                By hypothesis h, B.
+```
+The "linguistic type" actually refers to a type in the [GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/), which is used in the implementation of the grammars. The rough correspondences between Dedukti and MathCore are as follows:
+```
+Dedukti      MathCore
+-----------------------------------
+Exp          Exp, Kind, Prop, Proof
+Hypo         Hypo
+Ident        Ident
+Jmt          Jmt
+```
+Thus Dedukti's `Exp` is divided between many categories of MathCore, and the task of the conversion is to decide which one to choose. This choice is based on **symbol tables**, which define mappings between Dedukti constants and MathCore functions. The symbol tables have entries such as
+```
+Int    integer_Noun
+even   even_Adj
+list   list_Fam
+```
+The left-hand side is a Dedukti constant and the right-hand side a MathCore function. These functions belong to some of the **lexical categories** of MathCore, which are listed in the following table:
+```
+category  semantic type              example
+—-----------------------------------------------------------
+Adj       Exp -> Prop                even
+Adj2      Exp -> Exp -> Prop         divisible by
+Adj3      Exp -> Exp -> Exp -> Prop  congruent to y modulo z
+AdjC      Exps -> Prop               distinct (collective pred.)
+AdjE      Exps -> Prop               equal (equivalence rel.)
+Fam       Kind -> Kind               list of
+Fam2      Kind -> Kind -> Kind       function from ... to
+Fun       Exp -> Exp                 the square of
+Fun2      Exp -> Exp -> Exp          the quotient of
+FunC      Exps -> Exp                the sum of
+Label     ProofExp                   theorem 1
+Name      Exp                        the empty set
+Noun      Kind                       integer
+Noun1     Exp -> Prop                (a) prime
+Noun2     Exp -> Exp -> Prop         (a) divisor of
+Verb      Exp -> Prop                converge
+Verb2     Exp -> Exp -> Prop         divide
+```
+The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
 
 
 ### The full Informath language
@@ -299,29 +497,7 @@ $ make devel
 
 ### Categories of user-defined constants
 
-The following categories of new verbal constants are currently supported by the grammar and listed in `.dkgf` files:
-```
-  category  semantic type              example
-—-----------------------------------------------------------
-  Adj       Exp -> Prop                even
-  Adj2      Exp -> Exp -> Prop         divisible by
-  Adj3      Exp -> Exp -> Exp -> Prop  congruent to y modulo z
-  AdjC      Exps -> Prop               distinct (collective pred.)
-  AdjE      Exps -> Prop               equal (equivalence rel.)
-  Fam       Kind -> Kind               list of
-  Fam2      Kind -> Kind -> Kind       function from ... to
-  Fun       Exp -> Exp                 the square of
-  Fun2      Exp -> Exp -> Exp          the quotient of
-  FunC      Exps -> Exp                the sum of
-  Label     ProofExp                   theorem 1
-  Name      Exp                        the empty set
-  Noun      Kind                       integer
-  Noun1     Exp -> Prop                (a) prime
-  Noun2     Exp -> Exp -> Prop         (a) divisor of
-  Verb      Exp -> Prop                converge
-  Verb2     Exp -> Exp -> Prop         divide
-```
-The category `Exps` contains non-empty lists of expressions. In the concrete syntax, the last two are combined with the conjunction "and", and its equivalent in other languages.
+The following categories of new verbal constants are currently supported by the grammar and listed in `.dkgf` files.
 
 Every entry in a `.dkgf` file must have a verbal function as its primary rendering, given right after the Dedukti function. Alternative verbalizations can also come from symbolic categories:
 ```
@@ -353,17 +529,7 @@ lin rational_Noun = mkNoun (mkA "rationnel") (mkN "nombre" masculine)
 
 While it would be possible to define lexical categories for all possible semantic types and syntactic forms that appear in mathematics, this would clutter the grammar extensively and, what it worse, compel the user who wants to extend the language also to add compilation cases to the Haskell code. Because of this, Informath is being extended with the possibility to assign GF functions other than lexical ones to Dedukti constants in symbol tables.
 
-These functions operate on the basic types of expressions, which are
-```
-category   name           linguistic type 
-—-------------------------------------------------------------------
-Exp        expression.    NP (noun phrase)
-Ident      identifier     Symb (symbol)
-Kind       kind           CN (commoun noun)
-Prop       proposition    S (sentence)
-Proof      proof text.    Text
-```
-One advantage of this extension is that it eliminates the need to hard-code Dedukti identifiers in Haskell code. For example, the logical operators can now be mapped by means of symbol tables. In Dedukti we have
+These functions operate on the basic types of expressions, `Exp`, `Kind`, `Prop`, and `Proof`, as well as `Ident` when higher-order abstract syntax (variable bindings) are used in Dedukti. One advantage of this extension is that it eliminates the need to hard-code Dedukti identifiers in Haskell code. For example, the logical operators can now be mapped by means of symbol tables. In Dedukti we have
 ```
 and : Prop -> Prop -> Prop.
 ```
@@ -389,71 +555,6 @@ forall   CoreAllProp
 ```
 This generalization of symbol table is still an experimental feature of Informath.
 
-
-## Processing in type theory
-
-### Type checking in Dedukti
-
-The type checking is based on the file [BaseConstants.dk](./src/BaseConstants.dk), which is meant to be extended as the project grows. This file type checks in Dedukti with the command
-```
-  $ dk check BaseConstants.dk
-```
-The example file [test/exx.dk](./src/test/exx.dk) assumes this file. As shown in `make demo`, it must at the moment be appended to the base file to type check:
-```
-$ cat BaseConstants.dk test/exx.dk >bexx.dk
-$ dk check bexx.dk
-```
-Since this is cumbersome, we will need to implement something more automatic in the future. We also plan to use Dedukti for type selecting among ambiguous parse results by type checking, and Lambdapi (a syntactically richer version of Dedukti with implicit arguments) to restore implicit arguments.
-
-
-### Generating other type theories
-
-Each of Agda, Rocq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./src/BaseConstants.dk), with the format as in
-```
-#CONV agda forall all
-#CONV rocq forall All
-#CONV lean forall All
-```
-The purpose of these conversions is to
-- avoid clashes of the target systems' reserved words
-- map Dedukti to standard libraries of these systems
-- comply to the identifier syntax of each system
-
-The last purpose might be better served by a generic conversion, but that remains to be done.
-
-### Generating and type checking Agda
-
-There a simple generation of Agda from Dedukti. At the moment, it is only reliable for generating Agda "postulates". The usage is
-```
-$ RunInformath -to-formalism=agda <file>
-```
-where the file can be either a .dk or a text file.
-As shown by `make demo`, this process can produce valid Agda code:
-```
-$ RunInformath -to-formalixm=agda test/exx.dk >exx.agda
-$ agda --prop exx.agda
-```
-The base file [BaseConstants.agda](./src/BaseConstants.agda) is accessed by an `open import` statement.
-
-### Generating and type checking Rocq
-
-Generation from Dedukti is similar to Agda, but type checking requires at the moment concatenation with [BaseConstants.v](BaseConstants.v):
-```
-$ RunInformath -to-formalism=rocq test/exx.dk >exx.v
-$ cat BaseConstants.v exx.v >bexx.v
-$ coqc bexx.lean
-```
-This should be made less cumbersome in the future.
-
-### Generating and type checking Lean
-
-Just like in Rocq, type checking requires at the moment concatenation with [BaseConstants.lean](BaseConstants.lean):
-```
-$ RunInformath -to-formalism=lean test/exx.dk >exx.lean
-$ cat BaseConstants.lean exx.lean >bexx.lean
-$ lean bexx.lean
-```
-This should be made less cumbersome in the future.
 
 ## ToDo
 
