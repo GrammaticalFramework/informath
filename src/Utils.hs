@@ -46,6 +46,7 @@ toLatexDoc ss = latexPreamble ++ ss ++ [latexEndDoc]
 latexEndDoc = "\\end{document}"
 
 latexPreamble = [
+  "\\batchmode",
   "\\documentclass{article}",
   "\\usepackage{amsfonts}",
   "\\usepackage{amssymb}",

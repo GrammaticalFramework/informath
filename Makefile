@@ -149,9 +149,13 @@ natural_deduction:
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
 naproche:
+	$(RUN) -translate -to-latex-doc -variations -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
+	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
+
+interpret_naproche:
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) tmp/napzf.dk >out/napzf.tex
-	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
+	cd out ; pdflatex -batchmode napzf.tex ; $(OPEN) napzf.pdf
 
 baseconstants:
 	cat src/BaseConstants.dk >tmp/baseconstants.dk

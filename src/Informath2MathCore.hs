@@ -9,6 +9,10 @@ import PGF (showExpr)
 data SEnv = SEnv {varlist :: [String]}
 initSEnv = SEnv {varlist = []}
 
+-- used when no Kind is given e.g. as quantifier domain
+unspecifiedKind :: GKind
+unspecifiedKind = GNounKind (LexNoun "number_Noun")
+
 newVar :: SEnv -> (GIdent, SEnv)
 newVar senv = (xi, senv{varlist = x : varlist senv}) where
   x = head [x | x <- ["_h" ++ show i | i <- [0..]], notElem x (varlist senv)]
@@ -69,7 +73,10 @@ semArgkind argkind = case argkind of
   GIdentsArgKind kind (GListIdent idents) -> [(ident, kind) | ident <- idents]
   GIndexedDeclarationArgKind (GInt i) ->
      [((GStrIdent (GString ("UNRESOLVED_" ++ show i))), GIdentKind (GStrIdent (GString "UNRESOLVED_KIND")))]
-  -- GKindArgKind has been resolved in sem
+  GKindArgKind kind -> [(GStrIdent (GString "KIND_"), kind)]
+  GBareIdentsArgKind (GListIdent idents) -> [(ident, unspecifiedKind) | ident <- idents]
+  --- these should have been resolved in sem
+  _ -> error ("semArgKind failure")
 
 
 sem :: SEnv -> Tree a -> Tree a
@@ -236,15 +243,14 @@ sem env t = case t of
   GIffIffProp a b -> sem env (GIffProp a b)
   GWeHaveProp prop -> sem env prop
   GNoCommaAllProp argkinds prop -> sem env (GAllProp argkinds prop)
-  GBareIdentsArgKind idents -> sem env (GIdentsArgKind (GNounKind (LexNoun "number_Noun")) idents) ---- TODO: get from env
-{- ----
+  GBareIdentsArgKind idents -> sem env (GIdentsArgKind unspecifiedKind idents) ---- TODO: get from env
   GDeclarationArgKind declaration -> case sem env declaration of
-    GElemDeclaration (GListTerm terms) (GSetTerm set) -> ---- TODO: check that all are idents
-      GIdentsArgKind (GSetKind set) (GListIdent [x | GIdentTerm x <- terms])
+   ---- TODO: check that all are idents
+    GElemDeclaration (GListTerm terms) term ->
+      GIdentsArgKind (GTermKind term) (GListIdent [x | GIdentTerm x <- terms])
     GElemDeclaration (GListTerm terms) term -> 
       GIdentsArgKind (GTermKind term) (GListIdent [x | GIdentTerm x <- terms])
     _ -> t ---- error "cannot use declaration as argkind yet"
--}
   GNoCommaExistProp argkinds prop ->
     sem env (GExistProp argkinds prop)
   GNoArticleExistProp argkind prop ->
