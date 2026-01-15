@@ -10,8 +10,8 @@ false : Prop.
 and : (A : Prop) -> (B : Prop) -> Prop.
 or : (A : Prop) -> (B : Prop) -> Prop.
 if : Prop -> Prop -> Prop.
-forall : (A : Set) -> (Elem A -> Prop) -> Prop.
-exists : (A : Set) -> (Elem A -> Prop) -> Prop.
+forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
+exists : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
 
 def not : Prop -> Prop := A => if A false.
 def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
@@ -196,11 +196,11 @@ def orthogonal : (u : Elem Vector) -> (v : Elem Vector) -> Prop := u => v =>
 vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector.
 
 (; summer school ;)
-sigma : (m : Elem Nat) -> (n : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
+sigma : (m : Elem Nat) -> (n : Elem Nat) -> (f : (i : Elem Nat -> Elem Num)) -> Elem Num.
 
-series : (m : Elem Nat) -> (Elem Nat -> Elem Num) -> Elem Num.
+series : (m : Elem Nat) -> (f : (i : Elem Nat -> Elem Num)) -> Elem Num.
 
-integral : (m : Elem Real) -> (n : Elem Real) -> (Elem Real -> Elem Real) -> Elem Real.
+integral : (m : Elem Real) -> (n : Elem Real) -> (f : (x : Elem Real -> Elem Real)) -> Elem Real.
 
 
 (; Naproche-zf ;)

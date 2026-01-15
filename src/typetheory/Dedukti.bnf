@@ -32,18 +32,19 @@ EFun.    Exp1 ::= Hypo "->" Exp1 ;
 coercions Exp 9 ;
 
 BVar.   Bind ::= QIdent ;
-BTyped. Bind ::= QIdent ":" Exp3 ;
+BTyped. Bind ::= QIdent ":" Exp5 ;
+BLet.   Bind ::= "(" QIdent ":" Exp5 ":=" Exp5 ")" ;
 
 PBVar.   Pattbind ::= QIdent ;
 PBTyped. Pattbind ::= QIdent ":" Exp ;
 
-HExp.    Hypo ::= Exp3 ;
-HVarExp. Hypo ::= QIdent ":" Exp3 ;
+HExp.    Hypo ::= Exp5 ;
+HVarExp. Hypo ::= QIdent ":" Exp5 ;
 HParVarExp. Hypo ::= "(" QIdent ":" Exp ")" ;
 
 -- extension of Dedukti: local definitions
-HLetExp.    Hypo ::= "(" QIdent ":=" Exp ")" ;
-HLetTyped.  Hypo ::= "(" QIdent ":" Exp ":=" Exp ")" ;
+internal HLetExp.    Hypo ::= "(" QIdent ":=" Exp ")" ;
+internal HLetTyped.  Hypo ::= "(" QIdent ":" Exp ":=" Exp ")" ;
 
 -- separator nonempty QIdent "," ;
 

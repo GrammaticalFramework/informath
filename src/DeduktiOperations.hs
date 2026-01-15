@@ -140,7 +140,27 @@ metaExp = EIdent (QIdent "{|?|}")
 
 
 eliminateLocalDefinitions :: Tree a -> Tree a
-eliminateLocalDefinitions = elim [] where
+eliminateLocalDefinitions tr = case tr of
+  EFun (HLetTyped x t d) exp -> EAbs (BLet x t d) (eliminateLocalDefinitions exp)
+  --- artefact, not needed in t, d
+  _ -> composOp eliminateLocalDefinitions tr
+
+introduceLocalDefinitions :: Tree a -> Tree a
+introduceLocalDefinitions tr = case tr of
+  JStatic x typ  -> JStatic x (inlocal typ)
+  JDef x (MTExp typ) me -> JDef x (MTExp (inlocal typ)) me
+  JInj x (MTExp typ) me -> JInj x (MTExp (inlocal typ)) me
+  JThm x (MTExp typ) me -> JThm x (MTExp (inlocal typ)) me
+  _ -> composOp introduceLocalDefinitions tr
+ where
+   inlocal ty = case ty of
+     EAbs (BLet x t d) tyy -> EFun (HLetTyped x t d) (inlocal tyy)
+     EFun h tyy -> EFun h (inlocal tyy)
+     _ -> ty
+
+--- no longer needed
+completelyEliminateLocalDefinitions :: Tree a -> Tree a
+completelyEliminateLocalDefinitions = elim [] where
   elim :: [(QIdent, Exp)] -> Tree a -> Tree a
   elim defs t = case t of
     EIdent x -> maybe t id (lookup x defs)
@@ -233,6 +253,7 @@ bind2ident :: Bind -> QIdent
 bind2ident bind = case bind of
   BVar var -> var
   BTyped var _ -> var
+  BLet var _ _ -> var
 
 splitApp :: Exp -> (Exp, [Exp])
 splitApp exp = case exp of

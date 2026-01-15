@@ -1,4 +1,5 @@
-module InformathServer where
+--module InformathServer where
+module Main where
 
 import Environment
 import InformathAPI
@@ -12,6 +13,10 @@ import Network.URI
 --  1077  ./dist/build/Koe/Koe
 --  http://localhost:8080/?dk=Even
 
+main = do
+  xx <- getArgs
+  informathServer xx
+
 informathServer args = do
   env <- readEnv args 
   putStrLn "http://localhost:8080/?dk= or ?tex="
@@ -21,9 +26,9 @@ myresponse req@(Request uri method headers body) =
   outputText (unlines ["HELLLO", uriScheme uri, uriPath uri, processQuery (uriQuery uri)])
 
 informathResponse env s = case (break (=='=') s) of
-  (_:"dk", _:exp) ->
+  (_:"dk", _:exp) -> 
      let mo = parseDeduktiModule s
-     let results = processDeduktiModule env mo
+         results = processDeduktiModule env mo
      in unlines (printResults env (concatMap (printGenResult env) results))
   (_:"tex", _:exp) -> 
       let results = processLatex env s

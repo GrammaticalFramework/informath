@@ -15,7 +15,7 @@ import Data.Char
 
 -- clean-up of remaining annotated idents
 jmt2core :: Jmt -> GJmt
-jmt2core = cleanup . jmt2jmt where
+jmt2core = cleanup . jmt2jmt . introduceLocalDefinitions where
   cleanup :: Informath.Tree a -> Informath.Tree a
   cleanup t = case t of
     GStrIdent (GString s) -> GStrIdent (GString (unescapeConstant (stripConstant s)))
