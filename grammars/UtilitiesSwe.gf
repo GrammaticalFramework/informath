@@ -2,6 +2,7 @@ instance UtilitiesSwe of Utilities =
 
 open
   SyntaxSwe,
+  (S=SyntaxSwe),
   ParadigmsSwe,
   (P=ParadigmsSwe),
   SymbolicSwe,

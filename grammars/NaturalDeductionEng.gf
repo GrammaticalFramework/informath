@@ -4,11 +4,16 @@ open
   SyntaxEng,
   (P=ParadigmsEng),
   (Grammar=GrammarEng),
+  (Extend=ExtendEng),
   UtilitiesEng
+
+--- quick and dirty implementation, needs more structure and functorization
 
 in {
 
 lin
+  falseEProof C c = ccText c (prefixText "hence" (mkText (topProp C))) ; 
+
   andIProof A B a b =
     mkText a (mkText b (prefixText "altogether" (mkText
       (mkS and_Conj (partProp A) (partProp B))))) ;
@@ -34,19 +39,41 @@ lin
 
   ifEProof A B a b = mkText a (mkText b (prefixText "we conclude" (mkText (topProp B)))) ;
 
-{-
-  forallIProof A x B z b =
 
-  forallEProof A x B b a = 
+  forallIProof A x B z b =
+    ccText
+      (prefixText "consider an arbitrary" (mkText (mkUtt (identKindCN x A))))
+      b
+      (strText "we have proved that")
+      (mkText (mkText (topProp B)) (prefixText "for all" (mkText (mkUtt (identKindCN x A))))) ;
+
+  forallEProof A x B b a =
+    ccText
+      b
+      (prefixText "in particular" (topProp B))
+      (prefixText ("for" ++ x ++ "set to") (mkText (mkUtt a))) ;
 
   existsIProof A x B a b =
+    ccText
+      b
+      (prefixText "thus"
+        (mkText (Grammar.SSubjS (mkS (Extend.ExistsNP (mkNP a_Det ((identKindCN x A)))))
+	  such_that_Subj (partProp B)))) ;
 
   existsEProof A x B C c x y d =
--}
+    ccText
+      (prefixText "consider an arbitrary" (mkText (mkUtt (identKindCN x A))))
+      (prefixText "such that" (mkText (topProp B)))
+      d
+      (prefixText "we have proved that" (mkText (topProp C)))
+      (strText ("independently of" ++ x)) ;
 
   hypoProof A h = prefixText ("by" ++ h ++ ",") (mkText (topProp A)) ;
-
---  reflProof A a =
+  
+  reflProof A a =
+    ccText
+      (mkText (mkS (mkCl a (P.mkV2 "equal") a)))
+      (strText "by reflexivity .") ;
 
   NatIndProof x C d n h e =
     prefixText "we proceed by induction . First ,"

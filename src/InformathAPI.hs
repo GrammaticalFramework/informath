@@ -415,6 +415,12 @@ parseDeduktiModule s = case pModule (myLexer s) of
   Bad e -> error ("parse error: " ++ e)
   Ok mo -> mo
 
+-- | To parse a Dedukti file into its AST.
+parseDeduktiModuleErrorFree :: String -> Maybe Module
+parseDeduktiModuleErrorFree s = case pModule (myLexer s) of
+  Bad e -> Nothing
+  Ok mo -> return mo
+
 -- | To linearize a GF tree.
 gftree2nat :: Env -> Language -> GFTree -> String
 gftree2nat env lang tree = linearize (grammar env) lang tree

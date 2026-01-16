@@ -2,6 +2,7 @@ instance UtilitiesGer of Utilities =
 
 open
   SyntaxGer,
+  (S=SyntaxGer),
   ParadigmsGer,
   (P=ParadigmsGer),
   SymbolicGer,

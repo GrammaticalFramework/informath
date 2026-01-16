@@ -129,8 +129,8 @@ loopInformath env = do
       let results = processLatex env cs
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     _ -> do
-      let mo = parseDeduktiModule s
-      let results = processDeduktiModule env mo
+      let mmo = parseDeduktiModuleErrorFree s
+      let results = maybe [] (processDeduktiModule env) mmo
       mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
   loopInformath env
 

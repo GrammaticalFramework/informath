@@ -321,5 +321,31 @@ oper
   imply_V2 : V2 ;
   only_if_Subj : Subj ;
 
+-- for syntax
+
+oper
+
+  notionNP : {np : NP ; isPl : Bool} -> {cn : CN ; adv : Adv} -> NP = \idents, kind ->
+    let det = case idents.isPl of {
+      True => aPl_Det ; 
+      False => a_Det
+      }
+    in mkNP det (mkCN (mkCN kind.cn idents.np) kind.adv) ;
+
+  definedCN : CN -> NP -> CN = \cn, np ->
+    mkCN cn (S.mkAdv defined_as_Prep np) ;
+    
+  definedAdv : NP -> Adv = \df ->
+    S.mkAdv defined_as_Prep df ;
+
+  by_Prep : Prep = by8means_Prep ;
+
+  ccAdv : Adv -> Adv -> Adv = \x, y -> lin Adv {s = x.s ++ y.s} ;
+
+  identKindCN : Str -> {cn : CN ; adv : Adv} -> CN = \ident, kind ->
+    mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv ;
+
+  allNP : CN -> NP = \cn ->
+    mkNP all_Predet (mkNP aPl_Det cn) ;
 
 }

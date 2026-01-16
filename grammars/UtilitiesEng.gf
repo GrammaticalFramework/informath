@@ -2,6 +2,7 @@ instance UtilitiesEng of Utilities =
 
 open
   SyntaxEng,
+  (S=SyntaxEng),
   ParadigmsEng,
   (P=ParadigmsEng),
   SymbolicEng,

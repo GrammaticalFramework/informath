@@ -183,29 +183,5 @@ lin
       (mkNP the_Det (mkCN coercion.from exp))
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
-oper
-
-  notionNP : {np : NP ; isPl : Bool} -> {cn : CN ; adv : Adv} -> NP = \idents, kind ->
-    let det = case idents.isPl of {
-      True => aPl_Det ; 
-      False => a_Det
-      }
-    in mkNP det (mkCN (mkCN kind.cn idents.np) kind.adv) ;
-
-  definedCN : CN -> NP -> CN = \cn, np ->
-    mkCN cn (Syntax.mkAdv defined_as_Prep np) ;
-    
-  definedAdv : NP -> Adv = \df ->
-    Syntax.mkAdv defined_as_Prep df ;
-
-  by_Prep : Prep = by8means_Prep ;
-
-  ccAdv : Adv -> Adv -> Adv = \x, y -> lin Adv {s = x.s ++ y.s} ;
-
-  identKindCN : Str -> {cn : CN ; adv : Adv} -> CN = \ident, kind ->
-    mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv ;
-
-  allNP : CN -> NP = \cn ->
-    mkNP all_Predet (mkNP aPl_Det cn) ;
 
 }

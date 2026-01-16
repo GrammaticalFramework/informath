@@ -2,6 +2,7 @@ instance UtilitiesFre of Utilities =
 
 open
   SyntaxFre,
+  (S=SyntaxFre),
   ParadigmsFre,
   (P=ParadigmsFre),
   SymbolicFre,
