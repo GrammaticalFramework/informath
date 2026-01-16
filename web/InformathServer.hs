@@ -27,8 +27,8 @@ myresponse req@(Request uri method headers body) =
 
 informathResponse env s = case (break (=='=') s) of
   (_:"dk", _:exp) -> 
-     let mo = parseDeduktiModule s
-         results = processDeduktiModule env mo
+     let mmo = parseDeduktiModuleErrorFree s
+         results = maybe [] (processDeduktiModule env) mo
      in unlines (printResults env (concatMap (printGenResult env) results))
   (_:"tex", _:exp) -> 
       let results = processLatex env s
