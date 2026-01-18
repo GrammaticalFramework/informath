@@ -1,0 +1,56 @@
+thm prop1 : Proof (odd 1) := oddSucc 0 evenZero.
+prop2 : (n : Elem Nat) -> Proof (if (even n) (divisible (square n) 4)).
+
+def odd : (n : Elem Nat) -> Prop := n => not (even n).
+def Rat : Set := suchthat Real (x => exists Nat (p => exists Nat (q => Eq x (times p q)))).
+def square : (x : Elem Real) -> Elem Real := x => pow x 2.
+
+sphenic : (n : Elem Int) -> Prop.
+List : (A : Set) -> Set.
+vectorPlus : (u : Elem Vector) -> (v : Elem Vector) -> Elem Vector.
+
+def square := x => pow x 2.
+
+def plus : Elem Nat -> Elem Nat -> Elem Nat.
+[m] plus m Zero --> m.
+[m, n] plus m (Succ n) --> Succ (plus m n).
+
+ex1 : Proof (Eq 1 0) -> Proof false.
+ex2 : (n : Elem Nat) -> Proof (or (even n) (odd n)).
+ex4 : (m : Elem Nat) -> (n : Elem Nat := plus m m) => Proof (Geq n m).
+
+angleBetween : (u : Elem Vector) -> (v : Elem Vector) -> Elem Real.
+
+ex40 : Proof (and (even 2) (odd 3)).
+ex41 : Proof (or (even 2) (odd 3)).
+ex42 : Proof (if (even 2) (odd 3)).
+ex43 : Proof (iff (even 2) (odd 3)).
+ex44 : Proof (not (and (even 3) (odd 2))).
+ex45 : Proof false.
+ex46 : Proof (forall Int (x => Gt (plus x 1) x)).
+ex47 : Proof (exists Int (x => Lt (plus x x) x)).
+ex48 : Proof H.
+ex48 : Proof (K 1 2 3).
+
+ex51 : (x : K) -> false.
+ex52 : (n : Elem (suchthat Nat (x => even x))) -> Proof (divisible n 2).
+ex53 : (x : K 1 2 3) -> false.
+f54 : (x : Elem Int) -> (y : Elem Int) -> Elem Int.
+
+AdjProp : Proof (even 4).
+Adj2Prop : Proof (divisible 6 3).
+AdjCProp : Proof (Neq 2 3).
+AdjEProp : Proof (Eq (plus 2 3) (plus 3 2)).
+NounKind : Elem Nat.
+def NameExp := emptyset.
+def FunExp := cos 1.
+def Fun2Exp := minus 8 7.
+def FunCExp := gcd 9 6.
+FamKind : Elem (list Nat).
+Fam2Kind : Elem (function Real Real).
+VerbProp : Proof (converge f).
+Verb2Prop : Proof (ni N 8).
+Noun2Prop : Proof (subset A B).
+Adj3Prop : Proof (congruent 7 4 3).
+
+

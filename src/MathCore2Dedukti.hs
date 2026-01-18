@@ -157,11 +157,13 @@ kind2dedukti :: GKind -> Exp
 kind2dedukti kind = case kind of
   GElemKind k -> EApp (EIdent (QIdent "Elem")) (kind2dedukti k)
   GTermKind (GIdentTerm ident) -> EIdent (ident2ident ident)
-  GSuchThatKind ident kind prop ->
+  {- ----
+  GSuchThatKind kind ident prop ->
     propSigma
       (kind2dedukti kind)
       (EAbs (BVar (ident2ident ident))
             (prop2dedukti prop))
+	    -}
   GFamKind (LexFam fam) exp ->
     EApp (EIdent (QIdent fam)) (kind2dedukti exp)
   GFam2Kind (LexFam fam) exp1 exp2 ->

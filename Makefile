@@ -148,6 +148,12 @@ natural_deduction:
 	$(RUN) -to-latex-doc -constants=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
+mathcore_examples:
+	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk
+
+mathextensions_examples:
+	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf test/mathextensions_examples.dk
+
 naproche:
 	$(RUN) -translate -to-latex-doc -variations -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
 	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf

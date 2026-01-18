@@ -135,7 +135,7 @@ sem env t = case t of
 
   GAdjKind adj kind ->
     let (var, nenv) = newVar env
-    in GSuchThatKind var (sem nenv kind) (sem nenv (GAdjProp adj (GTermExp (GIdentTerm var))))
+    in GSuchThatKind (sem nenv kind) var (sem nenv (GAdjProp adj (GTermExp (GIdentTerm var))))
 
   GAdjProp adj (GAllIdentsKindExp (GListIdent [x]) kind) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])

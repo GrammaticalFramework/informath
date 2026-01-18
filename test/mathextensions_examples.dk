@@ -1,0 +1,20 @@
+TermKind : Elem N.
+FormulaProp : Proof (Eq (plus 2 3) 5).
+
+AndProp : Proof (and (even 0) (and (odd 1) (even 2))).
+OrProp : Proof (or (even 0) (or (odd 1) (even 2))).
+AllProp : Proof (forall Int (x => forall Int (y => Eq (times x y) (times y x)))).
+AllProp : Proof (exists Int (x => exists Int (y => Eq (times x y) (plus x y)))).
+
+NotAdjProp : Proof (not (even 5)).
+NotAdj2Prop : Proof (not (divisible 7 3)).
+NotAdjCProp : Proof (not (Neq 3 3)).
+NotAdjEProp : Proof (not (Eq (plus 2 3) (plus 2 4))).
+NotVerbProp : Proof (not (converge f)).
+NotVerb2Prop : Proof (not (ni A 8)).
+NotNoun2Prop : Proof (not (subset A B)).
+NotAdj3Prop : Proof (not (congruent 7 4 2)).
+
+AndAdj : Proof (and (odd 2) (prime 2)).
+OrAdj : Proof (or (even 2) (odd 2)).
+

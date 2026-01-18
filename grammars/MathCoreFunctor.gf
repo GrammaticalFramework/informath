@@ -91,7 +91,7 @@ lin
     cn = mkCN element_N ;
     adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb ident))
     } ;
-  SuchThatKind ident kind prop = {
+  SuchThatKind kind ident prop = {
     cn = mkCN kind.cn (latexNP (mkSymb ident)) ;
     adv = ccAdv kind.adv (Syntax.mkAdv such_that_Subj (partProp prop))
     } ;

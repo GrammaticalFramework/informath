@@ -14,6 +14,8 @@ exists CoreExistProp
 not CoreNotProp
 iff CoreIffProp
 
+suchthat SuchThatKind
+
 Num number_Noun
 bool boolean_Noun
 List list_Fam

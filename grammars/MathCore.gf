@@ -49,7 +49,7 @@ fun
   AppProp : Ident -> Exps -> Prop ;
 
   IdentKind : Ident -> Kind ; 
-  SuchThatKind : Ident -> Kind -> Prop -> Kind ;
+  SuchThatKind : Kind -> Ident -> Prop -> Kind ;
   AppKind : Ident -> Exps -> Kind ;
   FunKind : [ArgKind] -> Kind -> Kind ;
 
