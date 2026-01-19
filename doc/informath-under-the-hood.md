@@ -4,6 +4,11 @@
 
 [Code repository](https://github.com/GrammaticalFramework/informath)
 
+[Documents in github.io](https://grammaticalframework.github.io/informath/)
+
+This document is a complement of the [README file of Informath](https://grammaticalframework.github.io/informath/).
+It can be read independently to get an idea about the theory, but you can also start with installing the software and experimenting with it as described in the README.
+
 ## The Informath project
 
 The Informath project addresses the problem of translating between formal and informal languages for mathematics. It aims to translate between multiple formal and informal languages in all directions: 
@@ -148,6 +153,78 @@ If you want to check the formal code in any of the proof systems, you must also 
 - [Agda](https://agda.readthedocs.io/en/latest/getting-started/installation.html)
 - [Rocq](https://rocq-prover.org/)
 - [Lean](https://leanprover-community.github.io/get_started.html)
+
+
+## Grammatical Framework
+
+
+[Grammatical Framework, GF](https://www.grammaticalframework.org/) is itself based on a logical framework (LF). 
+To put it briefly,
+
+- GF = LF + grammar
+
+### GF as a logical framework: abstract syntax
+
+This framework is called **abstract syntax**, and it is to a large extent similar to Dedukti: it has both dependent types and variable bindings, enabling higher-order abstract syntax. Thus one *could* in GF define the types of sets and props and a universal quantifier just like in Dedukti:
+```
+abstract Logic = {
+cat Set ;
+cat Elem Set ;
+cat Prop ;
+cat Proof Prop ;
+fun forall : (A : Set) -> (Elem A -> Prop) -> Prop ;
+}
+```
+However, Informath grammars do not use all of these facilities, but only the fragmet known as **context-free abstract syntax**. 
+In this syntax, the corresponding definitions look as follows:
+```
+abstract Logic = {
+cat Set ;
+cat Elem ;
+cat Prop ;
+cat Proof ;
+cat Ident ;
+fun forall : Set -> Ident -> Prop -> Prop ;
+}
+```
+In this encodeing,
+- the type dependencies (arguments of basic types) are omitted,
+- abstractions are **flattened** to separate identifier and value arguments.
+
+In this abstract syntax, a Dedukti expression of form
+```
+forall A (x => B)
+```
+is represented as
+```
+forall A x B
+```
+There are several reasons for using a context-free abstract syntax in Informath:
+- grammar writing becomes more straightforward
+- GF tools for dealing with dependent types and higher-order abstract syntax are less developed than for context-free abstract syntax
+- ultimate type checking in Informath can be delegated to Dedukti and need not be performed in GF
+- in this way, we can easily deal with overloading of expressions, which is ubiquitous informal mathematical language
+
+In the above, we have already seen the syntax of GF's abstract syntax: it uses **modules** with the keyword `abstract` in the **header**, and has two forms of judgement:
+```
+cat C
+fun f : T
+```
+where (in context-free abstract syntax), the type T is either a category $C$ of a function type $C \rightarrow T$, where many-place functions are dealt by currying, like in Dedukti.
+
+### Concrete syntax
+
+What makes GF into a grammar formalism is **concrete syntax**.
+The simplest kind of concrete syntax is itself context-free: it consists of **linearization rules** that convert **abstract syntax trees** (terms of the logical framework) into strings. 
+This happens in a **compositional** fashion: a complex tree is linearized by concatenating the linearizations of its subtrees.
+The following GF module defines a concrete syntax for `Logic`:
+```
+
+```
+
+
+
+
 
 
 ## The MathCore language

@@ -4,6 +4,8 @@
 
 [Code repository](https://github.com/GrammaticalFramework/informath)
 
+[Documents in github.io](https://grammaticalframework.github.io/informath/)
+
 ## NEWS
 
 13 January 2026: divided this document to a basic part (this README file) and a new [Informath under the Hood document](./doc/informath-under-the-hood.md)).
@@ -17,6 +19,8 @@
 24 November 2025: The "-next" version is now default and "-previous" must be invoked with a flag. The previous version will be deprecated very soon, as all its functionality is available in the default version.
 
 ## Documentation
+
+[Informath Under the Hood](https://grammaticalframework.github.io/informath/doc/informath-under-the-hood.html)
 
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
 
@@ -122,6 +126,19 @@ C. If $n$ is even, then $n$ is not odd for all numbers $n$.
 $ echo "every number is even or odd." | RunInformath -formalize           
 noLabel : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
 ```
+The option `-loop` allows you to translate between individual Dedukti and natural language judgements:
+```
+$ RunInformath -loop
+> prop1 : Proof (forall Nat (n => if (even n) (not (odd n)))).
+Prop1. If $n$ is even, then $n$ is not odd for all natural numbers $n$.
+> ? Every number is even or odd.
+noLabel : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
+> 
+```
+Input prefixed with `?` is treated as natural language, all other input as Dedukti. 
+You can change the source and target languages with the `-from-lang` and `-to-lang` flags. 
+You can quit the loop with Ctrl-C.
+
 
 ## Using your own data
 
@@ -129,7 +146,7 @@ You can in principle generate from any Dedukti (`.dk`) file, at least if it is w
 
 There is a default symbol table, [baseconstants.dkgf](src/baseconstants.dkgf), which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table, by passing it to the flag `-constants`. An example is the conversion of a Matita dump:
 ```
-  $ RunInformath -constants=test/empty.dkgf test/mini-matita.dk
+$ RunInformath -constants=test/empty.dkgf test/mini-matita.dk
 ```
 Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-constants` flag, unless you use some other `.dkgf` file.
 
@@ -138,17 +155,17 @@ Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in
 - `#CONV <formalism> <DeduktiIdent> <FormalismIdent>`: conversion of Dedukti identifier to another formalism (e.g. its standard library function) 
 - `#DROP <DeduktiIdent> <int>`: drop a number of initial arguments from the Dedukti function application
 
-The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already availeble, nothing else is needed than the inclusion of the flag `-constants=<file>.dkgf+` where `base_constants.dkgf`can be one of the files. How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md).
+The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-constants=<file>.dkgf+` where `base_constants.dkgf`can be one of the files. How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md).
 
 ## Generating synthetic data
 
 For those who are interested just in the generation of synthetic data, the following commands (after building Informath with `make`) can do it: assuming that you have a `.dk` file available, build a `.jsonl` file with all conversions of each Dedukti judgement:
 ```
-  $ RunInformath -parallel-data <file>.dk > <file>.jsonl
+$ RunInformath -parallel-data <file>.dk > <file>.jsonl
 ```
 After that, select the desired formal and informal languages to generate a new `.jsonl` data with just those pairs:
 ```
-  $ python3 ./scripts/jsonltest.py <file.jsonl> <formal> <informal>
+$ python3 ./scripts/jsonltest.py <file.jsonl> <formal> <informal>
 ```
 The currently available values of `<formal>` and `<informal>` are the keys in `<file>.jsonl` - for example, `agda` and `InformathEng`, respectively.
 
