@@ -4,7 +4,7 @@ FormulaProp : Proof (Eq (plus 2 3) 5).
 AndProp : Proof (and (even 0) (and (odd 1) (even 2))).
 OrProp : Proof (or (even 0) (or (odd 1) (even 2))).
 AllProp : Proof (forall Int (x => forall Int (y => Eq (times x y) (times y x)))).
-AllProp : Proof (exists Int (x => exists Int (y => Eq (times x y) (plus x y)))).
+ExistProp : Proof (exists Int (x => exists Int (y => Eq (times x y) (plus x y)))).
 
 NotAdjProp : Proof (not (even 5)).
 NotAdj2Prop : Proof (not (divisible 7 3)).
@@ -15,6 +15,23 @@ NotVerb2Prop : Proof (not (ni A 8)).
 NotNoun2Prop : Proof (not (subset A B)).
 NotAdj3Prop : Proof (not (congruent 7 4 2)).
 
-AndAdj : Proof (and (odd 2) (prime 2)).
+AndAdj : Proof (and (even 2) (prime 2)).
 OrAdj : Proof (or (even 2) (odd 2)).
 
+AndExp : Proof (and (even 6) (even 8)).
+OrExp : Proof (or (even 2) (even 3)).
+
+BothAndProp : Proof (and (even 2) (odd 3)).
+EitherOrProp : Proof (or (even 2) (odd 3)).
+
+BothAndAdj : Proof (and (odd 2) (prime 2)).
+EitherOrAdj : Proof (or (even 2) (odd 2)).
+
+BothAndExp : Proof (and (even 6) (even 8)).
+EitherOrExp : Proof (or (even 2) (even 3)).
+
+OnlyIfProp : Proof (if (even 7) (odd 8)).
+
+ExistNoProp : Proof (not (exists Num (n => and (even n) (odd n)))).
+
+Adj2Adj : Proof (and (even 6) (divisible 6 3)).

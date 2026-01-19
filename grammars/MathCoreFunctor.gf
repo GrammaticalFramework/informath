@@ -55,8 +55,8 @@ lin
     mkUtt (mkS (mkCl patt exp)) ;
 
   PropHypo prop = mkUtt (mkImp (mkVP assume_VS (topProp prop))) ; 
-  VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
-  BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
+  VarHypo ident kind = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind)) ; 
+  BareVarHypo ident = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP arbitrary_A) ;
   LocalHypo local = Grammar.ImpP3 local.name (mkVP local.value) ; 
 
   LetLocal ident kind exp =
@@ -65,8 +65,8 @@ lin
   BareLetLocal ident exp = {name = latexNP (mkSymb ident) ; value = exp} ; 
 
   AppExp exp exps = mkNP exp (Syntax.mkAdv applied_to_Prep exps.np) ;
-  AbsExp idents exp =
-    mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
+  CoreAbsExp ident exp =
+    mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 (latexNP (mkSymb ident)) exp))) ;
   KindExp kind = mkNP the_Det (mkCN type_CN (Syntax.mkAdv possess_Prep (mkNP aPl_Det (useKind kind)))) ;
   TermExp term = latexNP (mkSymb term.s) ;
   TypedExp exp kind = mkNP the_Det (mkCN (mkCN kind.cn exp) kind.adv) ;
@@ -105,7 +105,7 @@ lin
     } ;
 
   KindArgKind kind = kind ** {isPl = False} ;
-  IdentsArgKind kind idents = {cn = mkCN kind.cn idents.np ; adv = kind.adv ; isPl = idents.isPl} ;
+  IdentArgKind kind ident = {cn = mkCN kind.cn (latexNP (mkSymb ident)) ; adv = kind.adv ; isPl = False} ;
 
   StrLabel s = {np = symb (mkSymb s.s) ; isEmpty = False} ;
   noLabel = {np = symb (mkSymb "") ; isEmpty = True} ;

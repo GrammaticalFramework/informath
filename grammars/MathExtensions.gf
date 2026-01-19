@@ -12,7 +12,13 @@ fun
   DisplayFormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;
 
--- to remove parentheses around complex propositions
+-- to introduce lists of idents
+  IdentsArgKind : Kind -> [Ident] -> ArgKind ;
+  VarsHypo : [Ident] -> Kind -> Hypo ;
+  BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
+  AbsExp : [Ident] -> Exp -> Exp ;
+
+-- to remove parentheses around complex propositions and introduce lists
   AndProp : [Prop] -> Prop ;
   OrProp : [Prop] -> Prop ;
   IfProp : Prop -> Prop -> Prop ;
@@ -75,6 +81,8 @@ fun
   EveryKindExp : Kind -> Exp ;
   EveryIdentKindExp : Ident -> Kind -> Exp ;
 ----  AllIdentsSetExp : [Ident] -> Set -> Exp ; -- TODO: all $x, y : N$
+
+  IdentsArgKind : Kind -> [Ident] -> ArgKind ;
 
   SomeKindExp : Kind -> Exp ;
   SomeIdentsKindExp : [Ident] -> Kind -> Exp ;

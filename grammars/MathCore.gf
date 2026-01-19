@@ -23,15 +23,15 @@ fun
   NoVarRewriteRule : Exp -> Exp -> Rule ;
 
   PropHypo : Prop -> Hypo ;
-  VarsHypo : [Ident] -> Kind -> Hypo ;
-  BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
+  VarHypo : Ident -> Kind -> Hypo ;
+  BareVarHypo : Ident -> Hypo ;  -- needed in proofs: let x be arbitrary
   LocalHypo : Local -> Hypo ;
   
   LetLocal : Ident -> Kind -> Exp -> Local ;
   BareLetLocal : Ident -> Exp -> Local ;
 
   AppExp : Exp -> Exps -> Exp ;
-  AbsExp : [Ident] -> Exp -> Exp ;
+  CoreAbsExp : Ident -> Exp -> Exp ;
   TermExp : Term -> Exp ; 
   KindExp : Kind -> Exp ;
   TypedExp : Exp -> Kind -> Exp ;
@@ -54,7 +54,7 @@ fun
   FunKind : [ArgKind] -> Kind -> Kind ;
 
   KindArgKind : Kind -> ArgKind ;
-  IdentsArgKind : Kind -> [Ident] -> ArgKind ;
+  IdentArgKind : Kind -> Ident -> ArgKind ;
 
   StrLabel : String -> Label ; -- to deal with Dedukti labels not in grammar
   noLabel : Label ; -- to deal with unlabelled statements

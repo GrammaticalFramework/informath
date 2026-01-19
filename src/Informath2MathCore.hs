@@ -70,6 +70,7 @@ addParenth t = case t of
 
 semArgkind :: GArgKind -> [(GIdent, GKind)]
 semArgkind argkind = case argkind of
+  GIdentArgKind kind ident -> [(ident, kind)]
   GIdentsArgKind kind (GListIdent idents) -> [(ident, kind) | ident <- idents]
   GIndexedDeclarationArgKind (GInt i) ->
      [((GStrIdent (GString ("UNRESOLVED_" ++ show i))), GIdentKind (GStrIdent (GString "UNRESOLVED_KIND")))]
@@ -110,9 +111,9 @@ sem env t = case t of
 
   GPostQuantProp prop exp -> case sem env exp of
     GEveryIdentKindExp ident kind ->
-      sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [ident])]) prop)
+      sem env (GCoreAllProp kind ident prop)
     GIndefIdentKindExp ident kind ->
-      sem env (GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent [ident])]) prop)
+      sem env (GCoreExistProp kind ident prop)
     GSomeIdentsKindExp idents kind ->
       sem env (GExistProp (GListArgKind [GIdentsArgKind kind idents]) prop)
     GAllIdentsKindExp idents kind ->

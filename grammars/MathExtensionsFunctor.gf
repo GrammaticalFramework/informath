@@ -28,6 +28,13 @@ lin
 
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
 
+  IdentsArgKind kind idents = {cn = mkCN kind.cn idents.np ; adv = kind.adv ; isPl = idents.isPl} ;
+  VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
+  BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
+  AbsExp idents exp =
+    mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
+
+
   AndProp props = simpleProp (mkS and_Conj props) ;
   OrProp props = simpleProp (mkS or_Conj props) ;
   IfProp A B = simpleProp (Grammar.ExtAdvS (Syntax.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B))) ;

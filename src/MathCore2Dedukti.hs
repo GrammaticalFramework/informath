@@ -147,6 +147,9 @@ local2dedukti local = case local of
 
 argkind2dedukti :: GArgKind -> [(Exp, QIdent)]
 argkind2dedukti argkind = case argkind of
+  GIdentArgKind kind ident ->
+    let dkind = kind2dedukti kind
+    in [(dkind, ident2ident ident)]
   GIdentsArgKind kind (GListIdent idents) ->
     let dkind = kind2dedukti kind
     in [(dkind, ident2ident ident) | ident <- idents]
