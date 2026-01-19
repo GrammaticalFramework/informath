@@ -335,9 +335,75 @@ In particular, the application programmer seldom needs to use the table and reco
 
 ### The GF Resource Grammar Library
 
+The RGL is divided into two main parts:
+
+- `Syntax<LANG>`, functions that form phrases from words and combine them
+- `Paradigms<LANG>`, functions that generate inflection forms of words
+
+In addition, there are some smaller libraries, which are also used in Informath:
+
+- `Prelude`, basic operations on strings, analogous to Haskell's `Prelude`
+- `Formal`, operations for formal expressions, such as definitions of infix, prefix, and postfix operators with different precedences
+- `Symbolic<LANG>`, functions for using formal expressions as parts of verbal text
+
+The suffix `<LANG>` it the 3-letter ISO-code for each language, e.g. `Eng` for English and `Fre` for French. 
+Most GF grammar names use the same codes, but this is not built in in GF.
+
+Starting with `Syntax`, the RGL provides a few dozen categories and functions.
+The most important categories for Informath are the following:
+
+- `Text`, texts, consisting of many sentences, such as those for proofs
+- `S`, sentences, with fixed tense (in Informath, usually present ) and polarity (positive or negative)
+- `Cl`, clauses, atomic sentences consisting of a predicate (such as a verb or an adjective) with its arguments (subject, object, complements), unspecified as for tense and polarity
+- `VP`, verb prases, verbs with their argument
+- `NP`, noun phrases, nouns with determiners and modifiers, with fixed number and gender
+- `CN`, common nouns, noun phrases without determiners, with variable number (admitting different determiners) but fixed gender
+
+The `Paradigms` functions build expressions of **lexical categories**, which contain individual words with their inflections and other properties such as gender and complement case:
+
+- `N`, nouns
+- `A`, adjectives
+- `V`, verbs
+- `V2`, two-place verbs (including transitive verbs)
+- `Prep`, prepositions (in some languages, also cases)
+- `Det`, determiners, such as "the", "every"
+
+Expressions of each of these categories are constructed with **overloaded operations**, that is, sets of operations where the one and the same name is used for different types of functions. 
+For ease of use and memory, the name of an RGL operation forming an expresion of category $C$ is almost always `mk`$C$ (almost because sometimes we need more than one operation of the same type).
+Here are some that are widely used in Informath; for the full list, consult the [RGL synopsis](https://www.grammaticalframework.org/lib/doc/synopsis/index.html). 
+The synopsis gives an API consisting of a name, a type and an example, as we will also do here, using examples from Informath:
+```
+mkText : S -> Text
+mkText : Text -> Text -> Text
+
+mkS : (Polarity) -> S
+
+mkCl : NP -> VP -> Cl
+mkCl : NP -> V -> Cl
+mkCl : NP -> V2 -> NP -> Cl
+mkCl : NP -> A -> Cl
+
+mkVP : V -> VP
+mkVP : V2 -> NP -> VP
+mkVP : A -> VP
+
+mkNP : Det -> CN -> NP
+
+mkCN : N -> CN
+mkCN : A -> CN -> CN
+
+the_Det : Det
+thePl_Det : Det
+a_Det : Det
+aPl_Det : Det
+every_Det : Det
+```
 
 
+### Using the RGL
 
+
+### Functors
 
 
 
