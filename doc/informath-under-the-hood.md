@@ -219,8 +219,92 @@ The simplest kind of concrete syntax is itself context-free: it consists of **li
 This happens in a **compositional** fashion: a complex tree is linearized by concatenating the linearizations of its subtrees.
 The following GF module defines a concrete syntax for `Logic`:
 ```
+concrete LogicEng of Logic = {
 
+lincat Set = Str ;
+lincat Elem = Str ;
+lincat Prop = Str ;
+lincat Ident = Str ;
+lincat Proof = Str ;
+
+lin forall set ident prop =
+  "for all" ++ ident ++ "in" ++ set ++ "," ++ prop ;
+}
 ```
+The combination of the abstract syntax Logic with LogicEng is equivalent to a context-free grammar with the rule
+```
+Prop ::= "for all" Ident "in" Set "," Prop
+```
+In the opposite direction, the GF grammar can be seen as the result of taking apart **pure constituency** (the nonterminals) and **surface realization**. 
+This operation has several advantages.
+The most obvious one is perhaps that one can vary the concrete syntax while keeping the abstract syntax constant.
+For example, a corrsponding French grammar is obtained by changing the linearization rule of `forall` to
+```
+lin forall set ident prop =
+  "pour tout" ++ ident ++ "dans" ++ set ++ "," ++ prop ;
+```
+A **multilingual grammar** is a grammar with one abstract syntax and several concrete syntaxes.
+It can be used for **translation** by parsing the source language into an abstract syntax tree and linearizing the tree into the target language.
+The abstract syntax then functions as an **interlingua**.
+Some of the languages could well be formal: a simple formalization and informalization system is obtained by writing a concrete syntax for the formal language:
+```
+lin forall set ident prop =
+  "forall" ++ set ++ "(" ++ ident ++ "=>" ++ prop ++ ")" ;
+```
+This approach has been used in e.g. Ranta 2011 (CADE) and Pathak 2024 (GFLean). 
+While it gives a simple way to convert between formal and informal languages, it is limited by compositionality.
+Therefore, it cannot be used for languages with very different structures.
+The approach followed in Informath is to have one abstract syntaxes for Dedukti and another one for Dedukti: surprisingly, natural languages are structurally close enough for this to work fine.
+
+### Enriched concrete syntax
+
+Much of the power of GF comes from not being context-free, but **mildly context-sensitive**.
+This class of languages is more restricted than fully context-sensitive (in the Chomsky hierarchy sense) and enjoys polynomial worst-case parsing complexity.
+It has turned out to be sufficient for almost any grammar-based analysis of natural languages, not only in GF but also with other formalisms such as TAG.
+
+Some languages are strictly beyond context-free in the sense of weak generative capacity (generating the same sets of sentences).
+A simple example that we can deal with already is the **copy language**, the set of sentences consisting of two copies of the same string, where strings have an arbitrary length.
+In GF, this can be defined by the following simple rules:
+```
+cat S ;
+fun copy : String -> S ;
+lin copy s = s ++ s ;
+```
+using the built-in category `String` and leaving out the module structure.
+
+A more interesting question, in practice, is to see what one can do when leaving the limits of the context-free rule format. 
+This is in the first place expressed in the linearization types. 
+Turning back to the `Logic` example, we can generalize the type of `Set` by making it dependent on a **parameter**, grammatical number, which has values singular and plural.
+This makes it possible to give both "integer" and "integers" the same abstract syntax.
+Some constructs will need the singular form, some the plural.
+
+Again leaving out the module structure, we can write
+```
+param Number = Sg | Pl ;
+
+lincat Set = Number => Str ;
+
+lin forall set ident prop =
+  "for all" ++ set ! Pl ++ ident ++ "," ++ prop ;
+```
+with a new form of judgement for parameter type definitions. 
+They are in GF a special case of **algebraic datatypes** in languages like ML and Haskell.
+Since parameter definitions belong to the concrete syntax, they can be different for different languages.
+French has also gender and mood, in addition to number:
+```
+param Number = Sg | Pl ;
+param gender = Masc | Fem ;
+param Mood = Ind | Subj ;
+
+lincat Set = {s : Number => Str ; g : Gender} ;
+lincat Prop = Mood => Str ;
+
+lin forall set ident prop =
+  \\m => "pour" ++ tout set.g ++ set.s ! Pl ++ ident ++ "," ++ prop ! m ;
+
+oper tout : Gender -> Str = \g -> case g of {Masc => "tout" ; Fem => "toutes"} ;
+```
+
 
 
 
