@@ -163,6 +163,9 @@ To put it briefly,
 
 - GF = LF + grammar
 
+If you are already familiar with GF, you can skip this section.
+If not, it tries to give you the prerequisites needed to apply and extend the GF grammar of Informath.
+
 ### GF as a logical framework: abstract syntax
 
 This framework is called **abstract syntax**, and it is to a large extent similar to Dedukti: it has both dependent types and variable bindings, enabling higher-order abstract syntax. Thus one *could* in GF define the types of sets and props and a universal quantifier just like in Dedukti:
@@ -289,6 +292,11 @@ lin forall set ident prop =
 ```
 with a new form of judgement for parameter type definitions. 
 They are in GF a special case of **algebraic datatypes** in languages like ML and Haskell.
+
+The above grammar is still context-free in the weak generative sense, because the `Set` category can be expanded to two non-terminals.
+But this will in general also require a duplication of rules, whole number in the worst case is the produce of the numbers of parameters in the types involved.
+Like many other grammars that use parameters, GF gives a compact way to produce sets of context-free rules.
+
 Since parameter definitions belong to the concrete syntax, they can be different for different languages.
 French has also gender and mood, in addition to number:
 ```
@@ -300,10 +308,34 @@ lincat Set = {s : Number => Str ; g : Gender} ;
 lincat Prop = Mood => Str ;
 
 lin forall set ident prop =
-  \\m => "pour" ++ tout set.g ++ set.s ! Pl ++ ident ++ "," ++ prop ! m ;
+  \\m => "pour" ++ tout ! set.g ++ set.s ! Pl ++ ident ++ "," ++ prop ! m ;
 
-oper tout : Gender -> Str = \g -> case g of {Masc => "tout" ; Fem => "toutes"} ;
+oper tout : Gender => Str = table {Masc => "tout" ; Fem => "toutes"} ;
 ```
+The context-free expansion of the `forall` rule would here produce four rules, for each combination of the two genders with the two moods.
+
+
+### Summary of GF notation
+
+While the abstract syntax notation of GF is familiar from logical frameworks, concrete syntax requires some explanations.
+We have in the above code examples used or presupposed the following:
+
+- **record types** e.g. ``{s : Number => Str ; g : Gender}``
+- **table types** e.g. ``Gender => Str``
+- **tables** (objects of table types), e.g. table {Masc => "tout" ; Fem => "toutes"} 
+- **records** (objects of record types), e.g. ``{s = "ligne" ; g = Fem}``
+- **selections** from table types, e.g. ``tout ! g``
+- **projections** from record types, e.g. ``set.g``
+
+This machinery - generalizing linearization types from strings with records and tables - has proven sufficient for many different languages, enabling them to share the same abstract syntax. 
+The most substantial proof of this is the 
+[GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/index.html), which at the time of writing includes over 40 languages.
+The main significance of RGL for GF applications, including Informath, is that *the programmer does not need to care about low-level linguistic features* such as parameters, but can use the library instead. 
+In particular, the application programmer seldom needs to use the table and record syntax shown in this section, but mostly just function calls to the RGL.
+
+### The GF Resource Grammar Library
+
+
 
 
 
