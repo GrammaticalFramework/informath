@@ -314,18 +314,26 @@ oper tout : Gender => Str = table {Masc => "tout" ; Fem => "toutes"} ;
 ```
 The context-free expansion of the `forall` rule would here produce four rules, for each combination of the two genders with the two moods.
 
+The keyword `oper`introduces yet another form of judgement: **auxiliary operations**. They are functions outside the `fun`/`lin` structure usable as auxiliaries in `lin` rules. The GF compiler eliminates them by inlining, and they are therefore unnecessary for the theoretical expression powerl. But they are an important part of grammar writing productivity, as they enable refactoring and reusability.
+
 
 ### Summary of GF notation
 
 While the abstract syntax notation of GF is familiar from logical frameworks, concrete syntax requires some explanations.
 We have in the above code examples used or presupposed the following:
 
+- **strings**, `Str`, more properly **token lists**
+  - they are combined with **concatenation** `++`, which unlike Haskell's `++` "introduces a space" - but technically, the "space" is just a token boundary, which need not create an actual space character
+
 - **record types** e.g. ``{s : Number => Str ; g : Gender}``
-- **table types** e.g. ``Gender => Str``
+- **table types** e.g. ``Gender => Str``, a "finite function type" in the sense that the argument type must be a finite parameter type; the name comes from their typical usage to model **inflection tables** of words
 - **tables** (objects of table types), e.g. table {Masc => "tout" ; Fem => "toutes"} 
+  - a special case is the **table abstract** `\\x => b`, which just passes the parameter similarly to a lambda expression `\x -> b` but builds a table (of some table type $P \Rightarrow B$) instead of a function (of some function type $A \rightarrow B$)
+
 - **records** (objects of record types), e.g. ``{s = "ligne" ; g = Fem}``
-- **selections** from table types, e.g. ``tout ! g``
 - **projections** from record types, e.g. ``set.g``
+- **selections** from table types, e.g. ``tout ! g``
+   - **case expressions** ``case e of {...}`` are syntactic sugar for `table {...} ! e`
 
 This machinery - generalizing linearization types from strings with records and tables - has proven sufficient for many different languages, enabling them to share the same abstract syntax. 
 The most substantial proof of this is the 
@@ -355,58 +363,312 @@ The most important categories for Informath are the following:
 - `Text`, texts, consisting of many sentences, such as those for proofs
 - `S`, sentences, with fixed tense (in Informath, usually present ) and polarity (positive or negative)
 - `Cl`, clauses, atomic sentences consisting of a predicate (such as a verb or an adjective) with its arguments (subject, object, complements), unspecified as for tense and polarity
-- `VP`, verb prases, verbs with their argument
-- `NP`, noun phrases, nouns with determiners and modifiers, with fixed number and gender
-- `CN`, common nouns, noun phrases without determiners, with variable number (admitting different determiners) but fixed gender
+- `VP`, verb prases, verbs with their argument, such as "range from $a$ to $b$"
+- `NP`, noun phrases, nouns with determiners and modifiers, such as "every even number" or singular terms such as "$x + y$"
+- `CN`, common nouns, noun phrases without determiners, with variable number (admitting different determiners) but fixed gender, such as "natural number"
+- `AP`, adjectival phrases, such as "uniformly continuous", "even or odd"
+- `Adv`, adverbial phrases, either single words such as "uniformly" or prepositional phrases such as "for every $x$"
 
 The `Paradigms` functions build expressions of **lexical categories**, which contain individual words with their inflections and other properties such as gender and complement case:
 
-- `N`, nouns
-- `A`, adjectives
-- `V`, verbs
-- `V2`, two-place verbs (including transitive verbs)
-- `Prep`, prepositions (in some languages, also cases)
+- `N`, nouns, such as "integer"
+- `A`, adjectives, such as "even"
+- `V`, verbs, such as "converge"
+- `V2`, two-place verbs (including transitive verbs), such as "contain"
+- `Prep`, prepositions, such as "for" (in some languages, also cases such as dative)
 - `Det`, determiners, such as "the", "every"
+- `Adv`, adverbs, such as "everywhere"
+- `Conj`, conjunctions, such as "and", "either - or"
+
+
+### The Syntax API
 
 Expressions of each of these categories are constructed with **overloaded operations**, that is, sets of operations where the one and the same name is used for different types of functions. 
 For ease of use and memory, the name of an RGL operation forming an expresion of category $C$ is almost always `mk`$C$ (almost because sometimes we need more than one operation of the same type).
 Here are some that are widely used in Informath; for the full list, consult the [RGL synopsis](https://www.grammaticalframework.org/lib/doc/synopsis/index.html). 
 The synopsis gives an API consisting of a name, a type and an example, as we will also do here, using examples from Informath:
 ```
-mkText : S -> Text
-mkText : Text -> Text -> Text
+mkText : S -> Text              We conclude that $f$ is continuous.
+mkText : Text -> Text -> Text   We have a contradiction. Hence $x$ is not prime.  
 
-mkS : (Polarity) -> S
+mkS : (Polarity) -> S           $x$ is (not) prime
 
-mkCl : NP -> VP -> Cl
-mkCl : NP -> V -> Cl
-mkCl : NP -> V2 -> NP -> Cl
-mkCl : NP -> A -> Cl
+mkCl : NP -> VP -> Cl           $x$ is greater than $y$
+mkCl : NP -> V -> Cl            $f$ converges
+mkCl : NP -> V2 -> NP -> Cl     $l$ intersects $m$
+mkCl : NP -> AP -> Cl           $2$ is even and prime
 
-mkVP : V -> VP
-mkVP : V2 -> NP -> VP
-mkVP : A -> VP
+mkVP : V -> VP                  converge
+mkVP : V2 -> NP -> VP           intersect $m$
+mkVP : AP -> VP                 be even
 
-mkNP : Det -> CN -> NP
+mkNP : Det -> CN -> NP          every natural number
 
-mkCN : N -> CN
-mkCN : A -> CN -> CN
+mkCN : N -> CN                  number
+mkCN : A -> N -> CN             natural number
+mkCN : AP -> CN -> CN           uniformly continuous function
+mkCN : CN -> Adv -> CN          divisor of $24$
 
-the_Det : Det
-thePl_Det : Det
-a_Det : Det
-aPl_Det : Det
-every_Det : Det
+mkAP : A -> AP                  even
+mkAP : Conj -> AP -> AP -> AP.  even or odd
+
+mkAdv : Prep -> NP -> Adv       for every number              
+
+the_Det : Det                   the (number)       
+thePl_Det : Det                 the (numbers)
+a_Det : Det                     a number
+aPl_Det : Det                   (numbers)
+every_Det : Det                 every (number)
+
+and_Conj                        and
+or_Conj                         or
+
+for_Prep                        for
+in_Prep                         in
 ```
+The last items in the list show functions for **structural words**, which are a part of the `Syntax` modules.
+They show another naming convention of the RGL: an English word and its category, separated by an underscore.
+Despite the English name, they linearize to corresponding words in other langauges.
+For instance, `the_Det` in French becomes "la" or "le" or "l'", whereas `thePl_Det` becomes "les".
+
+Notice that the API contains, on purpose, redundancies.
+For example, the `CN` "natural number" can be built with both of
+```
+mkCN (mkAP natural_A) (mkCN number_N)
+mkCN natural_A number_N
+```
+Under the hood, the latter is defined in terms of the former, so there is no redundancy in the underlying layer of the grammar.
+But the redundancies enable convenient shortcuts for the programmer.
+
+
+### The Paradigms API
+
+The categories and functions in the Syntax API are defined for all languages in the RGL.
+This makes it straightforward to transfer code written for one language into another one.
+The morphological paradigms, however, are less portable, because the inflection tables and other information needed varies so much.
+Thus the noun inflection in English only needs a singular and a plural form, whereas in French also a gender is needed, and in German, four cases in both singular and plural.
+This is reflected in the variants of overloaded functions for each language.
+
+In English, we have for instance
+```
+mkN : Str -> N                 number
+mkN : Str -> Str -> N          calculus, calculi
+
+mkA : Str -> A                 even
+
+mkV : Str -> V                 converge
+mkV : Str -> Str -> Str -> V   give, gave, given
+
+mkV2 : V -> V2                 contain (transitive)
+mkV2 : V -> Prep -> V2         differ, from
+```
+In general, every language in the RGL has, for each lexical category, a **smart paradigm** that infers the inflection and other properties from just one string.
+This is a qualified guess based on the characters contained in the string and statistics about the most common alternatives.
+For examples, the `mkN` function of `ParadigmsEng` covers cases such as "number-numbers", "bus-buses", "baby-babies".
+But it does not cover "man-men", "calculus-calculi": for these words, the two-argument function has to be used.
+
+The Informath grammar has an even higher level of API for defining vocabulary needed in mathematical functions and predicates. But in some cases, especially in languages other than English, the standard Paradigms API is needed in addition.
+
+### Libraries for formal code
+
+Mathematical language is a mixture of words and symbols.
+The symbolic part has its own syntactic features, familiar from grammars of programming languages and logical formalisms.
+The RGL module `Formal` gives some useful categories and functions to define this part:
+
+- `Prec`, precedence levels (from 1 to 4)
+- `TermPrec`, terms with a precedence level
+- `infixl : Prec -> Str -> TermPrec -> TermPrec -> TermPrec`, terms built with left-associative infix operators.
+
+The `Symbolic` API is used for combining symbolic terms with natural language expressions.
+The following are used in Informath:
+
+- `symb : Symb -> NP`
+- `symb : Symb -> S`
+- `mkSymb : Int -> Symb`
+- `mkSymb : Str -> Symb` 
+
+The user of Informath, even when extending the grammar with new symbolism, rarely needs to consult these modules, because Informath gives a higher level API for introducing new symbolism.
 
 
 ### Using the RGL
 
+The RGL is normally installed in a place where the GF compiler can find it by referencing the variable `GF_LIB_PATH`.
+With this information, it can find the library modules that are **opened** in other modules.
+A typical usage is as follows. Let us first assume a simpler abstract syntax,
+```
+abstract Math = {
+
+cat 
+  Prop ; Set ; Elem ;
+fun
+  AndProp : Prop -> Prop -> Prop ;
+  Nat : Set ;
+  Even : Elem -> Prop ;
+}
+```
+Notice here a syntax feature of GF: a judgement keyword such as `cat` need not be repeated as long as judgements of the same form follow.
+Now, an RGL-based concrete syntax 
+
+- opens `Syntax` and `Paradigms` modules
+- uses RGL categories and linearization types
+- builds linearizations with RGL functions
+
+Thus we can write
+```
+concrete MathEng of Math =
+  open SyntaxEng, ParadigmsEng 
+  in {
+    lincat 
+      Prop = S ;
+      Set = CN ;
+      Elem = NP ;
+    lin
+      AndProp A B = mkS and_Conj A B ;
+      Nat = mkCN (mkA "natural") (mkN "number") ;
+      Even x = mkS (mkCl x (mkA "even")) ;  
+  }
+```
+
 
 ### Functors
 
+Since the Syntax API is implemented for all RGL languages, the code for `MathEng` can be ported to another language by just changing the language codes and the words and, if needed, the morphological functions called.
+Thus we can write
+```
+concrete MathFre of Math =
+  open SyntaxFre, ParadigmsFre 
+  in {
+    lincat 
+      Prop = S ;
+      Set = CN ;
+      Elem = NP ;
+    lin
+      AndProp A B = mkS and_Conj A B ;
+      Nat = mkCN (mkA "naturel") (mkN "nombre" masculine) ;
+      Even x = mkS (mkCl x (mkA "pair")) ;  
+  }
+```
+Notice that
+
+- the implementation of `SyntaxFre` renders `Nat` in the correct word order, "nomber naturel",
+- the definition of "nombre" adds gender explicitly, because the default gender of nouns ending with "e" is feminine.
+
+Copying modules and changing language codes and words is a productive way to port GF grammars to new languages. 
+But there is something even better: **functors**, also known as **parameterized modules**.
+A functor opens **interfaces**, which declare the types of functions but does not give their definitions.
+The definitions are given in different **instances** of interfaces.
+Thus the RGL `Syntax` is an interface, and `SyntaxEng` and `SyntaxFre` are its instances.
+
+A functor for `Math` is a concrete syntax with the keyword `incomplete`:
+```
+incomplete concrete MathFunctor of Math =
+  open Syntax, Words  
+  in {
+    lincat 
+      Prop = S ;
+      Set = CN ;
+      Elem = NP ;
+    lin
+      AndProp A B = mkS and_Conj A B ;
+      Nat = mkCN natural_A number_N ;
+      Even x = mkS (mkCl x even_A) ;  
+  }
+```
+In addition to the RGL `Syntax`, this module opens the interface `Words`:
+```
+interface Words =
+  open Syntax in {
+    oper 
+      natural_A : A ;
+      number_N : N ;
+      even_A : A ;
+  }
+```
+with instances such as
+```
+instance WordsEng of Words =
+  open SyntaxEng, ParadigmsEng in {
+    oper 
+      natural_A = mkA "natural" ;
+      number_N = mkN "number" ;
+      even_A = mkA "even" ;
+  }
+```
+and similarly for French.
+The final concrete syntaxes can now be written as **instantiations** of the functor:
+```
+concrete MathEng of Math = MathFunctor with
+  (Syntax=SyntaxEng),
+  (Words=WordsEng) ;
+
+concrete MathFre of Math = MathFunctor with
+  (Syntax=SyntaxFre),
+  (Words=WordsFre) ;
+```
+Functors make it maximally easy to port GF grammars into new languages.
+One advantage over just copying the code is that when the abstract syntax is extended or changed, only the functor needs to be edited (and possibly the `Words` interface).
+
+In addition to functors, GF grammars can be structured to modules in many different ways.
+Maintaining a `Words` interface as above is usually not the best way to do this: it can be better to divide the abstract syntax into a syntax part and a lexical part, where the syntax part only needs the RGL syntax as its interface:
+```
+abstract MathSyntax = {
+cat 
+  Prop ; Set ; Elem ;
+fun
+  AndProp : Prop -> Prop -> Prop ;
+}
+
+abstract Math = MathSyntax ** {
+fun
+  Nat : Set ;
+  Even : Elem -> Prop ;
+}
+
+incomplete concrete MathSyntaxFunctor of MathSyntax =
+  open Syntax
+  in {
+    lincat 
+      Prop = S ;
+      Set = CN ;
+      Elem = NP ;
+    lin
+      AndProp A B = mkS and_Conj A B ;
+  }
+
+concrete MathSyntaxEng of Math = MathSyntaxFunctor with
+  (Syntax=SyntaxEng) ;
+
+concrete MathEng of Math = MathSyntaxEng **
+  open SyntaxEng, ParadigmsEng in {
+    lin
+      natural_A = mkA "natural" ;
+      number_N = mkN "number" ;
+      even_A = mkA "even" ;
+  }
+```
+This examples shows **module extensions** marked with the operator `**`.
+The difference between extensions and opening is that the extending module **inherits** all rules of the extended module.
+Extensions create an inheritance hierarchy reminiscent of object-oriented programs, and designing it in a good way can require several rounds of trial and error. 
+The Informath grammar is not an exception: its internal structure has changed several times during one year of continuous development.
+But this need not matter for the user: they can work with a pre-compiled version (see next section) or on isolated modules defining new concepts for their own fields of mathematics.
 
 
+### Compiling GF
+
+The GF software stack consists of related functionalities:
+
+- the GF shell, used for developing and testing grammars,
+- the GF compiler, used for building a binary file for runtime usage,
+- GF runtime interpreters, accessing the binary grammar from different programming languages, such as Haskell, Python, and C.
+
+The runtime grammar is a single binary file, in our case `Informath.pgf`.
+The Haskell runtime interpreter, which the Informath project uses, provides functions such as
+```
+linearize :: PGF -> Language -> Tree -> String
+parse :: PGF -> Language -> Type -> String -> [Tree]
+```
+The compiler can also produce a Haskell module `Informath.hs`, which exports the abstract syntax as a generalized algebraic datatype. 
+This type is internsely used in different manipulations of syntax trees, such as semantics and NLG.
 
 
 ## The MathCore language
