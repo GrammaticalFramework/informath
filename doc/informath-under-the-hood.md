@@ -650,6 +650,17 @@ This examples shows **module extensions** marked with the operator `**`.
 The difference between extensions and opening is that the extending module **inherits** all rules of the extended module.
 Extensions create an inheritance hierarchy reminiscent of object-oriented programs, and designing it in a good way can require several rounds of trial and error. 
 The Informath grammar is not an exception: its internal structure has changed several times during one year of continuous development.
+The most important principle is
+
+- DRY: Don't repeat yourself.
+
+A derivative of this is
+
+- The golden rule of functional programming: When you find yourself programming with copy and paste, write a function instead.
+
+GF supports this with the usual constructs of functional programming, in particular the `oper`definitions for auxiliary functions and libraries that can be opened. 
+Functors are an extension of it from expressions to modules: they are functions that produce modules, reducing the need to copy and paste.
+
 But this need not matter for the user: they can work with a pre-compiled version (see next section) or on isolated modules defining new concepts for their own fields of mathematics.
 
 
@@ -668,7 +679,8 @@ linearize :: PGF -> Language -> Tree -> String
 parse :: PGF -> Language -> Type -> String -> [Tree]
 ```
 The compiler can also produce a Haskell module `Informath.hs`, which exports the abstract syntax as a generalized algebraic datatype. 
-This type is internsely used in different manipulations of syntax trees, such as semantics and NLG.
+This type is intensely used in different manipulations of syntax trees, such as semantics and NLG.
+We will show examples from Informath later.
 
 
 ## The MathCore language
@@ -704,6 +716,8 @@ The rationale of this design is modularity and an optimal use of existing resour
 
 
 ### The syntax of MathCore
+
+#### Categories
 
 The syntactic categories of MathCore are defined in the module [Categories](./grammars/Categories.gf). Here are some of the main ones:
 ```
@@ -755,6 +769,41 @@ Verb      Exp -> Prop                converge
 Verb2     Exp -> Exp -> Prop         divide
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
+
+#### Functions
+
+The abstract syntax of MathCore consists of around 70 combination functions for that build judgements, propositions, kinds, expressions, and proofs, ultimately from lexical items.
+The following is an overview of them, in the form of a context-free grammar pseudocode.
+The reader should keep in mind that
+
+- each context-free rule corresponds to an abstract syntax function that operates on its nonterminals as argument and value types
+- the righ-hand sides correspond to simple instances of the full linearization rules for English
+- there rules do not show the variations in morphology and word order, which are defined in the source code by using the RGL
+- since the definition is a functor, it also applies to other languages in Informath
+
+Starting from top down, we MathCore has rules for expressing definitions of different types of constants, with (definition) or without (axiom, postulate) proofs or other defining terms.
+```
+Jmt ::=
+    Label "." Hypo* Prop "."
+  | Label "." Hypo* Prop ("Proof ." Proof)? "."
+  | Label "." Hypo* Prop "if" Prop "." 
+  | Label "." Hypo* "We can say that" Prop "." 
+  | Label "." Hypo* "a" Kind "is a" Kind "."
+  | Label "." Hypo* Kind "is a basic type "."
+  | Label "." Hypo* Exp "is a" Kind ()"defined as" Exp)? "."
+```
+The hypothesis are either assumptions of propositions or declarations of variables.
+```
+Hypo ::=
+    "Assume" Prop "."
+  | "Let" Ident "be a" Kind "."
+```
+
+
+
+
+
+
 
 
 ## The full Informath language
@@ -837,7 +886,7 @@ Every entry in a `.dkgf` file must have a verbal function as its primary renderi
 
 ### Linearizations of user-defined constants
 
-The easiest way to write linearization rules for constants is to use the `Utulities<Lang>` library module, whose API is given in the interface module [Utilities](./grammars/Utilities.gf). Many categories $C$ have a shortcut function
+The easiest way to write linearization rules for constants is to use the `Utulities<Lang>` library module, whose API is given in the interface module [Utilities](./grammars/Utilities.gf). Just like in the RGL, any categories $C$ have a shortcut function
 ```
 mkC : Str -> C
 ````
@@ -880,4 +929,7 @@ The symbol table entry relies on the correspondance between these types:
 forall   CoreAllProp
 ```
 This generalization of symbol table is still an experimental feature of Informath.
+But the use of symbol tables is essential for the goal of Informath to be completely general in relation to Dedukti: we want to be able to informalize arbitrary Dedukti code with any lexicon that the user wants to select, without the need to write any Haskell code, but only symbol table entries and, if new lexical items are needed, GF code.
+
+
 
