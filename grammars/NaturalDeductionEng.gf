@@ -91,19 +91,10 @@ lin
     
 
 oper
+
+  succNP : NP -> NP = \x -> mkNP the_Det (mkCN (P.mkN "successor") (mkAdv possess_Prep x)) ;
   assumeText : Str -> S -> Text = \h, s ->
     mkText (mkText (mkUtt (mkImp (mkVP assume_VS s)))) ((strText ("(" ++ h ++ ")"))) ;
-
-  strText : Str -> Text = \s -> lin Text {s = s} ;
-
-  succNP : NP -> NP = \x -> mkNP the_Det (mkCN (P.mkN "successor") (mkAdv possess_Prep x)) ;  
-  ccText = overload {    
-    ccText : (a, b : Text) -> Text = \a, b -> mkText a b ;
-    ccText : (a, b, c : Text) -> Text = \a, b, c -> mkText a (mkText b c) ;
-    ccText : (a, b, c, d : Text) -> Text = \a, b, c, d -> mkText a (mkText b (mkText c d)) ;
-    ccText : (a, b, c, d, e : Text) -> Text = \a, b, c, d, e ->
-      mkText a (mkText b (mkText c (mkText d e))) ;
-    } ;
 
 
 }

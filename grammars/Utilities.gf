@@ -24,6 +24,17 @@ oper
 	     | mkText hypos.text (mkText (mkUtt s))    ---- variants !!??
       } ;
 
+  strText : Str -> Text = \s -> lin Text {s = s} ;
+
+  ccText = overload {    
+    ccText : (a, b : Text) -> Text = \a, b -> mkText a b ;
+    ccText : (a, b, c : Text) -> Text = \a, b, c -> mkText a (mkText b c) ;
+    ccText : (a, b, c, d : Text) -> Text = \a, b, c, d -> mkText a (mkText b (mkText c d)) ;
+    ccText : (a, b, c, d, e : Text) -> Text = \a, b, c, d, e ->
+      mkText a (mkText b (mkText c (mkText d e))) ;
+    } ;
+
+
   latexNP : Symb -> NP = \x ->
     symb (mkSymb ("$" ++ x.s ++ "$")) ;
 
@@ -45,6 +56,10 @@ oper
     True => parenthS prop.s ;
     False => prop.s
     } ;
+
+
+  propText : Proposition -> Text = \prop -> mkText (topProp prop) ;
+  propInText : Proposition -> Text = \prop -> mkText (mkUtt (topProp prop)) ;
     
   parenthS : S -> S = \s -> MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
 
