@@ -15,6 +15,8 @@ lin
   HyposUnit hypos = hypos.text ;
   PropUnit prop = mkText (topProp prop) ;
   GoalUnit goal = goal ;
+  SinceUnit A B =
+    ccText (strText "since") (commaText (propInText A)) (propText B) ;
   FollowsLabelUnit label =
     strText ("follows by" ++ (mkUtt label.np).s) ;
   FollowsPropUnit prop = 
@@ -25,7 +27,7 @@ lin
   EnoughGoal prop = 
     prefixText "it is enough to prove that" (propText prop) ;
   SinceGoal prop goal =
-    prefixText "since" (ccText (propInText prop) goal) ;
+    ccText (strText "since") (commaText (propInText prop)) goal ;
 
 
   BaseUnit = emptyText ;

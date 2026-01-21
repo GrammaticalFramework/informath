@@ -1,3 +1,5 @@
 concrete UserExtensionsFre of UserExtensions =
-  NaprocheFre ;
+  NaprocheFre,
+  ProofUnitsFre
+  ;
 

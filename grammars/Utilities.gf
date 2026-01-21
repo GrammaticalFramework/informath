@@ -34,6 +34,7 @@ oper
       mkText a (mkText b (mkText c (mkText d e))) ;
     } ;
 
+  commaText : Text -> Text = \t -> ccText t (strText ",") ;
 
   latexNP : Symb -> NP = \x ->
     symb (mkSymb ("$" ++ x.s ++ "$")) ;
@@ -59,7 +60,7 @@ oper
 
 
   propText : Proposition -> Text = \prop -> mkText (topProp prop) ;
-  propInText : Proposition -> Text = \prop -> mkText (mkUtt (topProp prop)) ;
+  propInText : Proposition -> Text = \prop -> strText (mkUtt (topProp prop)).s ;
     
   parenthS : S -> S = \s -> MarkupS (lin Mark {begin = "(" ; end = ")"}) s ;
 

@@ -11,6 +11,7 @@ fun
   HyposUnit : [Hypo] -> Unit ;
   PropUnit : Prop -> Unit ;
   GoalUnit : Goal -> Unit ;
+  SinceUnit : Prop -> Prop -> Unit ;
   FollowsLabelUnit : Label -> Unit ;
   FollowsPropUnit : Prop -> Unit ;
   
