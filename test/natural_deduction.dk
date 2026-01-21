@@ -34,7 +34,7 @@ orIr : (A : Prop) -> (B : Prop) -> Proof B -> Proof (or A B).
 
 def orE : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof (or A B) ->
   (d : ((x : Proof A) -> Proof C)) -> (e : ((y : Proof B) -> Proof C)) -> Proof C.
-[a, d] orE _ _ _ (orIl _ _ a) d _ --> d a.
+[a, d] orE _ _ _ (orIl _ _ a) d _ --> d a
 [b, e] orE _ _ _ (orIr _ _ b) _ e --> e b.
 
 ifI : (A : Prop) -> (B : Prop) -> (b : ((x : Proof A) -> Proof B)) -> Proof (if A B).
@@ -76,52 +76,51 @@ thm nd1 : (A : Prop) -> (B : Prop) -> Proof (if A (if B A)) :=
 (; natural numbers ;)
 
 Nat : Set.
-Zero : Elem Nat.
+0 : Elem Nat.
 Succ : Elem Nat -> Elem Nat.
 
 def NatE : (n : Elem Nat) -> (C : ((x : Elem Nat) -> Prop)) ->
-  (d : Proof (C Zero)) ->
+  (d : Proof (C 0)) ->
   (e : ((n : Elem Nat) -> (h : Proof (C n) -> Proof (C (Succ n))))) ->
   Proof (C n).
-[d] NatE Zero _ d _ --> d.
-(;
+[d] NatE 0 _ d _ --> d
 [n, C, d, e] NatE (Succ n) C d e --> e n (NatE n C d e). 
-;)
+
 
 def NatInd : (C : ((x : Elem Nat) -> Prop)) ->
-  (d : Proof (C Zero)) ->
+  (d : Proof (C 0)) ->
   (e : ((n : Elem Nat) -> (h : Proof (C n) -> Proof (C (Succ n))))) ->
   Proof (forall Nat (n => (C n))) :=
     C => d => e => forallI Nat (x => C x) (n => NatE n C d e). 
 
 def plus : Elem Nat -> Elem Nat -> Elem Nat.
-[m] plus m Zero --> m.
+[m] plus m 0 --> m
 [m, n] plus m (Succ n) --> Succ (plus m n).
 
 def times : Elem Nat -> Elem Nat -> Elem Nat.
-[m] times m Zero --> Zero.
+[m] times m 0 --> 0
 [m, n] times m (Succ n) --> plus (times m n) m.
 
 def divisible : Elem Nat -> Elem Nat -> Prop := n => m => exists Nat (k => Eq Nat n (times k m)).
 
-def 0 : Elem Nat := Zero.
+(;def 0 : Elem Nat := 0.;)
 def 1 : Elem Nat := Succ 0.
 def 2 : Elem Nat := Succ 1.
 
 even : Elem Nat -> Prop.
 odd : Elem Nat -> Prop.
 
-evenZero : Proof (even Zero).
+even0 : Proof (even 0).
 evenSucc : (n : Elem Nat) -> Proof (odd n) -> Proof (even (Succ n)).
 oddSucc : (n : Elem Nat) -> Proof (even n) -> Proof (odd (Succ n)).
 
-thm prop1 : Proof (odd 1) := oddSucc 0 evenZero.
+thm prop1 : Proof (odd 1) := oddSucc 0 even0.
 
 prop2 : (n : Elem Nat) -> Proof (iff (even n) (divisible n 2)).
 
 thm prop3 : Proof (forall Nat (n => (or (even n) (odd n)))) :=
   NatInd (x => or (even x) (odd x))
-         (orIl (even 0) (odd 0) evenZero)
+         (orIl (even 0) (odd 0) even0)
 	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
 	                (hypo (or (even x) (odd x)) y)
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
