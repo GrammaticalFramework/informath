@@ -715,9 +715,7 @@ The rationale of this design is modularity and an optimal use of existing resour
 - Variation of natural language input and output is delegated to Informath.
 
 
-### The syntax of MathCore
-
-#### Categories
+### The categories of MathCore
 
 The syntactic categories of MathCore are defined in the module [Categories](./grammars/Categories.gf). Here are some of the main ones:
 ```
@@ -725,6 +723,8 @@ category   name           linguistic type     example
 —-------------------------------------------------------------------
 Exp        expression     NP (noun phrase)    the empty set
 Ident      identifier     Symb (symbol)       x
+Term       symbolic term  Symb                x + 2
+Int        integer        Symb                62
 Jmt        judgement      Text                N is a set.
 Hypo       hypothesis     Text                Assume A.
 Kind       kind           CN (commoun noun)   integer
@@ -770,7 +770,7 @@ Verb2     Exp -> Exp -> Prop         divide
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
 
-#### Functions
+### The syntactic combination functions of MathCore
 
 The abstract syntax of MathCore consists of around 70 combination functions for that build judgements, propositions, kinds, expressions, and proofs, ultimately from lexical items.
 The following is an overview of them, in the form of a context-free grammar pseudocode.
@@ -780,6 +780,8 @@ The reader should keep in mind that
 - the righ-hand sides correspond to simple instances of the full linearization rules for English
 - there rules do not show the variations in morphology and word order, which are defined in the source code by using the RGL
 - since the definition is a functor, it also applies to other languages in Informath
+
+#### Judgements and hypotheses
 
 Starting from top down, we MathCore has rules for expressing definitions of different types of constants, with (definition) or without (axiom, postulate) proofs or other defining terms.
 ```
@@ -799,11 +801,138 @@ Hypo ::=
   | "Let" Ident "be a" Kind "."
 ```
 
+#### Propositions
+
+Propositions are the richest category, with functions corresponding to every constant of predicate logic as well as for atomic formulas built by means of predicates. We start with the logical constants:
+```
+Prop ::=
+    "we have a contradiction"
+  | Prop "and" Prop
+  | Prop "or" Prop
+  | "if" Prop "then" Prop
+  | Prop "iff" Prop
+  | "it is not the case that" Prop
+  | "for all"  Kind Ident "," Prop
+  | "there exists a" Kind Ident "such that" Prop
+```
+These rules correspond one-to-one to a common formalization of logical constants in Dedukti.
+To prevent ambiguity, complex propositions (ones formed by logical constants) that appear as parts of other propositions are enclosed in brackets.
+Thus we have the following correspondances with Dedukti:
+```
+and A (or B C)  <--> A and (B or C)
+or (and A B) C  <--> (A and B) or C
+```
+The brackets can be erased in the full Informath language, which provides other ways to avoid ambiguities.
+The use of brackets is controlled by the flag `isComplex` in the linearization type of `Prop`:
+```
+lincat Prop = {s : S ; isComplex : Bool}
+```
+
+Now, in the natural language of mathematics, syntactic ambiguities do appear, and they are tolerated as long as the ambiguity is resolved by semantical means.
+For example,
+
+- for all numbers $x$, $x$ is even or $x$ is odd
+
+is syntactically ambiguous between
+
+- for all numbers $x$, ($x$ is even or $x$ is odd)
+- (for all numbers $x$, $x$ is even) or $x$ is odd
+
+The latter alternative is rejected in type checking because it recognizes $x$ as an unbound variable in the second disjunct.
+Another way to make the first statement unambiguous even syntactically is to use a disjunction of adjectives:
+
+- for all numbers $x$, $x$ is even or odd
+
+This variant is provided in the full Informath language.
+
+Atomic propositions are formed with separate rules for each category of predicates:
+```
+Prop ::=
+    Exp "is" Adj
+  | Exp "is" Adj2 prep Exp
+  | Exp "is" Adj3 prep1 Exp prep2 Exp
+  | Exp "and" Exp "are AdjC
+  | Exp "and" Exp "are AdjE
+  | Exp "is a" Noun1
+  | Exp "is a" Noun2 prep Exp
+  | Exp Verb
+  | Exp Verb2 prep Exp
+```
+The item `prep` in these rules, with or without a numeric index, refers to the inherent preposition of the predicate.
+It can also be empty, as in the case of transitive `V2`.
 
 
+#### Kinds
+
+Kinds correspond to common nouns (`CN`) in the RGL.
+The can consist of several words, such as "prime number" and "element of $A$".
+However, in the latter case, a `Kind` expression needs to be divided into two parts in some constructions, such as when a variable is declared:
+
+- for all elements $x$ of $A$, ...
+
+To enable this, we use a linearization type where the main noun and an adverbial part are separated:
+```
+lincat Kind = {cn : CN ; adv : Adv}
+```
+In the following grammar rules, we use the hyphen `-` to mark the boundary of these parts:
+```
+Kind := 
+    Ident -
+  | Kind Ident - "such that" Prop
+  | Noun -
+  | Fam - prep Kind
+  | Fam2 - prep1 Kind prep2 Kind
+```
+Notice that the second rule is actually a bit more complicated, because the CN-Adv boundary may occur inside the argument `Kind`, such as in
+
+- for all elements $x$ of $A$ such that $x$ is rational, ...
+
+#### Expressions
+
+Expressions in the sense of MathCore's `Exp` category correspond singular terms in logic and noun phrases (`NP`) in the RGL.
+They are formed by the following rules:
+```
+Exp := 
+    "$" Term "$"
+  | Name
+  | Fun prep Exp
+  | Fun2 prep1 Exp prep2 Exp
+  | FunC prep Exp "and" Exp
+```
+Notice that symbolic terms are enclosed in dollar signs when used as expressions.
+This enables Informath to parse and generate LaTeX code as used in mathematical writing.
+The `Term` category has just two rules in MathCore:
+```
+Term := 
+    Ident
+  | Int
+```
+But it will be extended with many more rules in the full Informath.
+There we will also extend the `Exp` category with rules that form quantifier phrases (such as "ever number") and other expressions that are not singular terms in the logical sense.
 
 
+#### Proofs and proof labels
 
+The treatment of proofs is still largely work in progress in Informath.
+However, the following rules are enough to translate all proof objects that can be formed in Dedukti. They correspond to identifiers (either proof labels or singular terms), applications, and abstractions:
+```
+Proof := 
+    Proof* "by" ProofExp "."
+  | Hypo+ Proof
+
+ProofExp :=
+    Label 
+  | ProofExp "applied to" Exp+
+  | ProofExp "assuming" Hypo+ 
+```
+
+#### Dedukti expressions outside the grammar
+
+To achieve the full potential of informalization, all constants in the Dedukti file should have entries in a symbol table that maps them to lexical constants in the GF grammar.
+However, for the sake of completeness, Informath also has rules corresponding to raw Dedukti terms, that is, function applications whose head does not have such an entry.
+
+
+### Translations between Dedukti to MathCore
 
 
 ## The full Informath language
