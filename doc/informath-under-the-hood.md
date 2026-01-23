@@ -877,8 +877,7 @@ lincat Kind = {cn : CN ; adv : Adv}
 In the following grammar rules, we use the hyphen `-` to mark the boundary of these parts:
 ```
 Kind := 
-    Ident -
-  | Kind Ident - "such that" Prop
+    Kind Ident - "such that" Prop
   | Noun -
   | Fam - prep Kind
   | Fam2 - prep1 Kind prep2 Kind
@@ -926,13 +925,82 @@ ProofExp :=
   | ProofExp "assuming" Hypo+ 
 ```
 
+#### Special constants
+
+The above categories of nouns, adjectives, and verbs cover a large part of verbal expressions of mathematical constants.
+However, there are cases where this does not hold.
+Such cases are taken care of GF functions that, instead of being constants of the lexical categories, take arguments and return values of the basic types, that is, `Prop`, `Kind`, `Exp`, and `Proof`. 
+Also `Ident` can occur as an argument, corresponding to a bound variable in higher-order abstract syntax.
+We have already seen examples, the logical constants, such as
+
+- Dedukti: `and : Prop -> Prop -> Prop`
+- Informath: `CoreAndProp : Prop -> Prop -> Prop`
+- symbol table: `and CoreAndProp
+
+- Dedukti `forAll : (A : Set) -> (Elem A -> Prop) -> Prop``
+- GF: `CoreAllProp : Kind -> Ident -> Prop -> Prop`
+- symbol table: `forAll CoreAllProp`
+
+Another example is sum expressions:
+
+- Dedukti : `sigma : Elem Num -> Elem Num -> (Elem Num -> Elem Num) -> Elem Num`
+- GF: `SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp`
+- symbol table: `sigma SigmaExp`
+
+The symbol table entries work if the Dedukti and GF types match.
+Run-time errors can (for the time being) happen if the code contains.
+If they are difficult to fix in the source code, using the empty symbol table should always produce failure-free verbalizations.
+
+
+
 #### Dedukti expressions outside the grammar
 
 To achieve the full potential of informalization, all constants in the Dedukti file should have entries in a symbol table that maps them to lexical constants in the GF grammar.
-However, for the sake of completeness, Informath also has rules corresponding to raw Dedukti terms, that is, function applications whose head does not have such an entry.
+However, for the sake of completeness, Informath also has rules corresponding to raw Dedukti terms, that is, 
+
+- variables
+- function applications whose heads do not have symbol table entries
+- constants applied to unexpected numbers of arguments (e.g. as partical application)
+- beta redexes (lambda expressions applied to arguments)
+- lambda expressions not corresponding to higher-order abstract syntax
+
+Such expressions are captured as catch-all cases of the translation from Dedukti to MathCore.
+The MathCore rules available for them are the following:
+```
+Prop ::= 
+    Ident
+  | Ident "holds for" Exp+
+Kind ::=  
+    "element of" - Ident
+  | "element of" - Ident "of" Exp+
+Exp  ::= 
+    Exp "applied to" Exp+
+  | "the function that maps" Ident "to" Exp
+```
+Needless to say, these rule produce rough "verbalizations" that can hardly be recognized as belonging to the informal language of mathematics.
 
 
-### Translations between Dedukti to MathCore
+### Translation from Dedukti to MathCore
+
+The translation from Dedukti to MathCore is defined in the Haskell module `Dedukti2MathCore`, which maps Dedukti abstract syntax trees to MathCore abstract syntax trees.
+It is defined top-down starting from judgements, and descending to the smallest parts of them, guided by the symbol table.
+
+The symbol table is given by the user as pairs of Dedukti and MathCore constants.
+The table actually used in the translator is constructed from this information by consulting the actual GF grammar.
+
+The first step is to select the form of judgement in MathCore that is used for the Dedukti judgement.
+Recall that MathCore has four kinds of judgement, defining or postulating either propositions (usually, predicates forming them), kinds, expressions, or proofs.
+From the typing part of a Dedukti judgement, of the form
+```
+Ident ":" Exp 
+```
+the first look-up tries to find the MathCore type of `Ident` in the symbol table.
+If this fails, the translator looks at the head of `Exp`.
+The default is `Proof`, because statistically theorem statements are more common than definitions, and their identifiers, names of theorems, are not always given grammar rules.
+
+
+### Translation from MathCore to Dedukti
+
 
 
 ## The full Informath language
