@@ -1,0 +1,35 @@
+Prop : Type.
+Set : Type.
+Label : Type.
+Proof : Type.
+Elem : Type.
+
+elemAssumption : (A : Set) -> (a : Elem) -> Proof.
+propAssumption : (A : Prop) -> Proof.
+
+propConclusion : (A : Prop) -> Proof.
+sinceConclusion : (A : Prop) -> (B : Prop) -> Proof.
+labelConclusion : (a : Label) -> Proof.
+propLabelConclusion : (A : Prop) -> (a : Label) -> Proof.
+followsPropConclusion : (A : Prop) -> Proof.
+obviousConclusion : Conclusion.
+
+firstVerifyGoal  : (A : Prop) -> Proof.
+enoughGoal : (A : Prop) -> Proof.
+sinceGoal : (A : Prop) -> (B : Prop) -> Proof.
+caseGoal : (A : Prop) -> (B : Prop) -> Proof.
+
+thm p1 : P1 := firstVerifyGoal (forall Nat (n => if (even n) (not (odd n)))).
+thm p2 : P2 := enoughGoal (forall Nat (n => not (and (even n) (odd n)))).
+thm p3 : P3 := sinceGoal (not (and (even 0) (odd 0))) (not (odd 0)).
+
+thm p4 : P4 := elemAssumption Nat n.
+thm p5 : P5 := caseGoal (even n) (odd n).
+thm p6 : P6 := propAssumption (even (plus n 1)).
+
+thm p7 : P7 := propConclusion (even (plus n 2)).
+thm p8 : P8 := sinceConclusion (even (plus n 2)) (odd (plus n 3)).
+thm p9 : P9 := followsPropConclusion (even (plus n 4)).
+thm p10 : P10 := obviousConclusion.
+
+

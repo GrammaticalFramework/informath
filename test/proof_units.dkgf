@@ -1,0 +1,13 @@
+
+elemAssumption ElemAssumption
+propAssumption PropAssumption
+propConclusion PropConclusion
+sinceConclusion SinceConclusion
+labelConclusion LabelConclusion
+propLabelConclusion PropLabelConclusion
+followsPropConclusion FollowsPropConclusion
+obviousConclusion ObviousConclusion
+firstVerifyGoal FirstVerifyGoal
+enoughGoal EnoughGoal
+sinceGoal SinceGoal
+caseGoal CaseGoal

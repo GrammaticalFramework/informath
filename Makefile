@@ -152,6 +152,9 @@ natural_deduction_rules:
 	$(RUN) -to-latex-doc -constants=test/natural_deduction.dkgf test/natural_deduction.dk >out/ndr.tex
 	cd out ; pdflatex ndr.tex ; $(OPEN) ndr.pdf
 
+proof_units:
+	$(RUN) -constants=src/baseconstants.dkgf,test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
+
 mathcore_examples:
 	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk
 
