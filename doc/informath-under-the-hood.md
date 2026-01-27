@@ -137,6 +137,89 @@ Here are some examples of how Dedukti has been used in Informath:
 ```
 For more examples, we recommend to start with [BaseConstants.dk](./src/BaseConstants.dk).
 
+### Identifiers and numerals
+
+The use of **identifiers** as expressions has been applied in all example above but not been explained yet. In Dedukti, idenfifiers include both variables and constants and even numeric literals. Dedukti has no built-in type of literals, but they can be declared and/or defined as identifiers or combinations of them. In the Informath project, we have mostly (but not exclusively) used types `Dig` and `Num` with the following rules:
+```
+  Dig : Set.
+  0 : Dig.
+  1 : Dig.
+  2 : Dig.
+  (; similarly for 3, 4, 5, 6, 7, 8, 9 ;) 
+  (; this is a Dedukti comment ;)
+  
+  Num : Set.
+  nd : Dig -> Num.
+  nn : Dig -> Num -> Num.
+```
+Thus for instance $1987$ is expressed by 
+```
+  nn 1 (nn 9 (nn 8 (nd 7)))
+```
+If you are used to a rigorous treatment of different classes of numbers (natural, integer, rational, real, complex), you will now ask how these are treated in Dedukti and Informath. The answer is that Dedukti itself says nothing about them, because it has no built-in numbers. Thus one has either to build the different number classes from scratch or to inherit them from some other formalism by a conversion. A typical starting point is then natural numbers starting from 0 and extended by a successor function,
+```
+  0 : Elem Nat.
+  succ : Elem Nat -> Elem Nat.
+```
+The other digits can then be defined
+```
+  def 1 : Elem Nat := succ 0.
+  def 2 : Elem Nat := succ 1. 
+```
+and so on. Integers and rational numbers are typically encoded as pairs. For example, integers are sometimes encoded with the function
+```
+  int : Elem Nat -> Elem Nat -> Elem Int
+```
+so that `int x y` represents $x - y$. Real numbers have many alternative definitions, also depending on whether classical or constructive mathematics is followed.
+
+In the current use of Dedukti in Informath, we have chosen an approach known as **soft typing**, relying on just one Dedukti type, `Num`, of numbers. This is because we are interested in modelling informal mathematical language, where, contrary to foundational treatments, numbers can be considered as one and the same type, at least from the syntactic point of view. Thus, for instance, $1987$ *is* both a natural number, an integer, and a rational and a real and a complex number, despite their different formalizations in ZF set theory or in constructive type theory. Soft typing is known from some other formal systems, in particular Mizar (REF), which treats expressions such as "real" and "rational" as predicates over an untyped universe of entities. 
+
+The treatment of numbers as a single type is one of the points Ganesalingam argues for, because he sees it as the best fitting account of the actual usage of language in informal mathematics. The price we have to pay are complex details in translating between Dedukti and other type theories (Agda, Lean, Rocq). Each of them has its own views about what expressions and operators can be used for different number classes, and different kinds of **coercions** are needed to match these views. A typical coercion is
+```
+  def nat2int : Nat -> Int := n => int n 0.
+```
+In Dedukti, the definition could also be simply
+```
+  nat2int := n => n.
+```
+if `Nat` and `Int` are treated as synonyms of `Num`.
+Then this coercion is not even needed. However, when translating to another system, a natural number to which an integer operation is applied may be need to be wrapped in a coercion function that is defined in that system.
+
+We do not know yet all the pros and cons of an underspecifird treatment of number classes with soft typing. However, the differences between other formalisms and theories can be seen as another argument for maintaining an underspecified treatment of number types in Dedukti when used as an interlingua between those systems. 
+
+
+### Correctness
+
+The fundamental notion of correctness in type theory is **type-correctness**: that an expression $a$ really has the type $A$. By to the propositions as types principle, type correctness also covers the correctness of proofs with respect to a given proposition.
+
+Type correctness is defined by a set of **typing rules**, which in software are implemented in a **type checker**. Typing rules are defined for judgements of the form
+
+$$\Gamma \vdash a : A$$
+
+where $\Gamma$ is a **context**, which assigns types to identifiers (i.e., variables and constants). The simplest typing rule is
+
+$\hspace{32mm} \Gamma \vdash x : A$, if $x : A$ is in $\Gamma$
+
+for identifier expressions $x$. Application expressions have the rule
+
+$$ \frac{\Gamma \vdash f : (x : A) \rightarrow B \hspace{4mm} \Gamma \vdash a : A}{\Gamma \vdash f a : B(x := a)} $$
+
+where the metanotation $B(x := a)$ means that $a$ is **substituted** for $x$ in $B$. If $B$ really is a **dependent type** that varies in $x$, this rule can assign different types to applications of $f$ to different arguments.
+
+Finally, we have the typing rule for abstraction, where the context changes between the premisses and the conclusion:
+
+$$ \frac{\Gamma, x : A \vdash b : B}{\Gamma \vdash x \Rightarrow b : (x : A) \rightarrow B} $$
+
+Under the propositions as types interpretation, this rule models **proofs by assumption**: if we can prove $B$ under the assumption $x : A$, then we can prove $B$ for every element or $A$. Seeing both $A$ and $B$ as propositions, this rule corresponds to proving the implication from $A$ to $B$. If $A$ is seen as a type and $B$ as a proposition depending on $x$, this rule corresponds to proving a universal statement from the assumption that $x$ is and arbitrary object of $A$.
+
+The three typing rules look simple and natural. But this simplicity is deceptive, because we also have the rule
+
+$$\frac{\Gamma \vdash a : A \hspace{4mm} \Gamma \vdash A = B : Type}{\Gamma \vdash a : B}$$
+
+This rule also looks simple and natural, but it is impossible to follow in full generality. The reason lies in the undecidabilituy of the halting problem:
+
+The equality of the types $A$ and $B$ is usually checked by **normalization**, that is, by computing both expressions to a **normal form** and checking that the result is the same for both $A$ and $B$. However, computation in Dedukti includes execution of rewrite rules. Since the rewrite rules form a Turing-complete language,  there is no general guarantee that their execution terminates. Because of this, equality checking - and hence type checking - is undecidable.
+
 ## Agda, Rocq, and Lean
 
 Agda, Rocq, and Lean are type-theoretical proof systems just like Dedukti. But all of them have a richer syntax than Dedukti, because they are intended to be hand-written by mathematicians and programmers, whereas Dedukti has an austere syntax suitable for automatic generation for code.
@@ -155,8 +238,88 @@ If you want to check the formal code in any of the proof systems, you must also 
 - [Lean](https://leanprover-community.github.io/get_started.html)
 
 
-## Grammatical Framework
+## Layers of natural language grammars
 
+In the Informath diagram above, the "Informal" part has a subpart called MathCore.
+It is related to the full Informath by two operations: **NLG**, which produces alternatives for MathCore expressions, and **semantics**, which translates all these expressions back to their "normal" MathCore forms.
+All communication with Dedukti takes place via MathCore, while actual natural language is generated from and parsed to the full Informath.
+Inside the "Formal" and "Informal" boxes, all operations are defined on the level of abstract syntax trees.
+
+The following subsections give a birds-eye view of the two languages and their design goals, while the technical details will be given later,  after a short introduction to Grammatical Framework, the grammar formalism in which they are implemented.
+
+### MathCore
+
+The MathCore language is meant to be the "core abstract syntax" in Informath. Technically, it is actually a subset of Informath: Informath is implemented as an extension of MathCore.
+
+As shown in the picture above, informalization and autoformalization are in the first place defined between Dedukti and MathCore. On the type theory side, this is composed with translations between other frameworks and Dedukti. On the natural language side, mappings between MathCore and the full Informath are defined on the abstract syntax level of these languages. Input and output of actual natural languages is performed by generation and parsing with concrete syntaxes of each language.
+
+MathCore is a minimalistic grammar for mathematical language, based on the following principles:
+
+- **Completeness**: all Dedukti code can be translated to MathCore.
+- **Non-ambiguity**: all MathCore text has a unique translation to Dedukti.
+- **Losslessness**: MathCore is a lossless representation of Dedukti; that is, all Dedukti code translated to MathCore can be translated back to the same Dedukti code (modulo some differences to be specified).
+- **Traceability**: Dedukti code and MathCore text can be aligned part by part.
+- **Grammaticality**: MathCore text is grammatically correct natural language (with mathematical symbols and some mark-up such as parentheses to prevent ambiguity).
+- **Naturalness**: MathCore supports natural expressions for mathematical concepts using nouns, adjectives, verbs, and other structures conventionally used in mathematical text.
+- **Minimality**: MathCore is defined to have exactly one way to express each Dedukti judgement. Alternative ways are provided in Informath via NLG. Typically, the unique way is the most straightforward one. For example, complex mathematical expressions are given in their verbal forms ("the sum of x and y") rather than formulas ("x + y"), because formulas are not available when any of the constituents if not formal ("x + the successor of y").
+- **Extensibility**: MathCore can be extended with lexical information assigning natural language verbalizations to Dedukti identifiers.
+- **Multilinguality**: MathCore has been implemented by GF RGL and is therefore ready for concrete syntax in new languages.
+
+The following propertes are, however, *not* expected:
+
+- **Type correctness**: MathCore text can be semantically invalid, leading to syntactically correct Dedukti code that is rejected by Dedukti's type checker.
+- **Fluency**: MathCore text can be repetitive and hard to read; making it better is delegated to the Informath grammar via the NLG component.
+- **Compositionality**: The translation between Dedukti and MathCore is not compositional in the strict sense of GF, as the two languages have distinxt abstract syntaxes. MathCore has a larger set of syntactic categories than Dedukti, for instance distinguishing between expressions that represent kinds, objects, propositions, and proofs.
+- **Easy natural language input**: while the grammar of MathCore is reversible, it is tedious to write MathCore. It is intended to be produced indirectly: by conversion from Dedukti on one hand and from Informath on the other.
+
+The rationale of this design is modularity and an optimal use of existing resources:
+
+- Type checking is delegated to Dedukti.
+- Conversions to different frameworks are also delegated to Dedukti.
+- Variation of natural language input and output is delegated to Informath.
+
+
+### Informath
+
+While being inspired by CNLs such as ForTheL and Naproche, covering a similar fragment of English, the Informath grammar differs from them in several ways:
+
+- **Grammaticality**: Informath follows the agreement rules of English (and other languages) instead of allowing free variation of e.g. singular and plural forms (as ForTheL and early versions of Naproche); this makes it more usable as the target of informalization.
+- **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic clues. This is in line with the findings in [*The language of Mathematics*](https://link.springer.com/book/10.1007/978-3-642-37012-0) by Mohan Ganesalingam.
+- **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
+- **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension should be equipped with a new semantic rule that converts it to MathCore.
+- **Omissions**: Informath is not guaranteed to cover everything that occurs in different CNLs. In particular, constructs that differ from grammatical English are usually omitted.
+- **Multilinguality**: Informath has several concrete syntaxes sharing a common abstract syntax.
+
+
+### An example of variations
+
+Consider again the example Dedukti statement used above:
+```
+Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
+  Proof (and (odd a) (odd c)) ->
+  Proof (forall Int (b => even (plus (times a b) (times b c)))).
+```
+The MathCore informalization (in English) is one-to-one and verbose:
+
+- Prop110. Let $a$ and $c$ be instances of integers. Assume that we can prove that $a$ is odd and $c$ is odd. Then we can prove that for all integers $b$, the sum of the product of $a$ and $b$ and the product of $b$ and $c$ is even.
+
+MathCore renderings are designed to be unique for each Dedukti judgement. But the full Informath language recognizes several variations. Here are some of them for English, as generated by the system; other languages have equivalents of each of them:
+
+- Prop110. For all integers $a$ and $c$, if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a$ and $c$ be integers. Then if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a , c \in Z$. then if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a$ and $c$ be integers. Assume that $a$ is odd and $c$ is odd. Then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a , c \in Z$. assume that $a$ is odd and $c$ is odd. Then for all integers $b$, $a b + b c$ is even.
+- Prop110. For all integers $a$ and $c$, if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a$ and $c$ be integers. Then if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a , c \in Z$. then if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then for all integers $b$, $a b + b c$ is even.
+- Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then for all integers $b$, $a b + b c$ is even.
+Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
+
+
+
+## Grammatical Framework
 
 [Grammatical Framework, GF](https://www.grammaticalframework.org/) is itself based on a logical framework (LF). 
 To put it briefly,
@@ -259,7 +422,7 @@ While it gives a simple way to convert between formal and informal languages, it
 Therefore, it cannot be used for languages with very different structures.
 The approach followed in Informath is to have one abstract syntaxes for Dedukti and another one for Dedukti: surprisingly, natural languages are structurally close enough for this to work fine.
 
-### Enriched concrete syntax
+### Concrete syntax beyond context-free
 
 Much of the power of GF comes from not being context-free, but **mildly context-sensitive**.
 This class of languages is more restricted than fully context-sensitive (in the Chomsky hierarchy sense) and enjoys polynomial worst-case parsing complexity.
@@ -685,36 +848,6 @@ We will show examples from Informath later.
 
 ## The MathCore language
 
-The MathCore language is meant to be the "core abstract syntax" in Informath. Technically, it is actually a subset of Informath: Informath is implemented as an extension of MathCore.
-
-As shown in the picture above, informalization and autoformalization are in the first place defined between Dedukti and MathCore. On the type theory side, this is composed with translations between other frameworks and Dedukti. On the natural language side, mappings between MathCore and the full Informath are defined on the abstract syntax level of these languages. Input and output of actual natural languages is performed by generation and parsing with concrete syntaxes of each language.
-
-MathCore is a minimalistic grammar for mathematical language, based on the following principles:
-
-- **Completeness**: all Dedukti code can be translated to MathCore.
-- **Non-ambiguity**: all MathCore text has a unique translation to Dedukti.
-- **Losslessness**: MathCore is a lossless representation of Dedukti; that is, all Dedukti code translated to MathCore can be translated back to the same Dedukti code (modulo some differences to be specified).
-- **Traceability**: Dedukti code and MathCore text can be aligned part by part.
-- **Grammaticality**: MathCore text is grammatically correct natural language (with mathematical symbols and some mark-up such as parentheses to prevent ambiguity).
-- **Naturalness**: MathCore supports natural expressions for mathematical concepts using nouns, adjectives, verbs, and other structures conventionally used in mathematical text.
-- **Minimality**: MathCore is defined to have exactly one way to express each Dedukti judgement. Alternative ways are provided in Informath via NLG. Typically, the unique way is the most straightforward one. For example, complex mathematical expressions are given in their verbal forms ("the sum of x and y") rather than formulas ("x + y"), because formulas are not available when any of the constituents if not formal ("x + the successor of y").
-- **Extensibility**: MathCore can be extended with lexical information assigning natural language verbalizations to Dedukti identifiers.
-- **Multilinguality**: MathCore has been implemented by GF RGL and is therefore ready for concrete syntax in new languages.
-
-The following propertes are, however, *not* expected:
-
-- **Type correctness**: MathCore text can be semantically invalid, leading to syntactically correct Dedukti code that is rejected by Dedukti's type checker.
-- **Fluency**: MathCore text can be repetitive and hard to read; making it better is delegated to the Informath grammar via the NLG component.
-- **Compositionality**: The translation between Dedukti and MathCore is not compositional in the strict sense of GF, as the two languages have distinxt abstract syntaxes. MathCore has a larger set of syntactic categories than Dedukti, for instance distinguishing between expressions that represent kinds, objects, propositions, and proofs.
-- **Easy natural language input**: while the grammar of MathCore is reversible, it is tedious to write MathCore. It is intended to be produced indirectly: by conversion from Dedukti on one hand and from Informath on the other.
-
-The rationale of this design is modularity and an optimal use of existing resources:
-
-- Type checking is delegated to Dedukti.
-- Conversions to different frameworks are also delegated to Dedukti.
-- Variation of natural language input and output is delegated to Informath.
-
-
 ### The categories of MathCore
 
 The syntactic categories of MathCore are defined in the module [Categories](./grammars/Categories.gf). Here are some of the main ones:
@@ -935,9 +1068,9 @@ We have already seen examples, the logical constants, such as
 
 - Dedukti: `and : Prop -> Prop -> Prop`
 - Informath: `CoreAndProp : Prop -> Prop -> Prop`
-- symbol table: `and CoreAndProp
+- symbol table: `and CoreAndProp`
 
-- Dedukti `forAll : (A : Set) -> (Elem A -> Prop) -> Prop``
+- Dedukti `forAll : (A : Set) -> (Elem A -> Prop) -> Prop`
 - GF: `CoreAllProp : Kind -> Ident -> Prop -> Prop`
 - symbol table: `forAll CoreAllProp`
 
@@ -1086,73 +1219,10 @@ If some of the words can be parsed in GF but is not find in the symbol table, th
 
 ## The full Informath language
 
-While being inspired by CNLs such as ForTheL and Naproche, covering a similar fragment of English, the Informath grammar differs from them in several ways:
 
-- **Grammaticality**: Informath follows the agreement rules of English (and other languages) instead of allowing free variation of e.g. singular and plural forms (as ForTheL and early versions of Naproche); this makes it more usable as the target of informalization.
-- **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic clues. This is in line with the findings in [*The language of Mathematics*](https://link.springer.com/book/10.1007/978-3-642-37012-0) by Mohan Ganesalingam.
-- **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
-- **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension should be equipped with a new semantic rule that converts it to MathCore.
-- **Omissions**: Informath is not guaranteed to cover everything that occurs in different CNLs. In particular, constructs that differ from grammatical English are usually omitted.
-- **Multilinguality**: Informath has several concrete syntaxes sharing a common abstract syntax.
+### Symbolic terms and constants
 
-### An example of variations
-
-Consider again the example Dedukti statement used above:
-```
-Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
-  Proof (and (odd a) (odd c)) ->
-  Proof (forall Int (b => even (plus (times a b) (times b c)))).
-```
-The MathCore informalization (in English) is one-to-one and verbose:
-
-- Prop110. Let $a$ and $c$ be instances of integers. Assume that we can prove that $a$ is odd and $c$ is odd. Then we can prove that for all integers $b$, the sum of the product of $a$ and $b$ and the product of $b$ and $c$ is even.
-
-MathCore renderings are designed to be unique for each Dedukti judgement. But the full Informath language recognizes several variations. Here are some of them for English, as generated by the system; other languages have equivalents of each of them:
-
-- Prop110. For all integers $a$ and $c$, if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a$ and $c$ be integers. Then if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a , c \in Z$. then if $a$ is odd and $c$ is odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a$ and $c$ be integers. Assume that $a$ is odd and $c$ is odd. Then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a , c \in Z$. assume that $a$ is odd and $c$ is odd. Then for all integers $b$, $a b + b c$ is even.
-- Prop110. For all integers $a$ and $c$, if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a$ and $c$ be integers. Then if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a , c \in Z$. then if both $a$ and $c$ are odd, then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then for all integers $b$, $a b + b c$ is even.
-- Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then for all integers $b$, $a b + b c$ is even.
-Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
-
-
-
-## User-defined extensions
-
-_Under construction, may work in a different way in the future._
-
-The lexicon part part of the GF grammar (files grammars/VerbalConstants*, SymbolicConstants*) give verbalizations to defined constants in .dk files.
-
-The mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files recognizes three kinds of lines;
-- `<DeduktiIdent> <GFFunction>+`: different GF functions usable for expressing the Dedukti concept
-- `#CONV <formalism> <DeduktiIdent> <FormalismIdent>`: conversion of Dedukti identifier to another formalism (e.g. its standard library function) 
-- `#DROP <DeduktiIdent> <int>`: drop a number of initial arguments from the Dedukti function application
-
-The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already availeble, nothing else is needed than the inclusion of the flag `-constants=<file>.dkgf+` where `base_constants.dkgf`can be one of the files.
-
-If new GF functions are defined, they have to be be included in [`UserExtensions`](./grammars/UserExtensions.gf), preferably via an extra module inherited by it. After that, the GF grammar has to be recompiled by 
-```
-$ make grammar
-```
-No recompilation of Haskell files is needed, as long as the UserConstants only include atomic functions of lexical categories, to be listed in next section. 
-
-If other functions are included, both the grammar and the Haskell code can be compiled with the short command
-```
-$ make devel
-```
-
-
-### Categories of user-defined constants
-
-The following categories of new verbal constants are currently supported by the grammar and listed in `.dkgf` files.
-
-Every entry in a `.dkgf` file must have a verbal function as its primary rendering, given right after the Dedukti function. Alternative verbalizations can also come from symbolic categories:
+Every entry in a symbol table must have a verbal function as its primary rendering, given right after the Dedukti function. Alternative verbalizations can also come from symbolic categories:
 ```
   category    semantic type           example
 —-------------------------------------------------------------------
@@ -1162,52 +1232,11 @@ Every entry in a `.dkgf` file must have a verbal function as its primary renderi
   Oper2       Term -> Term -> Term    +
 ```
 
-### Linearizations of user-defined constants
-
-The easiest way to write linearization rules for constants is to use the `Utulities<Lang>` library module, whose API is given in the interface module [Utilities](./grammars/Utilities.gf). Just like in the RGL, any categories $C$ have a shortcut function
-```
-mkC : Str -> C
-````
-such that, for instance, one can define
-```
-lin integer_Noun = mkNoun "integer"
-lin odd_Adj = mkAdj "odd"
-```
-However, more information is sometimes needed, particularly in languages other than English. A wider range of `mkC` functions is available for those cases, usually combining morphological functions from the standard RGL library `Paradigms<Lang>`. For instance, a possible rule for rational numbers in French is
-```
-lin rational_Noun = mkNoun (mkA "rationnel") (mkN "nombre" masculine)
-```
-
-### Functions of non-lexical categories
-
-While it would be possible to define lexical categories for all possible semantic types and syntactic forms that appear in mathematics, this would clutter the grammar extensively and, what it worse, compel the user who wants to extend the language also to add compilation cases to the Haskell code. Because of this, Informath is being extended with the possibility to assign GF functions other than lexical ones to Dedukti constants in symbol tables.
-
-These functions operate on the basic types of expressions, `Exp`, `Kind`, `Prop`, and `Proof`, as well as `Ident` when higher-order abstract syntax (variable bindings) are used in Dedukti. One advantage of this extension is that it eliminates the need to hard-code Dedukti identifiers in Haskell code. For example, the logical operators can now be mapped by means of symbol tables. In Dedukti we have
-```
-and : Prop -> Prop -> Prop.
-```
-In MathCore, we have
-```
-CoreAndProp : Prop -> Prop -> Prop
-```
-The symbol table entry is straightforward:
-```
-and    CoreAndProp
-```
-A bit more complicated is the treatment of variable bindings. In Dedukti, we can declare the universal quantifier as follows:
-```
-forall : (A : Kind) -> (B : ((x : Elem A) -> Prop)) -> Prop.
-```
-The corresponding GF function flattens the bound variable into an argument on the same level:
-```
-CoreAllProp : Kind -> Ident -> Prop -> Prop
-```
-The symbol table entry relies on the correspondance between these types:
-```
-forall   CoreAllProp
-```
-This generalization of symbol table is still an experimental feature of Informath.
-But the use of symbol tables is essential for the goal of Informath to be completely general in relation to Dedukti: we want to be able to informalize arbitrary Dedukti code with any lexicon that the user wants to select, without the need to write any Haskell code, but only symbol table entries and, if new lexical items are needed, GF code.
+### Flattening and aggregation
 
 
+### In situ quantification
+
+
+### Parsing via Informath
 
