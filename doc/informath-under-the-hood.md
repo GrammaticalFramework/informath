@@ -797,7 +797,7 @@ Jmt ::=
 The hypothesis are either assumptions of propositions or declarations of variables.
 ```
 Hypo ::=
-    "Assume" Prop "."
+    "Assume that" Prop "."
   | "Let" Ident "be a" Kind "."
 ```
 
@@ -982,7 +982,7 @@ Needless to say, these rule produce rough "verbalizations" that can hardly be re
 
 ### Translation from Dedukti to MathCore
 
-The translation from Dedukti to MathCore is defined in the Haskell module `Dedukti2MathCore`, which maps Dedukti abstract syntax trees to MathCore abstract syntax trees.
+The translation from Dedukti to MathCore is defined in a Haskell module that maps Dedukti abstract syntax trees to MathCore abstract syntax trees.
 It is defined top-down starting from judgements, and descending to the smallest parts of them, guided by the symbol table.
 
 The symbol table is given by the user as pairs of Dedukti and MathCore constants.
@@ -992,24 +992,105 @@ The first step is to select the form of judgement in MathCore that is used for t
 Recall that MathCore has four kinds of judgement, defining or postulating either propositions (usually, predicates forming them), kinds, expressions, or proofs.
 From the typing part of a Dedukti judgement, of the form
 ```
-Ident ":" Exp 
+Ident ":" Hypo* Exp 
 ```
-the first look-up tries to find the MathCore type of `Ident` in the symbol table.
-If this fails, the translator looks at the head of `Exp`.
-The default is `Proof`, because statistically theorem statements are more common than definitions, and their identifiers, names of theorems, are not always given grammar rules.
+where the type expression is divided into a hypothesis part and the part that follows them.
+This division is performed by following the syntax of the type as long as it has one of one of the forms $(x : A) \rightarrow B$ or $A \rightarrow B$.
+The extracted hypotheses form the **context** of the judgement.
+For example, the Dedukti judgement
+```
+prop30 : (n : Elem Nat) -> Proof (odd n) -> Proof (even (plus n 1)).
+```
+is analysed into
+```
+prop30 : (n : Elem Nat) (Proof (odd n)) ==> Proof (even (plus n 1)).
+```
+where we mark the end of the context part with `==>`.
+Judgements with defining parts (Dedukti's `def` and `thm`) are analysed in the same way.
+
+A look-up in the symbol table tries to find the MathCore function of `Ident` and its type.
+If this fails, the translator tries another look-up at the head of `Exp`.
+The default is `Proof`, because theorem statements are statistically more common than definitions, and their identifiers, names of theorems, are not always given grammar rules and therefore not included in symbol table.
+Assuming that this is the case with `prop30`, the following MathCore text is generated.
+
+- Prop30. Let $n$ be an instance of natural numbers. Assume that we can prove that $n$ is odd. Then we can prove that the sum of $n$ and $1$ is even.
+
+The relevant part of symbol table used here is
+```
+Nat   natural_Noun natural_Const
+even  even_Adj
+odd   odd_Adj
+plus  plus_FunC plus_Oper2
+```
+Each line has the form
+```
+<DeduktiId>  <GFId> <GFId>*
+```
+where the first `<GFId>` is the "canonical" function used in MathCore and the remaining ones are synonyms that can be used in full Informathl.
+The types of the GF identifiers are looked up from the grammar and therefore not written explicitly in the symbol table.
+We use the word "canonical" in quotes here, because a MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous.
+
+After selecting the form of GF judgement, the translator descends recursively to the parts of the hypothesis, the type, and the possible defining part.
+These parts are mostly built with function applications, and the translation uses the symbol table to identify the GF function and its type for each function head, to select the proper GF term to translate the application.
+If the form is not an application or an identifier found in the symbol table, the back-up rules are used to form a baseline translation.
+
+If the Dedukti judgement has a definition part, this part is typically an abstraction expression with the same number of variable bindings as there are hypotheses.
+Here is an example:
+```
+def divisible : Elem Int -> Elem Int -> Prop := 
+  n => m => exists Int (k => Eq n (times k m)).
+```
+For such definitions, the variable names occurring in the hypotheses (if any) are unified with those in the bindings.
+The abstractions are not translated into explicit parts of the GF expression, but the variables occurring in the defining expressions get bound in the hypotheses:
+
+- Definition. Let $n$ be an instance of integers. Let $m$ be an instance of integers. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
+
+The definition part may also consist of a set of rewrite rules. 
+They are translated into a GF expression that linearizes into an itemized list of cases:
+```
+def plus : Elem Nat -> Elem Nat -> Elem Nat.
+[m] plus m 0 --> m
+[m, n] plus m (Succ n) --> Succ (plus m n).
+```
+translates to
+
+- Let $x$ be an instance of natural numbers. Let $y$ be an instance of natural numbers. Then the sum of $x$ and $y$ is an instance of natural numbers. By cases: 
+  - for $m$, the sum of $m$ and $0$ is $m$. 
+  - for $m$ and $n$, the sum of $m$ and the successor of $n$ is the successor of the sum of $m$ and $n$. 
+
+Recall, once again, that the MathCore translations are designed to be very close to Dedukti.
+This makes them verbose and clumsy, but enable an accurate tracing of the translation process.
+Fluency is improved in the full Informath grammar, which introduces synonyms and shortcuts.
 
 
 ### Translation from MathCore to Dedukti
 
+Because of the close correspondence between MathCore and Dedukti, the translation is straightforward: its main ingredient is to suppress the additional syntactic information.
+Thus applications of adjectives, verbs, and nouns are all just applications of Dedukti identifiers.
+These identifiers are found by applying the symbol tables in an opposite direction.
+For example, the symbol table entry
+```
+even even_Adj
+```
+enables the translation of
+
+- $8$ is even.
+
+to
+```
+noLabel : Proof (even (nd 8)) .
+```
+When an English theorem statement has no label, the identifier `noLabel` is used in Dedukti.
+If some of the words can be parsed in GF but is not find in the symbol table, the identifier `UNDEFINED_<GFId>` is created.
 
 
 ## The full Informath language
 
-While being inspired by CNLs such as ForTheL and Naproche, covering a similar fragment of English, the Informath grammar differs from the original them in several ways:
+While being inspired by CNLs such as ForTheL and Naproche, covering a similar fragment of English, the Informath grammar differs from them in several ways:
 
 - **Grammaticality**: Informath follows the agreement rules of English (and other languages) instead of allowing free variation of e.g. singular and plural forms (as ForTheL and early versions of Naproche); this makes it more usable as the target of informalization.
 - **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic clues. This is in line with the findings in [*The language of Mathematics*](https://link.springer.com/book/10.1007/978-3-642-37012-0) by Mohan Ganesalingam.
-- **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
+- **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
 - **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension should be equipped with a new semantic rule that converts it to MathCore.
 - **Omissions**: Informath is not guaranteed to cover everything that occurs in different CNLs. In particular, constructs that differ from grammatical English are usually omitted.
 - **Multilinguality**: Informath has several concrete syntaxes sharing a common abstract syntax.
