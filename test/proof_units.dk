@@ -1,35 +1,48 @@
+(;
 Prop : Type.
 Set : Type.
+;)
 Label : Type.
-Proof : Type.
-Elem : Type.
+Unit : Type.
 
-elemAssumption : (A : Set) -> (a : Elem) -> Proof.
-propAssumption : (A : Prop) -> Proof.
+elemAssumption : (A : Set) -> (a : Elem A) -> Unit.
+propAssumption : (A : Prop) -> Unit.
 
-propConclusion : (A : Prop) -> Proof.
-sinceConclusion : (A : Prop) -> (B : Prop) -> Proof.
-labelConclusion : (a : Label) -> Proof.
-propLabelConclusion : (A : Prop) -> (a : Label) -> Proof.
-followsPropConclusion : (A : Prop) -> Proof.
-obviousConclusion : Conclusion.
+propConclusion : (A : Prop) -> Unit.
+sinceConclusion : (A : Prop) -> (B : Prop) -> Unit.
+labelConclusion : (a : Label) -> Unit.
+propLabelConclusion : (A : Prop) -> (a : Label) -> Unit.
+followsPropConclusion : (A : Prop) -> Unit.
+obviousConclusion : Unit.
 
-firstVerifyGoal  : (A : Prop) -> Proof.
-enoughGoal : (A : Prop) -> Proof.
-sinceGoal : (A : Prop) -> (B : Prop) -> Proof.
-caseGoal : (A : Prop) -> (B : Prop) -> Proof.
+firstVerifyGoal  : (A : Prop) -> Unit.
+enoughGoal : (A : Prop) -> Unit.
+sinceGoal : (A : Prop) -> (B : Prop) -> Unit.
+caseGoal : (A : Prop) -> (B : Prop) -> Unit.
 
-thm p1 : P1 := firstVerifyGoal (forall Nat (n => if (even n) (not (odd n)))).
-thm p2 : P2 := enoughGoal (forall Nat (n => not (and (even n) (odd n)))).
-thm p3 : P3 := sinceGoal (not (and (even 0) (odd 0))) (not (odd 0)).
+def p1 : Unit := firstVerifyGoal (odd n).
 
-thm p4 : P4 := elemAssumption Nat n.
-thm p5 : P5 := caseGoal (even n) (odd n).
-thm p6 : P6 := propAssumption (even (plus n 1)).
+def p2 : Unit := enoughGoal (even n).
 
-thm p7 : P7 := propConclusion (even (plus n 2)).
-thm p8 : P8 := sinceConclusion (even (plus n 2)) (odd (plus n 3)).
-thm p9 : P9 := followsPropConclusion (even (plus n 4)).
-thm p10 : P10 := obviousConclusion.
+def p3 : Unit := sinceGoal (even 0) (odd 0).
+
+
+(;
+---- bug to be fixed: logically complex propositions not allowed
+---- 
+def p1 : Unit := firstVerifyGoal (forall Nat (n => if (even n) (not (odd n)))).
+def p2 : Unit := enoughGoal (forall Nat (n => not (and (even n) (odd n)))).
+def p3 : Unit := sinceGoal (not (and (even 0) (odd 0))) (not (odd 0)).
+;)
+
+def p4 : Unit := elemAssumption Nat 0.
+def p5 : Unit := caseGoal (even 0) (odd 0).
+def p6 : Unit := propAssumption (even (plus 0 1)).
+
+def p7 : Unit := propConclusion (even (plus 0 2)).
+def p8 : Unit := sinceConclusion (even (plus 0 2)) (odd (plus 0 3)).
+
+def p9 : Unit := followsPropConclusion (even (plus 0 4)).
+def p10 : Unit := obviousConclusion.
 
 

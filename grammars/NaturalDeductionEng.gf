@@ -5,68 +5,53 @@ open
   (P=ParadigmsEng),
   (Grammar=GrammarEng),
   (Extend=ExtendEng),
-  UtilitiesEng
+  UtilitiesEng,
+  MathCoreEng,
+  IdentifiersLatex,
+  ProofUnitsEng
 
 --- quick and dirty implementation, needs more structure and functorization
 
 in {
 
 lin
-  falseEProof C c = ccText c (prefixText "hence" (mkText (topProp C))) ; 
+  falseEProof C c =
+    ccText c (PropConclusion henceHence C) ;
 
   andIProof A B a b =
-    mkText a (mkText b (prefixText "altogether" (mkText
-      (mkS and_Conj (partProp A) (partProp B))))) ;
+    ccText a b (PropConclusion altogetherHence (CoreAndProp A B)) ;
     
-  andElProof A B c = mkText c (prefixText "a fortiori" (mkText (topProp B))) ;
-  andErProof A B c = mkText c (prefixText "a fortiori" (mkText (topProp B))) ;
+  andElProof A B c =
+    ccText c (PropConclusion afortioriHence A) ;
+  andErProof A B c =
+    ccText c (PropConclusion afortioriHence B) ;
 
-  orIlProof A B a = mkText a (prefixText "a fortiori" (mkText (mkS or_Conj A.s B.s))) ;
-  orIrProof A B b = mkText b (prefixText "a fortiori" (mkText (mkS or_Conj A.s B.s))) ;
+  orIlProof A B a =
+    ccText a (PropConclusion afortioriHence (CoreOrProp A B)) ;
+  orIrProof A B b =
+    ccText b (PropConclusion afortioriHence (CoreOrProp A B)) ;
 
-  orEProof A B C c x d y e =
-    ccText c
-      (embedText ("Hence we have two cases . " ++ begin_itemize_str) end_itemize_str
-        (mkText
-          (prefixText (item_str ++ "First ,") (mkText (assumeText x A.s) d))
-          (prefixText (item_str ++ "Second ,") (mkText (assumeText y B.s) e))))
-        (prefixText "Thus"
-          (mkText (mkText C.s) (strText "in both cases ,"))) ;
-  
+  orEProof A B C c x d y e = 
+    ccText c CasesGoal (ccText (CaseGoal A) d (CaseGoal B) e)
+      (PropConclusion henceHence C) ;
+    
   ifIProof A B h b =
-    mkText (assumeText h (topProp A)) (mkText b (prefixText "we conclude" (mkText
-     (Grammar.ExtAdvS (SyntaxEng.mkAdv if_Subj (partProp A)) (mkS then_Adv (partProp B)))))) ;
+    ccText (PropAssumption A) b (PropConclusion henceHence (CoreIfProp A B)) ;
 
-  ifEProof A B a b = mkText a (mkText b (prefixText "we conclude" (mkText (topProp B)))) ;
-
+  ifEProof A B a b =
+    ccText a b (PropConclusion henceHence B) ;
 
   forallIProof A x B z b =
-    ccText
-      (prefixText "consider an arbitrary" (mkText (mkUtt (identKindCN x A))))
-      b
-      (strText "we have proved that")
-      (mkText (mkText (topProp B)) (prefixText "for all" (mkText (mkUtt (identKindCN x A))))) ;
+    ccText (IdentKindAssumption A x) b (PropConclusion henceHence (CoreAllProp A x B)) ;
 
   forallEProof A x B b a =
-    ccText
-      b
-      (prefixText "in particular" (topProp B))
-      (prefixText ("for" ++ x ++ "set to") (mkText (mkUtt a))) ;
+    ccText b (PropConclusion inParticularHence B) (strText ("where" ++ x ++ "is" ++ (mkUtt a).s)) ;
 
   existsIProof A x B a b =
-    ccText
-      b
-      (prefixText "thus"
-        (mkText (Grammar.SSubjS (mkS (Extend.ExistsNP (mkNP a_Det ((identKindCN x A)))))
-	  such_that_Subj (partProp B)))) ;
+    ccText b (PropConclusion henceHence (CoreExistProp A x B)) ;
 
   existsEProof A x B C c x y d =
-    ccText
-      (prefixText "consider an arbitrary" (mkText (mkUtt (identKindCN x A))))
-      (prefixText "such that" (mkText (topProp B)))
-      d
-      (prefixText "we have proved that" (mkText (topProp C)))
-      (strText ("independently of" ++ x)) ;
+    ccText c (IdentKindAssumption A x) (PropAssumption B) d (PropConclusion weConcludeHence C);
 
   hypoProof A h = prefixText ("by" ++ h ++ ",") (mkText (topProp A)) ;
   
@@ -76,11 +61,10 @@ lin
       (strText "by reflexivity .") ;
 
   NatIndProof x C d n h e =
-    prefixText "we proceed by induction . First ,"
-      (mkText d (prefixText ("Second , consider an arbitrary")
-        (mkText (strText x) (prefixText "such that"
-	  (mkText (mkText (mkText C.s) (strText ("(" ++ h ++ ")")))
-	    (mkText e (prefixText ("we have proved that , for all" ++ x ++ ",") (mkText C.s)))))))) ;
+    ccText InductionGoal
+      (ccText (IdentExpAssumption (TermExp (NumberTerm (lin Int {s = "0"}))) x) d)
+      (ccText (IdentKindAssumption natKind x) (PropAssumption C) e)
+      (PropConclusion weConcludeHence (CoreAllProp natKind x C)) ;
 
   evenZeroProof = strText "by the first axiom of parity , $ 0 $ is even ." ;
   
@@ -91,7 +75,7 @@ lin
     
 
 oper
-
+  natKind : Kind = NounKind (mkNoun "natural number") ;
   succNP : NP -> NP = \x -> mkNP the_Det (mkCN (P.mkN "successor") (mkAdv possess_Prep x)) ;
   assumeText : Str -> S -> Text = \h, s ->
     mkText (mkText (mkUtt (mkImp (mkVP assume_VS s)))) ((strText ("(" ++ h ++ ")"))) ;

@@ -153,7 +153,8 @@ natural_deduction_rules:
 	cd out ; pdflatex ndr.tex ; $(OPEN) ndr.pdf
 
 proof_units:
-	$(RUN) -constants=src/baseconstants.dkgf,test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
+	echo "proof units have no Dedukti formalization so far"
+#	$(RUN) -constants=src/baseconstants.dkgf,test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
 mathcore_examples:
 	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk

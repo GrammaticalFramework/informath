@@ -3,27 +3,35 @@ abstract ProofUnits = Categories ** {
 cat
   Unit ;
   [Unit] ;
-  Goal ;
-  Assumption ;
-  Conclusion ;
+  Hence ;
 
 fun
---  UnitsProof : [Unit] -> Proof ;
+  UnitsProof : [Unit] -> Proof ;
 
-  HyposAssumption : [Hypo] -> Proof ; -- Unit ;
-  ElemAssumption : Kind -> Exp -> Proof ;
-  PropAssumption : Prop -> Proof ;
+  HyposAssumption : [Hypo] -> Unit ;
+  IdentKindAssumption : Kind -> Ident -> Unit ;
+  IdentExpAssumption : Exp -> Ident -> Unit ;
+  PropAssumption : Prop -> Unit ;
   
-  PropConclusion : Prop -> Proof ; -- Unit ;
-  SinceConclusion : Prop -> Prop -> Proof ; -- Unit ;
-  LabelConclusion : Label -> Proof ; -- Unit ;
-  PropLabelConclusion : Prop -> Label -> Proof ; -- Unit ;
-  FollowsPropConclusion : Prop -> Proof ; -- Unit ;
-  ObviousConclusion : Proof ;
+  PropConclusion : Hence -> Prop -> Unit ;
+  SinceConclusion : Prop -> Prop -> Unit ;
+  LabelConclusion : Label -> Unit ;
+  PropLabelConclusion : Hence -> Prop -> Label -> Unit ;
+  FollowsPropConclusion : Prop -> Unit ;
+  ObviousConclusion : Unit ;
   
-  FirstVerifyGoal : Prop -> Proof ; -- Goal ;
-  EnoughGoal : Prop -> Proof ; -- Goal ;
-  SinceGoal : Prop -> Prop -> Proof ; -- Unit ;
-  CaseGoal : Prop -> Prop -> Proof ;
+  FirstVerifyGoal : Prop -> Unit ;
+  EnoughGoal : Prop -> Unit ;
+  SinceGoal : Prop -> Prop -> Unit ;
+  CasesGoal : Unit ;
+  InductionGoal : Unit ;
+  CaseGoal : Prop -> Unit ;
+
+  noHence : Hence ;
+  henceHence : Hence ;
+  altogetherHence : Hence ;
+  afortioriHence : Hence ;
+  inParticularHence : Hence ;
+  weConcludeHence : Hence ;
 
 }

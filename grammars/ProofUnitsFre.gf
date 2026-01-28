@@ -3,6 +3,8 @@ concrete ProofUnitsFre of ProofUnits = CategoriesFre **
 open
   SyntaxFre,
   ParadigmsFre,
+  (P=ParadigmsFre),
+  SymbolicFre,
   UtilitiesFre,
   (Grammar=GrammarFre)
 
@@ -11,26 +13,27 @@ in {
 lincat
   Unit = Text ;
   [Unit] = Text ;
-  Goal = Text ;
-  Assumption = Text ;
-  Conclusion = Text ;
 
 lin
---  UnitsProof units = units ;
+----  UnitsProof units = units ;
 
-  HyposAssumption hypos = hypos.text ;
-  ElemAssumption kind elem =
-    mkText (Grammar.ImpP3 elem (mkVP (useKind kind))) ; 
+  HyposAssumption hypos =
+    hypos.text ;
+  IdentKindAssumption kind ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ; 
+  IdentExpAssumption exp ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp)) ; 
   PropAssumption prop =
     prefixText "supposons que" (propText prop) ;
 
-  PropConclusion prop = propText prop ;
+  PropConclusion hence prop =
+    prefixText hence.s (propText prop) ;
   SinceConclusion A B =
     ccText (strText "comme") (commaText (propInText A)) (propText B) ;
   LabelConclusion label =
     strText ("s'ensuit par" ++ (mkUtt label.np).s) ;
-  PropLabelConclusion prop label =
-    prefixText ("par" ++ (mkUtt label.np).s) (propText prop) ;
+  PropLabelConclusion hence prop label =
+    ccText (strText hence.s) (propText prop) (strText ("par" ++ (mkUtt label.np).s)) ;
   FollowsPropConclusion prop =
     prefixText "il s'ensuit que" (propText prop) ;
   ObviousConclusion = strText "il est évident ." ;
@@ -42,10 +45,20 @@ lin
   SinceGoal prop goal =
     ccText (strText "comme") (commaText (propInText prop))
       (prefixText "il suffit de montrer que" (propText goal)) ;
-  CaseGoal A B =
-    ccText (strText "nous avons deux cas :") (propText A) (propText B) ;
+  InductionGoal =
+    strText "par recurrence :" ;
+  CasesGoal =
+    strText "par cas :" ;
+  CaseGoal A =
+    prefixText "\\item supposons que" (propText A) ;
 
-
+  noHence = P.mkAdv "" ;
+  henceHence = P.mkAdv "donc" ;
+  altogetherHence = P.mkAdv "em somme" ;
+  afortioriHence = P.mkAdv "a fortiori" ;
+  inParticularHence = P.mkAdv "en particulier" ;
+  weConcludeHence = P.mkAdv "nous concluons que" ;
+ 
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;
 

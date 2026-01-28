@@ -3,6 +3,8 @@ concrete ProofUnitsEng of ProofUnits = CategoriesEng **
 open
   SyntaxEng,
   ParadigmsEng,
+  (P=ParadigmsEng),
+  SymbolicEng,
   UtilitiesEng,
   (Grammar=GrammarEng)
 
@@ -11,26 +13,28 @@ in {
 lincat
   Unit = Text ;
   [Unit] = Text ;
-  Goal = Text ;
-  Assumption = Text ;
-  Conclusion = Text ;
+  Hence = Adv ;
 
 lin
---  UnitsProof units = units ;
+----  UnitsProof units = units ;
 
-  HyposAssumption hypos = hypos.text ;
-  ElemAssumption kind elem =
-    mkText (Grammar.ImpP3 elem (mkVP (useKind kind))) ; 
+  HyposAssumption hypos =
+    hypos.text ;
+  IdentKindAssumption kind ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ; 
+  IdentExpAssumption exp ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp)) ; 
   PropAssumption prop =
     prefixText "assume that" (propText prop) ;
 
-  PropConclusion prop = propText prop ;
+  PropConclusion hence prop =
+    prefixText hence.s (propText prop) ;
   SinceConclusion A B =
     ccText (strText "since") (commaText (propInText A)) (propText B) ;
   LabelConclusion label =
     strText ("follows by" ++ (mkUtt label.np).s) ;
-  PropLabelConclusion prop label =
-    prefixText ("by" ++ (mkUtt label.np).s) (propText prop) ;
+  PropLabelConclusion hence prop label =
+    ccText (strText hence.s) (propText prop) (strText ("by" ++ (mkUtt label.np).s)) ;
   FollowsPropConclusion prop =
     prefixText "it follows that" (propText prop) ;
   ObviousConclusion = strText "it is obvious ." ;
@@ -42,10 +46,20 @@ lin
   SinceGoal prop goal =
     ccText (strText "since") (commaText (propInText prop))
       (prefixText "it is enough to show that" (propText goal)) ;
-  CaseGoal A B =
-    ccText (strText "we have two cases :") (propText A) (propText B) ;
+  InductionGoal =
+    strText "we reason by induction :" ;
+  CasesGoal =
+    strText "we reason by cases :" ;
+  CaseGoal A =
+    prefixText "\\item assume that" (propText A) ;
 
-
+  noHence = P.mkAdv "" ;
+  henceHence = P.mkAdv "hence" ;
+  altogetherHence = P.mkAdv "altogether" ;
+  afortioriHence = P.mkAdv "a fortiori" ;
+  inParticularHence = P.mkAdv "in particular" ;
+  weConcludeHence = P.mkAdv "we conclude that" ;
+  
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;
 

@@ -35,7 +35,7 @@ jmt2jmt jmt = case jmt of
         let vhypos = addVarsToHypos mexp hypos
             chypos = hypos2hypos vhypos
 	in case () of
-	  _ | elem c ["Label", "Proof"] -> 
+	  _ | elem c ["Label", "Proof", "Unit"] -> 
             (maybe GAxiomJmt
 	        (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
               (ident2label ident)
