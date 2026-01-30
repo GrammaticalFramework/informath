@@ -18,9 +18,15 @@ aC = Atom "C"
 
 main = do
   putStrLn $ prLatexFile $ unlines [
-    prls exLines1, "\n\n",
-    prlt exLines1, "\n\n",
-    prst (linetree2steptree (lines2linetree exLines1))
+    linesDemo exLines1,
+     "\n\n",
+    linesDemo exLines2
+    ]
+
+linesDemo ex = unlines [
+    prls ex, "\n\n",
+    prlt ex, "\n\n",
+    prst (linetree2steptree (lines2linetree ex))
     ]
 
 data Formula =
@@ -77,6 +83,9 @@ exLines1 = [
   mkLine 7 [] (Not (And aA (Not aB))) "\\supset I" [6] [2]
   ]
 
+exLines2 =
+  [line{context = 1 : context line} | line <- exLines1] ++
+  [mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]]
 
 data Tree a = Tree a [Tree a]
   deriving (Show, Eq)
