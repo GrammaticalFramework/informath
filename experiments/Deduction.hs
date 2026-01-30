@@ -17,7 +17,11 @@ aB = Atom "B"
 aC = Atom "C"
 
 main = do
-  putStrLn $ prLatexFile $ prls exLines1 ++ "\n\n" ++ prlst exLines1
+  putStrLn $ prLatexFile $ unlines [
+    prls exLines1, "\n\n",
+    prlt exLines1, "\n\n",
+    prst (linetree2steptree (lines2linetree exLines1))
+    ]
 
 data Formula =
     And Formula Formula
@@ -44,27 +48,33 @@ data Proof =
   | Assumption Formula
   deriving (Show, Eq)
 
-data Line = Line {
-  line :: Int,
-  context :: [Int],
+data Step = Step {
+  line :: Int,  --- shown only for hypotheses
   formula :: Formula,
   rule :: String,
-  premisses :: [Int],
   discharged :: [Int]
   }
   deriving (Show, Eq)
 
-mkLine = Line
+data Line = Line {
+  context :: [Int],
+  premisses :: [Int],
+  step :: Step
+  }
+  deriving (Show, Eq)
+
+mkStep li fo ru di = Step li fo ru di
+mkLine li co fo ru prs di = Line co prs (mkStep li fo ru di)
 
 exLines1 :: [Line]
 exLines1 = [
-  mkLine 1 [] (If aA aB) "Assumption" [] [],
-  mkLine 2 [2] (And aA (Not aB)) "Hypo" [] [],
-  mkLine 3 [2] aA "AndE1" [2] [],
-  mkLine 4 [2] (Not aB) "AndE2" [2] [],
-  mkLine 5 [2] aB "IfE" [1, 3] [],
-  mkLine 6 [2] Falsum "IfE" [4, 5] [],
-  mkLine 7 [] (Not (And aA (Not aB))) "IfI" [6] [2]
+  mkLine 1 [] (If aA aB) "ass" [] [],
+  mkLine 2 [2] (And aA (Not aB)) "hypo" [] [],
+  mkLine 3 [2] aA "\\& E1" [2] [],
+  mkLine 4 [2] (Not aB) "\\& E2" [2] [],
+  mkLine 5 [2] aB "\\supset E" [1, 3] [],
+  mkLine 6 [2] Falsum "\\supset E" [4, 5] [],
+  mkLine 7 [] (Not (And aA (Not aB))) "\\supset I" [6] [2]
   ]
 
 
@@ -72,10 +82,12 @@ data Tree a = Tree a [Tree a]
   deriving (Show, Eq)
 
 
-lines2tree :: [Line] -> Tree Line
-lines2tree ls = ltr (last ls) where
+lines2linetree :: [Line] -> Tree Line
+lines2linetree ls = ltr (last ls) where
   ltr concl = Tree concl [ltr (ls !! (prem-1)) | prem <- premisses concl]
 
+linetree2steptree :: Tree Line -> Tree Step
+linetree2steptree (Tree l ts) = Tree (step l) (map linetree2steptree ts)
 
 --proof2lines :: Proof -> [Line]
 
@@ -145,18 +157,34 @@ prls lns = unlines $
 prl :: Line -> [String]
 prl ln = [
   concat (replicate (length (context ln)) "\\mid"),
-  show (line ln) ++ ".",
-  prf (formula ln),
-  "\\mbox{" ++ rule ln ++ "}",
+  show (line (step ln)) ++ ".",
+  prf (formula (step ln)),
+  rule (step ln),
   concat (intersperse ", " (map show (premisses ln))),
-  if null (discharged ln) then "" else "[" ++ concat (intersperse ", " (map show (discharged ln))) ++ "]"
+  let dis = discharged (step ln)
+    in if null dis then "" else "[" ++ concat (intersperse ", " (map show dis)) ++ "]"
+  ]
+  
+prs :: Step -> [String]
+prs st = [
+  show (line st) ++ ".",
+  prf (formula st),
+  rule st,
+  concat (map ((","++) . show) (discharged st))
   ]
 
-prlst :: [Line] -> String
-prlst = mathdisplay . pr . lines2tree where
+prlt :: [Line] -> String
+prlt = mathdisplay . pr . lines2linetree where
   pr (Tree a ts) = case ts of
     [] -> unwords (prl a)
     _ -> "\\infer{" ++ unwords (prl a) ++ "}{" ++ unwords (intersperse "&" (map pr ts)) ++ "}"
+
+prst :: Tree Step -> String
+prst = mathdisplay . pr where
+  pr (Tree a ts) = case ts of
+    [] -> concat ["\\discharge{", prs a !! 0, "}{", prs a !! 1, "}"]
+    _ -> concat ["\\infer[{\\scriptstyle ", prs a !! 2, prs a !! 3, "}]{",
+                 prs a !! 1, "}{", unwords (intersperse "&" (map pr ts)), "}"]
 
 mathdisplay s = "\\[" ++ s ++ "\\]"
 
