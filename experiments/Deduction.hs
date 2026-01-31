@@ -13,24 +13,25 @@ main = do
     "From lines to tree 2",
     linesDemo exLines2,
     "From tree to lines 1 (TODO)",
-    treeDemo exTree1,
+    proofDemo exProof1,
     "From tree to lines 2 (TODO)",
-    treeDemo exTree2
+    proofDemo exProof2,
+    "From tree to lines 3 (TODO)",
+    proofDemo exProof3
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
     prls ex,
     prlt tex,
-    prp (linetree2proof tex)
+    prst (linetree2steptree tex)
     ]
   where tex = lines2linetree ex
 
-treeDemo proof = unlines $ intersperse "\n\n" [
-    prp proof,
-    prlt linetree,
-    prls (linetree2lines linetree)
+proofDemo proof = unlines $ intersperse "\n\n" [
+    show proof,
+    prst (pst proof),
+    prls (pls proof)
     ]
-  where linetree = proof2linetree proof
 
 -------------------------------
 -- data types and constructors
@@ -51,15 +52,6 @@ data Tree a = Tree {
   }
   deriving (Show, Eq)
 
-data Rule = Rule {
-  label :: String,
-  proves :: [Formula] -> Formula,
-  discharges :: [Int],
-  hyponum :: Int --- default 0, not shown
-  }
-
-type Proof = Tree Step
-
 data Step = Step {
   line :: Int,  --- shown only for hypotheses
   formula :: Formula,
@@ -76,29 +68,87 @@ data Line = Line {
   deriving (Show, Eq)
 
 mkStep li fo ru di = Step li fo ru di
+fStep fo ru = mkStep 0 fo ru []
+
 mkLine li co fo ru prs di = Line co prs (mkStep li fo ru di)
 
-mkRule lab n f =
-  Rule lab (\fs -> if length fs == n then (f (take n fs)) else (error ("arity of " ++ lab))) [] 0 
+------------------------------------------
+-- hard-coded natural deduction from PESCA
+------------------------------------------
 
-applyRule :: Rule -> [Proof] -> Proof
-applyRule rule proofs = Tree concl proofs where
-  concl = (mkStep 0 (proves rule (map (formula . root) proofs)) (label rule) (discharges rule)){
-             line = hyponum rule}
+data Proof =
+    AndI Formula Formula Proof Proof
+  | AndE1 Formula Formula Proof
+  | AndE2 Formula Formula Proof
+  | OrI1 Formula Formula Proof
+  | OrI2 Formula Formula Proof
+  | OrE Formula Formula Formula Proof (Int, Proof) (Int, Proof)
+  | IfI Formula Formula (Int, Proof)
+  | IfE Formula Formula Proof Proof
+  | NotI Formula (Int, Proof)
+  | NotE Formula Proof Proof
+  | FalsumE Formula Proof
+  | Hypo Int Formula
+  | Assumption Formula
+  deriving (Show, Eq)
 
------------------------------------
--- example rules: natural deduction
------------------------------------
+pst :: Proof -> Tree Step
+pst proof = case proof of
+   Assumption formula ->
+     Tree (mkStep 0 formula "ass" []) []
+   Hypo int formula -> 
+     Tree (mkStep int formula "hypo" []) []
+   AndI  f1 f2 p1 p2 ->
+     Tree (fStep (And f1 f2) "\\& I") [pst p1, pst p2]
+   AndE1  f1 f2 p1 ->
+     Tree (fStep f1 "\\& E1") [pst p1]
+   AndE2  f1 f2 p1 ->
+     Tree (fStep f2 "\\& E2") [pst p1]
+   OrI1   f1 f2 p1 ->
+     Tree (fStep (Or f1 f2) "\\vee I1") [pst p1]
+   OrI2   f1 f2 p1 ->
+     Tree (fStep (Or f1 f2) "\\vee I2") [pst p1]
+   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
+     Tree (mkStep 0 f3 "\\vee E" [x, y]) [pst p1, pst p2, pst p3]
+   IfI   f1 f2 (x, p1) ->
+     Tree (mkStep 0 (If f1 f2) "\\supset I" [x]) [pst p1]
+   IfE   f1 f2 p1 p2 ->
+     Tree (fStep f2 "\\supset E") [pst p1, pst p2]
+   NotI   f1 (x, p1) ->
+     Tree (mkStep 0 (Not f1) "\\neg I" [x]) [pst p1]
+   NotE   f1 p1 p2 ->
+     Tree (fStep Falsum "\\not E") [pst p1, pst p2]
+   FalsumE   f1 p1 ->
+     Tree (fStep f1 "\\bot E") [pst p1]
 
-andI  = applyRule (mkRule "\\& I" 2 (\ [a, b] -> And a b))
-andE1 = applyRule (mkRule "\\& E1" 1 (\ [And a b] -> a))
-andE2 = applyRule (mkRule "\\& E1" 1 (\ [And a b] -> b))
-ifI   = \a i -> applyRule ((mkRule "\\supset I" 1 (\ [b] -> If a b)){discharges=[i]})
-ifE   = applyRule (mkRule "\\supset E" 2 (\ [a, b] -> b))
-notI  = \a i -> applyRule ((mkRule "\\neg I" 1 (\ [_] -> Not a)){discharges=[i]})
-notE  = applyRule (mkRule "\\neg E" 2 (\ [a, b] -> Falsum))
-hypo  = \a i -> applyRule ((mkRule "hypo" 0 (\_ -> a)){hyponum=i})
-
+pls :: Proof -> [Line]
+pls proof = case proof of
+   Assumption formula ->
+     [mkLine 0 [] formula "ass" [] []]
+   Hypo int formula -> 
+     [mkLine int [] formula "hypo" [] []]
+   AndI f1 f2 p1 p2 ->
+     concat [pls p1, pls p2, [mkLine 0 [] (And f1 f2) "\\& I" [] []]]
+   AndE1 f1 f2 p1 ->
+     concat [pls p1, [mkLine 0 [] f1 "\\& E1" [] []]]
+   AndE2 f1 f2 p1 ->
+     concat [pls p1, [mkLine 0 [] f2 "\\& E2" [] []]]
+   OrI1   f1 f2 p1 ->
+     concat [pls p1, [mkLine 0 [] (Or f1 f2) "\\vee I1" [] []]]
+   OrI2   f1 f2 p1 ->
+     concat [pls p1, [mkLine 0 [] (Or f1 f2) "\\vee I2" [] []]]
+   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
+     concat [pls p1, pls p2, pls p3, [mkLine 0 [] f3 "\\vee E" [] [x, y]]]
+   IfI f1 f2 (x, p1) ->
+     concat [pls p1, [mkLine 0 [] (If f1 f2) "\\supset I" [] [x]]]
+   IfE f1 f2 p1 p2 ->
+     concat [pls p1, pls p2, [mkLine 0 [] f2 "\\supset E" [] []]]
+   NotI   f1 (x, p1) ->
+     concat [pls p1, [mkLine 0 [] (Not f1) "\\neg I" [] [x]]]
+   NotE   f1 p1 p2 ->
+     concat [pls p1, pls p2, [mkLine 0 [] Falsum "\\neg E" [] []]]
+   FalsumE   f1 p1 ->
+     concat [pls p1, [mkLine 0 [] f1 "\\bot E" [] []]] 
 
 ------------------------------
 -- conversions
@@ -114,19 +164,11 @@ lines2linetree :: [Line] -> Tree Line
 lines2linetree ls = ltr (last ls) where
   ltr concl = Tree concl [ltr (ls !! (prem-1)) | prem <- premisses concl]
 
-linetree2proof :: Tree Line -> Proof
-linetree2proof (Tree l ts) = Tree (step l) (map linetree2proof ts)
-
-proof2linetree :: Proof -> Tree Line
-proof2linetree tree = prl $ renumber startnumber tree where
-  prl (Tree s ts) = Tree (premnumber ts s) (map prl ts)
-  startnumber = maximum (map line (nodes tree)) + 1
-  renumber n t = t ---- TODO
-  premnumber ts s = Line{context=[],  premisses = map (line . root) ts, step=s}
+linetree2steptree :: Tree Line -> Tree Step
+linetree2steptree = maptree step
 
 linetree2lines :: Tree Line -> [Line]
 linetree2lines = nub . sortOn (line . step) . nodes
-
 
 ----------------------------
 -- printing
@@ -176,8 +218,8 @@ prlt = mathdisplay . pr  where
     [] -> unwords (prl a)
     _ -> "\\infer{" ++ unwords (prl a) ++ "}{" ++ unwords (intersperse "&" (map pr ts)) ++ "}"
 
-prp :: Proof -> String
-prp = mathdisplay . pr where
+prst :: Tree Step -> String
+prst = mathdisplay . pr where
   pr (Tree a ts) = case ts of
     [] -> concat ["\\discharge{", prs a !! 0, "}{", prs a !! 1, "}"]
     _ -> concat ["\\infer[{\\scriptstyle ", prs a !! 2, prs a !! 3, "}]{",
@@ -219,6 +261,84 @@ exLines2 =
   [line{context = 1 : context line} | line <- exLines1] ++
   [mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]]
 
+exProof1 =
+  IfI (And aA aB) (And aB aA)
+    (1, (AndI aB aA
+      (AndE2 aA aB (Hypo 1 (And aA aB)))
+      (AndE1 aA aB (Hypo 1 (And aA aB)))))
+
+exProof2 =
+  IfI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
+    (3, AndI (Not (Not aA)) (Not (Not aB))
+      (NotI (Not aA) 
+        (1, NotE (Not aA)
+	  (Hypo 1 (Not aA))
+	  (AndE1 aA aB (Hypo 3 (And aA aB)))))
+      (NotI (Not aB) 
+        (2, NotE (Not aB)
+	  (Hypo 2 (Not aB))
+	  (AndE1 aA aB (Hypo 3 (And aA aB))))))
+
+exProof3 =
+  IfI (Or aA aB) (Or aB aA)
+    (1, OrE aA aB (Or aB aA)
+      (Hypo 1 (Or aA aB))
+      (2, (OrI2 aB aA (Hypo 2 aA)))
+      (3, (OrI1 aB aA (Hypo 3 aB))))
+
+
+
+{-
+exTree2 =
+  ifI (And aA aB) 3 [
+    andI [
+      notI (Not aA) 1 [
+        notE [
+          hypo (Not aA) 1 [],
+          andE1 [hypo (And aA aB) 3 []]
+	  ]
+	],
+      notI (Not aB) 2 [
+        notE [
+	  hypo (Not aB) 2 [],
+	  andE2 [hypo (And aA aB) 3 []]
+	  ]
+	]
+      ]
+    ]
+-}
+
+{-
+
+-----------------------------------
+-- building Tree Step directly
+-----------------------------------
+
+data Rule = Rule {
+  label :: String,
+  proves :: [Formula] -> Formula,
+  discharges :: [Int],
+  hyponum :: Int --- default 0, not shown
+  }
+
+mkRule lab n f =
+  Rule lab (\fs -> if length fs == n then (f (take n fs)) else (error ("arity of " ++ lab))) [] 0 
+
+applyRule :: Rule -> [Tree Step] -> Tree Step
+applyRule rule proofs = Tree concl proofs where
+  concl = (mkStep 0 (proves rule (map (formula . root) proofs)) (label rule) (discharges rule)){
+             line = hyponum rule}
+
+andI  = applyRule (mkRule "\\& I" 2 (\ [a, b] -> And a b))
+andE1 = applyRule (mkRule "\\& E1" 1 (\ [And a b] -> a))
+andE2 = applyRule (mkRule "\\& E1" 1 (\ [And a b] -> b))
+ifI   = \a i -> applyRule ((mkRule "\\supset I" 1 (\ [b] -> If a b)){discharges=[i]})
+ifE   = applyRule (mkRule "\\supset E" 2 (\ [a, b] -> b))
+notI  = \a i -> applyRule ((mkRule "\\neg I" 1 (\ [_] -> Not a)){discharges=[i]})
+notE  = applyRule (mkRule "\\neg E" 2 (\ [a, b] -> Falsum))
+hypo  = \a i -> applyRule ((mkRule "hypo" 0 (\_ -> a)){hyponum=i})
+
+
 exTree1 =
   ifI (And aA aB) 1 [andI [andE2 [hypo (And aA aB) 1 []], andE1 [hypo (And aA aB) 1 []]]]
 
@@ -239,7 +359,7 @@ exTree2 =
 	]
       ]
     ]
-
+-}
 
 {-
 
@@ -248,25 +368,6 @@ infixr 5 ++++
 
 a +++ b  = a ++ " "  ++ b
 a ++++ b = a ++ "\n" ++ b
-
--- hard-coded natural deduction from PESCA
-data Proof =
-    AndI Formula Formula Proof Proof
-  | AndE1 Formula Formula Proof
-  | AndE2 Formula Formula Proof
-  | OrI1 Formula Formula Proof
-  | OrI2 Formula Formula Proof
-  | OrE Formula Formula Formula Proof (Int, Proof) (Int, Proof)
-  | IfI Formula Formula (Int, Proof)
-  | IfE Formula Formula Proof Proof
-  | NotI Formula (Int, Proof)
-  | NotE Formula Proof Proof
-  | FalsumE Formula Proof
-  | Hypo Int Formula
-  | Assumption Formula
-  deriving (Show, Eq)
-
-
 
 -- printing to LaTeX proof.sty trees
 prt :: Proof -> String
