@@ -203,18 +203,18 @@ ptls = compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of
    Ass int formula ->
-     [mkLine ln cont formula "ass" [int] []]  --- store original number
+     [mkLine ln [int] formula "ass" [int] []]  --- store original number
    Hyp int formula -> 
-     [mkLine ln cont formula "hypo" [int] []]  --- store original number
+     [mkLine ln [int] formula "hypo" [int] []]  --- store original number
    App label fs pts conn ->
      let ---- TODO: generalize this to a fold
          ps1 = case pts of
 	    p1:_ -> ps ln cont p1
 	 ps2 = case pts of
-	    p1:p2:_ -> ps (lastline ps1 + 1) (nub (bindings p1 ++ cont)) p2
+	    p1:p2:_ -> ps (lastline ps1 + 1) cont p2
 	    _ -> ps1
 	 ps3 = case pts of
-	    p1:p2:p3:_ -> ps (lastline ps2 + 1) (nub (bindings p2 ++ cont)) p3
+	    p1:p2:p3:_ -> ps (lastline ps2 + 1) cont p3
 	    _ -> ps2
 	 ln3 = lastline ps3 + 1
 	 pss = [ps1, ps2, ps3]
@@ -227,8 +227,8 @@ ptls = compress [] . nub . ps 1 [] where  -- line number, context
  compress :: [(Int, Int)] -> [Line] -> [Line]
  compress renames ls = case ls of
    ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
-     case (line (step ln), head (premisses ln)) of
-       (n, h) -> case lookup h renames of
+     case (line (step ln), premisses ln) of
+       (n, [h]) -> case lookup h renames of
          Just k -> compress ((n, k) : renames) rest -- do not repeat hypothesis
          _ -> ln{premisses=[]} : compress ((n, n) : renames) rest
    ln : rest -> ln{premisses = [maybe p id (lookup p renames) | p <- premisses ln]} : compress renames rest
@@ -268,7 +268,8 @@ prls lns = unlines $
 
 prl :: Line -> [String]
 prl ln = [
-  concat (replicate (length (context ln)) "\\mid"),
+---  concat (replicate (length (context ln)) "\\mid"),
+  concat (intersperse "," (map show (context ln))),
   show (line (step ln)) ++ ".",
   prf (formula (step ln)),
   rule (step ln),
@@ -351,11 +352,11 @@ exTerm3 =
   ifI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
     (3, andI (Not (Not aA)) (Not (Not aB))
       (notI (Not aA) 
-        (1, notE (Not aA)
+        (1, notE (aA)
 	  (hypo 1 (Not aA))
 	  (andE1 aA aB (hypo 3 (And aA aB)))))
       (notI (Not aB) 
-        (2, notE (Not aB)
+        (2, notE (aB)
 	  (hypo 2 (Not aB))
 	  (andE2 aA aB (hypo 3 (And aA aB))))))
 
