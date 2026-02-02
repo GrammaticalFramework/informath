@@ -12,27 +12,27 @@ main = do
     linesDemo exLines1,
     "From lines to tree 2",
     linesDemo exLines2,
-    "From tree to lines 1 (TODO)",
-    proofDemo exProof1 ,
-    "From tree to lines 2 (TODO)",
-    proofDemo exProof2, {- 
-    "From tree to lines 3 (TODO)",
-    proofDemo exProof3 -}
-    "From tree to lines 4 (TODO)",
-    proofDemo exProof4
+    "From term to lines 1 (TODO)",
+    termDemo exTerm1 ,
+    "From term to tree and lines 2 (TODO)",
+    termDemo exTerm2, 
+    "From term to lines 3 (TODO)",
+    termDemo exTerm3,
+    "From term to lines 4 (TODO)",
+    termDemo exTerm4
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
     prls ex,
-    prlt tex,
+--    prlt tex,
     prst (linetree2steptree tex)
     ]
   where tex = lines2linetree ex
 
-proofDemo proof = unlines $ intersperse "\n\n" [
-    show proof,
-    prst (pst proof),
-    prls (pls proof)
+termDemo term = unlines $ intersperse "\n\n" [
+    mathdisplay (prt term),
+    prst (ptt term),
+    prls (ptls term)
     ]
 
 -------------------------------
@@ -95,113 +95,104 @@ linetree2lines :: Tree Line -> [Line]
 linetree2lines = nub . sortOn (line . step) . nodes
 
 
+
+
+
 ------------------------------------------
--- hard-coded natural deduction from PESCA
+-- general proof terms
 ------------------------------------------
 
-data Proof =
-    AndI Formula Formula Proof Proof
-  | AndE1 Formula Formula Proof
-  | AndE2 Formula Formula Proof
-  | OrI1 Formula Formula Proof
-  | OrI2 Formula Formula Proof
-  | OrE Formula Formula Formula Proof (Int, Proof) (Int, Proof)
-  | IfI Formula Formula (Int, Proof)
-  | IfE Formula Formula Proof Proof
-  | NotI Formula (Int, Proof)
-  | NotE Formula Proof Proof
-  | FalsumE Formula Proof
-  | Hypo Int Formula
-  | Assumption Formula
-  deriving (Show, Eq)
+data Term =
+    App String [Formula] [Term] ([Formula] -> Formula)
+  | Abs [Int] Term
+  | Hyp Int Formula
+  | Ass Int Formula
 
-pst :: Proof -> Tree Step
-pst proof = case proof of
-   Assumption formula ->
-     Tree (mkStep 0 formula "ass" []) []
-   Hypo int formula -> 
-     Tree (mkStep int formula "hypo" []) []
-   AndI  f1 f2 p1 p2 ->
-     Tree (fStep (And f1 f2) "\\& I") [pst p1, pst p2]
-   AndE1  f1 f2 p1 ->
-     Tree (fStep f1 "\\& E1") [pst p1]
-   AndE2  f1 f2 p1 ->
-     Tree (fStep f2 "\\& E2") [pst p1]
-   OrI1   f1 f2 p1 ->
-     Tree (fStep (Or f1 f2) "\\vee I1") [pst p1]
-   OrI2   f1 f2 p1 ->
-     Tree (fStep (Or f1 f2) "\\vee I2") [pst p1]
-   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
-     Tree (mkStep 0 f3 "\\vee E" [x, y]) [pst p1, pst p2, pst p3]
-   IfI   f1 f2 (x, p1) ->
-     Tree (mkStep 0 (If f1 f2) "\\supset I" [x]) [pst p1]
-   IfE   f1 f2 p1 p2 ->
-     Tree (fStep f2 "\\supset E") [pst p1, pst p2]
-   NotI   f1 (x, p1) ->
-     Tree (mkStep 0 (Not f1) "\\neg I" [x]) [pst p1]
-   NotE   f1 p1 p2 ->
-     Tree (fStep Falsum "\\not E") [pst p1, pst p2]
-   FalsumE   f1 p1 ->
-     Tree (fStep f1 "\\bot E") [pst p1]
+andI :: Formula -> Formula -> Term -> Term -> Term
+andI a b p q = App "\\& I" [a, b] [p, q] (\ [x, y] -> And x y)
 
-pls :: Proof -> [Line]
-pls = nub . ps 1 [] where  -- line number, context
- ps :: Int -> [Int] -> Proof -> [Line]
+andE1 :: Formula -> Formula -> Term -> Term
+andE1 a b p = App "\\& E1" [a, b] [p] (\ [x, y] -> x)
+
+andE2 :: Formula -> Formula -> Term -> Term
+andE2 a b p = App "\\& E2" [a, b] [p] (\ [x, y] -> y)
+
+orI1 :: Formula -> Formula -> Term -> Term
+orI1 a b p = App "\\vee I1" [a, b] [p] (\ [x, y] -> Or x y)
+
+orI2 :: Formula -> Formula -> Term -> Term
+orI2 a b p = App "\\vee I2" [a, b] [p] (\ [x, y] -> Or x y)
+
+orE :: Formula -> Formula -> Formula -> Term -> (Int, Term) -> (Int, Term) -> Term
+orE a b c r (x, p) (y, q) = App "\\vee E" [a, b, c] [r, Abs [x] p, Abs [y] q]  (\ [x, y, z] -> z)
+
+ifI :: Formula -> Formula -> (Int, Term) -> Term
+ifI a b (x, p) = App "\\supset I" [a, b] [Abs [x] p]  (\ [x, y] -> If x y)
+
+ifE :: Formula -> Formula -> Term -> Term -> Term
+ifE a b p q = App "\\supset E" [a, b] [p, q] (\ [x, y] -> y)
+
+notI :: Formula -> (Int, Term) -> Term
+notI a (x, p) = App "\\neg I" [a] [Abs [x] p]  (\ [x] -> Not x)
+
+notE :: Formula -> Term -> Term -> Term
+notE a p q = App "\\neg E" [a] [p, q] (\ [x] -> Falsum)
+
+hypo :: Int -> Formula -> Term
+hypo x a = Hyp x a
+
+ass :: Int -> Formula -> Term
+ass x a = Ass x a
+
+
+ptt :: Term -> Tree Step
+ptt term = case term of
+  App label ps ts c -> Tree (mkStep 0 (c ps) label (concatMap bindings ts)) (map ptt ts)
+  Abs xs t -> ptt t
+  Hyp x a -> Tree (mkStep x a "hypo" []) []
+  Ass x a -> Tree (mkStep x a "ass" []) []
+
+bindings :: Term -> [Int]
+bindings t = case t of
+    Abs xs _ -> xs
+    _ -> []
+
+prt :: Term -> String
+prt term = case term of
+  App label ps ts c -> label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
+  Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
+  Hyp x a -> prvar x
+  Ass x a -> prcons x
+ where
+  parenth s = "(" ++ s ++ ")"
+  prvar i = "h_" ++ show i
+  prcons i = "c_" ++ show i
+
+ptls :: Term -> [Line]
+ptls = nub . ps 1 [] where  -- line number, context
+ ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of
-   Assumption formula ->
+   Ass int formula ->
      [mkLine ln cont formula "ass" [] []]
-   Hypo int formula -> 
+   Hyp int formula -> 
      [mkLine ln (cont) formula "hypo" [] []]
-   AndI f1 f2 p1 p2 ->
-     let ps1 = ps ln cont p1
-	 ps2 = ps (lastline ps1 + 1) cont p2
-	 ln3 = lastline ps2 + 1
-	 cont3 = cont
-     in concat [ps1, ps2, [mkLine ln3 cont3 (And f1 f2) "\\& I" [lastline ps1, lastline ps2] []]]
-   AndE1 f1 f2 p1 ->
-     let ps1 = ps ln cont p1
-	 ln3 = lastline ps1 + 1
-	 cont3 = cont
-     in concat [ps1, [mkLine ln3 cont3 f1 "\\& E1" [lastline ps1] []]]
-   AndE2 f1 f2 p1 ->
-     let ps1 = ps ln cont p1
-	 ln3 = lastline ps1 + 1
-	 cont3 = cont
-     in concat [ps1, [mkLine ln3 cont3 f2 "\\& E2" [lastline ps1] []]]
-   OrI1 f1 f2 p1 ->
-     let ps1 = ps ln cont p1
-	 ln3 = lastline ps1 + 1
-	 cont3 = cont -- context (last ps1)
-     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I1" [lastline ps1] []]]
-   OrI2 f1 f2 p1 ->
-     let ps1 = ps ln cont p1
-	 ln3 = lastline ps1 + 1
-	 cont3 = cont
-     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I2" [lastline ps1] []]]
-     
-   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
-     let ps1 = ps ln cont p1
-	 ps2 = ps (lastline ps1 + 1) (x:cont) p2
-	 ps3 = ps (lastline ps2 + 1) (y:cont) p3
+   App label fs pts conn ->
+     let ---- TODO: generalize this to a fold
+         ps1 = case pts of
+	    p1:_ -> ps ln cont p1
+	 ps2 = case pts of
+	    p1:p2:_ -> ps (lastline ps1 + 1) (bindings p1 ++ cont) p2
+	    _ -> ps1
+	 ps3 = case pts of
+	    p1:p2:p3:_ -> ps (lastline ps2 + 1) (bindings p2 ++ cont) p3
+	    _ -> ps2
 	 ln3 = lastline ps3 + 1
-     in concat [ps1, ps2, ps3, [mkLine ln3 cont f3 "\\vee E" (map lastline [ps1, ps2, ps3]) [x, y]]]
+	 pss = [ps1, ps2, ps3]
+     in concat pss ++ [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
+   Abs xs t -> ps ln (xs ++ cont) t
 
-   IfI f1 f2 (x, p1) ->
-     let ps1 = ps ln (x:cont) p1
-	 ln3 = lastline ps1 + 1
-	 cont1 = tail (context (last ps1))
-     in concat [ps1, [mkLine ln3 cont1 (If f1 f2) "\\supset E" [lastline ps1] [x]]]
-{-
-   IfE f1 f2 p1 p2 ->
-     concat [pls p1, pls p2, [mkLine 0 [] f2 "\\supset E" [] []]]
-   NotI   f1 (x, p1) ->
-     concat [pls p1, [mkLine 0 [] (Not f1) "\\neg I" [] [x]]]
-   NotE   f1 p1 p2 ->
-     concat [pls p1, pls p2, [mkLine 0 [] Falsum "\\neg E" [] []]]
-   FalsumE   f1 p1 ->
-     concat [pls p1, [mkLine 0 [] f1 "\\bot E" [] []]] 
--}
  lastline = line . step . last
+
 
 ----------------------------
 -- printing
@@ -294,61 +285,44 @@ exLines2 =
   [line{context = 1 : context line} | line <- exLines1] ++
   [mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]]
 
-exProof1 =
-  IfI (And aA aB) (And aB aA)
-    (1, (AndI aB aA
-      (AndE2 aA aB (Hypo 1 (And aA aB)))
-      (AndE1 aA aB (Hypo 1 (And aA aB)))))
+exTerm1 =
+  ifI (And aA aB) (And aB aA)
+    (1, (andI aB aA
+      (andE2 aA aB (hypo 1 (And aA aB)))
+      (andE1 aA aB (hypo 1 (And aA aB)))))
 
-exProof2 =
-  IfI aA (If aB (And aA aB))
-    (1, (IfI aB (And aA aB)
-      (2, (AndI aA aB
-        (Hypo 1 aA)
-	(Hypo 2 aB)))))
+exTerm2 =
+  ifI aA (If aB (And aA aB))
+    (1, (ifI aB (And aA aB)
+      (2, (andI aA aB
+        (hypo 1 aA)
+	(hypo 2 aB)))))
 
-exProof3 =
-  IfI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
-    (3, AndI (Not (Not aA)) (Not (Not aB))
-      (NotI (Not aA) 
-        (1, NotE (Not aA)
-	  (Hypo 1 (Not aA))
-	  (AndE1 aA aB (Hypo 3 (And aA aB)))))
-      (NotI (Not aB) 
-        (2, NotE (Not aB)
-	  (Hypo 2 (Not aB))
-	  (AndE1 aA aB (Hypo 3 (And aA aB))))))
+exTerm3 =
+  ifI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
+    (3, andI (Not (Not aA)) (Not (Not aB))
+      (notI (Not aA) 
+        (1, notE (Not aA)
+	  (hypo 1 (Not aA))
+	  (andE1 aA aB (hypo 3 (And aA aB)))))
+      (notI (Not aB) 
+        (2, notE (Not aB)
+	  (hypo 2 (Not aB))
+	  (andE2 aA aB (hypo 3 (And aA aB))))))
 
-exProof4 =
-  IfI (Or aA aB) (Or aB aA)
-    (1, OrE aA aB (Or aB aA)
-      (Hypo 1 (Or aA aB))
-      (2, (OrI2 aB aA (Hypo 2 aA)))
-      (3, (OrI1 aB aA (Hypo 3 aB))))
+exTerm4 =
+  ifI (Or aA aB) (Or aB aA)
+    (1, orE aA aB (Or aB aA)
+      (hypo 1 (Or aA aB))
+      (2, (orI2 aB aA (hypo 2 aA)))
+      (3, (orI1 aB aA (hypo 3 aB))))
 
 
 
-{-
-exTree2 =
-  ifI (And aA aB) 3 [
-    andI [
-      notI (Not aA) 1 [
-        notE [
-          hypo (Not aA) 1 [],
-          andE1 [hypo (And aA aB) 3 []]
-	  ]
-	],
-      notI (Not aB) 2 [
-        notE [
-	  hypo (Not aB) 2 [],
-	  andE2 [hypo (And aA aB) 3 []]
-	  ]
-	]
-      ]
-    ]
--}
 
 {-
+------------------ intermediate attempts, no more needed -------------
+
 
 -----------------------------------
 -- building Tree Step directly
@@ -399,6 +373,133 @@ exTree2 =
 	]
       ]
     ]
+-}
+
+{-
+------------------------------------------
+-- hard-coded natural deduction from PESCA
+------------------------------------------
+
+data Proof =
+    AndI Formula Formula Proof Proof
+  | AndE1 Formula Formula Proof
+  | AndE2 Formula Formula Proof
+  | OrI1 Formula Formula Proof
+  | OrI2 Formula Formula Proof
+  | OrE Formula Formula Formula Proof (Int, Proof) (Int, Proof)
+  | IfI Formula Formula (Int, Proof)
+  | IfE Formula Formula Proof Proof
+  | NotI Formula (Int, Proof)
+  | NotE Formula Proof Proof
+  | FalsumE Formula Proof
+  | Hypo Int Formula
+  | Assumption Formula
+  deriving (Show, Eq)
+
+pst :: Proof -> Tree Step
+pst proof = case proof of
+   Assumption formula ->
+     Tree (mkStep 0 formula "ass" []) []
+   Hypo int formula -> 
+     Tree (mkStep int formula "hypo" []) []
+   AndI  f1 f2 p1 p2 ->
+     Tree (fStep (And f1 f2) "\\& I") [pst p1, pst p2]
+   AndE1  f1 f2 p1 ->
+     Tree (fStep f1 "\\& E1") [pst p1]
+   AndE2  f1 f2 p1 ->
+     Tree (fStep f2 "\\& E2") [pst p1]
+   OrI1   f1 f2 p1 ->
+     Tree (fStep (Or f1 f2) "\\vee I1") [pst p1]
+   OrI2   f1 f2 p1 ->
+     Tree (fStep (Or f1 f2) "\\vee I2") [pst p1]
+   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
+     Tree (mkStep 0 f3 "\\vee E" [x, y]) [pst p1, pst p2, pst p3]
+   IfI   f1 f2 (x, p1) ->
+     Tree (mkStep 0 (If f1 f2) "\\supset I" [x]) [pst p1]
+   IfE   f1 f2 p1 p2 ->
+     Tree (fStep f2 "\\supset E") [pst p1, pst p2]
+   NotI   f1 (x, p1) ->
+     Tree (mkStep 0 (Not f1) "\\neg I" [x]) [pst p1]
+   NotE   f1 p1 p2 ->
+     Tree (fStep Falsum "\\not E") [pst p1, pst p2]
+   FalsumE   f1 p1 ->
+     Tree (fStep f1 "\\bot E") [pst p1]
+
+pls :: Proof -> [Line]
+pls = nub . ps 1 [] where  -- line number, context
+ ps :: Int -> [Int] -> Proof -> [Line]
+ ps ln cont proof = case proof of
+   Assumption formula ->
+     [mkLine ln cont formula "ass" [] []]
+   Hypo int formula -> 
+     [mkLine ln (cont) formula "hypo" [] []]
+   AndI f1 f2 p1 p2 ->
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) cont p2
+	 ln3 = lastline ps2 + 1
+	 cont3 = cont
+     in concat [ps1, ps2, [mkLine ln3 cont3 (And f1 f2) "\\& I" [lastline ps1, lastline ps2] []]]
+   AndE1 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 f1 "\\& E1" [lastline ps1] []]]
+   AndE2 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 f2 "\\& E2" [lastline ps1] []]]
+   OrI1 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont -- context (last ps1)
+     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I1" [lastline ps1] []]]
+   OrI2 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I2" [lastline ps1] []]]    
+   OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) (x:cont) p2
+	 ps3 = ps (lastline ps2 + 1) (y:cont) p3
+	 ln3 = lastline ps3 + 1
+     in concat [ps1, ps2, ps3, [mkLine ln3 cont f3 "\\vee E" (map lastline [ps1, ps2, ps3]) [x, y]]]
+   IfI f1 f2 (x, p1) ->
+     let ps1 = ps ln (x:cont) p1
+	 ln3 = lastline ps1 + 1
+	 cont1 = tail (context (last ps1))
+     in concat [ps1, [mkLine ln3 cont1 (If f1 f2) "\\supset E" [lastline ps1] [x]]]
+   IfE f1 f2 p1 p2 ->
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) cont p2
+	 ln3 = lastline ps2 + 1
+	 cont3 = cont
+     in concat [ps1, ps2, [mkLine ln3 cont3 f2 "\\supset E" [lastline ps1, lastline ps2] []]]     
+   NotI   f1 (x, p1) ->
+     let ps1 = ps ln (x:cont) p1
+	 ln3 = lastline ps1 + 1
+	 cont1 = tail (context (last ps1))
+     in concat [ps1, [mkLine ln3 cont1 (Not f1) "\\neg I" [lastline ps1] [x]]]
+   NotE   f1 p1 p2 ->
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) cont p2
+	 ln3 = lastline ps2 + 1
+	 cont3 = cont
+     in concat [ps1, ps2, [mkLine ln3 cont3 Falsum "\\neg E" [lastline ps1, lastline ps2] []]]     
+   FalsumE f1 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont1 = cont
+     in concat [ps1, [mkLine ln3 cont1 f1 "\\bot E" [lastline ps1] []]]
+ lastline = line . step . last
+
+proofDemo proof = unlines $ intersperse "\n\n" [
+    show proof,
+    prst (pst proof),
+    prls (pls proof)
+    ]
+
 -}
 
 {-
@@ -454,3 +555,57 @@ prt proof = case proof of
      prt p1 ++++ "}"
 -}
 
+{-
+exProof1 =
+  IfI (And aA aB) (And aB aA)
+    (1, (AndI aB aA
+      (AndE2 aA aB (Hypo 1 (And aA aB)))
+      (AndE1 aA aB (Hypo 1 (And aA aB)))))
+
+exProof2 =
+  IfI aA (If aB (And aA aB))
+    (1, (IfI aB (And aA aB)
+      (2, (AndI aA aB
+        (Hypo 1 aA)
+	(Hypo 2 aB)))))
+
+exProof3 =
+  IfI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
+    (3, AndI (Not (Not aA)) (Not (Not aB))
+      (NotI (Not aA) 
+        (1, NotE (Not aA)
+	  (Hypo 1 (Not aA))
+	  (AndE1 aA aB (Hypo 3 (And aA aB)))))
+      (NotI (Not aB) 
+        (2, NotE (Not aB)
+	  (Hypo 2 (Not aB))
+	  (AndE1 aA aB (Hypo 3 (And aA aB))))))
+
+exProof4 =
+  IfI (Or aA aB) (Or aB aA)
+    (1, OrE aA aB (Or aB aA)
+      (Hypo 1 (Or aA aB))
+      (2, (OrI2 aB aA (Hypo 2 aA)))
+      (3, (OrI1 aB aA (Hypo 3 aB))))
+
+-}
+
+{-
+exTree2 =
+  ifI (And aA aB) 3 [
+    andI [
+      notI (Not aA) 1 [
+        notE [
+          hypo (Not aA) 1 [],
+          andE1 [hypo (And aA aB) 3 []]
+	  ]
+	],
+      notI (Not aB) 2 [
+        notE [
+	  hypo (Not aB) 2 [],
+	  andE2 [hypo (And aA aB) 3 []]
+	  ]
+	]
+      ]
+    ]
+-}
