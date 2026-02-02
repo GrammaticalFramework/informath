@@ -5,7 +5,22 @@ import Data.List (intersperse, nub, sortOn)
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."
 -- code partly borrowed from https://github.com/aarneranta/PESCA
-
+--
+-- main datatypes:
+--
+--   Tree  (Martin-Löf style)
+--   Term  (Gentzen style)
+--   Lines (Jaskowski/Prawitz style)
+--
+-- main conversions:
+--
+--   Term -> Tree
+--   Term -> Lines
+--   Lines -> Tree
+--   Lines -> Term  -- TODO
+--
+-- first a demo; do runghc Deduction.hs >pr.tex ; pdflatex pr.tex
+--
 main = do
   putStrLn $ prLatexFile $ unlines $ intersperse "\n\n" [
     "From lines to tree 1",
@@ -24,10 +39,9 @@ main = do
 
 linesDemo ex = unlines $ intersperse "\n\n" [
     prls ex,
---    prlt tex,
-    prst (linetree2steptree tex)
+    prst (lines2steptree ex)
+----    mathdisplay (prt (lines2term ex))
     ]
-  where tex = lines2linetree ex
 
 termDemo term = unlines $ intersperse "\n\n" [
     mathdisplay (prt term),
@@ -39,6 +53,8 @@ termDemo term = unlines $ intersperse "\n\n" [
 -- data types and constructors
 -------------------------------
 
+-- logical formulas
+
 data Formula =
     And Formula Formula
   | Or Formula Formula
@@ -48,11 +64,7 @@ data Formula =
   | Atom String
   deriving (Show, Eq)
 
-data Tree a = Tree {
-  root :: a,
-  subtrees :: [Tree a]
-  }
-  deriving (Show, Eq)
+-- proof steps (lines on trees)
 
 data Step = Step {
   line :: Int,  --- shown only for hypotheses
@@ -61,6 +73,10 @@ data Step = Step {
   discharged :: [Int]
   }
   deriving (Show, Eq)
+  
+mkStep li fo ru di = Step li fo ru di
+
+-- proof lines in Jaskowski-style notation
 
 data Line = Line {
   context :: [Int],
@@ -69,14 +85,17 @@ data Line = Line {
   }
   deriving (Show, Eq)
 
-mkStep li fo ru di = Step li fo ru di
-fStep fo ru = mkStep 0 fo ru []
-
 mkLine li co fo ru prs di = Line co prs (mkStep li fo ru di)
 
-------------------------------
+-- rose trees (in general)
+
+data Tree a = Tree {
+  root :: a,
+  subtrees :: [Tree a]
+  }
+  deriving (Show, Eq)
+
 -- conversions
-------------------------------
 
 nodes :: Tree a -> [a]
 nodes (Tree a ts) = a : concatMap nodes ts
@@ -88,25 +107,34 @@ lines2linetree :: [Line] -> Tree Line
 lines2linetree ls = ltr (last ls) where
   ltr concl = Tree concl [ltr (ls !! (prem-1)) | prem <- premisses concl]
 
-linetree2steptree :: Tree Line -> Tree Step
-linetree2steptree = maptree step
-
-linetree2lines :: Tree Line -> [Line]
-linetree2lines = nub . sortOn (line . step) . nodes
+lines2steptree :: [Line] -> Tree Step
+lines2steptree = maptree step . lines2linetree
 
 
 
-
-
-------------------------------------------
--- general proof terms
-------------------------------------------
+-----------------------
+-- proof terms
+----------------------
 
 data Term =
     App String [Formula] [Term] ([Formula] -> Formula)
   | Abs [Int] Term
   | Hyp Int Formula
   | Ass Int Formula
+-- the last argument of App tells how to combine the argument formulas for display
+
+---- idea: subformulas of conclusions could be derived from subderivations 
+app :: String -> [Term] -> ([Formula] -> Formula) -> Term
+app label terms conn = App label (map conclusion terms) terms conn
+
+conclusion :: Term -> Formula
+conclusion term = case term of
+  App _ _ ts c -> c (map conclusion ts)
+  Abs _ t -> conclusion t
+  Hyp _ f -> f
+  Ass _ f -> f
+
+-- macros for natural deduction
 
 andI :: Formula -> Formula -> Term -> Term -> Term
 andI a b p q = App "\\& I" [a, b] [p, q] (\ [x, y] -> And x y)
@@ -145,6 +173,8 @@ ass :: Int -> Formula -> Term
 ass x a = Ass x a
 
 
+-- conversions
+
 ptt :: Term -> Tree Step
 ptt term = case term of
   App label ps ts c -> Tree (mkStep 0 (c ps) label (concatMap bindings ts)) (map ptt ts)
@@ -169,29 +199,48 @@ prt term = case term of
   prcons i = "c_" ++ show i
 
 ptls :: Term -> [Line]
-ptls = nub . ps 1 [] where  -- line number, context
+ptls = compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of
    Ass int formula ->
-     [mkLine ln cont formula "ass" [] []]
+     [mkLine ln cont formula "ass" [int] []]  --- store original number
    Hyp int formula -> 
-     [mkLine ln (cont) formula "hypo" [] []]
+     [mkLine ln cont formula "hypo" [int] []]  --- store original number
    App label fs pts conn ->
      let ---- TODO: generalize this to a fold
          ps1 = case pts of
 	    p1:_ -> ps ln cont p1
 	 ps2 = case pts of
-	    p1:p2:_ -> ps (lastline ps1 + 1) (bindings p1 ++ cont) p2
+	    p1:p2:_ -> ps (lastline ps1 + 1) (nub (bindings p1 ++ cont)) p2
 	    _ -> ps1
 	 ps3 = case pts of
-	    p1:p2:p3:_ -> ps (lastline ps2 + 1) (bindings p2 ++ cont) p3
+	    p1:p2:p3:_ -> ps (lastline ps2 + 1) (nub (bindings p2 ++ cont)) p3
 	    _ -> ps2
 	 ln3 = lastline ps3 + 1
 	 pss = [ps1, ps2, ps3]
      in concat pss ++ [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
-   Abs xs t -> ps ln (xs ++ cont) t
+   Abs xs t -> ps ln (nub (xs ++ cont)) t
 
  lastline = line . step . last
+
+ ---- TODO compress numbering (now this creates gaps for repeated hypotheses)
+ compress :: [(Int, Int)] -> [Line] -> [Line]
+ compress renames ls = case ls of
+   ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
+     case (line (step ln), head (premisses ln)) of
+       (n, h) -> case lookup h renames of
+         Just k -> compress ((n, k) : renames) rest -- do not repeat hypothesis
+         _ -> ln{premisses=[]} : compress ((n, n) : renames) rest
+   ln : rest -> ln{premisses = [maybe p id (lookup p renames) | p <- premisses ln]} : compress renames rest
+   _ -> ls
+
+
+lines2term :: [Line] -> Term
+lines2term = tree2term . lines2steptree
+
+---- TODO
+tree2term :: Tree Step -> Term
+tree2term (Tree s ts) = app (rule s) (map tree2term ts) (const (formula s))
 
 
 ----------------------------
@@ -424,6 +473,8 @@ pst proof = case proof of
      Tree (fStep Falsum "\\not E") [pst p1, pst p2]
    FalsumE   f1 p1 ->
      Tree (fStep f1 "\\bot E") [pst p1]
+
+fStep fo ru = mkStep 0 fo ru []
 
 pls :: Proof -> [Line]
 pls = nub . ps 1 [] where  -- line number, context
