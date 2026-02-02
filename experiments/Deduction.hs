@@ -13,11 +13,13 @@ main = do
     "From lines to tree 2",
     linesDemo exLines2,
     "From tree to lines 1 (TODO)",
-    proofDemo exProof1,
+    proofDemo exProof1 ,
     "From tree to lines 2 (TODO)",
-    proofDemo exProof2,
+    proofDemo exProof2, {- 
     "From tree to lines 3 (TODO)",
-    proofDemo exProof3
+    proofDemo exProof3 -}
+    "From tree to lines 4 (TODO)",
+    proofDemo exProof4
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
@@ -72,6 +74,27 @@ fStep fo ru = mkStep 0 fo ru []
 
 mkLine li co fo ru prs di = Line co prs (mkStep li fo ru di)
 
+------------------------------
+-- conversions
+------------------------------
+
+nodes :: Tree a -> [a]
+nodes (Tree a ts) = a : concatMap nodes ts
+
+maptree :: (a -> b) -> Tree a -> Tree b
+maptree f (Tree a ts) = Tree (f a) (map (maptree f) ts)
+
+lines2linetree :: [Line] -> Tree Line
+lines2linetree ls = ltr (last ls) where
+  ltr concl = Tree concl [ltr (ls !! (prem-1)) | prem <- premisses concl]
+
+linetree2steptree :: Tree Line -> Tree Step
+linetree2steptree = maptree step
+
+linetree2lines :: Tree Line -> [Line]
+linetree2lines = nub . sortOn (line . step) . nodes
+
+
 ------------------------------------------
 -- hard-coded natural deduction from PESCA
 ------------------------------------------
@@ -122,25 +145,53 @@ pst proof = case proof of
      Tree (fStep f1 "\\bot E") [pst p1]
 
 pls :: Proof -> [Line]
-pls proof = case proof of
+pls = nub . ps 1 [] where  -- line number, context
+ ps :: Int -> [Int] -> Proof -> [Line]
+ ps ln cont proof = case proof of
    Assumption formula ->
-     [mkLine 0 [] formula "ass" [] []]
+     [mkLine ln cont formula "ass" [] []]
    Hypo int formula -> 
-     [mkLine int [] formula "hypo" [] []]
+     [mkLine ln (cont) formula "hypo" [] []]
    AndI f1 f2 p1 p2 ->
-     concat [pls p1, pls p2, [mkLine 0 [] (And f1 f2) "\\& I" [] []]]
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) cont p2
+	 ln3 = lastline ps2 + 1
+	 cont3 = cont
+     in concat [ps1, ps2, [mkLine ln3 cont3 (And f1 f2) "\\& I" [lastline ps1, lastline ps2] []]]
    AndE1 f1 f2 p1 ->
-     concat [pls p1, [mkLine 0 [] f1 "\\& E1" [] []]]
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 f1 "\\& E1" [lastline ps1] []]]
    AndE2 f1 f2 p1 ->
-     concat [pls p1, [mkLine 0 [] f2 "\\& E2" [] []]]
-   OrI1   f1 f2 p1 ->
-     concat [pls p1, [mkLine 0 [] (Or f1 f2) "\\vee I1" [] []]]
-   OrI2   f1 f2 p1 ->
-     concat [pls p1, [mkLine 0 [] (Or f1 f2) "\\vee I2" [] []]]
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 f2 "\\& E2" [lastline ps1] []]]
+   OrI1 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont -- context (last ps1)
+     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I1" [lastline ps1] []]]
+   OrI2 f1 f2 p1 ->
+     let ps1 = ps ln cont p1
+	 ln3 = lastline ps1 + 1
+	 cont3 = cont
+     in concat [ps1, [mkLine ln3 cont3 (Or f1 f2) "\\vee I2" [lastline ps1] []]]
+     
    OrE   f1 f2 f3 p1 (x, p2) (y, p3) ->
-     concat [pls p1, pls p2, pls p3, [mkLine 0 [] f3 "\\vee E" [] [x, y]]]
+     let ps1 = ps ln cont p1
+	 ps2 = ps (lastline ps1 + 1) (x:cont) p2
+	 ps3 = ps (lastline ps2 + 1) (y:cont) p3
+	 ln3 = lastline ps3 + 1
+     in concat [ps1, ps2, ps3, [mkLine ln3 cont f3 "\\vee E" (map lastline [ps1, ps2, ps3]) [x, y]]]
+
    IfI f1 f2 (x, p1) ->
-     concat [pls p1, [mkLine 0 [] (If f1 f2) "\\supset I" [] [x]]]
+     let ps1 = ps ln (x:cont) p1
+	 ln3 = lastline ps1 + 1
+	 cont1 = tail (context (last ps1))
+     in concat [ps1, [mkLine ln3 cont1 (If f1 f2) "\\supset E" [lastline ps1] [x]]]
+{-
    IfE f1 f2 p1 p2 ->
      concat [pls p1, pls p2, [mkLine 0 [] f2 "\\supset E" [] []]]
    NotI   f1 (x, p1) ->
@@ -149,26 +200,8 @@ pls proof = case proof of
      concat [pls p1, pls p2, [mkLine 0 [] Falsum "\\neg E" [] []]]
    FalsumE   f1 p1 ->
      concat [pls p1, [mkLine 0 [] f1 "\\bot E" [] []]] 
-
-------------------------------
--- conversions
-------------------------------
-
-nodes :: Tree a -> [a]
-nodes (Tree a ts) = a : concatMap nodes ts
-
-maptree :: (a -> b) -> Tree a -> Tree b
-maptree f (Tree a ts) = Tree (f a) (map (maptree f) ts)
-
-lines2linetree :: [Line] -> Tree Line
-lines2linetree ls = ltr (last ls) where
-  ltr concl = Tree concl [ltr (ls !! (prem-1)) | prem <- premisses concl]
-
-linetree2steptree :: Tree Line -> Tree Step
-linetree2steptree = maptree step
-
-linetree2lines :: Tree Line -> [Line]
-linetree2lines = nub . sortOn (line . step) . nodes
+-}
+ lastline = line . step . last
 
 ----------------------------
 -- printing
@@ -268,6 +301,13 @@ exProof1 =
       (AndE1 aA aB (Hypo 1 (And aA aB)))))
 
 exProof2 =
+  IfI aA (If aB (And aA aB))
+    (1, (IfI aB (And aA aB)
+      (2, (AndI aA aB
+        (Hypo 1 aA)
+	(Hypo 2 aB)))))
+
+exProof3 =
   IfI (And aA aB) (And (Not (Not aA)) (Not (Not aB)))
     (3, AndI (Not (Not aA)) (Not (Not aB))
       (NotI (Not aA) 
@@ -279,7 +319,7 @@ exProof2 =
 	  (Hypo 2 (Not aB))
 	  (AndE1 aA aB (Hypo 3 (And aA aB))))))
 
-exProof3 =
+exProof4 =
   IfI (Or aA aB) (Or aB aA)
     (1, OrE aA aB (Or aB aA)
       (Hypo 1 (Or aA aB))
