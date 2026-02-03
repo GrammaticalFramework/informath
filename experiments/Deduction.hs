@@ -38,15 +38,19 @@ main = do
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
-    prls ex,
-    prst (lines2steptree ex)
-----    mathdisplay (prt (lines2term ex))
+    prls ex
+    , prst (lines2steptree ex)
+    , mathdisplay (prt (lines2term ex))
+    , prls (term2lines (lines2term ex))
+    , "\\clearpage"
     ]
 
 termDemo term = unlines $ intersperse "\n\n" [
-    mathdisplay (prt term),
-    prst (ptt term),
-    prls (ptls term)
+    mathdisplay (prt term)
+    , prst (term2tree term)
+    , prls (term2lines term)
+----  , mathdisplay (prt (lines2term (term2lines term)))
+    , "\\clearpage"
     ]
 
 -------------------------------
@@ -175,10 +179,10 @@ ass x a = Ass x a
 
 -- conversions
 
-ptt :: Term -> Tree Step
-ptt term = case term of
-  App label ps ts c -> Tree (mkStep 0 (c ps) label (concatMap bindings ts)) (map ptt ts)
-  Abs xs t -> ptt t
+term2tree :: Term -> Tree Step
+term2tree term = case term of
+  App label ps ts c -> Tree (mkStep 0 (c ps) label (concatMap bindings ts)) (map term2tree ts)
+  Abs xs t -> term2tree t
   Hyp x a -> Tree (mkStep x a "hypo" []) []
   Ass x a -> Tree (mkStep x a "ass" []) []
 
@@ -198,8 +202,8 @@ prt term = case term of
   prvar i = "h_" ++ show i
   prcons i = "c_" ++ show i
 
-ptls :: Term -> [Line]
-ptls = compress [] . nub . ps 1 [] where  -- line number, context
+term2lines :: Term -> [Line]
+term2lines = compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of
    Ass int formula ->
@@ -240,7 +244,11 @@ lines2term = tree2term . lines2steptree
 
 ---- TODO
 tree2term :: Tree Step -> Term
-tree2term (Tree s ts) = app (rule s) (map tree2term ts) (const (formula s))
+tree2term (Tree s ts) = case (rule s, discharged s) of
+  ("hypo", _) -> hypo (line s) (formula s) 
+  ("ass", _) -> ass (line s) (formula s)
+----  (_, xs@(_:_)) -> app (rule s) (map (Abs xs . tree2term) ts) (const (formula s))
+  _ -> app (rule s) (map tree2term ts) (const (formula s))
 
 
 ----------------------------
@@ -327,8 +335,8 @@ exLines1 = [
   mkLine 3 [2] aA "\\& E1" [2] [],
   mkLine 4 [2] (Not aB) "\\& E2" [2] [],
   mkLine 5 [2] aB "\\supset E" [1, 3] [],
-  mkLine 6 [2] Falsum "\\supset E" [4, 5] [],
-  mkLine 7 [] (Not (And aA (Not aB))) "\\supset I" [6] [2]
+  mkLine 6 [2] Falsum "\\neg E" [4, 5] [],
+  mkLine 7 [] (Not (And aA (Not aB))) "\\neg I" [6] [2]
   ]
 
 exLines2 =
