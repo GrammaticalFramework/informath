@@ -33,8 +33,8 @@ main = do
     termDemo exTerm2, 
     "From term to lines 3 (TODO)",
     termDemo exTerm3,
-    "From term to lines 4 (TODO)",
-    termDemo exTerm4
+    "From term to lines 4 (TODO)"
+    , termDemo exTerm4
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
@@ -49,7 +49,8 @@ termDemo term = unlines $ intersperse "\n\n" [
     mathdisplay (prt term)
     , prst (term2tree term)
     , prls (term2lines term)
-----  , mathdisplay (prt (lines2term (term2lines term)))
+    , prst (lines2steptree (term2lines term))
+    , mathdisplay (prt (lines2term (term2lines term)))
     , "\\clearpage"
     ]
 
@@ -203,7 +204,7 @@ prt term = case term of
   prcons i = "c_" ++ show i
 
 term2lines :: Term -> [Line]
-term2lines = compress [] . nub . ps 1 [] where  -- line number, context
+term2lines = renumber . compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of
    Ass int formula ->
@@ -227,6 +228,7 @@ term2lines = compress [] . nub . ps 1 [] where  -- line number, context
 
  lastline = line . step . last
 
+
  ---- TODO compress numbering (now this creates gaps for repeated hypotheses)
  compress :: [(Int, Int)] -> [Line] -> [Line]
  compress renames ls = case ls of
@@ -236,7 +238,18 @@ term2lines = compress [] . nub . ps 1 [] where  -- line number, context
          Just k -> compress ((n, k) : renames) rest -- do not repeat hypothesis
          _ -> ln{premisses=[]} : compress ((n, n) : renames) rest
    ln : rest -> ln{premisses = [maybe p id (lookup p renames) | p <- premisses ln]} : compress renames rest
-   _ -> ls
+   _ -> ls 
+
+ renumber :: [Line] -> [Line]
+ renumber ls = ren [] (zip [1..] ls)
+   where
+    ren nums lns = case lns of
+      (i, ln):ilns -> case line (step ln) of
+        n | i == n -> ln : ren nums ilns
+        n | i < n ->  ln{premisses = [maybe p id (lookup p nums) | p <- premisses ln],
+	                 step = (step ln){line = i}}
+			: ren ((n, i):nums) ilns 
+      [] -> []
 
 
 lines2term :: [Line] -> Term
@@ -247,7 +260,7 @@ tree2term :: Tree Step -> Term
 tree2term (Tree s ts) = case (rule s, discharged s) of
   ("hypo", _) -> hypo (line s) (formula s) 
   ("ass", _) -> ass (line s) (formula s)
-----  (_, xs@(_:_)) -> app (rule s) (map (Abs xs . tree2term) ts) (const (formula s))
+  (_, xs@(_:_)) -> app (rule s) (map (Abs xs . tree2term) ts) (const (formula s))
   _ -> app (rule s) (map tree2term ts) (const (formula s))
 
 
