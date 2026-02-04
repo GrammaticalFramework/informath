@@ -38,11 +38,14 @@ linesDemo ex = unlines $ intersperse "\n\n" [
     , "Generated deduction tree"
     , prst (lines2steptree ex)
     , "Proof term generated from the tree"
-    , mathdisplay (prt (lines2term ex))
-    , "Linear proof generated from the proof term"
-    , prls (term2lines (lines2term ex))
+    , mathdisplay (prt termex)
+    , "Deduction tree generated from the proof term" ++ testEq (lines2steptree ex) (term2tree termex)
+    , prst (term2tree termex)
+    , "Linear proof generated from the proof term" ++ testEq ex (term2lines termex)
+    , prls (term2lines termex)
     , "\\clearpage"
     ]
+   where termex = lines2term ex
 
 termDemo term = unlines $ intersperse "\n\n" [
     "\\subsection*{From term to lines and back}"
@@ -50,14 +53,17 @@ termDemo term = unlines $ intersperse "\n\n" [
     , mathdisplay (prt term)
     , "Generated deduction tree"
     , prst (term2tree term)
-    , "Generated linear proof"
-    , prls (term2lines term)
-    , "Deduction tree generated from the linear proof"
-    , prst (lines2steptree (term2lines term))
+    , "Generated linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
+    , prls linesterm
+    , "Deduction tree generated from the linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
+    , prst (lines2steptree linesterm)
     , "Proof term generated from the linear proof"
-    , mathdisplay (prt (lines2term (term2lines term)))
+    , mathdisplay (prt (lines2term linesterm))
     , "\\clearpage"
     ]
+  where linesterm = term2lines term
+
+testEq x y = if x==y then " OK" else " TODO"
 
 -------------------------------
 -- data types and constructors
@@ -77,10 +83,10 @@ data Formula =
 -- proof steps (lines on trees)
 
 data Step = Step {
-  line :: Int,  --- shown only for hypotheses
-  formula :: Formula,
-  rule :: String,
-  discharged :: [Int]
+  hyponumber :: Int,  -- relevant only for hypotheses
+  formula :: Formula, -- formula assumed or concluded
+  rule :: String,     -- the rule that is used
+  discharged :: [Int] -- hyponumbers of discharged formulas
   }
   deriving (Show, Eq)
   
@@ -89,13 +95,15 @@ mkStep li fo ru di = Step li fo ru di
 -- proof lines in Jaskowski-style notation
 
 data Line = Line {
-  context :: [Int],
-  premisses :: [Int],
-  step :: Step
+  line :: Int,        -- line number
+  context :: [Int],   -- numbers of open hypotheses
+  premisses :: [Int], -- line numbers of premisses
+  step :: Step        -- the main content of this line
   }
   deriving (Show, Eq)
 
-mkLine li co fo ru prs di = Line co prs (mkStep li fo ru di)
+mkLine li co fo ru prs di = Line li co prs (mkStep 0 fo ru di)
+mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
 -- rose trees (in general)
 
@@ -200,50 +208,64 @@ bindings t = case t of
 term2lines :: Term -> [Line]
 term2lines = renumber . compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
- ps ln cont proof = case proof of
+ ps ln cont proof = case proof of -- next line number, its context 
+
    Ass int formula ->
-     [mkLine ln [int] formula "ass" [int] []]  --- store original number
-   Hyp int formula -> 
-     [mkLine ln [int] formula "hypo" [int] []]  --- store original number
-   App label fs pts conn ->
+     [mkHypoLine ln formula "ass" ln]
+
+   Hyp int formula ->
+     [mkHypoLine ln formula "hypo" ln] -- line int with hyponumber ??
+     
+   App label fs pts conn ->              
      let ---- TODO: generalize this to a fold
          ps1 = case pts of
-	    p1:_ -> ps ln cont p1
+	    p1:_ -> ps ln cont p1        -- context does not change
 	 ps2 = case pts of
-	    p1:p2:_ -> ps (lastline ps1 + 1) cont p2
+	    p1:p2:_ -> ps (nextline ln ps1) cont p2 -- next subtree starts from next line
 	    _ -> ps1
 	 ps3 = case pts of
-	    p1:p2:p3:_ -> ps (lastline ps2 + 1) cont p3
+	    p1:p2:p3:_ -> ps (nextline ln ps2) cont p3
 	    _ -> ps2
-	 ln3 = lastline ps3 + 1
+	 ln3 = nextline ln ps3
 	 pss = [ps1, ps2, ps3]
-     in concat pss ++ [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
-   Abs xs t -> ps ln (nub (xs ++ cont)) t
+     in concat pss ++
+          [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
+     
+   Abs xs t -> ps ln (nub (cont ++ xs)) t
 
- lastline = line . step . last
+ lastline = line . last
+ nextline ln p = lastline p + 1 --- if null p then ln else lastline p + 1
 
 
- ---- TODO compress numbering (now this creates gaps for repeated hypotheses)
+ -- compress lines by dropping repetitions of hypotheses (creates gaps in numbering)
  compress :: [(Int, Int)] -> [Line] -> [Line]
  compress renames ls = case ls of
    ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
-     case (line (step ln), premisses ln) of
+     case (hyponumber (step ln), context ln) of
        (n, [h]) -> case lookup h renames of
-         Just k -> compress ((n, k) : renames) rest -- do not repeat hypothesis
-         _ -> ln{premisses=[]} : compress ((n, n) : renames) rest
-   ln : rest -> ln{premisses = [maybe p id (lookup p renames) | p <- premisses ln]} : compress renames rest
+         Just k -> compress ((line ln, k) : renames) rest -- do not repeat hypothesis
+         _ -> ln{step = (step ln){hyponumber=line ln}} : compress ((n, line ln) : renames) rest
+   ln : rest -> renumberLine (line ln) renames ln : compress renames rest
    _ -> ls 
 
+ -- renumber lines and references to them so that no gaps are left
  renumber :: [Line] -> [Line]
  renumber ls = ren [] (zip [1..] ls)
    where
     ren nums lns = case lns of
-      (i, ln):ilns -> case line (step ln) of
+      (i, ln):ilns -> case line ln of
         n | i == n -> ln : ren nums ilns
-        n | i < n ->  ln{premisses = [maybe p id (lookup p nums) | p <- premisses ln],
-	                 step = (step ln){line = i}}
-			: ren ((n, i):nums) ilns 
+        n | i < n ->  renumberLine i nums ln : ren ((n, i):nums) ilns
+	_ -> error "i > n should not happen in renumber"
       [] -> []
+
+ -- change the line number and all references to other line numbers
+ renumberLine num nums ln = ln {
+    premisses = [maybe p id (lookup p nums) | p <- premisses ln],
+    context = [maybe p id (lookup p nums) | p <- context ln],
+    line = num,
+    step = (step ln){discharged = [maybe p id (lookup p nums) | p <- discharged (step ln)]}
+    }
 
 
 lines2term :: [Line] -> Term
@@ -252,8 +274,8 @@ lines2term = tree2term . lines2steptree
 ---- TODO
 tree2term :: Tree Step -> Term
 tree2term (Tree s ts) = case (rule s, discharged s) of
-  ("hypo", _) -> hypo (line s) (formula s) 
-  ("ass", _) -> ass (line s) (formula s)
+  ("hypo", _) -> hypo (hyponumber s) (formula s) 
+  ("ass", _) -> ass (hyponumber s) (formula s) ---- TODO: sequent lhs
   (_, xs@(_:_)) -> app (rule s) (map (Abs xs . tree2term) ts) (const (formula s))
   _ -> app (rule s) (map tree2term ts) (const (formula s))
 
@@ -285,7 +307,7 @@ prl :: Line -> [String]
 prl ln = [
 ---  concat (replicate (length (context ln)) "\\mid"),
   concat (intersperse "," (map show (context ln))),
-  show (line (step ln)) ++ ".",
+  show (line ln) ++ ".",
   prf (formula (step ln)),
   rule (step ln),
   concat (intersperse ", " (map show (premisses ln))),
@@ -295,7 +317,7 @@ prl ln = [
   
 prs :: Step -> [String]
 prs st = [
-  show (line st) ++ ".",
+  show (hyponumber st) ++ ".",
   prf (formula st),
   rule st,
   concat (map ((","++) . show) (discharged st))
@@ -348,8 +370,8 @@ aC = Atom "C"
 
 exLines1 :: [Line]
 exLines1 = [
-  mkLine 1 [] (If aA aB) "ass" [] [],
-  mkLine 2 [2] (And aA (Not aB)) "hypo" [] [],
+  mkHypoLine 1 (If aA aB) "ass" 1,
+  mkHypoLine 2 (And aA (Not aB)) "hypo" 2,
   mkLine 3 [2] aA "\\& E1" [2] [],
   mkLine 4 [2] (Not aB) "\\& E2" [2] [],
   mkLine 5 [2] aB "\\supset E" [1, 3] [],
@@ -358,7 +380,7 @@ exLines1 = [
   ]
 
 exLines2 =
-  [line{context = 1 : context line} | line <- exLines1] ++
+  [line{context = nub (1 : context line)} | line <- exLines1] ++
   [mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]]
 
 exTerm1 =
