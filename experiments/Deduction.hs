@@ -23,33 +23,38 @@ import Data.List (intersperse, nub, sortOn)
 --
 main = do
   putStrLn $ prLatexFile $ unlines $ intersperse "\n\n" [
-    "From lines to tree 1",
     linesDemo exLines1,
-    "From lines to tree 2",
     linesDemo exLines2,
-    "From term to lines 1 (TODO)",
-    termDemo exTerm1 ,
-    "From term to tree and lines 2 (TODO)",
+    termDemo exTerm1,
     termDemo exTerm2, 
-    "From term to lines 3 (TODO)",
     termDemo exTerm3,
-    "From term to lines 4 (TODO)"
-    , termDemo exTerm4
+    termDemo exTerm4
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
-    prls ex
+    "\\subsection*{From lines to term and back}"
+    , "Original linear proof"
+    , prls ex
+    , "Generated deduction tree"
     , prst (lines2steptree ex)
+    , "Proof term generated from the tree"
     , mathdisplay (prt (lines2term ex))
+    , "Linear proof generated from the proof term"
     , prls (term2lines (lines2term ex))
     , "\\clearpage"
     ]
 
 termDemo term = unlines $ intersperse "\n\n" [
-    mathdisplay (prt term)
+    "\\subsection*{From term to lines and back}"
+    , "Original proof term"
+    , mathdisplay (prt term)
+    , "Generated deduction tree"
     , prst (term2tree term)
+    , "Generated linear proof"
     , prls (term2lines term)
+    , "Deduction tree generated from the linear proof"
     , prst (lines2steptree (term2lines term))
+    , "Proof term generated from the linear proof"
     , mathdisplay (prt (lines2term (term2lines term)))
     , "\\clearpage"
     ]
@@ -192,17 +197,6 @@ bindings t = case t of
     Abs xs _ -> xs
     _ -> []
 
-prt :: Term -> String
-prt term = case term of
-  App label ps ts c -> label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
-  Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
-  Hyp x a -> prvar x
-  Ass x a -> prcons x
- where
-  parenth s = "(" ++ s ++ ")"
-  prvar i = "h_" ++ show i
-  prcons i = "c_" ++ show i
-
 term2lines :: Term -> [Line]
 term2lines = renumber . compress [] . nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
@@ -320,8 +314,19 @@ prst = mathdisplay . pr where
     _ -> concat ["\\infer[{\\scriptstyle ", prs a !! 2, prs a !! 3, "}]{",
                  prs a !! 1, "}{", unwords (intersperse "&" (map pr ts)), "}"]
 
-mathdisplay s = "\\[" ++ s ++ "\\]"
+---- TODO: pretty-printing on multiple lines
+prt :: Term -> String
+prt term = case term of
+  App label ps ts c -> label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
+  Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
+  Hyp x a -> prvar x
+  Ass x a -> prcons x
+ where
+  parenth s = "(" ++ s ++ ")"
+  prvar i = "h_" ++ show i
+  prcons i = "c_" ++ show i
 
+mathdisplay s = "\\[" ++ s ++ "\\]"
 
 prLatexFile string = unlines [
   "\\documentstyle[proof]{article}",
