@@ -206,15 +206,15 @@ bindings t = case t of
     _ -> []
 
 term2lines :: Term -> [Line]
-term2lines = renumber . compress [] . nub . ps 1 [] where  -- line number, context
+term2lines = nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
    Ass int formula ->
-     [mkHypoLine ln formula "ass" ln]
+     [mkHypoLine ln formula "ass" int]
 
    Hyp int formula ->
-     [mkHypoLine ln formula "hypo" ln] -- line int with hyponumber ??
+     [mkHypoLine ln formula "hypo" int] -- line int with hyponumber ??
      
    App label fs pts conn ->              
      let ---- TODO: generalize this to a fold
@@ -235,37 +235,6 @@ term2lines = renumber . compress [] . nub . ps 1 [] where  -- line number, conte
 
  lastline = line . last
  nextline ln p = lastline p + 1 --- if null p then ln else lastline p + 1
-
-
- -- compress lines by dropping repetitions of hypotheses (creates gaps in numbering)
- compress :: [(Int, Int)] -> [Line] -> [Line]
- compress renames ls = case ls of
-   ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
-     case (hyponumber (step ln), context ln) of
-       (n, [h]) -> case lookup h renames of
-         Just k -> compress ((line ln, k) : renames) rest -- do not repeat hypothesis
-         _ -> ln{step = (step ln){hyponumber=line ln}} : compress ((n, line ln) : renames) rest
-   ln : rest -> renumberLine (line ln) renames ln : compress renames rest
-   _ -> ls 
-
- -- renumber lines and references to them so that no gaps are left
- renumber :: [Line] -> [Line]
- renumber ls = ren [] (zip [1..] ls)
-   where
-    ren nums lns = case lns of
-      (i, ln):ilns -> case line ln of
-        n | i == n -> ln : ren nums ilns
-        n | i < n ->  renumberLine i nums ln : ren ((n, i):nums) ilns
-	_ -> error "i > n should not happen in renumber"
-      [] -> []
-
- -- change the line number and all references to other line numbers
- renumberLine num nums ln = ln {
-    premisses = [maybe p id (lookup p nums) | p <- premisses ln],
-    context = [maybe p id (lookup p nums) | p <- context ln],
-    line = num,
-    step = (step ln){discharged = [maybe p id (lookup p nums) | p <- discharged (step ln)]}
-    }
 
 
 lines2term :: [Line] -> Term
@@ -379,10 +348,17 @@ exLines1 = [
   mkLine 7 [] (Not (And aA (Not aB))) "\\neg I" [6] [2]
   ]
 
-exLines2 =
-  [line{context = nub (1 : context line)} | line <- exLines1] ++
-  [mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]]
-
+exLines2 = [
+  mkHypoLine 1 (If aA aB) "hypo" 1,
+  mkHypoLine 2 (And aA (Not aB)) "hypo" 2,
+  mkLine 3 [1,2] aA "\\& E1" [2] [],
+  mkLine 4 [1,2] (Not aB) "\\& E2" [2] [],
+  mkLine 5 [1,2] aB "\\supset E" [1, 3] [],
+  mkLine 6 [1,2] Falsum "\\neg E" [4, 5] [],
+  mkLine 7 [1] (Not (And aA (Not aB))) "\\neg I" [6] [2],
+  mkLine 8 [] (If (If aA aB) (Not (And aA (Not aB)))) "\\supset I" [7] [1]
+  ]
+  
 exTerm1 =
   ifI (And aA aB) (And aB aA)
     (1, (andI aB aA
