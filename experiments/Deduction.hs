@@ -1,6 +1,6 @@
 module Deduction where
 
-import Data.List (intersperse, nub, sortOn)
+import Data.List (intersperse, nub, nubBy, sortOn)
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."
@@ -206,7 +206,8 @@ bindings t = case t of
     _ -> []
 
 term2lines :: Term -> [Line]
-term2lines = nub . ps 1 [] where  -- line number, context
+term2lines = renumber . compress [] .
+    nub . ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
@@ -236,6 +237,36 @@ term2lines = nub . ps 1 [] where  -- line number, context
  lastline = line . last
  nextline ln p = lastline p + 1 --- if null p then ln else lastline p + 1
 
+ -- compress lines by dropping repetitions of hypotheses (creates gaps in numbering)
+ compress :: [(Int, Int)] -> [Line] -> [Line]
+ compress renames ls = case ls of
+   ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
+     case (hyponumber (step ln), context ln) of
+       (n, [h]) -> case lookup h renames of
+         Just k -> compress ((line ln, k) : renames) rest -- do not repeat hypothesis
+         _ -> ln{step = (step ln){hyponumber=line ln}, context= line ln : tail (context ln)} :
+	      compress ((n, line ln) : renames) rest
+   ln : rest -> renumberLine (line ln) renames ln : compress renames rest
+   _ -> ls 
+
+ -- renumber lines and references to them so that no gaps are left
+ renumber :: [Line] -> [Line]
+ renumber ls = ren [] (zip [1..] ls)
+   where
+    ren nums lns = case lns of
+      (i, ln):ilns -> case line ln of
+        n | i == n -> ln : ren nums ilns
+        n | i < n  -> renumberLine i nums ln : ren ((n, i):nums) ilns
+	_ -> error "i > n should not happen in renumber"
+      [] -> []
+
+ -- change the line number and all references to other line numbers
+ renumberLine num nums ln = ln {
+    premisses = [maybe p id (lookup p nums) | p <- premisses ln],
+    context = [maybe p id (lookup p nums) | p <- context ln],
+    line = num,
+    step = (step ln){discharged = [maybe p id (lookup p nums) | p <- discharged (step ln)]}
+    }
 
 lines2term :: [Line] -> Term
 lines2term = tree2term . lines2steptree
