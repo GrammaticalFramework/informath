@@ -208,7 +208,9 @@ bindings t = case t of
 term2lines :: Term -> [Line]
 term2lines =
     compress 0 [] [] .
-    ps 1 [] where  -- line number, context
+    ps 1 []             
+      where
+ -- generate lines starting with this line number and context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
@@ -219,36 +221,40 @@ term2lines =
      [mkHypoLine ln formula "hypo" int] -- line int with hyponumber ??
      
    App label fs pts conn ->              
-     let ---- TODO: generalize this to a fold
-         ps1 = case pts of
-	    p1:_ -> ps ln cont p1       -- context does not change
-	 ps2 = case pts of
-	    p1:p2:_ -> ps (nextline ln ps1) cont p2 -- next subtree starts from next line
-	    _ -> []
-	 ps3 = case pts of
-	    p1:p2:p3:_ -> ps (nextline ln ps2) cont p3
-	    _ -> []
-	 pss = filter (not . null) [ps1, ps2, ps3]
+     let
+         pss = psfold cont (pts, ln)
 	 ln3 = nextline ln (concat pss)
      in concat pss ++
           [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
      
    Abs xs t -> ps ln (cont ++ xs) t
 
+ psfold :: [Int] -> ([Term], Int) -> [[Line]]
+ psfold cont (pts, n) = case pts of
+   p : pp -> case
+     ps n cont p of
+       [] -> psfold cont (pp, n)
+       ls -> ls : psfold cont (pp, nextline n ls)
+   [] -> []
+
  lastline = line . last
  nextline ln p = if null p then ln else lastline p + 1
 
- -- compress lines by dropping repetitions of hypotheses (creates gaps in numbering)
+ -- compress lines by dropping repetitions of hypotheses and renumbering lines
  compress :: Int -> [(Int, Int)] -> [(Int, Int)] -> [Line] -> [Line]
  compress gaps relines rehypos ls = case ls of
    ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
      case (hyponumber (step ln)) of
        h -> case lookup h rehypos of
-         Just k ->
-	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest -- omit repeated hypothesis, add gap
-         _ ->
+         Just k ->  -- old hypothesis: add gap and re-point line number to first occurrence
+	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest
+         _ ->       -- new hypothesis: update its line number and hypo number to new line number 
 	   let nln = line ln - gaps
-	   in ln{line = nln, step = (step ln){hyponumber=nln}, context= nln : tail (context ln)} :
+	   in ln{
+	         line = nln,
+		 step = (step ln){hyponumber=nln},
+		 context = nln : tail (context ln)
+		 } :
 	      compress gaps ((line ln, nln):relines) ((h, nln) : rehypos) rest
    ln : rest ->
            renumberLine (line ln - gaps) relines rehypos ln :
