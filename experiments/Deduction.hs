@@ -28,7 +28,8 @@ main = do
     termDemo exTerm1,
     termDemo exTerm2, 
     termDemo exTerm3,
-    termDemo exTerm4
+    termDemo exTerm4,
+    termDemo exTerm5
     ]
 
 linesDemo ex = unlines $ intersperse "\n\n" [
@@ -189,6 +190,11 @@ hypo x a = Hyp x a
 
 ass :: Int -> Formula -> Term
 ass x a = Ass x a
+
+-- generalized elimination
+
+andE :: Formula -> Formula -> Formula -> Term -> (Int, Int, Term) -> Term
+andE a b c r (x, y, p) = App "\\& E" [a, b, c] [r, Abs [x, y] p] (\ [x, y, z] -> z)
 
 
 -- conversions
@@ -422,6 +428,10 @@ exTerm4 =
       (hypo 1 (Or aA aB))
       (2, (orI2 aB aA (hypo 2 aA)))
       (3, (orI1 aB aA (hypo 3 aB))))
+
+exTerm5 =
+  ifI (And aA aB) (And aB aA)
+    (1, (andE aA aB (And aB aA) (hypo 1 (And aA aB)) (3, 2, andI aB aA (hypo 3 aB) (hypo 2 aA))))
 
 
 
