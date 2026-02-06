@@ -37,7 +37,7 @@ linesDemo ex = unlines $ intersperse "\n\n" [
     , prls ex
     , "Generated deduction tree"
     , prst (lines2steptree ex)
-    , "Proof term generated from the tree"
+    , "Proof term generated from the tree" ++ testEq 1 0
     , mathdisplay (prt termex)
     , "Deduction tree generated from the proof term" ++ testEq (lines2steptree ex) (term2tree termex)
     , prst (term2tree termex)
@@ -206,8 +206,9 @@ bindings t = case t of
     _ -> []
 
 term2lines :: Term -> [Line]
-term2lines = renumber . compress [] .
-    nub . ps 1 [] where  -- line number, context
+term2lines =
+    compress 0 [] [] .
+    ps 1 [] where  -- line number, context
  ps :: Int -> [Int] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
@@ -220,52 +221,46 @@ term2lines = renumber . compress [] .
    App label fs pts conn ->              
      let ---- TODO: generalize this to a fold
          ps1 = case pts of
-	    p1:_ -> ps ln cont p1        -- context does not change
+	    p1:_ -> ps ln cont p1       -- context does not change
 	 ps2 = case pts of
 	    p1:p2:_ -> ps (nextline ln ps1) cont p2 -- next subtree starts from next line
-	    _ -> ps1
+	    _ -> []
 	 ps3 = case pts of
 	    p1:p2:p3:_ -> ps (nextline ln ps2) cont p3
-	    _ -> ps2
-	 ln3 = nextline ln ps3
-	 pss = [ps1, ps2, ps3]
+	    _ -> []
+	 pss = filter (not . null) [ps1, ps2, ps3]
+	 ln3 = nextline ln (concat pss)
      in concat pss ++
           [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
      
-   Abs xs t -> ps ln (nub (cont ++ xs)) t
+   Abs xs t -> ps ln (cont ++ xs) t
 
  lastline = line . last
- nextline ln p = lastline p + 1 --- if null p then ln else lastline p + 1
+ nextline ln p = if null p then ln else lastline p + 1
 
  -- compress lines by dropping repetitions of hypotheses (creates gaps in numbering)
- compress :: [(Int, Int)] -> [Line] -> [Line]
- compress renames ls = case ls of
+ compress :: Int -> [(Int, Int)] -> [(Int, Int)] -> [Line] -> [Line]
+ compress gaps relines rehypos ls = case ls of
    ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
-     case (hyponumber (step ln), context ln) of
-       (n, [h]) -> case lookup h renames of
-         Just k -> compress ((line ln, k) : renames) rest -- do not repeat hypothesis
-         _ -> ln{step = (step ln){hyponumber=line ln}, context= line ln : tail (context ln)} :
-	      compress ((n, line ln) : renames) rest
-   ln : rest -> renumberLine (line ln) renames ln : compress renames rest
+     case (hyponumber (step ln)) of
+       h -> case lookup h rehypos of
+         Just k ->
+	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest -- omit repeated hypothesis, add gap
+         _ ->
+	   let nln = line ln - gaps
+	   in ln{line = nln, step = (step ln){hyponumber=nln}, context= nln : tail (context ln)} :
+	      compress gaps ((line ln, nln):relines) ((h, nln) : rehypos) rest
+   ln : rest ->
+           renumberLine (line ln - gaps) relines rehypos ln :
+           compress gaps ((line ln, line ln -gaps):relines) rehypos rest
    _ -> ls 
 
- -- renumber lines and references to them so that no gaps are left
- renumber :: [Line] -> [Line]
- renumber ls = ren [] (zip [1..] ls)
-   where
-    ren nums lns = case lns of
-      (i, ln):ilns -> case line ln of
-        n | i == n -> ln : ren nums ilns
-        n | i < n  -> renumberLine i nums ln : ren ((n, i):nums) ilns
-	_ -> error "i > n should not happen in renumber"
-      [] -> []
-
  -- change the line number and all references to other line numbers
- renumberLine num nums ln = ln {
-    premisses = [maybe p id (lookup p nums) | p <- premisses ln],
-    context = [maybe p id (lookup p nums) | p <- context ln],
+ renumberLine num relines rehypos ln = ln {
+    premisses = [maybe p id (lookup p relines) | p <- premisses ln],
+    context = [maybe p id (lookup p rehypos) | p <- context ln],
     line = num,
-    step = (step ln){discharged = [maybe p id (lookup p nums) | p <- discharged (step ln)]}
+    step = (step ln){discharged = [maybe p id (lookup p rehypos) | p <- discharged (step ln)]}
     }
 
 lines2term :: [Line] -> Term
