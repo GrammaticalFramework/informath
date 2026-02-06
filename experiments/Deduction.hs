@@ -78,7 +78,14 @@ data Formula =
   | If Formula Formula
   | Not Formula
   | Falsum
-  | Atom String
+  | Atom String [Exp]
+  | Forall Int Formula Formula
+  | Exist Int Formula Formula
+  deriving (Show, Eq)
+
+data Exp =
+    Var Int
+  | Funapp String [Exp]
   deriving (Show, Eq)
 
 -- proof steps (lines on trees)
@@ -197,6 +204,15 @@ andE :: Formula -> Formula -> Formula -> Term -> (Int, Int, Term) -> Term
 andE a b c r (x, y, p) = App "\\& E" [a, b, c] [r, Abs [x, y] p] (\ [x, y, z] -> z)
 
 
+-- quantifiers ---- have to generalize App ?
+
+forallI :: Formula -> (Exp -> Formula) -> (Int, Term) -> Term
+forallI a b (y, p) = App "\\forall I" [a, b (Var y)] [Abs [y] p]  (\ [d, f] -> Forall y d f)
+
+forallE :: Formula -> (Exp -> Formula) -> Term -> Exp -> Term
+forallE a b p e = App "\\forall E" [a, b e] [p]  (\ [d, f] -> b e)
+
+
 -- conversions
 
 term2tree :: Term -> Tree Step
@@ -294,13 +310,19 @@ tree2term (Tree s ts) = case (rule s, discharged s) of
 prf :: Formula -> String
 prf = pr 0 where
   pr n f = case f of
-    And a b -> par 3 n (pr 3 a ++ " \\& " ++ pr 4 b)
-    Or a b -> par 2 n (pr 2 a ++ " \\vee " ++ pr 3 b)
-    If a b -> par 1 n (pr 2 a ++ " \\supset " ++ pr 2 b)
-    Not a -> par 4 n ("\\neg " ++ pr 4 a)
+    And a b -> parenth 3 n (pr 3 a ++ " \\& " ++ pr 4 b)
+    Or a b -> parenth 2 n (pr 2 a ++ " \\vee " ++ pr 3 b)
+    If a b -> parenth 1 n (pr 2 a ++ " \\supset " ++ pr 2 b)
+    Not a -> parenth 4 n ("\\neg " ++ pr 4 a)
     Falsum -> "\\bot"
-    Atom s -> s
-  par k n f = if k >= n then f else "(" ++ f ++ ")"
+    Atom s es -> s ++ if null es then "" else parenth 1 0 (concat (intersperse "," (map prexp es)))
+
+parenth k n f = if k >= n then f else "(" ++ f ++ ")"
+
+prexp :: Exp -> String
+prexp e = case e of
+  Var i -> "x" ++ show i
+  Funapp f es -> f ++ parenth 1 0 (concat (intersperse "," (map prexp es)))
 
 
 prls :: [Line] -> String
@@ -371,13 +393,16 @@ prLatexFile string = unlines [
 -- examples
 ---------------------------
 
-aA = Atom "A"
-aB = Atom "B"
-aC = Atom "C"
+aA = Atom "A" []
+aB = Atom "B" []
+aC = Atom "C" []
+
+aF es = Atom "F" es
+aG es = Atom "G" es
 
 exLines1 :: [Line]
 exLines1 = [
-  mkHypoLine 1 (If aA aB) "ass" 1,
+  mkHypoLine 1 (If aA aB) "hypo" 1,
   mkHypoLine 2 (And aA (Not aB)) "hypo" 2,
   mkLine 3 [2] aA "\\& E1" [2] [],
   mkLine 4 [2] (Not aB) "\\& E2" [2] [],
@@ -432,7 +457,6 @@ exTerm4 =
 exTerm5 =
   ifI (And aA aB) (And aB aA)
     (1, (andE aA aB (And aB aA) (hypo 1 (And aA aB)) (3, 2, andI aB aA (hypo 3 aB) (hypo 2 aA))))
-
 
 
 
