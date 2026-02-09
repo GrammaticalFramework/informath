@@ -5,7 +5,9 @@ cat
   Hence ;
 
 fun
+  --- these are not (yet) interpretable in Dedukti
   UnitsProof : [Unit] -> Proof ;
+  UnitJmt : Unit -> Jmt ;
 
   HyposAssumption : [Hypo] -> Unit ;
   IdentKindAssumption : Kind -> Ident -> Unit ;

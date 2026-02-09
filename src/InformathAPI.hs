@@ -127,7 +127,7 @@ processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 processLatex :: Env -> String -> [ParseResult]
 processLatex env = map (processLatexLine env) . filter parsable . lines
  where
-   parsable line = not (null line) && notElem (head line) "\\%" 
+   parsable line = not (null line) --- && notElem (head line) "\\%" 
 
 
 -- * Conversion outcomes

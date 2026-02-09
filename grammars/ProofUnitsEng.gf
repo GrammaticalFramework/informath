@@ -16,6 +16,7 @@ lincat
 
 lin
 ----  UnitsProof units = units ;
+  UnitJmt unit = unit ;
 
   HyposAssumption hypos =
     hypos.text ;

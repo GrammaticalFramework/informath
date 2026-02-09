@@ -71,6 +71,11 @@ jmt2jmt jment = case jment of
       (exp2ident exp)
       MTNone
       (MEExp (exp2dedukti df))
+  GUnitJmt unit ->
+    JDef
+      (QIdent "proofUnit")
+      MTNone
+      (MEExp (unit2exp unit))
 
 rule2dedukti :: GRule -> Rule
 rule2dedukti rule = case rule of
@@ -78,6 +83,44 @@ rule2dedukti rule = case rule of
     RRule (map (PBVar . ident2ident) idents) (exp2deduktiPatt patt) (exp2dedukti exp)
   GNoVarRewriteRule patt exp ->
     rule2dedukti (GRewriteRule (GListIdent []) patt exp)
+
+
+unit2exp :: GUnit -> Exp
+unit2exp unit = case unit of
+  GBeginAbbreviationUnit label -> wrap "BeginAbbreviationUnit" [EIdent (label2ident label)]
+  GBeginEnumerateUnit -> uni "BeginEnumerateUnit"
+  GBeginLemmaUnit label -> wrap "BeginLemmaUnit" [EIdent (label2ident label)]
+  GBeginProofMethodUnit method_ -> uni "BeginProofMethodUnit"
+  GBeginProofUnit -> uni "BeginProofUnit"
+  GBeginPropositionUnit label -> wrap "BeginPropositionUnit" [EIdent (label2ident label)]
+  GBeginStructUnit label -> wrap "BeginStructUnit" [EIdent (label2ident label)]
+  GCaseGoal prop -> wrap "CaseGoal" [prop2dedukti prop]
+  GCasesGoal -> uni "CasesGoal"
+  GEndAbbreviationUnit -> uni "EndAbbreviationUnit"
+  GEndEnumerateUnit -> uni "EndEnumerateUnit"
+  GEndLemmaUnit -> uni "EndLemmaUnit"
+  GEndProofUnit -> uni "EndProofUnit"
+  GEndPropositionUnit -> uni "EndPropositionUnit"
+  GEndStructUnit -> uni "EndStructUnit"
+  GEnoughGoal prop -> wrap "EnoughGoal" [prop2dedukti prop]
+  GFirstVerifyGoal prop -> wrap "FirstVerifyGoal" [prop2dedukti prop]
+  GFollowsPropConclusion prop -> wrap "FollowsPropConclusion" [prop2dedukti prop]
+  GHyposAssumption (GListHypo hypos) -> wrap "HyposAssumptiop" [foldr EFun eUnit (concatMap hypo2dedukti hypos)]
+  GIdentExpAssumption exp ident -> wrap "IdentExpAssumptiopn" [exp2dedukti exp, EIdent (ident2ident ident)]
+  GIdentKindAssumption kind ident -> wrap "IdentKindAssumptiopn" [kind2dedukti kind, EIdent (ident2ident ident)]
+  GInductionGoal -> uni "InductionGoal"
+  GLabelConclusion label -> wrap "LabelConclution" [EIdent (label2ident label)]
+  GObviousConclusion -> uni "ObviousConclusion"
+  GPropAssumption prop -> wrap "PropAssumption" [prop2dedukti prop]
+  GPropConclusion hence prop -> wrap "PropConclusion" [prop2dedukti prop]
+  GPropLabelConclusion hence prop label -> wrap "PropLabelConclusion" [prop2dedukti prop]
+  GSinceConclusion a b -> wrap "SinceConclusion" [prop2dedukti a, prop2dedukti b]
+  GSinceGoal a b -> wrap "SinceGoal" [prop2dedukti a, prop2dedukti b]
+  _ -> eUnit
+ where
+  wrap s xs = foldl EApp (EIdent (QIdent s)) xs
+  uni s = wrap s []
+  eUnit = wrap "UNIT" []
 
 prop2dedukti :: GProp -> Exp
 prop2dedukti prop = case prop of

@@ -66,11 +66,11 @@ oper
   emptyAdv = ParadigmsEng.mkAdv "" ;
 
   beginUnit = overload {
-    beginUnit : Str -> Text = \s -> strText ("\\begin{" ++ s ++ "}") ;
+    beginUnit : Str -> Text = \s -> strText ("\\begin{" + s + "}") ;
     beginUnit : Str -> Label -> Text = \s, label ->
-      ccText (strText ("\\begin{" ++ s ++ "}")) (strText ("\\label{" ++ (mkUtt label.np).s ++ "}")) ;
+      ccText (strText ("\\begin{" + s + "}")) (strText ("\\label{" ++ (mkUtt label.np).s ++ "}")) ;
     } ;
 
-  endUnit : Str -> Text = \s -> strText ("\\begin{" ++ s ++ "}") ;
+  endUnit : Str -> Text = \s -> strText ("\\end{" + s + "}") ;
 
 }
