@@ -11,7 +11,6 @@ open
 in {
 
 lincat
-  Unit = Text ;
   [Unit] = Text ;
 
 lin

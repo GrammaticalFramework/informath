@@ -31,6 +31,7 @@ lincat
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
   Adj3 = Adj3T ;
+  Unit = Text ;
 
 -- lexicon, verbal
   Noun = CN ;

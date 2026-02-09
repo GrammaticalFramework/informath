@@ -9,6 +9,9 @@ concrete NaprocheEng of Naproche = CategoriesEng, TermsLatex **
     (E = ExtendEng)
 in {
 
+lincat
+  Method = Text ;
+
 lin
   SupposePropHypo prop =
     mkUtt (mkImp (E.ComplBareVS suppose_VS (topProp prop))) ;
@@ -30,7 +33,22 @@ lin
 
   NoArticleExistProp argkind prop =
     simpleProp (lin S
-      {s = (mkS (E.ExistsNP (mkNP (mkCN argkind.cn argkind.adv)))).s ++ "such that" ++ prop.s.s}) ;  
+      {s = (mkS (E.ExistsNP (mkNP (mkCN argkind.cn argkind.adv)))).s ++ "such that" ++ prop.s.s}) ;
+
+
+  BeginPropositionUnit label = beginUnit "proposition" label ;
+  EndPropositionUnit = endUnit "proposition" ;
+  BeginProofUnit = beginUnit "proof" ; 
+  BeginProofMethodUnit method = ccText (beginUnit "proof") (strText ("(" ++ method.s ++ ")")) ;
+  EndProofUnit = endUnit "proof" ;
+  BeginAbbreviationUnit label = beginUnit "abbreviation" label ;
+  EndAbbreviationUnit = endUnit "abbreviation" ;
+  BeginLemmaUnit label = beginUnit "lemma" label ;
+  EndLemmaUnit = endUnit "lemma" ;
+  BeginStructUnit label = beginUnit "struct" label ;
+  EndStructUnit = endUnit "struct" ;
+  BeginEnumerateUnit = beginUnit "enumerate" ;
+  EndEnumerateUnit = endUnit "enumerate" ;
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
@@ -46,5 +64,13 @@ oper
 
   emptyN = mkN "" "" ;
   emptyAdv = ParadigmsEng.mkAdv "" ;
-  
+
+  beginUnit = overload {
+    beginUnit : Str -> Text = \s -> strText ("\\begin{" ++ s ++ "}") ;
+    beginUnit : Str -> Label -> Text = \s, label ->
+      ccText (strText ("\\begin{" ++ s ++ "}")) (strText ("\\label{" ++ (mkUtt label.np).s ++ "}")) ;
+    } ;
+
+  endUnit : Str -> Text = \s -> strText ("\\begin{" ++ s ++ "}") ;
+
 }

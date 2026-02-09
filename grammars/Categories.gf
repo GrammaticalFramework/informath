@@ -23,6 +23,7 @@ cat
   [Rule] {1} ;
   Coercion ;
   [Ident] {1} ;
+  Unit ;
 
 -- lexicon, verbal
   Noun ;    -- Kind -- set

@@ -11,7 +11,6 @@ open
 in {
 
 lincat
-  Unit = Text ;
   [Unit] = Text ;
   Hence = Adv ;
 
@@ -55,6 +54,8 @@ lin
 
   noHence = P.mkAdv "" ;
   henceHence = P.mkAdv "hence" ;
+  thusHence = P.mkAdv "thus" ;
+  thenHence = P.mkAdv "then" ;
   altogetherHence = P.mkAdv "altogether" ;
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "in particular" ;

@@ -1,7 +1,6 @@
 abstract ProofUnits = Categories ** {
 
 cat
-  Unit ;
   [Unit] ;
   Hence ;
 
@@ -29,6 +28,8 @@ fun
 
   noHence : Hence ;
   henceHence : Hence ;
+  thusHence : Hence ;
+  thenHence : Hence ;
   altogetherHence : Hence ;
   afortioriHence : Hence ;
   inParticularHence : Hence ;

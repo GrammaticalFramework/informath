@@ -2,6 +2,9 @@ abstract Naproche = Categories, Terms ** {
 
 -- extensions from Naproche-ZF
 
+cat
+  Method ; -- sometimes used in \begin{proof}[ <Method> ]
+
 fun
 -- combinations
   SupposePropHypo : Prop -> Hypo ;
@@ -13,6 +16,23 @@ fun
   IndexedDeclarationArgKind : Int -> ArgKind ;
   NoCommaExistProp : [ArgKind] -> Prop -> Prop ;
   NoArticleExistProp : ArgKind -> Prop -> Prop ;  -- there exists x such that P
+
+-- proof units
+
+  BeginPropositionUnit : Label -> Unit ;
+  EndPropositionUnit : Unit ;
+  BeginProofUnit : Unit ;
+  BeginProofMethodUnit : Method -> Unit ;
+  EndProofUnit : Unit ;
+  BeginAbbreviationUnit : Label -> Unit ;
+  EndAbbreviationUnit : Unit ;
+  BeginLemmaUnit : Label -> Unit ;
+  EndLemmaUnit : Unit ;
+  BeginStructUnit : Label -> Unit ;
+  EndStructUnit : Unit ;
+  BeginEnumerateUnit : Unit ;
+  EndEnumerateUnit : Unit ;
+----  ImportUnit : String -> Unit ;
 
 
 -- lexicon
