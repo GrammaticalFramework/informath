@@ -1,8 +1,10 @@
 "Analyse Naproch-ZF code"
 
-FILE = 'nzf-lines.tex'
-#MATHMARK = 'LATEXMATH'
-MATHMARK = '$X$'
+import sys
+
+FILE = sys.argv[1]
+MATHMARK = 'LATEXMATH'
+#MATHMARK = '$X$'
 
 def untex(s):
     begtex = s.strip()[:1] == '$'   # line starts with $  
@@ -21,15 +23,28 @@ def untex(s):
 #PROCESS = lambda line: ' '.join(untex(line).split()[:3])
 PROCESS = untex
 
+def chop_lines(file):
+    for line in file:
+        yield line
+
+def chop_sentences(file):
+    content = ' '.join([line.strip() for line in file if line.strip()[:1] != "\\"])
+    for line in content.split('. '):
+        line = line + '.'
+        yield line
+        
+CHOP = chop_sentences
+
 with open(FILE) as file:
     freqs = {}
-    for line in file:
+    for line in CHOP(file):
         line = PROCESS(line)
         freqs[line] = freqs.get(line, 0) + 1
         
 
 for it in sorted(list(freqs.items()), key=lambda li: 0-li[1]):
-#    print(it)
-    print(it[0])      
+#    print(it)      # show all distinct sentences and their frequencies in descending order 
+    print(it[0])  # show just the sentences
+    print()
 
     
