@@ -45,14 +45,10 @@ lin
   EndAbbreviationUnit = endUnit "abbreviation" ;
   BeginLemmaUnit label = beginUnit "lemma" label ;
   EndLemmaUnit = endUnit "lemma" ;
-  BeginDefinitionUnit label = beginUnit "definition" label ;
-  EndDefinitionUnit = endUnit "definition" ;
   BeginStructUnit label = beginUnit "struct" label ;
   EndStructUnit = endUnit "struct" ;
   BeginEnumerateUnit = beginUnit "enumerate" ;
   EndEnumerateUnit = endUnit "enumerate" ;
-
-  crefLabel ident = mkLabel ("\\cref{" ++ ident ++ "}") ;
 
   inhabited_Adj = mkAP (mkA "inhabited") ;
   empty_Adj = mkAP (mkA "empty") ;
@@ -60,7 +56,7 @@ lin
   disjoint_Compar = "\\notmeets" ;
   contain_Verb2 = mkV2 "contain" ;
   ni_Compar = "\\ni" ;
-
+  
 
 oper
   suppose_VS = mkVS (mkV "suppose") ;

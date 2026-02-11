@@ -28,16 +28,11 @@ fun
   EndAbbreviationUnit : Unit ;
   BeginLemmaUnit : Label -> Unit ;
   EndLemmaUnit : Unit ;
-  BeginDefinitionUnit : Label -> Unit ;
-  EndDefinitionUnit : Unit ;
   BeginStructUnit : Label -> Unit ;
   EndStructUnit : Unit ;
   BeginEnumerateUnit : Unit ;
   EndEnumerateUnit : Unit ;
 ----  ImportUnit : String -> Unit ;
-
--- reference
-  crefLabel : Ident -> Label ;
 
 
 -- lexicon

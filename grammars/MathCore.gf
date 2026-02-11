@@ -56,8 +56,8 @@ fun
   KindArgKind : Kind -> ArgKind ;
   IdentArgKind : Kind -> Ident -> ArgKind ;
 
-  IdentLabel : Ident -> Label ; -- to deal with Dedukti labels not in grammar
-  noLabel : Label ; --- to deal with unlabelled statements
+  StrLabel : String -> Label ; -- to deal with Dedukti labels not in grammar
+  noLabel : Label ; -- to deal with unlabelled statements
   axiomLabel : Label ;
   theoremLabel : Label ;
   definitionLabel : Label ;

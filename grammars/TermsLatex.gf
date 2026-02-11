@@ -11,7 +11,6 @@ lincat
   Const = Str ;
   Oper = OperT ;
   Oper2 = Oper2T ;
-  Terms = Str ;
 
 lin
   EquationFormula eq = constant eq.s ;
@@ -54,12 +53,7 @@ lin
     p = op.p ;
     isNumber = False
     } ; 
-
-  MacroTerm ident terms =
-    constant (ident ++ terms) ** {isNumber = False} ; --- False
-
-  OneTerms term = curly (top term) ;
-  AddTerms term terms = curly (top term) ++ terms ;
+      
 
 oper
 
@@ -143,6 +137,4 @@ oper
   macroOper2 : Str -> Prec -> Prec -> Prec -> Oper2T
     = \op, p, ep1, ep2 -> mkOper2 (op + "{") "}{" "}" p ep1 ep2  ; 
 
-  curly : Str -> Str = \s -> "{" ++ s ++ "}" ;
-  
 }
