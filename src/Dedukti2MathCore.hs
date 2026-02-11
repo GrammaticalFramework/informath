@@ -19,7 +19,7 @@ jmt2core = cleanup . jmt2jmt . introduceLocalDefinitions where
   cleanup :: Informath.Tree a -> Informath.Tree a
   cleanup t = case t of
     GStrIdent (GString s) -> GStrIdent (GString (unescapeConstant (stripConstant s)))
-    GStrLabel (GString s) -> GStrLabel (GString (unescapeConstant (stripConstant s)))
+    GIdentLabel ident -> GIdentLabel (cleanup ident)
     _ -> Informath.composOp cleanup t
 
 jmt2jmt :: Jmt -> GJmt
@@ -76,7 +76,7 @@ axiomLabel :: GLabel
 axiomLabel = LexLabel "axiomLabel"
 
 axiomUndefLabel :: QIdent -> GLabel
-axiomUndefLabel ident = GStrLabel (GString ("Undefined_" ++ show ident))
+axiomUndefLabel ident = GIdentLabel (GStrIdent (GString ("Undefined_" ++ show ident)))
 
 funListExp :: QIdent -> [GExp] -> GExp
 funListExp ident exps = case ident of
@@ -346,7 +346,7 @@ ident2label :: QIdent -> GLabel
 ident2label ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Label", c) -> LexLabel c
-    _ -> GStrLabel (GString s)
+    _ -> GIdentLabel (ident2ident ident)
 
 ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of

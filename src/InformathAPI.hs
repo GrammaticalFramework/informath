@@ -342,6 +342,10 @@ printParseResult env result = case 0 of
     [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
   _ | isFlag "-translate" env ->
     transResults result
+  _ | isFlag "-failures" env ->
+    if null (parseResults (result))
+    then [originalLine result]
+    else []
   _ | isFlag "-json" env || isFlag "-v" env -> [encodeJSON $ mkJSONObject [
     mkJSONField "originalLine" (stringJSON (originalLine result)),
     mkJSONField "lexedLine" (stringJSON (lexedLine result)),
