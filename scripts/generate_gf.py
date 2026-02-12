@@ -50,6 +50,7 @@ def gfrules(words, cat, oper=None, params=[]):
 
 
 for line in sys.stdin:
+    line = ''.join([c for c in line if c.isalpha() or c in "-'"])
     for rule in gfrules(line.split(), CAT):
         print(rule)
 
