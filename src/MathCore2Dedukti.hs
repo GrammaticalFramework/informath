@@ -73,7 +73,7 @@ jmt2jmt jment = case jment of
       (MEExp (exp2dedukti df))
   GUnitJmt unit ->
     JDef
-      (QIdent "proofUnit")
+      (QIdent "unit")
       MTNone
       (MEExp (unit2exp unit))
 
@@ -88,10 +88,10 @@ rule2dedukti rule = case rule of
 unit2exp :: GUnit -> Exp
 unit2exp unit = case unit of
   GBeginAbbreviationUnit label -> wrap "BeginAbbreviationUnit" [EIdent (label2ident label)]
-  GBeginEnumerateUnit -> uni "BeginEnumerateUnit"
+  GBeginEnumerateUnit label -> wrap "BeginEnumerateUnit" [EIdent (label2ident label)]
   GBeginLemmaUnit label -> wrap "BeginLemmaUnit" [EIdent (label2ident label)]
-  GBeginProofMethodUnit method_ -> uni "BeginProofMethodUnit"
-  GBeginProofUnit -> uni "BeginProofUnit"
+  GBeginProofMethodUnit label method_ -> wrap "BeginProofMethodUnit" [EIdent (label2ident label)]
+  GBeginProofUnit label -> wrap "BeginProofUnit" [EIdent (label2ident label)]
   GBeginPropositionUnit label -> wrap "BeginPropositionUnit" [EIdent (label2ident label)]
   GBeginStructUnit label -> wrap "BeginStructUnit" [EIdent (label2ident label)]
   GCaseGoal prop -> wrap "CaseGoal" [prop2dedukti prop]

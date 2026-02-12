@@ -125,9 +125,14 @@ processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 -- This assumes that parsing units are single lines not starting with a backslash \ or % 
 
 processLatex :: Env -> String -> [ParseResult]
-processLatex env = map (processLatexLine env) . filter parsable . lines
+processLatex env = map (processLatexLine env) . filter parsable . map uncomment . lines
  where
-   parsable line = not (null line) --- && notElem (head line) "\\%" 
+   parsable line = not (null (words line))
+   uncomment line = case line of
+     c:d:cs | c == '\\' -> c : d : uncomment cs -- preserve \% 
+     '%' : cs -> uncomment cs
+     c : cs -> c : uncomment cs
+     _ -> line
 
 
 -- * Conversion outcomes
@@ -346,6 +351,10 @@ printParseResult env result = case 0 of
     if null (parseResults (result))
     then [originalLine result]
     else []
+  _ | isFlag "-results" env ->
+    if null (parseResults (result))
+    then ["FAILURE: " ++ originalLine result]
+    else ["SUCCESS: " ++ originalLine result]
   _ | isFlag "-json" env || isFlag "-v" env -> [encodeJSON $ mkJSONObject [
     mkJSONField "originalLine" (stringJSON (originalLine result)),
     mkJSONField "lexedLine" (stringJSON (lexedLine result)),

@@ -4,6 +4,8 @@ abstract Naproche = Categories, Terms ** {
 
 cat
   Method ; -- sometimes used in \begin{proof}[ <Method> ]
+  Title ;  -- used in \section, \subsection
+  Filename ; -- used in \import
 
 fun
 -- combinations
@@ -19,22 +21,45 @@ fun
 
 -- proof units
 
-  BeginPropositionUnit : Label -> Unit ;
-  EndPropositionUnit : Unit ;
-  BeginProofUnit : Unit ;
-  BeginProofMethodUnit : Method -> Unit ;
-  EndProofUnit : Unit ;
   BeginAbbreviationUnit : Label -> Unit ;
-  EndAbbreviationUnit : Unit ;
-  BeginLemmaUnit : Label -> Unit ;
-  EndLemmaUnit : Unit ;
+  BeginAxiomUnit : Label -> Unit ;
+  BeginCorollaryUnit : Label -> Unit ;
+  BeginDatatypeUnit : Label -> Unit ;
   BeginDefinitionUnit : Label -> Unit ;
-  EndDefinitionUnit : Unit ;
+  BeginEnumerateUnit : Label -> Unit ;
+  BeginInductiveUnit : Label -> Unit ;
+  BeginLemmaUnit : Label -> Unit ;
+  BeginPrimrecUnit : Label -> Unit ;
+  BeginProofMethodUnit : Label -> Method -> Unit ;
+  BeginProofUnit : Label -> Unit ;
+  BeginPropositionUnit : Label -> Unit ;
+  BeginSignatureUnit : Label -> Unit ;
   BeginStructUnit : Label -> Unit ;
-  EndStructUnit : Unit ;
-  BeginEnumerateUnit : Unit ;
+  BeginTheoremUnit : Label -> Unit ;
+  
+  EndAbbreviationUnit : Unit ;
+  EndAxiomUnit : Unit ;
+  EndCorollaryUnit : Unit ;
+  EndDatatypeUnit : Unit ;
+  EndDefinitionUnit : Unit ;
   EndEnumerateUnit : Unit ;
-----  ImportUnit : String -> Unit ;
+  EndInductiveUnit : Unit ;
+  EndLemmaUnit : Unit ;
+  EndPrimrecUnit : Unit ;
+  EndProofUnit : Unit ;
+  EndPropositionUnit : Unit ;
+  EndSignatureUnit : Unit ;
+  EndStructUnit : Unit ;
+  EndTheoremUnit : Unit ;
+  
+  ImportUnit : String -> Unit ;
+  LabelUnit : Label -> Unit ;
+  SectionUnit : Title -> Label -> Unit ;
+  SubsectionUnit : Title -> Label -> Unit ;
+
+  StringTitle : String -> Title ;
+  StringMethod : String -> Method ;
+  StringFilename : String -> Filename ;
 
 -- reference
   crefLabel : Ident -> Label ;

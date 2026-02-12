@@ -11,6 +11,8 @@ in {
 
 lincat
   Method = Text ;
+  Title = Text ;
+  Filename = Str ;
 
 lin
   SupposePropHypo prop =
@@ -35,22 +37,44 @@ lin
     simpleProp (lin S
       {s = (mkS (E.ExistsNP (mkNP (mkCN argkind.cn argkind.adv)))).s ++ "such that" ++ prop.s.s}) ;
 
-
-  BeginPropositionUnit label = beginUnit "proposition" label ;
-  EndPropositionUnit = endUnit "proposition" ;
-  BeginProofUnit = beginUnit "proof" ; 
-  BeginProofMethodUnit method = ccText (beginUnit "proof") (strText ("(" ++ method.s ++ ")")) ;
-  EndProofUnit = endUnit "proof" ;
   BeginAbbreviationUnit label = beginUnit "abbreviation" label ;
-  EndAbbreviationUnit = endUnit "abbreviation" ;
-  BeginLemmaUnit label = beginUnit "lemma" label ;
-  EndLemmaUnit = endUnit "lemma" ;
+  BeginAxiomUnit label = beginUnit "axiom" label ;
+  BeginCorollaryUnit label = beginUnit "corollary" label ;
+  BeginDatatypeUnit label = beginUnit "datatype" label ;
   BeginDefinitionUnit label = beginUnit "definition" label ;
-  EndDefinitionUnit = endUnit "definition" ;
+  BeginEnumerateUnit label = beginUnit "enumerate" label ;
+  BeginInductiveUnit label = beginUnit "inductive" label ;
+  BeginLemmaUnit label = beginUnit "lemma" label ;
+  BeginPrimrecUnit label = beginUnit "primrec" label ;
+  BeginProofMethodUnit label method = ccText (beginUnit "proof" label) (strText ("(" ++ method.s ++ ")")) ;
+  BeginProofUnit label = beginUnit "proof" label ;
+  BeginPropositionUnit label = beginUnit "proposition" label ;
+  BeginSignatureUnit label = beginUnit "signature" label ;
   BeginStructUnit label = beginUnit "struct" label ;
-  EndStructUnit = endUnit "struct" ;
-  BeginEnumerateUnit = beginUnit "enumerate" ;
+  BeginTheoremUnit label = beginUnit "theorem" label ;
+  EndAbbreviationUnit = endUnit "abbreviation" ;
+  EndAxiomUnit = endUnit "axiom" ;
+  EndCorollaryUnit = endUnit "corollary" ;
+  EndDatatypeUnit = endUnit "datatype" ;
+  EndDefinitionUnit = endUnit "definition" ;
   EndEnumerateUnit = endUnit "enumerate" ;
+  EndInductiveUnit = endUnit "inductive" ;
+  EndLemmaUnit = endUnit "lemma" ;
+  EndPrimrecUnit = endUnit "primrec" ;
+  EndProofUnit = endUnit "proof" ;
+  EndPropositionUnit = endUnit "proposition" ;
+  EndSignatureUnit = endUnit "signature" ;
+  EndStructUnit = endUnit "struct" ;
+  EndTheoremUnit = endUnit "theorem" ;
+  
+  ImportUnit filename = strText ("\\import {" ++ filename.s ++ "}") ;
+  LabelUnit label = strText ("\\label {" ++ (mkUtt label.np).s ++ "}") ;
+  SectionUnit title label = strText ("\\section {" ++ title.s ++ "}" ++ labelLatex label) ;
+  SubsectionUnit title label = strText ("\\subsection {" ++ title.s ++ "}" ++ labelLatex label) ;
+
+  StringTitle s = strText s.s ;
+  StringMethod s = strText s.s ;
+  StringFilename s = s.s ;
 
   crefLabel ident = mkLabel ("\\cref {" ++ ident ++ "}") ;
 
@@ -72,9 +96,14 @@ oper
   beginUnit = overload {
     beginUnit : Str -> Text = \s -> strText ("\\begin { " ++ s ++ "}") ;
     beginUnit : Str -> Label -> Text = \s, label ->
-      ccText (strText ("\\begin {" ++ s ++ "}")) (strText ("\\label {" ++ (mkUtt label.np).s ++ "}")) ;
+      ccText (strText ("\\begin {" ++ s ++ "}")) (strText (labelLatex label))
     } ;
 
   endUnit : Str -> Text = \s -> strText ("\\end {" ++ s ++ "}") ;
+
+  labelLatex : Label -> Str = \label -> case label.isEmpty of {
+    True => (mkUtt label.np).s ;
+    False => "\\label {" ++ (mkUtt label.np).s ++ "}"
+    } ;
 
 }
