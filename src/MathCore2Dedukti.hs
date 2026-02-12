@@ -87,21 +87,11 @@ rule2dedukti rule = case rule of
 
 unit2exp :: GUnit -> Exp
 unit2exp unit = case unit of
-  GBeginAbbreviationUnit label -> wrap "BeginAbbreviationUnit" [EIdent (label2ident label)]
-  GBeginEnumerateUnit label -> wrap "BeginEnumerateUnit" [EIdent (label2ident label)]
-  GBeginLemmaUnit label -> wrap "BeginLemmaUnit" [EIdent (label2ident label)]
+  GBeginEnvironmentUnit (LexEnvironment s) label -> wrap "BeginEnvironmentUnit" [EIdent (QIdent s)]
   GBeginProofMethodUnit label method_ -> wrap "BeginProofMethodUnit" [EIdent (label2ident label)]
-  GBeginProofUnit label -> wrap "BeginProofUnit" [EIdent (label2ident label)]
-  GBeginPropositionUnit label -> wrap "BeginPropositionUnit" [EIdent (label2ident label)]
-  GBeginStructUnit label -> wrap "BeginStructUnit" [EIdent (label2ident label)]
   GCaseGoal prop -> wrap "CaseGoal" [prop2dedukti prop]
   GCasesGoal -> uni "CasesGoal"
-  GEndAbbreviationUnit -> uni "EndAbbreviationUnit"
-  GEndEnumerateUnit -> uni "EndEnumerateUnit"
-  GEndLemmaUnit -> uni "EndLemmaUnit"
-  GEndProofUnit -> uni "EndProofUnit"
-  GEndPropositionUnit -> uni "EndPropositionUnit"
-  GEndStructUnit -> uni "EndStructUnit"
+  GEndEnvironmentUnit (LexEnvironment s) -> wrap "EndAbbreviationUnit" [EIdent (QIdent s)] ;
   GEnoughGoal prop -> wrap "EnoughGoal" [prop2dedukti prop]
   GFirstVerifyGoal prop -> wrap "FirstVerifyGoal" [prop2dedukti prop]
   GFollowsPropConclusion prop -> wrap "FollowsPropConclusion" [prop2dedukti prop]
@@ -166,6 +156,7 @@ formula2dedukti formula = case formula of
   GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
     foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
   ---- modulo_Formula : Term -> Term -> Term -> Formula
+  GMacroFormula ident terms -> foldl EApp (EIdent (ident2ident ident)) (map term2dedukti (termsList terms)) 
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -251,7 +242,13 @@ term2dedukti term = case term of
     appIdent oper (map term2dedukti [x, y])
   GNumberTerm (GInt n) -> int2exp n
   GIdentTerm ident -> EIdent (ident2ident ident)
+  GMacroTerm ident terms -> foldl EApp (EIdent (ident2ident ident)) (map term2dedukti (termsList terms)) 
   _ -> eUndefinedDebug term ---- TODO
+
+termsList :: GTerms -> [GTerm]
+termsList terms = case terms of
+  GAddTerms t tt -> t : termsList terms
+  GOneTerms t -> [t]
 
 exp2deduktiPatt :: GExp -> Patt
 exp2deduktiPatt exp = case exp of

@@ -15,7 +15,8 @@ unindexString :: [String] -> String -> String
 unindexString tindex = unwords . findterms . words
   where
     findterms ws = case ws of
-      "\\INDEXEDTERM" : "{" : n : ('}':cs) : ww -> (tindex !! (read n) ++ cs) : findterms ww
+      "\\INDEXEDTERM" : ('{' : cs) : ww -> (tindex !! (read (init cs))) : findterms ww
+      "\\INDEXEDTERM" : "{" : cs : "}" : ww -> (tindex !! (read (init cs))) : findterms ww --- different unlexing
       w : ww -> w : findterms ww
       _ -> ws
 

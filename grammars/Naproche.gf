@@ -6,6 +6,7 @@ cat
   Method ; -- sometimes used in \begin{proof}[ <Method> ]
   Title ;  -- used in \section, \subsection
   Filename ; -- used in \import
+  Environment ; -- used in \begin and \end
 
 fun
 -- combinations
@@ -21,36 +22,28 @@ fun
 
 -- proof units
 
-  BeginAbbreviationUnit : Label -> Unit ;
-  BeginAxiomUnit : Label -> Unit ;
-  BeginCorollaryUnit : Label -> Unit ;
-  BeginDatatypeUnit : Label -> Unit ;
-  BeginDefinitionUnit : Label -> Unit ;
-  BeginEnumerateUnit : Label -> Unit ;
-  BeginInductiveUnit : Label -> Unit ;
-  BeginLemmaUnit : Label -> Unit ;
-  BeginPrimrecUnit : Label -> Unit ;
+  BeginEnvironmentUnit : Environment -> Label -> Unit ;
   BeginProofMethodUnit : Label -> Method -> Unit ;
-  BeginProofUnit : Label -> Unit ;
-  BeginPropositionUnit : Label -> Unit ;
-  BeginSignatureUnit : Label -> Unit ;
-  BeginStructUnit : Label -> Unit ;
-  BeginTheoremUnit : Label -> Unit ;
   
-  EndAbbreviationUnit : Unit ;
-  EndAxiomUnit : Unit ;
-  EndCorollaryUnit : Unit ;
-  EndDatatypeUnit : Unit ;
-  EndDefinitionUnit : Unit ;
-  EndEnumerateUnit : Unit ;
-  EndInductiveUnit : Unit ;
-  EndLemmaUnit : Unit ;
-  EndPrimrecUnit : Unit ;
-  EndProofUnit : Unit ;
-  EndPropositionUnit : Unit ;
-  EndSignatureUnit : Unit ;
-  EndStructUnit : Unit ;
-  EndTheoremUnit : Unit ;
+  EndEnvironmentUnit : Environment -> Unit ;
+
+  abbreviation_Environment : Environment ;
+  alignstar_Environment : Environment ;
+  axiom_Environment : Environment ;
+  byCase_Environment : Environment ;
+  corollary_Environment : Environment ;
+  datatype_Environment : Environment ;
+  definition_Environment : Environment ;
+  enumerate_Environment : Environment ;
+  inductive_Environment : Environment ;
+  lemma_Environment : Environment ;
+  primrec_Environment : Environment ;
+  proof_Environment : Environment ;
+  proposition_Environment : Environment ;
+  signature_Environment : Environment ;
+  struct_Environment : Environment ;
+  subproof_Environment : Environment ;
+  theorem_Environment : Environment ;
   
   ImportUnit : String -> Unit ;
   LabelUnit : Label -> Unit ;

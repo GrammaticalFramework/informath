@@ -40,6 +40,7 @@ fun
   OperTerm : Oper -> Term -> Term ;
   Oper2Term : Oper2 -> Term -> Term -> Term ;
 
+  MacroFormula : Ident -> Terms -> Formula ;
   MacroTerm : Ident -> Terms -> Term ;
   OneTerms : Term -> Terms ;
   AddTerms : Term -> Terms -> Terms ;

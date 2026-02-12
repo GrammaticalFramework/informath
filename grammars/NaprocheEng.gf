@@ -13,6 +13,7 @@ lincat
   Method = Text ;
   Title = Text ;
   Filename = Str ;
+  Environment = Str ;
 
 lin
   SupposePropHypo prop =
@@ -37,35 +38,29 @@ lin
     simpleProp (lin S
       {s = (mkS (E.ExistsNP (mkNP (mkCN argkind.cn argkind.adv)))).s ++ "such that" ++ prop.s.s}) ;
 
-  BeginAbbreviationUnit label = beginUnit "abbreviation" label ;
-  BeginAxiomUnit label = beginUnit "axiom" label ;
-  BeginCorollaryUnit label = beginUnit "corollary" label ;
-  BeginDatatypeUnit label = beginUnit "datatype" label ;
-  BeginDefinitionUnit label = beginUnit "definition" label ;
-  BeginEnumerateUnit label = beginUnit "enumerate" label ;
-  BeginInductiveUnit label = beginUnit "inductive" label ;
-  BeginLemmaUnit label = beginUnit "lemma" label ;
-  BeginPrimrecUnit label = beginUnit "primrec" label ;
+  BeginEnvironmentUnit env label = beginUnit env label ;
   BeginProofMethodUnit label method = ccText (beginUnit "proof" label) (strText ("(" ++ method.s ++ ")")) ;
-  BeginProofUnit label = beginUnit "proof" label ;
-  BeginPropositionUnit label = beginUnit "proposition" label ;
-  BeginSignatureUnit label = beginUnit "signature" label ;
-  BeginStructUnit label = beginUnit "struct" label ;
-  BeginTheoremUnit label = beginUnit "theorem" label ;
-  EndAbbreviationUnit = endUnit "abbreviation" ;
-  EndAxiomUnit = endUnit "axiom" ;
-  EndCorollaryUnit = endUnit "corollary" ;
-  EndDatatypeUnit = endUnit "datatype" ;
-  EndDefinitionUnit = endUnit "definition" ;
-  EndEnumerateUnit = endUnit "enumerate" ;
-  EndInductiveUnit = endUnit "inductive" ;
-  EndLemmaUnit = endUnit "lemma" ;
-  EndPrimrecUnit = endUnit "primrec" ;
-  EndProofUnit = endUnit "proof" ;
-  EndPropositionUnit = endUnit "proposition" ;
-  EndSignatureUnit = endUnit "signature" ;
-  EndStructUnit = endUnit "struct" ;
-  EndTheoremUnit = endUnit "theorem" ;
+  
+  EndEnvironmentUnit env = endUnit env ;
+
+
+  abbreviation_Environment = "abbreviation" ;
+  alignstar_Environment = "align*" ;
+  axiom_Environment = "axiom" ;
+  byCase_Environment = "byCase" ;
+  corollary_Environment = "corollary" ;
+  datatype_Environment = "datatype" ;
+  definition_Environment = "definition" ;
+  enumerate_Environment = "enumerate" ;
+  inductive_Environment = "inductive" ;
+  lemma_Environment = "lemma" ;
+  primrec_Environment = "primrec" ;
+  proof_Environment = "proof" ;
+  proposition_Environment = "proposition" ;
+  signature_Environment = "signature" ;
+  struct_Environment = "struct" ;
+  subproof_Environment = "subproof" ;
+  theorem_Environment = "theorem" ;
   
   ImportUnit filename = strText ("\\import {" ++ filename.s ++ "}") ;
   LabelUnit label = strText ("\\label {" ++ (mkUtt label.np).s ++ "}") ;

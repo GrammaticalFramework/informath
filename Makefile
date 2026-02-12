@@ -17,7 +17,7 @@ RunInformath:
 devel: grammar RunInformath
 
 grammars/Informath.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2 --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
 
 # if you want to use the -previous option, also do this
 previous/grammars/PreviousInformath.pgf: $(GF_FILES)

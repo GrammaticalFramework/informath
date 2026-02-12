@@ -8,8 +8,6 @@ main_pgf = "grammars/Informath.pgf"
 max_number = 19999 -- number of trees considered with checkVariables
 max_number_taken = 3 -- number of trees considered for semantics
 
--- quick stand-alone test: runghc ParseInformath.hs <test/gflean-data.txt
-
 -- this is the function to be exported to other modules
 
 parseJmt :: PGF -> Language -> Type -> String -> (Maybe [Expr], String)
@@ -27,20 +25,8 @@ parseJmt gr eng cat s =
          (Nothing, "# FAILURE INCOMPLETE")
 
 
--- quick hack to get the effect of a callback: check that variables consist of one letter
--- and that numbers don't overshadow Dedukti digits
-
-{-
-checkVariables :: Expr -> Bool
-checkVariables expr = case unApp expr of
-  -- eliminate parenthesis versions only used in MathCore, to prevent spurious ambiguity
-  Just (f, _) | elem (showCId f) ["AndProp", "OrProp", "IfProp", "IffProp"] -> False
-  Just (f, [x]) | showCId f == "StrIdent" -> case showExpr [] x of
-    [_,c,_] | isAlpha c -> notElem c "CNQRZ"
-    _ -> False
-  Just (_, args) -> all checkVariables args
-  _ -> True
--}
+-- quick hack to get the effect of a callback: check that variables are a(a|d|_|'|\)*
+-- and don't in particular overshadow digits
 
 checkVariables :: Expr -> Bool
 checkVariables expr = case unApp expr of
@@ -51,7 +37,6 @@ checkVariables expr = case unApp expr of
   _ -> True
  where
   isIdent s@(c:cs) = isAlpha c && all (\x -> isAlphaNum x || elem x "\\_'") cs
-
 
 
 unindexGFTree :: PGF -> Language -> [String] -> Expr -> Expr
@@ -76,8 +61,8 @@ unindexGFTree pgf lang termindex expr = maybe expr id (unind  expr) where
        return $ mkApp f uxs
     _ -> return expr
 
-
   look i = termindex !! i
+  
   parsed c s = do
     cat <- readType c
     let (mts, msg) = parseJmt pgf lang cat s

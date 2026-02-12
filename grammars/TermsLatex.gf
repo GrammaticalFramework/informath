@@ -55,8 +55,10 @@ lin
     isNumber = False
     } ; 
 
+  MacroFormula ident terms =
+    constant (ident ++ terms) ;
   MacroTerm ident terms =
-    constant (ident ++ terms) ** {isNumber = False} ; --- False
+    constant (ident ++ terms) ** {isNumber = False} ; --- False impossible to know
 
   OneTerms term = curly (top term) ;
   AddTerms term terms = curly (top term) ++ terms ;

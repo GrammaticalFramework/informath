@@ -208,7 +208,7 @@ processLatexLine env s =
     ts = maybe [] id mts
   in ParseResult {
     originalLine = s,
-    lexedLine = lextex s,
+    lexedLine = ls,
     termIndex = tindex,
     indexedLine = ils,
     parseMessage = msg,
