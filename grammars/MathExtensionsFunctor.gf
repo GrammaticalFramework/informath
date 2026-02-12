@@ -79,9 +79,9 @@ lin
   BaseAdj a b = mkListAP a b ;
   ConsAdj a bs = mkListAP a bs ;
 
-  IndexedTermExp i = symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}")) ;
-  IndexedFormulaProp i = simpleProp (symb (mkSymb ("\\INDEXEDTERM{" ++ i.s ++ "}"))) ;
-  IndexedLetFormulaHypo i = lin Utt {s = let_Str ! False ++ "\\INDEXEDTERM{" ++ i.s ++ "}"} ;
+  IndexedTermExp i = symb (mkSymb ("\\INDEXEDTERM {" ++ i.s ++ "}")) ;
+  IndexedFormulaProp i = simpleProp (symb (mkSymb ("\\INDEXEDTERM {" ++ i.s ++ "}"))) ;
+  IndexedLetFormulaHypo i = lin Utt {s = let_Str ! False ++ "\\INDEXEDTERM {" ++ i.s ++ "}"} ;
 
 -- Pathak's and more
 

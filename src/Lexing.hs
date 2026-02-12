@@ -31,7 +31,7 @@ indexTex = massage . ind [] [] . map unwords . chop . words where
     t : rest -> ind ts (t : ss) rest
     _ -> (ss, ts)
 
-  indexedTerm i = "\\INDEXEDTERM{ " ++ show i ++ " }"
+  indexedTerm i = "\\INDEXEDTERM { " ++ show i ++ " }"
 
   isDollar s = elem s ["$", "$$"]
 
@@ -102,6 +102,7 @@ isPunct = flip elem ".?!,:;"
 isMajorPunct = flip elem ".?!"
 isMinorPunct = flip elem ",:;"
 isParen = flip elem "()[]{}"
+isOpening = flip elem "([{"
 isClosing = flip elem ")]}"
 
 unlexCode :: [String] -> String
@@ -124,8 +125,9 @@ lexText' uncap1 = uncap . lext where
   lext s = case s of
     c:cs | isMajorPunct c -> [c] : uncap (lext cs)
     c:cs | isMinorPunct c -> [c] : lext cs
-    c:cs | isSpace c ->       lext cs
-    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x) s in w : lext cs
+    c:cs | isParen c      -> [c] : lext cs
+    c:cs | isSpace c      ->       lext cs
+    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x) s in w : lext cs
     _ -> [s]
   uncap s = case s of
     w:ws -> uncap1 w:ws
@@ -138,6 +140,8 @@ unlexText = capitInit . unlext where
     w:[c]:[] | isPunct c -> w ++ [c]
     w:[c]:cs | isMajorPunct c -> w ++ [c] ++ " " ++ capitInit (unlext cs)
     w:[c]:cs | isMinorPunct c -> w ++ [c] ++ " " ++ unlext cs
+    w:[c]:cs | isOpening    c -> w ++ " " ++ [c] ++ unlext cs
+    w:[c]:cs | isClosing    c -> w ++ [c] ++ " " ++ unlext cs
     w:ws -> w ++ " " ++ unlext ws
     _ -> []
 

@@ -141,7 +141,7 @@ oper
     } ;
 
   macroOper2 : Str -> Prec -> Prec -> Prec -> Oper2T
-    = \op, p, ep1, ep2 -> mkOper2 (op + "{") "}{" "}" p ep1 ep2  ; 
+    = \op, p, ep1, ep2 -> mkOper2 (op ++ "{") "} {" "}" p ep1 ep2  ; 
 
   curly : Str -> Str = \s -> "{" ++ s ++ "}" ;
   
