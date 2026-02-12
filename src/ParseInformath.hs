@@ -1,7 +1,7 @@
 module ParseInformath where
 
 import PGF
-import Data.Char(isAlpha)
+import Data.Char(isAlpha, isAlphaNum)
 import qualified Data.Map
 
 main_pgf = "grammars/Informath.pgf"
@@ -30,6 +30,7 @@ parseJmt gr eng cat s =
 -- quick hack to get the effect of a callback: check that variables consist of one letter
 -- and that numbers don't overshadow Dedukti digits
 
+{-
 checkVariables :: Expr -> Bool
 checkVariables expr = case unApp expr of
   -- eliminate parenthesis versions only used in MathCore, to prevent spurious ambiguity
@@ -39,6 +40,18 @@ checkVariables expr = case unApp expr of
     _ -> False
   Just (_, args) -> all checkVariables args
   _ -> True
+-}
+
+checkVariables :: Expr -> Bool
+checkVariables expr = case unApp expr of
+  Just (f, [x]) | showCId f == "StrIdent" -> case showExpr [] x of
+    c | isIdent (init (tail c)) -> True --- notElem c "CNQRZ"
+    _ -> False
+  Just (_, args) -> all checkVariables args
+  _ -> True
+ where
+  isIdent s@(c:cs) = isAlpha c && all (\x -> isAlphaNum x || elem x "\\_'") cs
+
 
 
 unindexGFTree :: PGF -> Language -> [String] -> Expr -> Expr
