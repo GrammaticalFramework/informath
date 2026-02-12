@@ -107,7 +107,7 @@ lin
   KindArgKind kind = kind ** {isPl = False} ;
   IdentArgKind kind ident = {cn = mkCN kind.cn (latexNP (mkSymb ident)) ; adv = kind.adv ; isPl = False} ;
 
-  StrLabel s = {np = symb (mkSymb s.s) ; isEmpty = False} ;
+  IdentLabel s = {np = symb (mkSymb s) ; isEmpty = False} ;
   noLabel = {np = symb (mkSymb "") ; isEmpty = True} ;
 
   definitionLabel = mkLabel definition_Str ;

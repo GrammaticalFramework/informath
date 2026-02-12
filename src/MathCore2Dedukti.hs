@@ -113,7 +113,7 @@ unit2exp unit = case unit of
   GObviousConclusion -> uni "ObviousConclusion"
   GPropAssumption prop -> wrap "PropAssumption" [prop2dedukti prop]
   GPropConclusion hence prop -> wrap "PropConclusion" [prop2dedukti prop]
-  GPropLabelConclusion hence prop label -> wrap "PropLabelConclusion" [prop2dedukti prop]
+  GPropLabelConclusion hence prop label -> wrap "PropLabelConclusion" [prop2dedukti prop, EIdent (label2ident label)]
   GSinceConclusion a b -> wrap "SinceConclusion" [prop2dedukti a, prop2dedukti b]
   GSinceGoal a b -> wrap "SinceGoal" [prop2dedukti a, prop2dedukti b]
   _ -> eUnit
@@ -291,7 +291,8 @@ exp2ident exp = case exp of
 label2ident :: GLabel -> QIdent
 label2ident label = case label of
   LexLabel s -> QIdent (s)
-  GStrLabel (GString s) -> QIdent s
+  GIdentLabel ident -> ident2ident ident
+  GcrefLabel ident -> ident2ident ident
 
 kind2ident :: GKind -> QIdent
 kind2ident kind = case kind of
