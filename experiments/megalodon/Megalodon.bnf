@@ -1,0 +1,53 @@
+DJmts. Doc ::= [Jmt] ;
+
+terminator Jmt "" ;
+
+JParameter.  Jmt  ::= "Parameter" Ident ":" Exp "." ;
+JAxiom.      Jmt ::= "Axiom" Ident ":" Exp "." ;
+JDefinition. Jmt ::= "Definition" Ident ":" Exp ":=" Exp "." ;
+JInfix.      Jmt ::= "Infix" Infix Integer ":=" Exp "." ;
+JPrefix.     Jmt ::= "Prefix" Prefix Integer ":=" Exp "." ;
+JSection.    Jmt ::= "Section" Ident ;
+JEnd.        Jmt ::= "End" Ident ;
+
+EIdent.   Exp8 ::= Ident ;
+EApp.     Exp7 ::= Exp7 Exp8 ;
+EPrefix.  Exp6 ::= Prefix Exp6 ; --- follow prec given in file
+EInfix.   Exp5 ::= Exp6 Prefix Exp6 ;
+EForall.  Exp3 ::= "forall" [Ident] ":" Exp1 "," Exp3 ;
+EArrow.   Exp3 ::= Exp4 "->" Exp3 ;
+EFun.     Exp2 ::= "fun" [Ident] ":" Exp4 "=>" Exp3 ;
+
+coercions Exp 8 ;
+
+IAnd. Infix ::= "/\\" ;
+IOr.  Infix ::= "\\/" ;
+IEq.  Infix ::= "=" ;
+INeq. Infix ::= "<>" ;
+IIff. Infix ::= "<->" ;
+IIn.  Infix ::= "/:e" ;
+IMul. Infix ::= "*" ;
+IAdd. Infix ::= "+" ;
+
+
+{-
+:*:
+:+:
+:/:
+:/\:
+:\/:
+:\:
+:^:
+<
+<=
+<>
+^
+-}
+
+
+PMinus. Prefix ::= "-" ;
+PTilde. Prefix ::= "~" ;
+
+terminator nonempty Ident "" ;
+
+comment "(*" "*)" ;
