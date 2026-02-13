@@ -292,7 +292,7 @@ processInformathJmt env s = do
   ifv env $ putStrLn $ "## LEXED: " ++ ls
   let (ils, tindex) = indexTex ls
   ifv env $ putStrLn $ "## INDEXED: " ++ ils ++ show tindex
-  let (mts, msg) = parseJmt gr (fromlang env) jmt ils
+  let (mts, msg) = parseJmt False gr (fromlang env) jmt ils
   ifv env $ putStrLn msg
   case mts of
     Just ts@(t:_) | ifFlag "-just-translate" env -> do
@@ -408,7 +408,7 @@ unindexJmt env expr = maybe expr id (unind  expr) where
   look i = termindex env !! i
   parsed c s = do
     cat <- readType c
-    let (mts, msg) = parseJmt (cpgf env) (fromlang env) cat s
+    let (mts, msg) = parseJmt False (cpgf env) (fromlang env) cat s
     case mts of
       Just (t:ts) -> return t ---- todo: ambiguity if ts
       _ -> Nothing

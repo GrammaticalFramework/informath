@@ -98,6 +98,7 @@ helpMsg4 = unlines [
   just "-translate" "translate text without parsing parts in $...$",
   just "-unknown-words" "show words in text file not in grammar",
   just "-failures" "show lines that fail to parse",
+  just "-macroidents" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",
   "* General output options:",
   "",

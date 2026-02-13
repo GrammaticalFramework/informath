@@ -32,7 +32,8 @@ scoreString env s = Scores {
   initial_dollars = initdollars toks + if take 1 toks == ["$"] then 1 else 0,
   extra_parses =  -- can be expensive; return #parses -1 
     if (isFlag "-test-ambiguity" env)
-    then maybe 0 ((+ (-1)) . length . take 3) (fst (parseJmt (grammar env) (toLang env) jmt inds))
+    then maybe 0 ((+ (-1)) . length . take 3)
+           (fst (parseJmt (isFlag "-macroidents" env) (grammar env) (toLang env) jmt inds))
     else 1
   }
  where

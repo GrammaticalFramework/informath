@@ -201,10 +201,11 @@ processLatexLine env s =
   let
     gr = grammar env
     trans = isFlag "-translate" env
+    macroidents = isFlag "-macroidents" env
     ls = lextex s
     (ils, tindex) = indexTex ls
     Just jmt = readType "Jmt"
-    (mts, msg) = parseJmt gr (fromLang env) jmt ils
+    (mts, msg) = parseJmt macroidents gr (fromLang env) jmt ils
     ts = maybe [] id mts
   in ParseResult {
     originalLine = s,
@@ -217,7 +218,7 @@ processLatexLine env s =
     formalResults = if trans then [] else [
       (t, ut, gf ct, gjmt2dedukti env ct) |
         t <- ts,
-        let ut = unindexGFTree gr (fromLang env) tindex t,
+        let ut = unindexGFTree macroidents gr (fromLang env) tindex t,
         let ct = ext2core (fg ut)
       ],
     transResults = [
