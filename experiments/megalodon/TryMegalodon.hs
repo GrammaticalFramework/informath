@@ -12,7 +12,7 @@ import Prelude
   , Show, show
   , IO, (>>), (>>=), mapM_, putStrLn
   , FilePath
-  , getContents, readFile, lines, map, unwords, putStr
+  , getContents, readFile, lines, map, unwords, putStr, zip, uncurry
   )
 import System.Environment ( getArgs )
 import System.Exit        ( exitFailure )
@@ -32,18 +32,18 @@ putStrV :: Verbosity -> String -> IO ()
 putStrV v s = when (v > 1) $ putStrLn s
 
 runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
-runFile v p f = putStrLn f >> readFile f >>= mapM_ (run v p) . lines
+runFile v p f = putStrLn f >> readFile f >>= \f -> mapM_ (run v p) (zip [1..] (lines f))
 
-run :: (Print a, Show a) => Verbosity -> ParseFun a -> String -> IO ()
-run v p s =
+run :: (Print a, Show a) => Verbosity -> ParseFun a -> (Int, String) -> IO ()
+run v p (n, s) =
   case p ts of
     Left err -> do
-      putStr "Parse Failed..."
-      putStr "Tokens: "
-      putStr $ unwords $ map (showPosToken . mkPosToken) ts
+      putStr (show n ++ ": FAILURE: " ++ s)
+--      putStr " Tokens: "
+--      putStr $ unwords $ map (showPosToken . mkPosToken) ts
       putStrLn (" " ++ err)
     Right tree -> do
-      putStr "Parse Successful! "
+      putStr (show n ++ ": SUCCESS: ")
       showTree v tree
   where
   ts = myLexer s
@@ -51,7 +51,7 @@ run v p s =
 
 showTree :: (Show a, Print a) => Int -> a -> IO ()
 showTree v tree = do
-  putStrLn $ "[Abstract Syntax]: " ++ show tree
+--  putStrLn $ "[Abstract Syntax]: " ++ show tree
   putStrLn $ "[Linearized tree]: " ++ printTree tree
 
 usage :: IO ()
@@ -69,7 +69,7 @@ main = do
   args <- getArgs
   case args of
     ["--help"] -> usage
-    []         -> getContents >>= run 2 pDoc
+    []         -> getContents >>= \s -> run 2 pDoc (0, s)
     "-s":fs    -> mapM_ (runFile 0 pDoc) fs
     fs         -> mapM_ (runFile 2 pDoc) fs
 

@@ -4,28 +4,48 @@ terminator Jmt "" ;
 
 JParameter.  Jmt  ::= "Parameter" Ident ":" Exp "." ;
 JAxiom.      Jmt ::= "Axiom" Ident ":" Exp "." ;
+JTheorem.    Jmt ::= "Theorem" Ident ":" Exp "." ;
 JDefinition. Jmt ::= "Definition" Ident ":" Exp ":=" Exp "." ;
 JInfix.      Jmt ::= "Infix" Infix Integer ":=" Exp "." ;
+JInfixLeft.  Jmt ::= "Infix" Infix Integer "left" ":=" Exp "." ;
 JPrefix.     Jmt ::= "Prefix" Prefix Integer ":=" Exp "." ;
-JSection.    Jmt ::= "Section" Ident ;
-JEnd.        Jmt ::= "End" Ident ;
+JSection.    Jmt ::= "Section" Ident "." ;
+JEnd.        Jmt ::= "End" Ident "." ;
+JVariable.   Jmt ::= "Variable" [Ident] ":" Exp "." ;
+JWed.        Jmt ::= "Qed" "." ;
+Jsteps.      Jmt ::= [Step] ;
+
+SLet.     Step ::= "let" Exp "." ;
+SAssume.  Step ::= "assume" Exp "." ;
+SExact.   Step ::= "exact" Exp7 "." ;
+SApply.   Step ::= "apply" Exp7 "." ;
+SProve.   Step ::= "prove" Exp7 "." ;
+
+terminator nonempty Step "" ;
 
 EIdent.   Exp8 ::= Ident ;
 EApp.     Exp7 ::= Exp7 Exp8 ;
 EPrefix.  Exp6 ::= Prefix Exp6 ; --- follow prec given in file
-EInfix.   Exp5 ::= Exp6 Prefix Exp6 ;
-EForall.  Exp3 ::= "forall" [Ident] ":" Exp1 "," Exp3 ;
+EInfix.   Exp5 ::= Exp5 Infix Exp6 ; --- infix left
+EForall.  Exp3 ::= "forall" Bind "," Exp3 ;
+EExists.  Exp3 ::= "exists" Bind "," Exp3 ;
 EArrow.   Exp3 ::= Exp4 "->" Exp3 ;
-EFun.     Exp2 ::= "fun" [Ident] ":" Exp4 "=>" Exp3 ;
+EFun.     Exp2 ::= "fun" Bind "=>" Exp3 ;
 
 coercions Exp 8 ;
+
+BTyping.  Bind ::= [Ident] ":" Exp3 ;
+BIdents.  Bind ::= [Ident] ;
+BInfix.   Bind ::= [Ident] ":e" Exp3 ;
+_.        Bind ::= "(" Bind ")" ;
 
 IAnd. Infix ::= "/\\" ;
 IOr.  Infix ::= "\\/" ;
 IEq.  Infix ::= "=" ;
 INeq. Infix ::= "<>" ;
 IIff. Infix ::= "<->" ;
-IIn.  Infix ::= "/:e" ;
+IIn.  Infix ::= ":e" ;
+IInn. Infix ::= "/:e" ;
 IMul. Infix ::= "*" ;
 IAdd. Infix ::= "+" ;
 
