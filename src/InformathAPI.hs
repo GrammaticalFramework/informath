@@ -478,7 +478,10 @@ readGFtree2nat :: Env -> String -> String
 readGFtree2nat env s = case readExpr s of
   Just tree -> linearize (grammar env) (toLang env) tree
   Nothing -> ("ERROR: not a valid tree: " ++ s)
-  
 
+-- | To show all GF functions with their types, one per line
+showGFFunctions :: Env -> [String]
+showGFFunctions env = [showCId f ++ " : " ++ showType [] t  | f <- functions gr, Just t <- [functionType gr f]]
+  where gr = grammar env
 
 

@@ -52,6 +52,9 @@ lincat
   Label = LabelT ;
 
   Prep = Syntax.Prep ;
+
+linref
+  Kind = \kind -> (mkUtt (useKind kind)).s ;
   
 lin
 -- Base and Const for lists
