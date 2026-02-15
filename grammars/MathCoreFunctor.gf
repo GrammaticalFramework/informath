@@ -183,5 +183,15 @@ lin
       (mkNP the_Det (mkCN coercion.from exp))
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
+  AdjPrepAdj2 adj prep = {ap = adj ; prep = prep} ;
+  NounPrepFun noun prep = {cn = noun ; prep = prep} ;
+
+  byPrep = Syntax.by8means_Prep ;
+  fromPrep = Syntax.from_Prep ;
+  inPrep = Syntax.in_Prep ;
+  ofPrep = Syntax.possess_Prep ;
+  onPrep = Syntax.on_Prep ;
+  toPrep = Syntax.to_Prep ;
+
 
 }

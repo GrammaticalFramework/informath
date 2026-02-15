@@ -104,8 +104,9 @@ funListProp ident exps = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Adj", c) | length exps == 1 ->
       GAdjProp (LexAdj c) (exps !! 0)
-    Just ("Adj2", c) | length exps == 2 ->
-      GAdj2Prop (LexAdj2 c) (exps !! 0) (exps !! 1)
+    Just ("Adj2", c) | length exps == 2 -> case splitFunPrep c of
+      (f, [p]) -> GAdj2Prop (GAdjPrepAdj2 (LexAdj f) (LexPrep p)) (exps !! 0) (exps !! 1)
+      (f, []) -> GAdj2Prop (LexAdj2 f) (exps !! 0) (exps !! 1)
     Just ("AdjC", c) | length exps == 2 ->
       GAdjCProp (LexAdjC c) (exps !! 0) (exps !! 1)
     Just ("AdjE", c) | length exps == 2 ->

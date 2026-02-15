@@ -51,6 +51,8 @@ lincat
   FunC = FunT ;
   Label = LabelT ;
 
+  Prep = Syntax.Prep ;
+  
 lin
 -- Base and Const for lists
   BaseIdent ident =

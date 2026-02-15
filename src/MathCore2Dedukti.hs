@@ -7,6 +7,7 @@ import Dedukti.AbsDedukti
 import Informath -- superset of MathCore
 import CommonConcepts
 import DeduktiOperations
+import BuildConstantTable 
 import PGF (showExpr)
 
 import Data.Char
@@ -14,7 +15,7 @@ import Data.List (intersperse)
 import qualified Data.Map as M
 
 
-jmt2dedukti :: M.Map QIdent [QIdent] -> M.Map QIdent Int -> GJmt -> [Jmt]
+jmt2dedukti :: BackConstantTable -> DropTable -> GJmt -> [Jmt]
 jmt2dedukti lb dt =
   map eliminateLocalDefinitions .
   map (restoreFirstArguments dt) .
@@ -22,7 +23,7 @@ jmt2dedukti lb dt =
   jmt2jmt
 
 -- this is where the GF identifier ambiguity is resolved
-applyLookBack ::  M.Map QIdent [QIdent] -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
+applyLookBack ::  BackConstantTable -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
 applyLookBack mb t = case t of
   QIdent s -> maybe [t] id $ M.lookup t mb
   _ -> Dedukti.AbsDedukti.composOpM (applyLookBack mb) t  
@@ -132,6 +133,9 @@ prop2dedukti prop = case prop of
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b, c])
   GAdj2Prop (LexAdj2 rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
+    
+  GAdj2Prop (GAdjPrepAdj2 (LexAdj rel) (LexPrep prep)) a b ->
+    foldl EApp (EIdent (funPrepQIdent (rel, [prep]))) (map exp2dedukti [a, b])
 
   GAdjCProp (LexAdjC rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
@@ -224,6 +228,10 @@ exp2dedukti exp = case exp of
     EIdent (QIdent (name))
   GTermExp term -> term2dedukti term
   GFunExp (LexFun f) x -> appIdent f (map exp2dedukti [x])
+
+  GFunExp (GNounPrepFun (LexNoun noun) (LexPrep prep)) x -> appQIdent (funPrepQIdent (noun, [prep])) (map exp2dedukti [x])
+
+
   GFun2Exp (LexFun2 f) x y -> appIdent f (map exp2dedukti [x, y])
   GFunCExp (LexFunC f) x y -> appIdent f (map exp2dedukti [x, y])
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
@@ -310,6 +318,9 @@ eUndefinedDebug t =
 
 appIdent :: String -> [Exp] -> Exp
 appIdent f exps = foldl EApp (EIdent (QIdent f)) exps
+
+appQIdent :: QIdent -> [Exp] -> Exp
+appQIdent f exps = foldl EApp (EIdent f) exps
 
 
 --- also in MCI

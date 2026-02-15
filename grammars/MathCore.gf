@@ -100,4 +100,15 @@ fun
 
   CoercionExp : Coercion -> Exp -> Exp ;
 
+-- extensions of lexicon definable in symbol tables
+
+  AdjPrepAdj2 : Adj -> Prep -> Adj2 ;
+  NounPrepFun : Noun -> Prep -> Fun ;
+
+  byPrep : Prep ;
+  fromPrep : Prep ;
+  inPrep : Prep ;
+  ofPrep : Prep ;
+  onPrep : Prep ;
+  toPrep : Prep ;
 }

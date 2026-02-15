@@ -21,6 +21,27 @@ type Fun = CId
 type Cat = CId
 type Formalism = String
 
+-- preposition-extended symbol table: Adj+toPrep -> Adj2
+type FunPrep = (CId, [CId])
+
+showFunPrep :: FunPrep -> String
+showFunPrep (f, ps) = concat $ intersperse "+" $ map showCId (f:ps)
+
+readFunPrep :: String -> FunPrep
+readFunPrep ff = case words (map (\c -> if c=='+' then ' ' else c) ff) of
+  f:fs -> (mkCId f, map mkCId fs)
+
+splitFunPrep :: String -> (String, [String])
+splitFunPrep ff = case words (map (\c -> if c=='+' then ' ' else c) ff) of
+  f:fs -> (f, fs)
+
+funPrepQIdent :: (String, [String]) -> QIdent
+funPrepQIdent = QIdent . funPrepString
+
+funPrepString :: (String, [String]) -> String
+funPrepString (f, ps) = concat (intersperse "+" (f:ps))
+
+------
 
 mainCats :: S.Set Cat
 mainCats = S.fromList [mkCId c | c <- words
@@ -47,13 +68,13 @@ type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 type DropTable = M.Map QIdent Int
 
 data ConstantTableEntry = ConstantTableEntry {
-  primary  :: (Fun, Type),
-  symbolics :: [(Fun, Type)],
-  synonyms :: [(Fun, Type)]
+  primary  :: (FunPrep, Type),
+  symbolics :: [(FunPrep, Type)],
+  synonyms :: [(FunPrep, Type)]
   }
 
 
-allGFFuns :: ConstantTable -> QIdent -> [(Fun, Type)]
+allGFFuns :: ConstantTable -> QIdent -> [(FunPrep, Type)]
 allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
@@ -70,7 +91,7 @@ showConstantTable = concat . map prEntry . M.toList where
         "symbolics: " ++ unwords (map prTyping (symbolics entry)),
         "synonyms: " ++ unwords (map prTyping (synonyms entry))
       ]
-  prTyping (fun, typ) = showCId fun ++ " : " ++ showType [] typ ++ " ;"
+  prTyping (fun, typ) = showFunPrep fun ++ " : " ++ showType [] typ ++ " ;"
 
 -- looking for synonyms of primary constants in NLG
 --- strings, which are arguments of Lex* constructors
@@ -81,11 +102,11 @@ type SynonymConstantTableNLG = M.Map SFun ([(SFun, SCat)], [(SFun, SCat)])
 
 buildSynonymConstantTableNLG :: ConstantTable -> SynonymConstantTableNLG
 buildSynonymConstantTableNLG table = M.fromList [
-  (showCId fun, (sfcs, vfcs)) | 
+  (showFunPrep fun, (sfcs, vfcs)) | 
     (_, entry) <- M.toList table,
     let fun = fst (primary entry),
-    let sfcs = [(showCId f, showCId (valCat typ)) | (f, typ) <- symbolics entry],
-    let vfcs = [(showCId f, showCId (valCat typ)) | (f, typ) <- synonyms entry]
+    let sfcs = [(showFunPrep f, showCId (valCat typ)) | (f, typ) <- symbolics entry],
+    let vfcs = [(showFunPrep f, showCId (valCat typ)) | (f, typ) <- synonyms entry]
   ]
 
 -- looking for core constants for their synonyms in semantics
@@ -93,23 +114,23 @@ type SynonymConstantTableSem = M.Map SFun [(SFun, SCat)]
 
 buildSynonymConstantTableSem :: ConstantTable -> SynonymConstantTableSem
 buildSynonymConstantTableSem table = M.fromListWith (++) [
-  (showCId fun, [fc]) | 
+  (showFunPrep fun, [fc]) | 
     (_, entry) <- M.toList table,
     (fun, _) <- symbolics entry ++ synonyms entry,
     let (f, typ) = primary entry,
-    let fc = (showCId f, showCId (valCat typ))
+    let fc = (showFunPrep f, showCId (valCat typ))
   ]
 
-type BackConstantTable = M.Map QIdent [QIdent]
+type BackConstantTable = M.Map QIdent [QIdent] -- maps "Adj+Prep" ident to original "Dk" idents
 
 buildBackConstantTable :: ConstantTable -> BackConstantTable
 buildBackConstantTable table = M.fromListWith (++) [
-  (QIdent (showCId fun), [qid]) | 
+  (QIdent (showFunPrep fun), [qid]) | 
     (qid, entry) <- M.toList table,
     fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
   ]
 
-printBackTable ::  M.Map QIdent [QIdent] -> String
+printBackTable ::  BackConstantTable -> String
 printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
@@ -121,7 +142,7 @@ buildConstantTable pgf dkgfs = do
   let conversionlines = filter isConversion entrylines
   let droplines = filter isDrop entrylines
   let constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map mkCId gfids)) | qid:gfids <- constantlines]
+        (QIdent qid, mkConstantTableEntry pgf (map readFunPrep gfids)) | qid:gfids <- constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
@@ -133,14 +154,23 @@ buildConstantTable pgf dkgfs = do
    isDrop line = head line == "#DROP"
 
 
-mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
-mkConstantTableEntry pgf (fun:funs) = ConstantTableEntry {
-  primary = (fun, funtype fun),
+mkConstantTableEntry :: PGF -> [FunPrep] -> ConstantTableEntry
+mkConstantTableEntry pgf (funps:funs) = ConstantTableEntry {
+  primary = (funps, funtype funps),
   symbolics = [(f, typ) | (f, typ) <- symbs],
   synonyms = [(f, typ) | (f, typ) <- syns]
   }
  where
-   funtype fun = maybe (error ("cannot infer type of " ++ showCId fun)) id (functionType pgf fun)
+ 
+   funtype (fun, ps) = case functionType pgf fun of
+     Just typ -> case ps of
+       [_] -> case showType [] typ of
+         "Adj" -> mkType [] (mkCId "Adj2") []
+         "Noun" -> mkType [] (mkCId "Fun") []
+	 sty -> error ("preposition-extended lexicon: expected Adj or Noun, found " ++ sty)
+       _ -> typ
+     _ -> error ("cannot infer type of " ++ showCId fun)
+     
    (symbs, syns) = partition (isSymbolic . snd) [(f, funtype f) | f <- funs]
    isSymbolic typ = case unType typ of
      (_, cat, _) -> S.member cat symbolicCats
@@ -170,7 +200,7 @@ constantTableErrors dk pgf table =
 		      mismatchingTypes dktyp gftyp]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
-    ["MISMATCHING TYPES: " ++ printTree dkfun ++ " <> " ++ showCId gffun |
+    ["MISMATCHING TYPES: " ++ printTree dkfun ++ " <> " ++ showFunPrep gffun |
                       (dkfun, gffun) <- mismatches]
 		      
 
@@ -214,11 +244,12 @@ annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
     Just entry -> annotIdent c (primary entry)
     _ -> c
 
-annotIdent :: QIdent -> (Fun, Type) -> QIdent
+annotIdent :: QIdent -> (FunPrep, Type) -> QIdent
 annotIdent (QIdent s) (f, t) =
-  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dk f] ++ map dk (argCats t)
+  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t)
     where
       dk c = showCId c
+      dkp f = showFunPrep f
 
 valCat :: Type -> Cat
 valCat t = case unType t of (_, c, _) -> c

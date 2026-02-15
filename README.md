@@ -151,7 +151,8 @@ $ RunInformath -constants=test/empty.dkgf test/mini-matita.dk
 Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-constants` flag, unless you use some other `.dkgf` file.
 
 Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files recognizes three kinds of lines;
-- `<DeduktiIdent> <GFFunction>+`: different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms
+- `<DeduktiIdent> <GFFunction>+`: different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms.
+The GFFunction can be a single GF abstract syntax function, such as `divisible_Adj2`, or a combination of such a function with a preposition, such as `divisible_Adj+byPrep`. The latter feature enables applications of Informath to new concepts without extending the grammar but by using a general-purpose lexicon.
 - `#CONV <formalism> <DeduktiIdent> <FormalismIdent>`: conversion of Dedukti identifier to another formalism (e.g. its standard library function) 
 - `#DROP <DeduktiIdent> <int>`: drop a number of initial arguments from the Dedukti function application
 

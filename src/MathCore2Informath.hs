@@ -6,6 +6,7 @@ module MathCore2Informath where
 import Informath
 import Environment
 import Utils
+import BuildConstantTable (funPrepString, splitFunPrep)
 
 import Data.List (nub, sortOn)
 import Data.Char (isDigit)
@@ -86,8 +87,10 @@ synonyms env t = symbs t ++ verbs t where
   
   verbs :: forall a. Tree a -> [Tree a]
   verbs t = case t of
-    GAdj2Prop (LexAdj2 c) x y ->
-      t : [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
+    GAdj2Prop adj2 x y -> t : case adj2 of
+      LexAdj2 c -> [pred alt [sx, sy] | alt <- vsyns c, sx <- verbs x, sy <- verbs y]
+      GAdjPrepAdj2 (LexAdj c) (LexPrep p) ->
+        [pred alt [sx, sy] | alt <- vsyns (funPrepString (c,[p])), sx <- verbs x, sy <- verbs y]
     GFun2Exp _ _ _ -> t : map GTermExp (terms t) ---- also verbal synonyms
     GFunCExp _ _ _ -> t : map GTermExp (terms t)
     GFunExp _ _ -> t : map GTermExp (terms t)
@@ -96,7 +99,9 @@ synonyms env t = symbs t ++ verbs t where
   vsyns c = maybe [] snd (M.lookup c (synonymConstantTableNLG env))
  
   pred (fun, cat) xs = case cat of
-    "Adj2" -> GAdj2Prop (LexAdj2 fun) (xs !! 0) (xs !! 1)
+    "Adj2" -> case splitFunPrep fun of
+      (f, [p]) -> GAdj2Prop (GAdjPrepAdj2 (LexAdj f) (LexPrep p)) (xs !! 0) (xs !! 1)
+      _ -> GAdj2Prop (LexAdj2 fun) (xs !! 0) (xs !! 1)
     "AdjC" -> GAdjCProp (LexAdjC fun) (xs !! 0) (xs !! 1)
     "AdjE" -> GAdjEProp (LexAdjE fun) (xs !! 0) (xs !! 1)
     _ -> error $ "NOT YET: " ++ show cat

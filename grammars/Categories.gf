@@ -44,5 +44,7 @@ cat
   Label ;   -- Exp                  -- theorem 1
   Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
 
+  Prep ;    -- used for symbol table extensions of grammar
+
 
 }
