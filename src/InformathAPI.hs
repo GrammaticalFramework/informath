@@ -32,7 +32,7 @@ import Utils
 import Informath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn)
+import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 
@@ -468,5 +468,17 @@ missingWords env = morphoMissing (morpho env) . words . lextex
      "$$" : ww -> let (_, _:ww2) = break (=="$$") ww in ordinary acc ww2
      w : ww -> ordinary (w:acc) ww
      _ -> acc
+
+-- | show candidate GF functions that linearize to a given word
+findGFFunctions :: Env -> String -> (String, [String])
+findGFFunctions env w = (w, nub [showCId f | (f, _) <- lookupMorpho (morpho env) w])
+
+-- | To linearize a GF tree (given as string) to a string
+readGFtree2nat :: Env -> String -> String
+readGFtree2nat env s = case readExpr s of
+  Just tree -> linearize (grammar env) (toLang env) tree
+  Nothing -> ("ERROR: not a valid tree: " ++ s)
+  
+
 
 

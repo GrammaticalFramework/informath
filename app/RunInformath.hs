@@ -36,6 +36,9 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
     Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-unknown-words" args -> do
       s <- readFile file 
       mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
+    Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-show-functions" args -> do
+      s <- readFile file 
+      mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
     Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
       s <- readFile file 
       let results = processLatex env s
@@ -44,8 +47,15 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       (ct, _, _) <- readConstantTable (grammar env) [file]
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
+      
     Nothing | elem "-loop" args -> do
       loopInformath env
+    Nothing | elem "-find-gf" args -> do
+      s <- getContents
+      mapM_ (putStrLn . show . findGFFunctions env) (words s)
+    Nothing | elem "-linearize" args -> do
+      s <- getContents
+      mapM_ (putStrLn . readGFtree2nat env) (lines s)
     Nothing | elem "-formalize" args -> do
       s <- getContents 
       let results = processLatex env s
@@ -97,6 +107,8 @@ helpMsg4 = unlines [
   just "-from-lang=<lang>" "parse from <lang>",
   just "-translate" "translate text without parsing parts in $...$",
   just "-unknown-words" "show words in text file not in grammar",
+  just "-find-gf" "shows GF functions that match each word in standard input",
+  just "-linearize" "linearize GF trees given line by line in standard input",
   just "-failures" "show lines that fail to parse",
   just "-macroidents" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",
