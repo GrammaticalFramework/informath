@@ -82,7 +82,7 @@ oper
   Adj2T : Type = {ap : AP ; prep : Prep} ;
   Noun2T : Type = {cn : CN ; prep : Prep} ;
   FunT : Type = {cn : CN ; prep : Prep} ;
-  Fun2T : Type = {cn : CN ; prep1, prep2 : Prep ; isColl : Bool} ; -- isColl means f prep x and y
+  Fun2T : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ; -- isCollective means f prep x and y
   FamT : Type = {cn : CN ; prep : Prep ; isCollective : Bool} ;
   Fam2T : Type = {cn : CN ; prep1, prep2 : Prep ; isCollective : Bool} ;
   LabelT = {np : NP ; isEmpty : Bool} ;
@@ -147,21 +147,21 @@ oper
 
   mkFun2 = overload {
     mkFun2 : Str -> Fun2T
-      = \s -> {cn = mkCN (strN s) ; prep1, prep2 = possess_Prep ; isColl = True} ;
+      = \s -> {cn = mkCN (strN s) ; prep1, prep2 = possess_Prep ; isCollective = True} ;
     mkFun2 : N -> Fun2T
-      = \n -> {cn = mkCN n ; prep1, prep2 = possess_Prep ; isColl = True} ;
+      = \n -> {cn = mkCN n ; prep1, prep2 = possess_Prep ; isCollective = True} ;
     mkFun2 : CN -> Fun2T
-      = \cn -> {cn = cn ; prep1, prep2 = possess_Prep ; isColl = True} ;
+      = \cn -> {cn = cn ; prep1, prep2 = possess_Prep ; isCollective = True} ;
     mkFun2 : Str -> Str -> Fun2T
-      = \s, sprep2 -> {cn = mkCN (strN s) ; prep1 = possess_Prep ; prep2 = strPrep sprep2 ; isColl = False} ;
+      = \s, sprep2 -> {cn = mkCN (strN s) ; prep1 = possess_Prep ; prep2 = strPrep sprep2 ; isCollective = False} ;
     mkFun2 : N -> Prep -> Prep -> Fun2T
-      = \n, prep1, prep2 -> {cn = mkCN n ; prep1 = prep1 ; prep2 = prep2 ; isColl = False} ;
+      = \n, prep1, prep2 -> {cn = mkCN n ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
     mkFun2 : CN -> Prep -> Prep -> Fun2T
-      = \cn, prep1, prep2 -> {cn = cn ; prep1 = prep1 ; prep2 = prep2 ; isColl = False} ;
+      = \cn, prep1, prep2 -> {cn = cn ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
     mkFun2 : N -> Prep -> Fun2T
-      = \n, prep1 -> {cn = mkCN n ; prep1, prep2 = prep1 ; isColl = True} ; --- prep2 is junk
+      = \n, prep1 -> {cn = mkCN n ; prep1, prep2 = prep1 ; isCollective = True} ; --- prep2 is junk
     mkFun2 : CN -> Prep -> Fun2T
-      = \cn, prep1 -> {cn = cn ; prep1, prep2 = prep1 ; isColl = True} ;
+      = \cn, prep1 -> {cn = cn ; prep1, prep2 = prep1 ; isCollective = True} ;
     } ;
 
   mkFunC = overload {

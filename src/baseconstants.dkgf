@@ -107,7 +107,7 @@ sigma SigmaExp sigma_Term
 series SeriesExp series_Term
 integral IntegralExp integral_Term
 ni contain_Verb2 ni_Compar
-disjoint disjoint_AdjC disjoint_Compar
+disjoint disjoint_AdjC disjoint_Adj+fromPrep disjoint_Compar
 empty empty_Adj
 inhabited inhabited_Adj
 sameParity sameParityProp

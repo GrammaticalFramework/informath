@@ -103,7 +103,17 @@ fun
 -- extensions of lexicon definable in symbol tables
 
   AdjPrepAdj2 : Adj -> Prep -> Adj2 ;
+
+  NounPrepFam : Noun -> Prep -> Fam ;
+  NounPrepFam2 : Noun -> Prep -> Prep -> Fam2 ;
   NounPrepFun : Noun -> Prep -> Fun ;
+  NounPrepFun2 : Noun -> Prep -> Prep -> Fun2 ;
+  
+  AdjAdjC : Adj -> AdjC ;
+  AdjAdjE : Adj -> AdjE ;
+  NounPrepFunC : Noun -> Prep -> FunC ;
+
+  NounAdjNoun : Noun -> Adj -> Noun ;
 
   byPrep : Prep ;
   fromPrep : Prep ;

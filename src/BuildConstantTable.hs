@@ -164,10 +164,12 @@ mkConstantTableEntry pgf (funps:funs) = ConstantTableEntry {
  
    funtype (fun, ps) = case functionType pgf fun of
      Just typ -> case ps of
+     {- -- don't change the type here, but in Dedukti2MathCore
        [_] -> case showType [] typ of
          "Adj" -> mkType [] (mkCId "Adj2") []
          "Noun" -> mkType [] (mkCId "Fun") []
 	 sty -> error ("preposition-extended lexicon: expected Adj or Noun, found " ++ sty)
+      -}
        _ -> typ
      _ -> error ("cannot infer type of " ++ showCId fun)
      

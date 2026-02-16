@@ -143,7 +143,7 @@ lin
   NounKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   NameExp name = name ;
   FunExp f exp = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exp)) ;
-  Fun2Exp f x y = case f.isColl of {
+  Fun2Exp f x y = case f.isCollective of {
     True => mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep1 (mkNP and_Conj x y))) ;
     _ => mkNP the_Det (mkCN (mkCN f.cn (Syntax.mkAdv f.prep1 x)) (Syntax.mkAdv f.prep2 y))
     } ;
@@ -184,8 +184,18 @@ lin
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
   AdjPrepAdj2 adj prep = {ap = adj ; prep = prep} ;
+  NounPrepFam noun prep = {cn = noun ; prep = prep ; isCollective = False} ;
+  --- isC only relevant for Fam2
+  NounPrepFam2 noun prep1 prep2 = {cn = noun ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
   NounPrepFun noun prep = {cn = noun ; prep = prep} ;
+  NounPrepFun2 noun prep1 prep2 = {cn = noun ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
 
+  AdjAdjE adj = adj ;
+  AdjAdjC adj = adj ;
+  NounPrepFunC noun prep = {cn = noun ; prep = prep} ;
+
+  NounAdjNoun noun adj = mkCN adj noun ;
+  
   byPrep = Syntax.by8means_Prep ;
   fromPrep = Syntax.from_Prep ;
   inPrep = Syntax.in_Prep ;

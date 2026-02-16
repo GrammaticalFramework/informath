@@ -52,7 +52,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       loopInformath env
     Nothing | elem "-find-gf" args -> do
       s <- getContents
-      mapM_ (putStrLn . show . findGFFunctions env) (words s)
+      mapM_ putStrLn [unwords (w : ":" : fs) | (w, fs) <- map (findGFFunctions env) (words s)]
     Nothing | elem "-linearize" args -> do
       s <- getContents
       mapM_ (putStrLn . readGFtree2nat env) (lines s)
@@ -66,6 +66,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       mo <- getContents >>= return . parseDeduktiModule
       let results = processDeduktiModule env mo
       mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
+      
     _ -> putStrLn helpMsg4 
 
 helpMsg4 = unlines [

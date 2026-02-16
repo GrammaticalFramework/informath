@@ -131,16 +131,21 @@ prop2dedukti prop = case prop of
     foldl1 EApp ((EIdent (ident2ident ident)) : map exp2dedukti (exps2list exps))
   GAdj3Prop (LexAdj3 rel) a b c ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b, c])
+    
   GAdj2Prop (LexAdj2 rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
-    
   GAdj2Prop (GAdjPrepAdj2 (LexAdj rel) (LexPrep prep)) a b ->
     foldl EApp (EIdent (funPrepQIdent (rel, [prep]))) (map exp2dedukti [a, b])
 
   GAdjCProp (LexAdjC rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
+  GAdjCProp (GAdjAdjC (LexAdj rel)) a b ->
+    foldl EApp (EIdent (funPrepQIdent (rel, ["C"]))) (map exp2dedukti [a, b])
+    
   GAdjEProp (LexAdjE rel) a b ->
     foldl EApp (EIdent (QIdent (rel))) (map exp2dedukti [a, b])
+  GAdjCProp (GAdjAdjE (LexAdj rel)) a b ->
+    foldl EApp (EIdent (funPrepQIdent (rel, ["E"]))) (map exp2dedukti [a, b])
     
   GAdjProp (LexAdj adj) exp ->
     EApp (EIdent (QIdent (adj))) (exp2dedukti exp)
