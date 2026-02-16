@@ -60,7 +60,6 @@ fun
 
 -- lexicon
   inhabited_Adj : Adj ;
-  empty_Adj : Adj ;
   disjoint_AdjC : AdjC ;
   disjoint_Compar : Compar ;
   contain_Verb2 : Verb2 ;

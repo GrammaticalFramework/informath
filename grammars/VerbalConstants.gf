@@ -1,128 +1,127 @@
 abstract VerbalConstants = Categories ** {
 
-fun
-  type_Noun : Noun ;
-  set_Noun : Noun ;
-  proposition_Noun : Noun ;
 
-  number_Noun : Noun ;
-  boolean_Noun : Noun ;  
-  cardinal_Noun : Noun ;
-  digit_Noun : Noun ;
-  natural_Noun : Noun ;
-  integer_Noun : Noun ;
-  rational_Noun : Noun ;
-  real_Noun : Noun ;
-  complex_Noun : Noun ;
 
-  list_Fam : Fam ;
-  set_Fam : Fam ;
-  
-  Eq_Adj2 : Adj2 ;
-  Lt_Adj2 : Adj2 ;
-  Gt_Adj2 : Adj2 ;
-  Neq_Adj2 : Adj2 ;
-  Leq_Adj2 : Adj2 ;
-  Geq_Adj2 : Adj2 ;
+fun proposition_Noun : Noun ;
 
-  Eq_AdjE : AdjE ;
-  Neq_AdjC : AdjC ;
 
-  positive_Adj : Adj ;
-  negative_Adj : Adj ;
+fun boolean_Noun : Noun ;
 
-  converge_Verb : Verb ;
-  divide_Verb2 : Verb2 ;
-  member_Noun2 : Noun2 ;
-  divisor_Noun2 : Noun2 ;
+fun digit_Noun : Noun ;
+fun natural_Noun : Noun ;
 
-  plus_FunC : FunC ;
-  minus_Fun2 : Fun2 ;
-  times_FunC : FunC ;
-  div_Fun2 : Fun2 ;
-  pow_Fun2 : Fun2 ;
-  neg_Fun : Fun ;
-  logarithm_Fun2 : Fun2 ;
-  square_root_Fun : Fun ;
-  
-  successor_Fun : Fun ;
-  absolute_value_Fun : Fun ;
-  factorial_Fun : Fun ;
-  gcd_FunC : FunC ;
+fun rational_Noun : Noun ;
+fun real_Noun : Noun ;
 
-  even_Adj : Adj ;
-  odd_Adj : Adj ;
-  divisible_Adj2 : Adj2 ;
-  prime_Adj : Adj ;
 
-  function_Fam2 : Fam2 ;
-  
-  union_FunC : FunC ;
-  intersection_FunC : FunC ;
-  cartesian_FunC : FunC ;
-  difference_Fun2 : Fun2 ;
-  complement_Fun : Fun ;
-  powerset_Fun : Fun ;
+fun list_Fam : Fam ;
+fun set_Fam : Fam ;
 
-  subset_Noun2 : Noun2 ;  
-  subseteq_Noun2 : Noun2 ;  
-  superset_Noun2 : Noun2 ;
-  superseteq_Noun2 : Noun2 ;
-  equalset_Adj2 : Adj2 ;
-  notequalset_Adj2 : Adj2 ;
-  element_Noun2 : Noun2 ;
-  notelement_Noun2 : Noun2 ;
+fun Eq_Adj2 : Adj2 ;
+fun Lt_Adj2 : Adj2 ;
+fun Gt_Adj2 : Adj2 ;
+fun Neq_Adj2 : Adj2 ;
+fun Leq_Adj2 : Adj2 ;
+fun Geq_Adj2 : Adj2 ;
 
-  emptyset_Name : Name ;
-  universeset_Name : Name ;
+fun Eq_AdjE : AdjE ;
+fun Neq_AdjC : AdjC ;
 
-  congruent_Adj3 : Adj3 ;
 
-  finite_Adj : Adj ;
-  infinite_Adj : Adj ;
 
-  rational_Adj : Adj ; -- top100
-  irrational_Adj : Adj ; -- top100
-  polynomial_Noun : Noun ; -- top100
-  degree_Fun : Fun ; -- top100
-  root_Noun2 : Noun2 ; -- top100
-  cardinality_Fun : Fun ; -- top100
-  denumerable_Adj : Adj ; -- top100
-  vector_Noun : Noun ; -- top100
-  length_Fun : Fun ; -- top100
-  norm_Fun : Fun ; -- top100
-  perpendicular_Adj2 : Adj2 ; -- top100
-  resultant_FunC : FunC ; -- top100
-  square_Fun : Fun ; -- top100
-  legendre_symbol_Fun2 : Fun2 ; -- top100
-  pi_Name : Name ; -- top100
-  circle_Noun : Noun ; -- top100
-  radius_Fun  : Fun ; -- top100
-  area_Fun : Fun ; -- top100
-  binomial_Fun2 : Fun2 ; -- top100
-  combinations_Fun2 : Fun2 ; -- top100
-  combinationsFromSet_Fun2 : Fun2 ; -- top100
-  sin_Fun : Fun ;
-  cos_Fun : Fun ;
-  tan_Fun : Fun ;
-  arcsin_Fun : Fun ;
-  arccos_Fun : Fun ;
-  arctan_Fun : Fun ;
-  orthogonal_Adj2 : Adj2 ;
-  orthogonal_AdjC : AdjC ;
-  perpendicular_Adj2 : Adj2 ;
-  perpendicular_AdjC : AdjC ;
-  angle_between_Fun2 : Fun2 ;
-  dot_product_FunC : FunC ;
-  vector_plus_FunC : FunC ;
 
-  sphenic_Adj : Adj ;
+fun converge_Verb : Verb ;
+fun divide_Verb2 : Verb2 ;
+fun member_Noun2 : Noun2 ;
+fun divisor_Noun2 : Noun2 ;
+
+fun plus_FunC : FunC ;
+fun minus_Fun2 : Fun2 ;
+fun times_FunC : FunC ;
+fun div_Fun2 : Fun2 ;
+fun pow_Fun2 : Fun2 ;
+fun neg_Fun : Fun ;
+fun logarithm_Fun2 : Fun2 ;
+fun square_root_Fun : Fun ;
+
+fun successor_Fun : Fun ;
+fun absolute_value_Fun : Fun ;
+fun factorial_Fun : Fun ;
+fun gcd_FunC : FunC ;
+
+
+
+fun divisible_Adj2 : Adj2 ;
+
+
+fun function_Fam2 : Fam2 ;
+
+fun union_FunC : FunC ;
+fun intersection_FunC : FunC ;
+fun cartesian_FunC : FunC ;
+fun difference_Fun2 : Fun2 ;
+fun complement_Fun : Fun ;
+fun powerset_Fun : Fun ;
+
+fun subset_Noun2 : Noun2 ;
+fun subseteq_Noun2 : Noun2 ;
+fun superset_Noun2 : Noun2 ;
+fun superseteq_Noun2 : Noun2 ;
+fun equalset_Adj2 : Adj2 ;
+fun notequalset_Adj2 : Adj2 ;
+fun element_Noun2 : Noun2 ;
+fun notelement_Noun2 : Noun2 ;
+
+fun emptyset_Name : Name ;
+fun universeset_Name : Name ;
+
+fun congruent_Adj3 : Adj3 ;
+
+
+
+
+
+fun irrational_Adj : Adj ; -- top100
+
+fun degree_Fun : Fun ; -- top100
+fun root_Noun2 : Noun2 ; -- top100
+fun cardinality_Fun : Fun ; -- top100
+fun denumerable_Adj : Adj ; -- top100
+
+fun length_Fun : Fun ; -- top100
+fun norm_Fun : Fun ; -- top100
+fun perpendicular_Adj2 : Adj2 ; -- top100
+fun resultant_FunC : FunC ; -- top100
+fun square_Fun : Fun ; -- top100
+fun legendre_symbol_Fun2 : Fun2 ; -- top100
+fun pi_Name : Name ; -- top100
+
+fun radius_Fun : Fun ; -- top100
+fun area_Fun : Fun ; -- top100
+fun binomial_Fun2 : Fun2 ; -- top100
+fun combinations_Fun2 : Fun2 ; -- top100
+fun combinationsFromSet_Fun2 : Fun2 ; -- top100
+fun sin_Fun : Fun ;
+fun cos_Fun : Fun ;
+fun tan_Fun : Fun ;
+fun arcsin_Fun : Fun ;
+fun arccos_Fun : Fun ;
+fun arctan_Fun : Fun ;
+fun orthogonal_Adj2 : Adj2 ;
+fun orthogonal_AdjC : AdjC ;
+fun perpendicular_Adj2 : Adj2 ;
+fun perpendicular_AdjC : AdjC ;
+fun angle_between_Fun2 : Fun2 ;
+fun dot_product_FunC : FunC ;
+fun vector_plus_FunC : FunC ;
+
+
 
 -- special constants
-  SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp ;
-  SeriesExp : Exp -> Ident -> Exp -> Exp ;
-  IntegralExp : Exp -> Exp -> Ident -> Exp -> Exp ;
-  
-  sameParityProp : Exp -> Exp -> Prop ;
+fun SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp ;
+fun SeriesExp : Exp -> Ident -> Exp -> Exp ;
+fun IntegralExp : Exp -> Exp -> Ident -> Exp -> Exp ;
+
+fun sameParityProp : Exp -> Exp -> Prop ;
 
 }

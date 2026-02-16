@@ -1,9 +1,7 @@
 concrete UserExtensionsEng of UserExtensions =
   NaprocheEng,
-  NaprocheLexiconEng,
-  HottLexiconEng,
+  NaprocheWordsEng,
+  HottWordsEng,
   NaturalDeductionEng,
   ProofUnitsEng
   ;
-  
-

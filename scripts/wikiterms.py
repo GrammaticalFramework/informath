@@ -1,6 +1,10 @@
 # FILE = 'grammars/mathterms/DerivedTerms.gf'
 FILE = 'grammars/mathterms/DerivedTermsEng.gf'
 
+import sys
+
+MODE = sys.argv[1]
+
 def convertabs(line):
     line = line.replace('AP', 'Adj')
     line = line.replace('CN', 'Noun')
@@ -29,11 +33,21 @@ def convertcnc(line):
     else:
         return line
 
-with open(FILE) as file:
+def pick_funs(line):
+    words = line.replace(')', ' ').split()
+    return '\n'.join([w for w in words if
+                      any([w.endswith(s) for s in
+                           ['_A', '_N', "_A'", "_N'", "_V"]])])
+    
+with sys.stdin as file:
     prev = ''
     for line in file:
-#        line = convertabs(line)
-        line = convertcnc(line)
+        if MODE=='abs':
+            line = convertabs(line)
+        elif MODE=='cnc':
+            line = convertcnc(line)
+        else:
+            line = pick_funs(line)
         if line != prev:
             print(line)
         prev = line

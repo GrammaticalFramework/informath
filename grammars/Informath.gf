@@ -3,6 +3,7 @@ abstract Informath =
   VerbalConstants,
   SymbolicConstants,
   MathExtensions,
+  WikidataWords,
   UserExtensions
   ** {
 

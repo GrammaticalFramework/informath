@@ -89,7 +89,7 @@ oper
   Adj3T = {ap : AP ; prep1, prep2 : Prep} ;
   AdjT = AP ;
   NounT = CN ;
-  VerbT = VP ;
+  VerbT = V ;
   Verb2T = V2 ;
 
 -- lintype constructors, language-independent
@@ -270,11 +270,9 @@ oper
 
   mkVerb = overload {
     mkVerb : Str -> VerbT
-      = \s -> mkVP (strV s) ;
+      = \s -> (strV s) ;
     mkVerb : V -> VerbT
-      = \v -> mkVP v ;
-    mkVerb : VP -> VerbT
-      = \vp -> vp ;
+      = \v -> v ;
     } ;
 
   mkVerb2 = overload {

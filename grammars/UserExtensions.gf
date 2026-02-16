@@ -1,7 +1,7 @@
 abstract UserExtensions =
   Naproche,
-  NaprocheLexicon,
-  HottLexicon,
+  NaprocheWords,
+  HottWords,
   NaturalDeduction,
   ProofUnits
   ;

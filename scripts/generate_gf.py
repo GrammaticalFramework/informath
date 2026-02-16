@@ -2,10 +2,16 @@ import sys
 
 """
 Generating GF rules for (multi)words, one per line.
-Usage example: python3 scripts/generate_gf.py Adj <tmp/nap-adj.txt
+Usage examples:
+  python3 scripts/generate_gf.py Adj <tmp/nap-adj.txt
+  python3 scripts/wikiterms.py w <grammars/mathterms/MathTermsEng.gf | sort -u | python3 scripts/generate_gf.py FOO funlist
 """
 
 CAT = sys.argv[1]
+
+MODE = 'wordlist'
+if sys.argv[2:]:
+    MODE = sys.argv[2]
 
 def mk_fun(s):
     s = '_'.join(s.split())  # spaces replaced by underscores
@@ -48,11 +54,34 @@ def gfrules(words, cat, oper=None, params=[]):
         mk_lin_rule(fun, lin)
       ]
 
+cats = {'A': 'Adj', 'N': 'Noun', 'V': 'Verb'}
 
-for line in sys.stdin:
-    line = ''.join([c for c in line if c.isalpha() or c in "-'"])
-    for rule in gfrules(line.split(), CAT):
-        print(rule)
+def gffun_rules(line):
+    line = line.strip()
+    words = line.split('_')
+    cat0 = words[-1]
+    if cat0 in cats:
+        cat = cats[cat0]
+        fun = mk_fun_from_strs(words[:-1] + [cat])
+        lin = mk_lin ('mk' + cat, [], [line])
+        return [
+            mk_fun_rule(fun, cat),
+            mk_lin_rule(fun, lin)
+            ]
+    else:
+        return []
+
+
+if MODE == 'wordlist':  # bare words, CAT given as command-line argument
+    for line in sys.stdin:
+        line = ''.join([c for c in line if c.isalpha() or c in "-'"])
+        for rule in gfrules(line.split(), CAT):
+            print(rule)
+elif MODE == 'funlist':  # lexical funs, CAT given as suffix
+    for line in sys.stdin:
+        if line.strip():
+            for rule in gffun_rules(line):
+                print(rule)
 
 
 

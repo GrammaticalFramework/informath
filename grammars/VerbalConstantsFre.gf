@@ -1,155 +1,129 @@
 concrete VerbalConstantsFre of VerbalConstants = CategoriesFre **
 
 open
-  UtilitiesFre,
-  SyntaxFre,
-  ParadigmsFre,
-  SymbolicFre,
-  Prelude
+UtilitiesFre,
+SyntaxFre,
+ParadigmsFre,
+SymbolicFre,
+Prelude
 
 in {
 
-lin
-  type_Noun = type_CN ;
-  set_Noun = mkNoun ensemble_N ;
-  proposition_Noun = mkNoun "proposition" ;
-
-  digit_Noun = mkNoun (mkN "chiffra" masculine) ;
-  number_Noun = mkNoun nombre_N ;
-  boolean_Noun = mkNoun (mkCN (mkA "booléen") (mkN "valeur" feminine)) ;
-  cardinal_Noun = mkNoun "cardinal" ;
-  natural_Noun = mkNoun (mkA "naturel") nombre_N ;
-  integer_Noun = mkNoun "entier" ;
-  rational_Noun = mkNoun (mkA "rationnel") nombre_N ;
-  real_Noun = mkNoun (mkA "réel") nombre_N ;
-  complex_Noun = mkNoun (mkA "complexe") nombre_N ;
-
-  list_Fam = mkFam "liste" ;  
-  set_Fam = mkFam ensemble_N ;  
-
-  Eq_Adj2 = mkAdj2  (mkA "égal") dative ;
-  Eq_AdjE = mkAdj (mkAP (mkA "égal")) ;
-  Lt_Adj2 = mkAdj2 (mkA "inférieur") dative ;
-  Gt_Adj2 = mkAdj2 (mkA "supérieur") dative ;
-  Neq_Adj2 = mkAdj2 (mkA "distinct") genitive ;
-  Neq_AdjC = mkAP (mkA "distinct") ;
-  Leq_Adj2 = mkAdj2 (mkAP or_Conj (mkAP (mkA "inférieur")) (mkAP (mkA "égal"))) dative ; 
-  Geq_Adj2 = mkAdj2 (mkAP or_Conj (mkAP (mkA "supérieur")) (mkAP (mkA "égal"))) dative ;
-
-  positive_Adj = mkAdj "positif" ;
-  negative_Adj = mkAdj "negatif" ;
-
-  converge_Verb = mkVP (mkV "converger") ;
-  divide_Verb2 = mkV2 "diviser" ;
-  
-  member_Noun2 = mkNoun2 element_N ;
-  divisor_Noun2 = mkNoun2 (mkN "diviseur") ;
-
-  plus_FunC = mkFunC "somme" ;
-  minus_Fun2 = mkFun2 (mkN "différence") (mkPrep "entre") ;
-  times_FunC = mkFunC (mkN "produit") ;
-  div_Fun2 = mkFun2 (mkN "quotient") (mkPrep "entre") ; ----
-  pow_Fun2 = mkFun2 (mkN "puissance") possess_Prep (mkPrep "en") ; ----
-  neg_Fun = mkFun (mkN "négation") ;
-  logarithm_Fun2 = mkFun2 (mkN "logarithme" masculine) (mkPrep "en base") possess_Prep ; ----
-  square_root_Fun = mkFun (mkCN (mkA "carré") (mkN "racine")) ;
-
-  successor_Fun = mkFun (mkN "successeur") ;
-  absolute_value_Fun = mkFun (mkCN (mkA "absolu") (mkN "valeur" feminine)) ;
-  factorial_Fun = mkFun (mkN "factorielle") ;
-  gcd_FunC = mkFunC "plus grand" "commun" "diviseur" ; ---- should be in this order
-
-  even_Adj = mkAdj "pair" ;
-  odd_Adj = mkAdj "impair" ;
-  divisible_Adj2 = mkAdj2 "divisible" "par" ;
-  prime_Adj = mkAdj "premier" ;
-
-  function_Fam2 = mkFam2 "fonction" genitive dative ;
-  union_FunC = mkFun "union" ;
-  intersection_FunC = mkFun "intersection" ;
-  complement_Fun = mkFun (mkN "complément") ;
-  cartesian_FunC = mkFun (mkCN (mkA "cartésien") (mkN "produit")) ;
-  difference_Fun2 = mkFun2 (mkN "différence") (mkPrep "entre") ;
-  powerset_Fun = mkFun "puissance" ; ----
-
-  subset_Noun2 = mkNoun2 (mkCN (mkA "propre") (mkN "sous-ensemble" masculine)) ;  
-  subseteq_Noun2 = mkNoun2 (mkN "sous-ensemble" masculine) ;  
-  superset_Noun2 = mkNoun2 (mkCN (mkA "propre") (mkN "sur-ensemble" masculine)) ;
-  superseteq_Noun2 = mkNoun2 (mkN "sur-ensemble" masculine) ;
-  equalset_Adj2 = mkAdj2 (mkA "égal") dative ;
-  notequalset_Adj2 = mkAdj2 (mkA "égal") dative ; ----
-  element_Noun2 = mkNoun2 (mkN "élément") ;
-  notelement_Noun2 = mkNoun2 (mkN "non-élément") ; ----
-
-  emptyset_Name = mkName (mkNP the_Det (mkCN (mkA "vide") ensemble_N)) ;
-  universeset_Name = mkName (mkNP the_Det (mkCN (mkA "universel") ensemble_N)) ;
-
-  congruent_Adj3 = mkAdj3 (mkAP (mkA "congruent")) dative (mkPrep "modulo") ;
-
-  finite_Adj = mkAdj "fini" ;
-  infinite_Adj = mkAdj "infini" ;
-
-  combinationsFromSet_Fun2 = mkFun2 (mkCN nombre_N (SyntaxFre.mkAdv genitive (mkNP thePl_Det combinaison_N))) genitive on_Prep ; ----
-  combinations_Fun2 = mkFun2 (mkCN ensemble_N (SyntaxFre.mkAdv genitive (mkNP aPl_Det combinaison_N))) genitive on_Prep ; ----
-  binomial_Fun2 = mkFun2 (mkCN (mkA "binomial") (mkN "coefficient")) genitive on_Prep ; ----
-
-  area_Fun = mkFun "aire" ;
-  radius_Fun = mkFun "rayon" ;
-  circle_Noun = mkNoun (mkN "cercle" masculine) ;
-  pi_Name = mkName (mkNP the_Det (mkCN nombre_N (symb "\\(\\pi\\)"))) ;
-  legendre_symbol_Fun2 = mkFun2 (mkCN (mkN "symbole" masculine) (SyntaxFre.mkAdv genitive (mkNP (mkPN "Legendre")))) genitive on_Prep ; ----
-  square_Fun = mkFun (mkN "carré" masculine) ;
-  resultant_FunC = mkFunC (mkN "addition") ;
-  perpendicular_Adj2 = mkAdj2 (mkA "perpendiculaire") dative ;
-  perpendicular_AdjC = mkAdjC (mkA "perpendiculaire") ;
-  length_Fun = mkFun "norme" ;
-  norm_Fun = mkFun "norme" ;
-  vector_Noun = mkNoun "vecteur" ;
-  denumerable_Adj = mkAdj "dénombrable" ;
-  cardinality_Fun = mkFun "cardinalité" ;
-  root_Noun2 = mkNoun2 (mkN "racine") genitive ;
-  degree_Fun = mkFun (mkN "degré" masculine) ;
-  polynomial_Noun = mkNoun (mkN "polynôme" masculine) ;
-  irrational_Adj = mkAdj "irrationnel" ;
-  rational_Adj = mkAdj "rationnel" ;
-
-  sin_Fun = mkFun "sinus" ;
-  cos_Fun = mkFun "cosinus" ;
-  tan_Fun = mkFun "tangente" ;
-  arcsin_Fun = mkFun "arcsinus" ;
-  arccos_Fun = mkFun "arccosinus" ;
-  arctan_Fun = mkFun "arctangente" ;
-  orthogonal_Adj2 = mkAdj2 (mkA "orthogonal") dative ;
-  orthogonal_AdjC = mkAdjC (mkA "orthogonal") ;
-  angle_between_Fun2 = mkFun2 (mkN "angle" masculine) (mkPrep "entre") ;
-  dot_product_FunC = mkFunC (mkCN (mkA "scalaire") (mkN "produit")) ;
-  vector_plus_FunC = mkFunC "somme" ;
-
-  sphenic_Adj = mkAdj "sphénique" ;
 
 
-{-
+lin proposition_Noun = mkNoun "proposition" ;
 
--- special constants
+lin digit_Noun = mkNoun (mkN "chiffra" masculine) ;
 
-  SigmaExp i m n exp =
-    mkNP the_Det (mkCN (mkCN sum_N)
-      (SyntaxFre.mkAdv possess_Prep
-        (mkNP all_Predet
-	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
-	    (SyntaxFre.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))))) ;
-	    
-  SeriesExp i m exp =
-    mkNP the_Det (mkCN (mkCN series_N)
-      (SyntaxFre.mkAdv possess_Prep
-        (mkNP all_Predet
-	  (mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
-	    (SyntaxFre.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m infinity_NP)))))))) ;
-	    
-  IntegralExp i m n exp =
-    mkNP the_Det (mkCN (mkCN integral_N)
-      (SyntaxFre.mkAdv possess_Prep
-        (mkNP exp (SyntaxFre.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))) ;
+lin boolean_Noun = mkNoun (mkCN (mkA "booléen") (mkN "valeur" feminine)) ;
 
--}
+lin natural_Noun = mkNoun (mkA "naturel") nombre_N ;
+
+lin rational_Noun = mkNoun (mkA "rationnel") nombre_N ;
+lin real_Noun = mkNoun (mkA "réel") nombre_N ;
+
+
+lin list_Fam = mkFam "liste" ;
+lin set_Fam = mkFam ensemble_N ;
+
+lin Eq_Adj2 = mkAdj2 (mkA "égal") dative ;
+lin Eq_AdjE = mkAdj (mkAP (mkA "égal")) ;
+lin Lt_Adj2 = mkAdj2 (mkA "inférieur") dative ;
+lin Gt_Adj2 = mkAdj2 (mkA "supérieur") dative ;
+lin Neq_Adj2 = mkAdj2 (mkA "distinct") genitive ;
+lin Neq_AdjC = mkAP (mkA "distinct") ;
+lin Leq_Adj2 = mkAdj2 (mkAP or_Conj (mkAP (mkA "inférieur")) (mkAP (mkA "égal"))) dative ;
+lin Geq_Adj2 = mkAdj2 (mkAP or_Conj (mkAP (mkA "supérieur")) (mkAP (mkA "égal"))) dative ;
+
+
+
+
+lin converge_Verb = mkV "converger" ;
+lin divide_Verb2 = mkV2 "diviser" ;
+
+lin member_Noun2 = mkNoun2 element_N ;
+lin divisor_Noun2 = mkNoun2 (mkN "diviseur") ;
+
+lin plus_FunC = mkFunC "somme" ;
+lin minus_Fun2 = mkFun2 (mkN "différence") (mkPrep "entre") ;
+lin times_FunC = mkFunC (mkN "produit") ;
+lin div_Fun2 = mkFun2 (mkN "quotient") (mkPrep "entre") ; ----
+lin pow_Fun2 = mkFun2 (mkN "puissance") possess_Prep (mkPrep "en") ; ----
+lin neg_Fun = mkFun (mkN "négation") ;
+lin logarithm_Fun2 = mkFun2 (mkN "logarithme" masculine) (mkPrep "en base") possess_Prep ; ----
+lin square_root_Fun = mkFun (mkCN (mkA "carré") (mkN "racine")) ;
+
+lin successor_Fun = mkFun (mkN "successeur") ;
+lin absolute_value_Fun = mkFun (mkCN (mkA "absolu") (mkN "valeur" feminine)) ;
+lin factorial_Fun = mkFun (mkN "factorielle") ;
+lin gcd_FunC = mkFunC "plus grand" "commun" "diviseur" ; ---- should be in this order
+
+
+
+lin divisible_Adj2 = mkAdj2 "divisible" "par" ;
+
+
+lin function_Fam2 = mkFam2 "fonction" genitive dative ;
+lin union_FunC = mkFun "union" ;
+lin intersection_FunC = mkFun "intersection" ;
+lin complement_Fun = mkFun (mkN "complément") ;
+lin cartesian_FunC = mkFun (mkCN (mkA "cartésien") (mkN "produit")) ;
+lin difference_Fun2 = mkFun2 (mkN "différence") (mkPrep "entre") ;
+lin powerset_Fun = mkFun "puissance" ; ----
+
+lin subset_Noun2 = mkNoun2 (mkCN (mkA "propre") (mkN "sous-ensemble" masculine)) ;
+lin subseteq_Noun2 = mkNoun2 (mkN "sous-ensemble" masculine) ;
+lin superset_Noun2 = mkNoun2 (mkCN (mkA "propre") (mkN "sur-ensemble" masculine)) ;
+lin superseteq_Noun2 = mkNoun2 (mkN "sur-ensemble" masculine) ;
+lin equalset_Adj2 = mkAdj2 (mkA "égal") dative ;
+lin notequalset_Adj2 = mkAdj2 (mkA "égal") dative ; ----
+lin element_Noun2 = mkNoun2 (mkN "élément") ;
+lin notelement_Noun2 = mkNoun2 (mkN "non-élément") ; ----
+
+lin emptyset_Name = mkName (mkNP the_Det (mkCN (mkA "vide") ensemble_N)) ;
+lin universeset_Name = mkName (mkNP the_Det (mkCN (mkA "universel") ensemble_N)) ;
+
+lin congruent_Adj3 = mkAdj3 (mkAP (mkA "congruent")) dative (mkPrep "modulo") ;
+
+
+
+
+lin combinationsFromSet_Fun2 = mkFun2 (mkCN nombre_N (SyntaxFre.mkAdv genitive (mkNP thePl_Det combinaison_N))) genitive on_Prep ; ----
+lin combinations_Fun2 = mkFun2 (mkCN ensemble_N (SyntaxFre.mkAdv genitive (mkNP aPl_Det combinaison_N))) genitive on_Prep ; ----
+lin binomial_Fun2 = mkFun2 (mkCN (mkA "binomial") (mkN "coefficient")) genitive on_Prep ; ----
+
+lin area_Fun = mkFun "aire" ;
+lin radius_Fun = mkFun "rayon" ;
+
+lin pi_Name = mkName (mkNP the_Det (mkCN nombre_N (symb "\\(\\pi\\)"))) ;
+lin legendre_symbol_Fun2 = mkFun2 (mkCN (mkN "symbole" masculine) (SyntaxFre.mkAdv genitive (mkNP (mkPN "Legendre")))) genitive on_Prep ; ----
+lin square_Fun = mkFun (mkN "carré" masculine) ;
+lin resultant_FunC = mkFunC (mkN "addition") ;
+lin perpendicular_Adj2 = mkAdj2 (mkA "perpendiculaire") dative ;
+lin perpendicular_AdjC = mkAdjC (mkA "perpendiculaire") ;
+lin length_Fun = mkFun "norme" ;
+lin norm_Fun = mkFun "norme" ;
+
+lin denumerable_Adj = mkAdj "dénombrable" ;
+lin cardinality_Fun = mkFun "cardinalité" ;
+lin root_Noun2 = mkNoun2 (mkN "racine") genitive ;
+lin degree_Fun = mkFun (mkN "degré" masculine) ;
+
+lin irrational_Adj = mkAdj "irrationnel" ;
+
+
+lin sin_Fun = mkFun "sinus" ;
+lin cos_Fun = mkFun "cosinus" ;
+lin tan_Fun = mkFun "tangente" ;
+lin arcsin_Fun = mkFun "arcsinus" ;
+lin arccos_Fun = mkFun "arccosinus" ;
+lin arctan_Fun = mkFun "arctangente" ;
+lin orthogonal_Adj2 = mkAdj2 (mkA "orthogonal") dative ;
+lin orthogonal_AdjC = mkAdjC (mkA "orthogonal") ;
+lin angle_between_Fun2 = mkFun2 (mkN "angle" masculine) (mkPrep "entre") ;
+lin dot_product_FunC = mkFunC (mkCN (mkA "scalaire") (mkN "produit")) ;
+lin vector_plus_FunC = mkFunC "somme" ;
+
+
+
 }
