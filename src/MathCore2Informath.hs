@@ -51,8 +51,12 @@ synonyms env t = symbs t ++ verbs t where
 
   symbs :: forall a. Tree a -> [Tree a]
   symbs t = case t of
+    GAdjProp (LexAdj c) x ->
+      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
     GAdj2Prop (LexAdj2 c) x y ->
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAdj3Prop (LexAdj3 c) x y z ->
+      [sympred alt [sx, sy, sz] | alt <- ssyns c, sx <- terms x, sy <- terms y, sz <- terms z]
     GAdjCProp (LexAdjC c) x y ->
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAdjEProp (LexAdjE c) x y ->
@@ -109,13 +113,22 @@ synonyms env t = symbs t ++ verbs t where
   sympred (fun, cat) xs = case cat of
     "Compar" -> GFormulaProp (GEquationFormula
                   (GBinaryEquation (LexCompar fun) (xs !! 0) (xs !! 1)))
+    "MACRO" -> GFormulaProp (GMacroFormula (macroIdent fun) (gTerms xs))
     _ -> error $ "NOT YET: " ++ show cat
  
   app (fun, cat) xs = case cat of
     "Const" -> GConstTerm (LexConst fun)
     "Oper" -> GOperTerm (LexOper fun) (xs !! 0)
     "Oper2" -> GOper2Term (LexOper2 fun) (xs !! 0) (xs !! 1)
+    "MACRO" -> GMacroTerm (macroIdent fun) (gTerms xs)
     _ -> error $ "NOT YET: " ++ show cat
+
+  macroIdent fun = GStrIdent (GString (init (drop 2 fun)))  -- '\\foo' -> \foo
+
+gTerms :: [GTerm] -> GTerms
+gTerms terms = case terms of
+  [term] -> GOneTerms term
+  t : ts -> GAddTerms t (gTerms ts)
      
 ---- also in DMC, IMC
 gExps :: [GExp] -> GExps

@@ -50,7 +50,7 @@ mainCats = S.fromList [mkCId c | c <- words
 
 symbolicCats :: S.Set Cat
 symbolicCats = S.fromList [mkCId c | c <- words
-  "Formula Term Compar Const Oper Oper2"
+  "Formula Term Compar Const Oper Oper2 MACRO"  --- MACRO is not a cat in GF
   ]
 
 verbalCats :: S.Set Cat
@@ -171,7 +171,9 @@ mkConstantTableEntry pgf (funps:funs) = ConstantTableEntry {
 	 sty -> error ("preposition-extended lexicon: expected Adj or Noun, found " ++ sty)
       -}
        _ -> typ
-     _ -> error ("cannot infer type of " ++ showCId fun)
+     _ -> case showCId fun of
+       '\'':'\\':_ -> mkType [] (mkCId "MACRO") []
+       _ -> error ("cannot infer type of " ++ showCId fun)
      
    (symbs, syns) = partition (isSymbolic . snd) [(f, funtype f) | f <- funs]
    isSymbolic typ = case unType typ of

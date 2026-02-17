@@ -70,7 +70,7 @@ element element_Noun2 element_Compar
 notelement notelement_Noun2 notelement_Compar
 emptyset emptyset_Name emptyset_Const
 universeset universeset_Name universeset_Const
-congruent congruent_Adj3
+congruent congruent_Adj3 
 finite finite_Adj
 infinite infinite_Adj
 rational rational_Adj
@@ -129,4 +129,8 @@ Equ Eq_Adj2 Eq_AdjE Eq_Compar
 #DROP {|!_∘_|} 6
 #DROP const 4
 #DROP Π-swap 6
+
+#MACRO \congruent 3 #1 \equiv #2 \mbox{mod} #3
+#MACRO \isempty 1 #1 = \emptyset
+
 

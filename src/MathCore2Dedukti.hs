@@ -25,8 +25,13 @@ jmt2dedukti lb dt =
 -- this is where the GF identifier ambiguity is resolved
 applyLookBack ::  BackConstantTable -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
 applyLookBack mb t = case t of
-  QIdent s -> maybe [t] id $ M.lookup t mb
+  QIdent s -> maybe [t] id $ M.lookup (QIdent (unescape s)) mb
   _ -> Dedukti.AbsDedukti.composOpM (applyLookBack mb) t  
+ where
+  unescape s = case s of
+    '{':'|':cs -> "'\\" ++ init (init cs) ++ "'" -- for macros ; --- cumbersome
+    _ -> s
+    
 
 jmt2jmt :: GJmt -> Jmt
 jmt2jmt jment = case jment of
