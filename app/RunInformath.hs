@@ -44,9 +44,9 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
-      (ct, _, _) <- readConstantTable (grammar env) [file]
+      (ct, _, _, mt) <- readConstantTable (grammar env) [file]
       putStrLn (printConstantTable ct)
-      putStrLn (checkConstantTable (baseConstantModule env) (grammar env) ct)
+      putStrLn (checkConstantTable (baseConstantModule env) (grammar env) mt ct)
       
     Nothing | elem "-loop" args -> do
       loopInformath env

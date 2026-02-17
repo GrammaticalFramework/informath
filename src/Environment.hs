@@ -20,6 +20,7 @@ data Env = Env {
   synonymConstantTableSem :: SynonymConstantTableSem,
   backConstantTable :: BackConstantTable,
   dropTable :: DropTable,
+  macroTable :: MacroTable,
   formalisms :: [String],
   langs :: [Language],
   toLang :: Language,

@@ -55,9 +55,9 @@ readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  (ct, cvt, dt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
+  (ct, cvt, dt, mt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
   let fro = mkLanguage gr (argValue "-from-lang" english args)
-  ifArg "-check-constant-table" args (checkConstantTable mo gr ct)
+  ifArg "-check-constant-table" args (checkConstantTable mo gr mt ct)
   return Env {
     flags = args,
     grammar = gr,
@@ -68,6 +68,7 @@ readEnv args = do
     backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
     dropTable = dt,
+    macroTable = mt,
     formalisms = words "agda dedukti lean rocq",
     langs = languages gr, ---- | relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
@@ -92,7 +93,7 @@ readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
 
 -- | To read a constant table from a .dkgf file. 
-readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
+readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
 readConstantTable = buildConstantTable
 
 -- | To construct a concrete syntax name from a 3-letter language code.
@@ -253,8 +254,8 @@ annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
-checkConstantTable :: Module -> PGF -> ConstantTable -> String
-checkConstantTable mo gr ct = unlines (constantTableErrors mo gr ct)
+checkConstantTable :: Module -> PGF -> MacroTable -> ConstantTable -> String
+checkConstantTable mo gr mt ct = unlines (constantTableErrors mo gr mt ct)
 
 printConstantTable :: ConstantTable -> String
 printConstantTable = showConstantTable
@@ -389,7 +390,7 @@ printFinalParseResult env (t, ut, ct, jmts) = encodeJSON $ mkJSONObject [
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
   if isFlag "-to-latex-doc" env
-  then toLatexDoc (intersperse "" ss)
+  then toLatexDoc (macroCommands (macroTable env)) (intersperse "" ss)
   else ss
 
 -- | To print Dedukti under environment options, given in flags. 

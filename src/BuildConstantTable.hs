@@ -67,6 +67,9 @@ type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 -- conversions in Dk that drop a number of initial arguments
 type DropTable = M.Map QIdent Int
 
+-- definitions of macros to be converted to \newcommand in LaTeX
+type MacroTable = M.Map String (Int, String)
+
 data ConstantTableEntry = ConstantTableEntry {
   primary  :: (FunPrep, Type),
   symbolics :: [(FunPrep, Type)],
@@ -135,23 +138,26 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, [QIdent]) -> String
   prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable)
+buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
 buildConstantTable pgf dkgfs = do
   entrylines <- mapM readFile dkgfs >>= return . filter (not . null) . map words . concatMap lines
   let constantlines = filter isConstantEntry entrylines
   let conversionlines = filter isConversion entrylines
   let droplines = filter isDrop entrylines
+  let macrolines = filter isMacro entrylines
   let constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map readFunPrep gfids)) | qid:gfids <- constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
   let dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
-  return (constantTable, conversionTable, dropTable)
+  let macroTable = M.fromList [(c, (read n, unwords rest)) | _:c:n:rest <- macrolines]
+  return (constantTable, conversionTable, dropTable, macroTable)
  where
    isConstantEntry line = head (head line) /= '#'
    isConversion line = head line == "#CONV"
    isDrop line = head line == "#DROP"
+   isMacro line = head line == "#MACRO"
 
 
 mkConstantTableEntry :: PGF -> [FunPrep] -> ConstantTableEntry
@@ -180,32 +186,37 @@ mkConstantTableEntry pgf (funps:funs) = ConstantTableEntry {
      (_, cat, _) -> S.member cat symbolicCats
 
 
-mismatchingTypes :: DkType -> Type -> Bool
-mismatchingTypes dktyp gftyp = arityMismatch dktyp (unType gftyp) where
-  arityMismatch (dkhypos, _) (gfhypos, cid, _) = dkArity dkhypos /= gfArity gfhypos cid
+mismatchingTypes :: MacroTable -> DkType -> Type -> FunPrep -> Maybe (Int, Int)
+mismatchingTypes mt dktyp gftyp funprep = arityMismatch dktyp (unType gftyp) where
+  arityMismatch (dkhypos, _) (gfhypos, cid, _) = if dka /= gfa then Just (dka, gfa) else Nothing
+    where
+      dka = dkArity dkhypos
+      gfa = gfArity gfhypos cid
   gfArity gfhypos cid = case showCId cid of
-    s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
+    s | elem s (words "Adj Verb") -> 1 + length (snd funprep)
+    s | elem s (words "Fun Fam Noun1 Oper") -> 1
     s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2 FunC AdjC AdjE") -> 2  ---- C can be >2
     s | elem s (words "Adj3") -> 3
-    _ -> length gfhypos
+    s | elem s (words "MACRO") -> maybe 0 fst (M.lookup (tail (filter (/='\'') (showCId (fst funprep)))) mt) --- '\\foo' -> \foo 
+    _ -> length gfhypos + length (snd funprep)
   dkArity dkhypos = foldl (+) 0 (map hypoArity dkhypos)
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
 
  ---- TODO: check more than arity
 
-constantTableErrors :: Module -> PGF -> ConstantTable -> [String]
-constantTableErrors dk pgf table = 
+constantTableErrors :: Module -> PGF -> MacroTable -> ConstantTable -> [String]
+constantTableErrors dk pgf mt table = 
   let funs = deduktiFunctions dk
       missing = [fun | (fun, _) <- funs, M.notMember fun table]
-      mismatches = [(dkfun, gffun) |
+      mismatches = [((dkfun, gffun), (e, f)) |
                       (dkfun, dktyp) <- funs,
 		      (gffun, gftyp) <- allGFFuns table dkfun,
-		      mismatchingTypes dktyp gftyp]
+		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
-    ["MISMATCHING TYPES: " ++ printTree dkfun ++ " <> " ++ showFunPrep gffun |
-                      (dkfun, gffun) <- mismatches]
+    [unwords ["MISMATCHING TYPES:", printTree dkfun, show e, "<>", showFunPrep gffun, show f] |
+                      ((dkfun, gffun), (e, f)) <- mismatches]
 		      
 
 
@@ -287,5 +298,9 @@ guessGFCat ident@(QIdent c) typ =
         _ -> "FunC"
       (EIdent f, _) | f == identProof -> "Label"
       _ -> "Label"  --- default, assuming proof labels are often not linearized 
-      
 
+
+macroCommands :: MacroTable -> [String]
+macroCommands t = [concat ["\\newcommand{", c, "}", arity n, "{", d, "}"] | (c, (n, d)) <- M.assocs t]
+  where
+    arity n = if n==0 then "" else "[" ++ show n ++ "]"

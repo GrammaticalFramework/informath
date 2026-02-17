@@ -70,7 +70,7 @@ element element_Noun2 element_Compar
 notelement notelement_Noun2 notelement_Compar
 emptyset emptyset_Name emptyset_Const
 universeset universeset_Name universeset_Const
-congruent congruent_Adj3 
+congruent congruent_Adj3 \congruent
 finite finite_Adj
 infinite infinite_Adj
 rational rational_Adj
@@ -108,7 +108,7 @@ series SeriesExp series_Term
 integral IntegralExp integral_Term
 ni contain_Verb2 ni_Compar
 disjoint disjoint_AdjC disjoint_Adj+fromPrep disjoint_Compar
-empty empty_Adj
+empty empty_Adj \isempty
 inhabited inhabited_Adj
 sameParity sameParityProp
 

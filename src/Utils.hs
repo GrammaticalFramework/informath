@@ -41,8 +41,8 @@ fileSuffix = reverse . takeWhile (/= '.') . reverse
 
 commaSep s = words (map (\c -> if c==',' then ' ' else c) s)
 
-toLatexDoc :: [String] -> [String]
-toLatexDoc ss = latexPreamble ++ ss ++ [latexEndDoc]
+toLatexDoc :: [String] -> [String] -> [String]
+toLatexDoc ms ss = latexPreamble ++ ms ++ ss ++ [latexEndDoc]
 
 latexEndDoc = "\\end{document}"
 
