@@ -38,8 +38,8 @@ lin Geq_Adj2 = mkAdj2 (mkAP or_Conj (mkAP (mkA "supérieur")) (mkAP (mkA "égal"
 
 
 
-lin converge_Verb = mkV "converger" ;
-lin divide_Verb2 = mkV2 "diviser" ;
+lin converge_Verb = mkVerb "converger" ;
+lin divide_Verb2 = mkVerb2 "diviser" ;
 
 lin member_Noun2 = mkNoun2 element_N ;
 lin divisor_Noun2 = mkNoun2 (mkN "diviseur") ;

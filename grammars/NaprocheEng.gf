@@ -76,7 +76,7 @@ lin
   inhabited_Adj = mkAP (mkA "inhabited") ;
   disjoint_AdjC = mkAP (mkA "disjoint") ;
   disjoint_Compar = "\\notmeets" ;
-  contain_Verb2 = mkV2 "contain" ;
+  contain_Verb2 = mkVerb2 "contain" ;
   ni_Compar = "\\ni" ;
 
 

@@ -39,7 +39,7 @@ lin Geq_Adj2 = mkAdj2 "större än eller lika" "med" ;
 
 
 lin converge_Verb = mkVerb (mkV "konvergera") ;
-lin divide_Verb2 = mkV2 "dela" ;
+lin divide_Verb2 = mkVerb2 "dela" ;
 
 lin member_Noun2 = mkNoun2 element_N ;
 lin divisor_Noun2 = mkNoun2 (mkN "delare") ;

@@ -40,7 +40,7 @@ lin Geq_Adj2 = mkAdj2 "" "größer oder gleich" ;
 
 
 lin converge_Verb = mkVerb (mkV "konvergieren") ;
-lin divide_Verb2 = mkVerb2 (mkV2 "teilen") ;
+lin divide_Verb2 = mkVerb2 (mkV "teilen") ;
 lin member_Noun2 = mkNoun2 (mkN "Element" "Elemente" neuter) ;
 lin divisor_Noun2 = mkNoun2 (mkN "Teiler") ;
 
