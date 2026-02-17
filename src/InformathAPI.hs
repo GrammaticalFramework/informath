@@ -35,6 +35,7 @@ import PGF
 import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
+import qualified Data.Set as S
 
 
 -- * The environment
@@ -481,7 +482,12 @@ readGFtree2nat env s = case readExpr s of
 
 -- | To show all GF functions with their types, one per line
 showGFFunctions :: Env -> [String]
-showGFFunctions env = [showCId f ++ " : " ++ showType [] t  | f <- functions gr, Just t <- [functionType gr f]]
-  where gr = grammar env
+showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map showLang (langs f))
+                         | f <- functions gr, Just t <- [functionType gr f]]
+  where
+    gr = grammar env
+    misses = [(lang, S.fromList (missingLins gr lang)) | lang <- languages gr]
+    langs f = [lang | lang <- languages gr, S.notMember f (maybe S.empty id (lookup lang misses))]
+    showLang = drop 9 . showCId  -- InformathEng -> Eng
 
 
