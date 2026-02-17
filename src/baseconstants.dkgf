@@ -50,7 +50,7 @@ even even_Adj
 odd odd_Adj
 prime prime_Adj
 divisible divisible_Adj2
-divide divide_Verb2
+divide divide_Verb2 \divides
 divisor divisor_Noun2
 converge converge_Verb
 function function_Fam2
@@ -130,7 +130,8 @@ Equ Eq_Adj2 Eq_AdjE Eq_Compar
 #DROP const 4
 #DROP Π-swap 6
 
-#MACRO \congruent 3 #1 \equiv #2 \mbox{mod} #3
+#MACRO \congruent 3 #1 \equiv #2 \, \mbox{mod} \, #3
 #MACRO \isempty 1 #1 = \emptyset
+#MACRO \divides 2 #1 \mid #2
 
 
