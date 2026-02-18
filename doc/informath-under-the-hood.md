@@ -1224,12 +1224,12 @@ If some of the words can be parsed in GF but is not find in the symbol table, th
 
 Every entry in a symbol table must have a verbal function as its primary rendering, given right after the Dedukti function. Alternative verbalizations can also come from symbolic categories:
 ```
-  category    semantic type           example
-—-------------------------------------------------------------------
-  Compar      Term -> Term -> Term    <
-  Const       Term                    \pi
-  Oper        Term -> Term            \sqrt
-  Oper2       Term -> Term -> Term    +
+  category    semantic type            example
+—----------------------------------------------
+  Compar      Term -> Term -> Formula  <
+  Const       Term                     \pi
+  Oper        Term -> Term             \sqrt
+  Oper2       Term -> Term -> Term     +
 ```
 
 ### Flattening and aggregation

@@ -141,22 +141,22 @@ sigma:
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
 natural_deduction:
-	$(RUN) -to-latex-doc -constants=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex
+	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
 natural_deduction_rules:
-	$(RUN) -to-latex-doc -constants=test/natural_deduction.dkgf test/natural_deduction.dk >out/ndr.tex
+	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction.dk >out/ndr.tex
 	cd out ; pdflatex ndr.tex ; $(OPEN) ndr.pdf
 
 proof_units:
 	echo "proof units have no Dedukti formalization so far"
-#	$(RUN) -constants=src/baseconstants.dkgf,test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
+#	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
 mathcore_examples:
-	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk
+	$(RUN) -add-symboltables=test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk
 
 mathextensions_examples:
-	$(RUN) -constants=src/baseconstants.dkgf,test/natural_deduction.dkgf test/mathextensions_examples.dk
+	$(RUN) -add-symboltables=test/natural_deduction.dkgf test/mathextensions_examples.dk
 
 naproche:
 	$(RUN) -translate -to-latex-doc -variations -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
@@ -187,7 +187,7 @@ parallel-def:
 	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl
 
 matita:
-	$(RUN) -constants=test/empty.dkgf test/mini-matita.dk
+	$(RUN) -symboltables=test/empty.dkgf test/mini-matita.dk
 
 gflean:
 	$(RUN) test/gflean-data.txt

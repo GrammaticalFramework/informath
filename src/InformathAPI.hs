@@ -55,7 +55,11 @@ readEnv :: [Flag] -> IO Env
 readEnv args = do
   mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
   gr <- readGFGrammar (argValue "-grammar" grammarFile args)
-  (ct, cvt, dt, mt) <- readConstantTable gr (argValues "-constants" constantTableFile args)
+  let symboltables =
+        if flagHasValue "-add-symboltables" args
+	then constantTableFile : argValues "-add-symboltables" "" args
+	else argValues "-symboltables" constantTableFile args
+  (ct, cvt, dt, mt) <- readConstantTable gr symboltables
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   ifArg "-check-constant-table" args (checkConstantTable mo gr mt ct)
   return Env {

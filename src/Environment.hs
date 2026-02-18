@@ -56,6 +56,8 @@ argValueMaybeInt flag args = case argValue flag "nothing" args of
 
 isFlag flag env = elem flag (flags env)
 
+flagHasValue flag args = elem flag (map (takeWhile (/='=')) args)
+
 ifArg flag args msg = if elem flag args then putStrLn msg else return ()
 
 inputFileArg args = case [arg | arg <- args, head arg /= '-'] of

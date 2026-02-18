@@ -8,6 +8,12 @@
 
 ## NEWS
 
+18 February 2026: support for adapting Informath to new data without changing the grammar. This will also enable a binary-only release of Informath, which does not require Haskell or GF. A description is found below in the "Symbol tables" section.
+
+18 February 2026: deprecated `-previous`; it can be restored by checking out the GitHub version before the deprecation commit, but there should be no need.
+
+16 February 2026: a much larger lexicon in [WikidataWords.gf](grammars/WikidataWords.gf). About 2000 words in English, less in other languages. Mostly extracted from WikiData. Also other lexica extracted from Naproche and Rijke's HoTT book via Universal Dependency parsing. This is a preparation for a version of Informath that can be adapted to new data without editing the grammar.
+
 13 January 2026: divided this document to a basic part (this README file) and a new [Informath under the Hood document](./doc/informath-under-the-hood.md)).
 
 13 January 2026: enable reading standard input; see `RunInformath -help`.
@@ -139,25 +145,6 @@ Input prefixed with `?` is treated as natural language, all other input as Deduk
 You can change the source and target languages with the `-from-lang` and `-to-lang` flags. 
 You can quit the loop with Ctrl-C.
 
-
-## Using your own data
-
-You can in principle generate from any Dedukti (`.dk`) file, at least if it is well typed in Dedukti (which is not always necessary). However, the result will be quite bad unless you provide a symbol table with a `.dkgf` file, converting Dedukti identifiers to GF functions; see below about the structure of this file. 
-
-There is a default symbol table, [baseconstants.dkgf](src/baseconstants.dkgf), which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table, by passing it to the flag `-constants`. An example is the conversion of a Matita dump:
-```
-$ RunInformath -constants=test/empty.dkgf test/mini-matita.dk
-```
-Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-constants` flag, unless you use some other `.dkgf` file.
-
-Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files recognizes three kinds of lines;
-- `<DeduktiIdent> <GFFunction>+`: different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms.
-The GFFunction can be a single GF abstract syntax function, such as `divisible_Adj2`, or a combination of such a function with a preposition, such as `divisible_Adj+byPrep`. The latter feature enables applications of Informath to new concepts without extending the grammar but by using a general-purpose lexicon.
-- `#CONV <formalism> <DeduktiIdent> <FormalismIdent>`: conversion of Dedukti identifier to another formalism (e.g. its standard library function) 
-- `#DROP <DeduktiIdent> <int>`: drop a number of initial arguments from the Dedukti function application
-
-The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-constants=<file>.dkgf+` where `base_constants.dkgf`can be one of the files. How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md).
-
 ## Generating synthetic data
 
 For those who are interested just in the generation of synthetic data, the following commands (after building Informath with `make`) can do it: assuming that you have a `.dk` file available, build a `.jsonl` file with all conversions of each Dedukti judgement:
@@ -287,13 +274,175 @@ $ lean bexx.lean
 ```
 This should be made less cumbersome in the future.
 
-# ToDo
+## Symbol tables
 
-- improve conversions from Dedukti to other proof systems in particular to guarantee type correctness
-- extend the MathCore-Informath conversion
-- investigate the possibility of a declarative, user-defined extension of MathCore-Informath conversion
-- improve the concrete syntaxes of different languages by functor exceptions
-- add concrete syntaxes to yet other natural languages
-- extend the Informath language, in particular, with
-     - proofs, in addition to theorems and definitions to proofs (complete in theory, but very rudimentary now)
-     - wider coverage of BaseConstants.dk and the multilingual lexicon of math terms
+You can in principle generate from any Dedukti (`.dk`) file, at least if it is well typed in Dedukti (which is not always necessary). However, the result will be quite bad unless you provide a symbol table with a `.dkgf` file, converting Dedukti identifiers to GF functions. This section describes the structure of this file. 
+
+There is a default symbol table, [baseconstants.dkgf](src/baseconstants.dkgf), which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table, by passing it to the flag `-symboltables`. An example is the conversion of a Matita dump:
+```
+$ RunInformath -symboltables=test/empty.dkgf test/mini-matita.dk
+```
+Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-symboltables` flag, unless you use some other `.dkgf` file.
+
+If you don't want to replace `baseconstants.dkgf` but just add your own `.dkgf` files, you can use the flag `-add-symboltables`.
+
+Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
+```
+<DeduktiIdent> <GFFunction>+
+```
+This line maps the Dedukti identifier to the different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms. For example, the line
+```
+Eq Eq_Adj2 Eq_AdjE Eq_Compar
+```
+says that the Dedukti constant `Eq` is primarily rendered with `Eq_Adj2`, which means that `Eq x y` becomes "$x$ is equal to $y$". The second alternative, `Eq_AdjE`, uses the collective predication form "$x$ and $y$ are equal". The third alternative `Eq_Compar` uses the fully symbolic expression "$x = y$".
+
+In these symbol table lines, the first variant must always be a **verbal** function, that is, use words instead of mathematical symbols. This condition is needed to make informalization failure-free: a symbolic function can only be used if all of its arguments have symbolic renderings, which is not guaranteed for all concepts in informal mathematics.
+
+A GFFunction in a symbol table can be a single GF abstract syntax function, such as `Eq_Adj2`, or a combination of functions, as specified below.
+
+In addition to mappings from Dedukti to GF, a `.dkgf` file can contain the following kind of lines:
+```
+#CONV <formalism> <DeduktiIdent> <FormalismIdent>
+``` 
+defines a conversion of a Dedukti identifier to another formalism, such as Lean, typically to a standard library function of that formalism.
+```
+#DROP <DeduktiIdent> <int>
+```
+tells the conversion from Dedukti to GF to drop a number of initial arguments of the function application. These are typically the "hidden arguments" in some other formalism, which Dedukti has to make explicit.
+```
+#MACRO <macroname> <int> <definition>
+```
+defines a LaTeX macro, which can be used on lines that map Dedukti identifiers to GF. The parts of this line are also converted to LaTeX `\newcommand` statements and included in the file generated with the `-to-latex-doc` option. For example, the mapping
+```
+congruent congruent_Adj3 \congruent
+```
+gives, as the primary rendering, the three-place adjective producing "$m$ is congruent to $n$ modulo $k$". The second alternative is a macro, which is defined as 
+```
+#MACRO \congruent 3 #1 \equiv #2 \, \text{mod} \, #3
+```
+The resulting LaTeX command is
+```
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \text{mod} \, #3}
+```
+which produces the rendering "$m \equiv n \, \text{mod} \, k$".
+
+The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+` where `base_constants.dkgf`can be one of the files. How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md).
+
+
+### Syntactic and lexical categories
+
+A majority of Dedukti expressions are function applications (of the form `f x1 ... xn`), which are rendered in a category determined by the symbol table mapping of the function `f`. The resulting informalizations belong to one of the following **syntactic categories** in GF:
+```
+category   name              linguistic type     example
+—---------------------------------------------------------------
+Exp        expression        NP (noun phrase)    the empty set
+Kind       kind              CN (commoun noun)   integer
+Prop       proposition       S (sentence)        2 is even
+Term       symbolic term     TermPrec            x + 2
+Formula    symbolic formula  TermPrec            x > 2
+```
+The "linguistic type" here refers to a type in the [GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/), which is used in the implementation of the grammar. The category `TermPrec` means term with a precedence level, where a small integer controls the use of parentheses in combinations. 
+
+Unless you are willing to modify the GF grammars and the Haskell code, you will never have to write the name of a syntactic category. The only thing that you modify is the symbol table, which uses **lexical categories**, that is, categories of individual words such as "integer" and fixed multiword phrases such as "natural number". Informath comes with a large lexicon (of 3000 entries in English), from which you can pick ones that you need in your symbol table.
+Most of these entries follow a uniform naming convention:
+```
+<word>_<category>
+```
+For example,
+```
+even_Adj
+integer_Noun
+converge_Verb
+```
+The following lexical categories are available for verbal renderings:
+```
+category  semantic type              example
+—-----------------------------------------------------------
+Adj       Exp -> Prop                even
+Adj2      Exp -> Exp -> Prop         divisible by
+Adj3      Exp -> Exp -> Exp -> Prop  congruent to y modulo z
+AdjC      Exps -> Prop               distinct (collective pred.)
+AdjE      Exps -> Prop               equal (equivalence rel.)
+Fam       Kind -> Kind               list of
+Fam2      Kind -> Kind -> Kind       function from ... to
+Fun       Exp -> Exp                 the square of
+Fun2      Exp -> Exp -> Exp          the quotient of
+FunC      Exps -> Exp                the sum of
+Label     ProofExp                   theorem 1
+Name      Exp                        the empty set
+Noun      Kind                       integer
+Noun1     Exp -> Prop                (a) prime
+Noun2     Exp -> Exp -> Prop         (a) divisor of
+Verb      Exp -> Prop                converge
+Verb2     Exp -> Exp -> Prop         divide
+```
+The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
+
+The following categories are available for symbolic renderings:
+```
+  category    semantic type            example
+—----------------------------------------------
+  Compar      Term -> Term -> Formula  <
+  Const       Term                     \pi
+  Oper        Term -> Term             \sqrt
+  Oper2       Term -> Term -> Term     +
+```
+The grammar contains some antries from each category. However, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories.
+
+### Inspecting the Informath lexicon
+
+The Informath lexicon contains entries from each of the lexical categories.
+It can be inspected with RunInformath itself by using the flag `-find-gf`:
+```
+$ echo "vector orthogonal" | RunInformath -find-gf
+
+vector : vector_Noun
+orthogonal : orthogonal_AdjC orthogonal_Adj2 orthogonal_Adj
+```
+This command reads standard input and treats every word separately.
+
+Another view of the lexicon (and the whole grammar) can be obtained by the option `-all-gf-functions`, which lists all functions of the grammar with their types, as well as the languages for which they are implemented. Grepping with the category and the language focuses the view to what you are looking for:
+```
+$ RunInformath -all-gf-functions | grep AdjC | grep Ger
+
+Neq_AdjC : AdjC 	 Eng Fre Ger Swe
+disjoint_AdjC : AdjC 	 Eng Fre Ger
+orthogonal_AdjC : AdjC 	 Eng Fre Ger Swe
+perpendicular_AdjC : AdjC 	 Eng Fre Ger Swe
+```
+(showing a part of the result). To see what the rendering of a given function is in a given language, you can use the `-linearize` option:
+```
+$ echo "disjoint_AdjC" | RunInformath -linearize -to-lang=Ger
+
+disjunkt
+```
+
+### Compound lexical entries
+
+Most of the words in the Informath lexicon belong to the base categories `Adj`, `Noun`, and `Verb`. Complex categories such as `Adj2` and `Fun` have very few entries.
+There are three reasons for this:
+
+- Words of base categories have been easy to find in available resources such as Wikidata, whereas the data for complex categories is much less common.
+- It is hard to anticipate all uses of a given word in the different categories.
+- Including all of these uses would populate the lexicon with redundant information, in particular, the inflection of base category words that appear in different complex categories.
+
+At the same time, most mathematical concepts *are* of complex categories, such as a noun or an adjective with a preposition. Changing the preposition can change the meaning of the base word. To make it possible to describe this accurately by just editing the symbol table (and not the grammar), a notation for **compound lexical entries** is made available. The syntax of a compound entry is
+```
+<BaseFun>+<Fun_1>...+<Fun_n>+<Cat>
+```
+Thus, `+` is used as delimiter of the different parts. The first part is an GF function of a base category, and the last part is the target category. The middle parts are GF functions that are used to modify the base function - in particular, prepositions used for arguments, but also adjectives used to modify nouns. Here are some examples:
+```
+equal_Adj+toPrep+Adj2         -- equal to
+equal_Adj+AdjE                -- (are) equal
+number_Noun+ofPrep+Fun        -- the number of
+number_Noun+complex_Adj+Noun  -- complex number
+```
+**Notice: this has not yet been fully implemented but is coming soon.**
+
+### Type checking symbol tables
+
+It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may even cause run-time failures. Because of this, RunInformath provides a static checker of symbol tables, invoked as follows:
+```
+RunInformath -base=<file.dk> <file>.dkgf
+```
+This command checks if the types of the GF functions and symbolic macros are compatible with the types of the Dedukti functions that they are assigned to. It does not (yet) find all errors, but should be enough to guarantee that informalization is failure-free.
