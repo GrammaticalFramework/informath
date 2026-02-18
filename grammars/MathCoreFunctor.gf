@@ -197,8 +197,11 @@ lin
   AdjAdjC adj = adj ;
   AdjAdjE adj = adj ;
   AdjPrepAdj3 adj prep1 prep2 = {ap = adj ; prep1 = prep1 ; prep2 = prep2} ;
+  
+  NounNoun1 noun = noun ;
+  NounPrepNoun2 noun prep = {cn = noun ; prep = prep} ;
 
-  VerbVerb2 verb prep = mkVerb2 verb prep ;
+  VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
 
   NounAdjNoun noun adj = mkCN adj noun ;
   

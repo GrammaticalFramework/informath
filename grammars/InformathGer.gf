@@ -2,6 +2,7 @@
 
 concrete InformathGer of Informath =
   MathCoreGer,
+  ExamplesGer,
   VerbalConstantsGer,
   SymbolicConstantsLatex,
   WikidataWordsGer,

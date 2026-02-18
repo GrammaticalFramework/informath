@@ -14,7 +14,7 @@ import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
-import ParseInformath (parseJmt, unindexGFTree)
+import ParseInformath (parseJmt, unindexGFTree, parseExample)
 import Lexing
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
@@ -495,4 +495,9 @@ showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map sho
     langs f = [lang | lang <- languages gr, S.notMember f (maybe S.empty id (lookup lang misses))]
     showLang = drop 9 . showCId  -- InformathEng -> Eng
 
+
+-- | To parse an example to a tree
+parseFunExample :: Env -> String -> [String]
+parseFunExample env s =
+  map (showExpr []) (parseExample (grammar env) (fromLang env) s)
 

@@ -55,6 +55,9 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       mapM_ (putStrLn . readGFtree2nat env) (lines s)
     Nothing | elem "-all-gf-functions" args -> do
       mapM_ putStrLn (showGFFunctions env)
+    Nothing | elem "-parse-example" args -> do
+      s <- getContents
+      mapM_ putStrLn (parseFunExample env s)
     Nothing | elem "-formalize" args -> do
       s <- getContents 
       let results = processLatex env s
@@ -111,6 +114,7 @@ helpMsg4 = unlines [
   just "-find-gf" "shows GF functions that match each word in standard input",
   just "-linearize" "linearize GF trees given line by line in standard input",
   just "-all-gf-functions" "show all GF functions with their types",
+  just "-parse-example" "parse example candidate lexical item",
   just "-failures" "show lines that fail to parse",
   just "-macroidents" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",

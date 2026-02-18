@@ -2,6 +2,7 @@
 
 concrete InformathEng of Informath =
   MathCoreEng,
+  ExamplesEng,
   VerbalConstantsEng,
   SymbolicConstantsLatex,
   MathExtensionsEng,

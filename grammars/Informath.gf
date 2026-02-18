@@ -1,5 +1,6 @@
 abstract Informath =
   MathCore,
+  Examples,
   VerbalConstants,
   SymbolicConstants,
   MathExtensions,

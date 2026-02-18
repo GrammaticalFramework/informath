@@ -116,7 +116,10 @@ fun
   AdjAdjE : Adj -> AdjE ;
   AdjPrepAdj3 : Adj -> Prep -> Prep -> Adj3 ;
 
-  VerbVerb2 : Verb -> Prep -> Verb2 ;
+  NounNoun1 : Noun -> Noun1 ;
+  NounPrepNoun2 : Noun -> Prep -> Noun2 ;
+
+  VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
   
   NounAdjNoun : Noun -> Adj -> Noun ;
 

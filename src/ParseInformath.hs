@@ -71,3 +71,6 @@ unindexGFTree macroidents pgf lang termindex expr = maybe expr id (unind  expr) 
     case mts of
       Just (t:ts) -> return t ---- todo: ambiguity if ts
       _ -> Nothing
+
+parseExample :: PGF -> Language -> String -> [Expr]
+parseExample pgf lang = parse pgf lang (maybe undefined id (readType "Example"))
