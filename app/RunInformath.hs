@@ -3,8 +3,6 @@
 
 module Main where
 
-import Informath3 (main3) ---- to be deprecated
-
 import Environment
 import InformathAPI
 import Utils (showFreqs)
@@ -16,11 +14,10 @@ import System.IO (stdout, hFlush)
 
 main = do
   xx <- getArgs
-  if elem "-previous" xx
-  then main3 xx
-----  else if elem "-server" xx  --- TODO-server
+----  if elem "-server" xx  --- TODO-server
 ----  then informathServer xx  --- TODO-server
-  else main4 xx 
+----  else
+  main4 xx 
 
 main4 args = if elem "-help" args then putStrLn helpMsg4 else do
   env <- readEnv args 
@@ -123,7 +120,6 @@ helpMsg4 = unlines [
   just "-no-unlex" "linearize to tokens separated by spaces",
   just "-dedukti-tokens" "print Dedukti code with tokens separated by spaces",
   just "-help" "show this help message",
-  just "-previous" "use the previous version of Informath (to be deprecated)",
   "",
   "* Analysing and converting Dedukti:",
   "",

@@ -1,5 +1,4 @@
 RUN  := stack exec RunInformath --
-PREVIOUSRUN := RunInformath -previous
 OPEN := open  # pdf viewer command
 GF_FILES := $(wildcard grammars/*.gf)
 
@@ -7,7 +6,7 @@ lang=Eng
 
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
 
-all: grammars/Informath.pgf previous/grammars/PreviousInformath.pgf Dedukti Agda Rocq Lean RunInformath grammar
+all: Dedukti Agda Rocq Lean grammar RunInformath
 
 grammar: grammars/Informath.pgf
 
@@ -19,9 +18,6 @@ devel: grammar RunInformath
 grammars/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
 
-# if you want to use the -previous option, also do this
-previous/grammars/PreviousInformath.pgf: $(GF_FILES)
-	cd previous/grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Fam,Adj,Rel,Fun,Label,Const,Oper,Compar,Set,Coercion,Relverb,Relnoun,Reladj,Comparnoun,Verb,Pred3 -name=PreviousInformath --probs=Informath.probs InformathEng.gf # InformathFre.gf InformathSwe.gf InformathGer.gf
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
@@ -196,29 +192,3 @@ matita:
 gflean:
 	$(RUN) test/gflean-data.txt
 
-previousdemo:
-	$(PREVIOUSRUN) -lang=Eng test/exx.dk
-	$(PREVIOUSRUN) -lang=Fre test/exx.dk
-	$(PREVIOUSRUN) -lang=Ger test/exx.dk
-	$(PREVIOUSRUN) -lang=Swe test/exx.dk
-	$(PREVIOUSRUN) -lang=Eng test/exx.dk >out/exx.txt
-	$(PREVIOUSRUN) -lang=Eng out/exx.txt
-	$(PREVIOUSRUN) -lang=Eng test/gflean-data.txt
-	cat src/BaseConstants.dk test/exx.dk >bexx.dk
-	dk check bexx.dk
-	$(PREVIOUSRUN) -to-agda test/exx.dk >src/exx.agda
-	cd src ; agda --prop exx.agda
-	$(PREVIOUSRUN) -to-coq test/exx.dk >exx.v
-	cat src/BaseConstants.v exx.v >bexx.v
-	coqc bexx.v
-	$(PREVIOUSRUN) -to-lean test/exx.dk >exx.lean
-	cat src/BaseConstants.lean exx.lean >bexx.lean
-	lean bexx.lean
-	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
-	dk check out/texx.dk
-	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
-	dk check out/sexx.dk
-	$(PREVIOUSRUN) -to-latex-file -variations test/top100.dk >out/top100.tex
-	echo "consider pdflatex out/top100.tex"
-	$(PREVIOUSRUN) -to-latex-file -variations test/sets.dk >out/sets.tex
-	echo "consider pdflatex out/sets.tex"

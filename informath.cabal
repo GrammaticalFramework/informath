@@ -15,16 +15,12 @@ executable RunInformath
   other-modules:
     CommonConcepts
     ConstantData
-    Core2Dedukti
-    Core2Informath
     Dedukti2Agda
     Dedukti2Rocq
-    Dedukti2Core
     Dedukti2Lean
     DeduktiOperations
     Environment
     Informath
-    Informath2Core
     Lexing
     MkConstants
     ParseInformath
