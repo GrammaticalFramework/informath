@@ -128,8 +128,9 @@ buildConstantTable pgf dkgfs = do
   let conversionlines = filter isConversion entrylines
   let droplines = filter isDrop entrylines
   let macrolines = filter isMacro entrylines
-  let constantTable = M.fromList [ ---- TODO: change this to work with arbitrary trees
-        (QIdent qid, mkConstantTableEntry pgf (map readGFTree gfids)) | qid:gfids <- constantlines]
+  let constantTable = M.fromList [
+        (QIdent qid, mkConstantTableEntry pgf (map readGFTree gfids)) |
+                     qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
@@ -142,8 +143,21 @@ buildConstantTable pgf dkgfs = do
    isDrop line = head line == "#DROP"
    isMacro line = head line == "#MACRO"
 
+splitEntry s = case split '|' s of
+  fg : ws -> split ':' fg ++ ws
+  _ -> []
+
+--- Data.List.Split cannot be found...
+split :: Char -> String -> [String]
+split c cs = case break (==c) cs of
+  ([], []) -> []
+  (s,  []) -> [strip s]
+  (s, _:s2) -> strip s : split c s2
+
+strip = unwords . words
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
+mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
 mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
   primary = (fun, funtype pgf fun),
   symbolics = [(f, typ) | (f, typ) <- symbs],

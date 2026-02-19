@@ -1,117 +1,116 @@
-Set set_Noun
-Type type_Noun
-Prop proposition_Noun
+Set : set_Noun
+Type : type_Noun
+Prop : proposition_Noun
 
-#Elem ElemKind
-#Proof ProofProp
+#Elem : ElemKind
+#Proof : ProofProp
 
-false FalseProp
-and CoreAndProp
-or CoreOrProp
-if CoreIfProp
-forall CoreAllProp
-exists CoreExistProp
-not CoreNotProp
-iff CoreIffProp
+false : FalseProp
+and : CoreAndProp
+or : CoreOrProp
+if : CoreIfProp
+forall : CoreAllProp
+exists : CoreExistProp
+not : CoreNotProp
+iff : CoreIffProp
 
-suchthat SuchThatKind
+suchthat : SuchThatKind
 
-Num number_Noun
-bool boolean_Noun
-List list_Fam
-Dig digit_Noun
-Nat natural_Noun natural_Const
-Int integer_Noun integer_Const
-Rat rational_Noun rational_Const
-Real real_Noun real_Const
-Complex complex_Noun complex_Const
-Cardinal cardinal_Noun
-Eq Eq_Adj2 Eq_AdjE Eq_Compar
-Lt Lt_Adj2 Lt_Compar
-Gt Gt_Adj2 Gt_Compar
-Neq Neq_Adj2 Neq_AdjC Neq_Compar
-Leq Leq_Adj2 Leq_Compar
-Geq Geq_Adj2 Geq_Compar
-positive positive_Adj
-negative negative_Adj
-plus plus_FunC plus_Oper2
-minus minus_Fun2 minus_Oper2
-times times_FunC times_Oper2
-div div_Fun2 div_Oper2
-pow pow_Fun2 pow_Oper2
-neg neg_Fun neg_Oper
-log logarithm_Fun2 logarithm_Oper2
-sqrt square_root_Fun square_root_Oper
-succ successor_Fun
-abs absolute_value_Fun absolute_value_Oper
-factorial factorial_Fun factorial_Oper
-gcd gcd_FunC
-even even_Adj
-odd odd_Adj
-prime prime_Adj
-divisible divisible_Adj2
-divide divide_Verb2 \divides
-divisor divisor_Noun2
-converge converge_Verb
-function function_Fam2
-union union_FunC union_Oper2
-intersection intersection_FunC intersection_Oper2
-difference difference_Fun2 difference_Oper2
-cartesian cartesian_FunC cartesian_Oper2
-powerset powerset_Fun powerset_Oper
-complement complement_Fun complement_Oper
-subset subset_Noun2 subset_Compar
-subseteq subseteq_Noun2 subseteq_Compar
-superset superset_Noun2 superset_Compar
-superseteq superseteq_Noun2 superseteq_Compar
-equalset equalset_Adj2 Eq_AdjE Eq_Compar
-notequalset notequalset_Adj2 Neq_Compar
-element element_Noun2 element_Compar
-notelement notelement_Noun2 notelement_Compar
-emptyset emptyset_Name emptyset_Const
-universeset universeset_Name universeset_Const
-congruent congruent_Adj3 \congruent
-finite finite_Adj
-infinite infinite_Adj
-rational rational_Adj
-irrational irrational_Adj
-Polynomial polynomial_Noun
-degree degree_Fun
-isRoot root_Noun2
-cardinality cardinality_Fun cardinality_Oper
-denumerable denumerable_Adj
-Vector vector_Noun
-length length_Fun length_Oper norm_Fun
-norm length_Fun length_Oper norm_Fun
-square square_Fun square_Oper
-legendre legendre_symbol_Fun2 legendre_symbol_Oper2
-pi pi_Name pi_Const
-Circle circle_Noun
-radius radius_Fun
-area area_Fun
-binomial binomial_Fun2 binomial_Oper2
-combinations combinations_Fun2 combinations_Oper2
-combinationsFromSet combinationsFromSet_Fun2 combinations_Oper2
-sin sin_Fun sin_Oper
-cos cos_Fun cos_Oper
-tan tan_Fun tan_Oper
-arcsin arcsin_Fun arcsin_Oper
-arccos arccos_Fun arccos_Oper
-arctan arctan_Fun arctan_Oper
-orthogonal orthogonal_Adj2 perpendicular_Adj2 orthogonal_AdjC perpendicular_AdjC orthogonal_Compar
-angleBetween angle_between_Fun2
-dotProduct dot_product_FunC dot_product_Oper2
-vectorPlus vector_plus_FunC resultant_FunC plus_Oper2
-sphenic sphenic_Adj
-sigma SigmaExp sigma_Term
-series SeriesExp series_Term
-integral IntegralExp integral_Term
-ni contain_Verb2 ni_Compar
-disjoint disjoint_AdjC (AdjPrepAdj2(disjoint_Adj)(fromPrep)) disjoint_Compar
-empty empty_Adj \isempty
-inhabited inhabited_Adj
-sameParity sameParityProp
-
+Num : number_Noun
+bool : boolean_Noun
+List : list_Fam
+Dig : digit_Noun
+Nat : natural_Noun | natural_Const
+Int : integer_Noun | integer_Const
+Rat : rational_Noun | rational_Const
+Real : real_Noun | real_Const
+Complex : complex_Noun | complex_Const
+Cardinal : cardinal_Noun
+Eq : Eq_Adj2 | Eq_AdjE | Eq_Compar
+Lt : Lt_Adj2 | Lt_Compar
+Gt : Gt_Adj2 | Gt_Compar
+Neq : Neq_Adj2 | Neq_AdjC | Neq_Compar
+Leq : Leq_Adj2 | Leq_Compar
+Geq : Geq_Adj2 | Geq_Compar
+positive : positive_Adj
+negative : negative_Adj
+plus : plus_FunC | plus_Oper2
+minus : minus_Fun2 | minus_Oper2
+times : times_FunC | times_Oper2
+div : div_Fun2 | div_Oper2
+pow : pow_Fun2 | pow_Oper2
+neg : neg_Fun | neg_Oper
+log : logarithm_Fun2 | logarithm_Oper2
+sqrt : square_root_Fun | square_root_Oper
+succ : successor_Fun
+abs : absolute_value_Fun | absolute_value_Oper
+factorial : factorial_Fun | factorial_Oper
+gcd : gcd_FunC
+even : even_Adj
+odd : odd_Adj
+prime : prime_Adj
+divisible : divisible_Adj2
+divide : divide_Verb2 | \divides
+divisor : divisor_Noun2
+converge : converge_Verb
+function : function_Fam2
+union : union_FunC | union_Oper2
+intersection : intersection_FunC | intersection_Oper2
+difference : difference_Fun2 | difference_Oper2
+cartesian : cartesian_FunC | cartesian_Oper2
+powerset : powerset_Fun | powerset_Oper
+complement : complement_Fun | complement_Oper
+subset : subset_Noun2 | subset_Compar
+subseteq : subseteq_Noun2 | subseteq_Compar
+superset : superset_Noun2 | superset_Compar
+superseteq : superseteq_Noun2 | superseteq_Compar
+equalset : equalset_Adj2 | Eq_AdjE | Eq_Compar
+notequalset : notequalset_Adj2 | Neq_Compar
+element : element_Noun2 | element_Compar
+notelement : notelement_Noun2 | notelement_Compar
+emptyset : emptyset_Name | emptyset_Const
+universeset : universeset_Name | universeset_Const
+congruent : congruent_Adj3 | \congruent
+finite : finite_Adj
+infinite : infinite_Adj
+rational : rational_Adj
+irrational : irrational_Adj
+Polynomial : polynomial_Noun
+degree : degree_Fun
+isRoot : root_Noun2
+cardinality : cardinality_Fun | cardinality_Oper
+denumerable : denumerable_Adj
+Vector : vector_Noun
+length : length_Fun | length_Oper | norm_Fun
+norm : length_Fun | length_Oper | norm_Fun
+square : square_Fun | square_Oper
+legendre : legendre_symbol_Fun2 | legendre_symbol_Oper2
+pi : pi_Name | pi_Const
+Circle : circle_Noun
+radius : radius_Fun
+area : area_Fun
+binomial : binomial_Fun2 | binomial_Oper2
+combinations : combinations_Fun2 | combinations_Oper2
+combinationsFromSet : combinationsFromSet_Fun2 | combinations_Oper2
+sin : sin_Fun | sin_Oper
+cos : cos_Fun | cos_Oper
+tan : tan_Fun | tan_Oper
+arcsin : arcsin_Fun | arcsin_Oper
+arccos : arccos_Fun | arccos_Oper
+arctan : arctan_Fun | arctan_Oper
+orthogonal : orthogonal_Adj2 | perpendicular_Adj2 | orthogonal_AdjC | perpendicular_AdjC | orthogonal_Compar
+angleBetween : angle_between_Fun2
+dotProduct : dot_product_FunC | dot_product_Oper2
+vectorPlus : vector_plus_FunC | resultant_FunC | plus_Oper2
+sphenic : sphenic_Adj
+sigma : SigmaExp | sigma_Term
+series : SeriesExp | series_Term
+integral : IntegralExp | integral_Term
+ni : contain_Verb2 | ni_Compar
+disjoint : disjoint_AdjC | AdjPrepAdj2 disjoint_Adj fromPrep | disjoint_Compar
+empty : empty_Adj | \isempty
+inhabited : inhabited_Adj
+sameParity : sameParityProp
 
 #CONV agda forall all
 #CONV agda Type Set

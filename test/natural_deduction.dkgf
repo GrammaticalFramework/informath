@@ -1,45 +1,45 @@
-Set set_Noun
-Prop proposition_Noun
-#Elem ElemKind
-#Proof ProofProp
+Set : set_Noun
+Prop : proposition_Noun
+#Elem : ElemKind
+#Proof : ProofProp
 
-false FalseProp
-and CoreAndProp
-or CoreOrProp
-if CoreIfProp
-forall CoreAllProp
-exists CoreExistProp
-not CoreNotProp
-iff CoreIffProp
+false : FalseProp
+and : CoreAndProp
+or : CoreOrProp
+if : CoreIfProp
+forall : CoreAllProp
+exists : CoreExistProp
+not : CoreNotProp
+iff : CoreIffProp
 
-falseE falseEProof
-andI andIProof
-andEl andElProof
-andEr andErProof
-orIl orIlProof
-orIr orIrProof
-orE orEProof
-ifI ifIProof
-ifE ifEProof
-forallI forallIProof
-forallE forallEProof
-existI existIProof
-existE existEProof
-hypo hypoProof
-refl reflProof
-NatInd NatIndProof
-evenZero evenZeroProof
-evenSucc evenSuccProof
-oddSucc oddSuccProof
+falseE : falseEProof
+andI : andIProof
+andEl : andElProof
+andEr : andErProof
+orIl : orIlProof
+orIr : orIrProof
+orE : orEProof
+ifI : ifIProof
+ifE : ifEProof
+forallI : forallIProof
+forallE : forallEProof
+existI : existIProof
+existE : existEProof
+hypo : hypoProof
+refl : reflProof
+NatInd : NatIndProof
+evenZero : evenZeroProof
+evenSucc : evenSuccProof
+oddSucc : oddSuccProof
 
-Eq Eq_Adj2 Eq_AdjE Eq_Compar
-Nat natural_Noun natural_Const
-Succ successor_Fun
-plus plus_FunC plus_Oper2
-times times_FunC times_Oper2
-divisible divisible_Adj2
-even even_Adj
-odd odd_Adj
+Eq : Eq_Adj2 | Eq_AdjE | Eq_Compar
+Nat : natural_Noun | natural_Const
+Succ : successor_Fun
+plus : plus_FunC | plus_Oper2
+times : times_FunC | times_Oper2
+divisible : divisible_Adj2
+even : even_Adj
+odd : odd_Adj
 
 # #DROP Eq 1
 

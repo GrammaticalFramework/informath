@@ -288,17 +288,17 @@ If you don't want to replace `baseconstants.dkgf` but just add your own `.dkgf` 
 
 Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
 ```
-<DeduktiIdent> <GFFunction>+
+<DeduktiIdent> : <GFFunction> | ... | <GFFunction>
 ```
 This line maps the Dedukti identifier to the different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms. For example, the line
 ```
-Eq Eq_Adj2 Eq_AdjE Eq_Compar
+Eq : Eq_Adj2 | Eq_AdjE | Eq_Compar
 ```
 says that the Dedukti constant `Eq` is primarily rendered with `Eq_Adj2`, which means that `Eq x y` becomes "$x$ is equal to $y$". The second alternative, `Eq_AdjE`, uses the collective predication form "$x$ and $y$ are equal". The third alternative `Eq_Compar` uses the fully symbolic expression "$x = y$".
 
 In these symbol table lines, the first variant must always be a **verbal** function, that is, use words instead of mathematical symbols. This condition is needed to make informalization failure-free: a symbolic function can only be used if all of its arguments have symbolic renderings, which is not guaranteed for all concepts in informal mathematics.
 
-A GFFunction in a symbol table can be a single GF abstract syntax function, such as `Eq_Adj2`, or a combination of functions, as specified below.
+A GFFunction in a symbol table can be a single GF abstract syntax function, such as `Eq_Adj2`, or a complex syntax tree, as specified below.
 
 In addition to mappings from Dedukti to GF, a `.dkgf` file can contain the following kind of lines:
 ```
@@ -358,23 +358,23 @@ The following lexical categories are available for verbal renderings:
 ```
 category  semantic type              example
 —-----------------------------------------------------------
-Adj       Exp -> Prop                even
-Adj2      Exp -> Exp -> Prop         divisible by
-Adj3      Exp -> Exp -> Exp -> Prop  congruent to y modulo z
-AdjC      Exps -> Prop               distinct (collective pred.)
-AdjE      Exps -> Prop               equal (equivalence rel.)
-Fam       Kind -> Kind               list of
-Fam2      Kind -> Kind -> Kind       function from ... to
-Fun       Exp -> Exp                 the square of
-Fun2      Exp -> Exp -> Exp          the quotient of
-FunC      Exps -> Exp                the sum of
+Adj       Exp -> Prop                X is even
+Adj2      Exp -> Exp -> Prop         X is divisible by Y
+Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
+AdjC      Exps -> Prop               X and Y are distinct
+AdjE      Exps -> Prop               X and Y are equal  (eqrel)
+Fam       Kind -> Kind               list of As
+Fam2      Kind -> Kind -> Kind       function from As to Bs
+Fun       Exp -> Exp                 the square of X
+Fun2      Exp -> Exp -> Exp          the quotient of X and Y
+FunC      Exps -> Exp                the sum of X and Y
 Label     ProofExp                   theorem 1
 Name      Exp                        the empty set
 Noun      Kind                       integer
-Noun1     Exp -> Prop                (a) prime
-Noun2     Exp -> Exp -> Prop         (a) divisor of
-Verb      Exp -> Prop                converge
-Verb2     Exp -> Exp -> Prop         divide
+Noun1     Exp -> Prop                X is a prime
+Noun2     Exp -> Exp -> Prop         X is a divisor of Y
+Verb      Exp -> Prop                X converges
+Verb2     Exp -> Exp -> Prop         X divides Y
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
 
@@ -382,10 +382,10 @@ The following categories are available for symbolic renderings:
 ```
   category    semantic type            example
 —----------------------------------------------
-  Compar      Term -> Term -> Formula  <
+  Compar      Term -> Term -> Formula  X < Y
   Const       Term                     \pi
-  Oper        Term -> Term             \sqrt
-  Oper2       Term -> Term -> Term     +
+  Oper        Term -> Term             \sqrt{Y}
+  Oper2       Term -> Term -> Term     X + Y
 ```
 The grammar contains some antries from each category. However, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories.
 
@@ -426,16 +426,12 @@ There are three reasons for this:
 - It is hard to anticipate all uses of a given word in the different categories.
 - Including all of these uses would populate the lexicon with redundant information, in particular, the inflection of base category words that appear in different complex categories.
 
-At the same time, most mathematical concepts *are* of complex categories, such as a noun or an adjective with a preposition. Changing the preposition can change the meaning of the base word. To make it possible to describe this accurately by just editing the symbol table (and not the grammar), a notation for **compound lexical entries** is made available. The syntax of a compound entry is
+At the same time, most mathematical concepts *are* of complex categories, such as a noun or an adjective with a preposition. Changing the preposition can change the meaning of the base word. To make it possible to describe this accurately by just editing the symbol table (and not the grammar), a notation for **compound lexical entries** is made available. The syntax of a compound entry is the same as a complex GF tree (as a generalization from single function symbols). Here are some examples:
 ```
-<BaseFun>+<Fun_1>...+<Fun_n>+<Cat>
-```
-Thus, `+` is used as delimiter of the different parts. The first part is an GF function of a base category, and the last part is the target category. The middle parts are GF functions that are used to modify the base function - in particular, prepositions used for arguments, but also adjectives used to modify nouns. Here are some examples:
-```
-equal_Adj+toPrep+Adj2         -- equal to
-equal_Adj+AdjE                -- (are) equal
-number_Noun+ofPrep+Fun        -- the number of
-number_Noun+complex_Adj+Noun  -- complex number
+AdjPrepAdj2 equal_Adj toPrep        -- equal to
+AdjAdjE equal_Adj                   -- (are) equal
+NounFun number_Noun ofPrep          -- the number of
+NounAdjNoun number_Noun complex_Adj -- complex number
 ```
 **Notice: this has not yet been fully implemented but is coming soon.**
 
