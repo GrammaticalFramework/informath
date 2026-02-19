@@ -16,11 +16,12 @@ import Data.Char
 -- clean-up of remaining annotated idents
 jmt2core :: Jmt -> GJmt
 jmt2core = cleanup . jmt2jmt . introduceLocalDefinitions where
-  cleanup :: Informath.Tree a -> Informath.Tree a
-  cleanup t = case t of
-    GStrIdent (GString s) -> GStrIdent (GString (unescapeConstant (stripConstant s)))
-    GIdentLabel ident -> GIdentLabel (cleanup ident)
-    _ -> Informath.composOp cleanup t
+
+cleanup :: Informath.Tree a -> Informath.Tree a
+cleanup t = case t of
+  GStrIdent (GString s) -> GStrIdent (GString (unescapeConstant (stripConstant s)))
+  GIdentLabel ident -> GIdentLabel (cleanup ident)
+  _ -> Informath.composOp cleanup t
 
 jmt2jmt :: Jmt -> GJmt
 jmt2jmt jmt = case jmt of
@@ -78,69 +79,58 @@ axiomLabel = LexLabel "axiomLabel"
 axiomUndefLabel :: QIdent -> GLabel
 axiomUndefLabel ident = GIdentLabel (GStrIdent (GString ("Undefined_" ++ show ident)))
 
+fgTree :: Gf a => String -> a
+fgTree = fg . readGFTree
+
+annotateExp :: QIdent -> GExp -> GExp
+annotateExp qid exp = GAnnotateExp (ident2ident qid) exp
+
+annotateKind :: QIdent -> GKind -> GKind
+annotateKind qid exp = GAnnotateKind (ident2ident qid) exp
+
+annotateProp :: QIdent -> GProp -> GProp
+annotateProp qid exp = GAnnotateProp (ident2ident qid) exp
+
+annotateProof :: QIdent -> GProof -> GProof
+annotateProof qid exp = GAnnotateProof (ident2ident qid) exp
+
+annotateProofExp :: QIdent -> GProofExp -> GProofExp
+annotateProofExp qid exp = GAnnotateProofExp (ident2ident qid) exp
+
 funListExp :: QIdent -> [GExp] -> GExp
-funListExp ident exps = case ident of
+funListExp ident exps = annotateExp ident $ case ident of
   QIdent s -> case (lookupConstant s, exps) of
-    (Just ("Name", c), []) -> GNameExp (LexName c)
-    (Just ("Fun", c), [x]) -> GFunExp (LexFun c) x
-    (Just ("Fun2", c), [x, y]) -> GFun2Exp (LexFun2 c) x y
-    (Just ("FunC", c), [x, y]) -> GFunCExp (LexFunC c) x y
-    (Just ("Noun", c), [x]) -> case splitFunPrep c of
-      (f, [p]) -> GFunExp (GNounPrepFun (LexNoun f) (LexPrep p)) x
-    (Just ("Noun", c), [x, y]) -> case splitFunPrep c of
-      (f, [p, q]) -> GFun2Exp (GNounPrepFun2 (LexNoun f) (LexPrep p) (LexPrep q)) x y
-      (f, [p])   -> GFunCExp (GNounPrepFunC (LexNoun f) (LexPrep p)) x y
-      _ -> error ("incorrect Fun2/FunC: " ++ c)
+    (Just ("Name", c), []) -> GNameExp (fgTree c)
+    (Just ("Fun", c), [x]) -> GFunExp (fgTree c) x
+    (Just ("Fun2", c), [x, y]) -> GFun2Exp (fgTree c) x y
+    (Just ("FunC", c), [x, y]) -> GFunCExp (fgTree c) x y
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps exps)
 
 funListKind :: QIdent -> [Exp] -> GKind
-funListKind ident exps = case ident of
+funListKind ident exps = annotateKind ident $ case ident of
   QIdent s -> case (lookupConstant s, exps) of
-    (Just ("Noun", c), []) -> case splitFunPrep c of
-      (f, [a]) -> GNounKind (GNounAdjNoun (LexNoun f) (LexAdj a))
-      (f, []) -> GNounKind (LexNoun c)
-    (Just ("Noun", c), [x]) -> case splitFunPrep c of
-      (f, [p]) -> GFamKind (GNounPrepFam (LexNoun f) (LexPrep p)) (exp2kind x)
-      _ -> error ("incorrect Fam: " ++ c)
-    (Just ("Noun", c), [x, y]) -> case splitFunPrep c of
-      (f, [p, q]) -> GFam2Kind (GNounPrepFam2 (LexNoun f) (LexPrep p) (LexPrep q))
-                        (exp2kind x) (exp2kind y)
-      _ -> error ("incorrect Fam2: " ++ c)
-    (Just ("Fam",  c), [x]) -> GFamKind (LexFam c) (exp2kind x) 
-    (Just ("Fam2", c), [x, y]) -> GFam2Kind (LexFam2 c) (exp2kind x) (exp2kind y)
+    (Just ("Noun", c), []) -> GNounKind (fgTree c)
+    (Just ("Fam",  c), [x]) -> GFamKind (fgTree c) (exp2kind x) 
+    (Just ("Fam2", c), [x, y]) -> GFam2Kind (fgTree c) (exp2kind x) (exp2kind y)
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GAppKind (ident2ident ident) (gExps (map exp2exp exps))
 
 
 funListProp :: QIdent -> [GExp] -> GProp
-funListProp ident exps = case ident of
+funListProp ident exps = annotateProp ident $ case ident of
   QIdent s -> case (lookupConstant s, exps) of
-    (Just ("Adj", c), [x]) ->
-      GAdjProp (LexAdj c) x
-    (Just ("Adj", c), [x, y]) -> case splitFunPrep c of
-      (f, ["C"]) -> GAdjCProp (GAdjAdjC (LexAdj f)) x y
-      (f, ["E"]) -> GAdjEProp (GAdjAdjE (LexAdj f)) x y
-      (f, [p]) -> GAdj2Prop (GAdjPrepAdj2 (LexAdj f) (LexPrep p)) x y
-      _ -> error ("incorrect Adj2/AdjC/AdjE: " ++ c)
-    (Just ("Adj2", c), [x, y]) ->
-      GAdj2Prop (LexAdj2 c) x y
-    (Just ("AdjC", c), [x, y]) ->
-      GAdjCProp (LexAdjC c) x y
-    (Just ("AdjE", c), [x, y]) ->
-      GAdjEProp (LexAdjE c) x y
-    (Just ("Adj3", c), [x, y, z]) ->
-      GAdj3Prop (LexAdj3 c) x y z
-    (Just ("Verb", c), [x]) ->
-      GVerbProp (LexVerb c) x
-    (Just ("Verb2", c), [x, y]) ->
-      GVerb2Prop (LexVerb2 c) x y
-    (Just ("Noun1", c), [x]) ->
-      GNoun1Prop (LexNoun1 c) x
-    (Just ("Noun2", c), [x, y]) ->
-      GNoun2Prop (LexNoun2 c) x y
+    (Just ("Adj", c), [x]) -> GAdjProp (fgTree c) x
+    (Just ("Adj2", c), [x, y]) -> GAdj2Prop (fgTree c) x y
+    (Just ("AdjC", c), [x, y]) -> GAdjCProp (fgTree c) x y
+    (Just ("AdjE", c), [x, y]) -> GAdjEProp (fgTree c) x y
+    (Just ("Adj3", c), [x, y, z]) -> GAdj3Prop (fgTree c) x y z
+    (Just ("Verb", c), [x]) -> GVerbProp (fgTree c) x
+    (Just ("Verb2", c), [x, y]) -> GVerb2Prop (fgTree c) x y
+    (Just ("Noun1", c), [x]) -> GNoun1Prop (fgTree c) x
+    (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
       _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps) ---- TODO: this causes "Gt holds for ..." etc
@@ -200,7 +190,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
      (fun, args) -> case fun of
         EIdent ident -> funListKind ident args
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
-      Just ("Noun", c) -> GNounKind (LexNoun c)
+      Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
       _ -> ident2kind ident
     EFun _ _ -> case splitType exp of
       (hypos, body) ->
@@ -244,7 +234,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
   Just expr -> fg expr
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
-      Just ("Name", c) -> GNameExp (LexName c)
+      Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
       _ -> ident2exp ident
   
     EApp _ _ -> case splitApp exp of
@@ -307,19 +297,19 @@ ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of
   QIdent [d] | isDigit d -> GTermExp (GNumberTerm (GInt (read [d])))
   QIdent s -> case lookupConstant s of
-    Just ("Name", c) -> GNameExp (LexName c)
+    Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
     _ -> GTermExp (GIdentTerm (ident2ident ident))
 
 ident2label :: QIdent -> GLabel
 ident2label ident = case ident of
   QIdent s -> case lookupConstant s of
-    Just ("Label", c) -> LexLabel c
+    Just ("Label", c) -> fgTree c
     _ -> GIdentLabel (ident2ident ident)
 
 ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
-    Just ("Noun", c) -> GNounKind (LexNoun c)
+    Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
     _ -> GTermKind (GIdentTerm (ident2ident ident))
 
 bind2coreIdent :: Bind -> GIdent

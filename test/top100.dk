@@ -10,7 +10,8 @@ Thm01d : Proof (not (rational (sqrt 2))).
 
 Thm01e : Proof (irrational (sqrt 2)).
 
-Thm01f : Proof (not (exists Nat (p => exists Nat (q => Eq (square p) (times 2 (square q)))))).
+Thm01f : Proof (not (exists Nat (p =>
+  exists Nat (q => and (Gt q 0) (Eq (square p) (times 2 (square q))))))).
 
 Thm02 : (P : Polynomial) -> Proof (Gt (degree P) 0) ->
   Proof (exists Complex (c => isRoot c P)).

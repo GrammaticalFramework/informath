@@ -114,8 +114,8 @@ constantTableFile = "src/baseconstants.dkgf"
 
 -- * Main types involved
 
--- | GF abstract syntax tree
-type GFTree = Expr
+-- GF abstract syntax tree: from BuildConstantTable
+-- type GFTree = Expr
 
 -- | Dedukti judgement
 type DkJmt = Jmt   

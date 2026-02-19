@@ -17,35 +17,25 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (partition, sortOn, sort, groupBy, intersperse)
 
-type Fun = CId
+type GFTree = PGF.Tree
+type Fun = GFTree
 type Cat = CId
 type Formalism = String
 
--- preposition-extended symbol table: Adj+toPrep -> Adj2
-type FunPrep = (CId, [CId])
+showGFTree :: GFTree -> String
+showGFTree = showExpr []
 
-showFunPrep :: FunPrep -> String
-showFunPrep (f, ps) = concat $ intersperse "+" $ map showCId (f:ps)
-
-readFunPrep :: String -> FunPrep
-readFunPrep ff = case words (map (\c -> if c=='+' then ' ' else c) ff) of
-  f:fs -> (mkCId f, map mkCId fs)
-
-splitFunPrep :: String -> (String, [String])
-splitFunPrep ff = case words (map (\c -> if c=='+' then ' ' else c) ff) of
-  f:fs -> (f, fs)
-
-funPrepQIdent :: (String, [String]) -> QIdent
-funPrepQIdent = QIdent . funPrepString
-
-funPrepString :: (String, [String]) -> String
-funPrepString (f, ps) = concat (intersperse "+" (f:ps))
+--- OK to fail, because it should stop compilation
+readGFTree :: String -> GFTree
+readGFTree s = case s of
+  '\\':_ -> mkApp (mkCId s) []
+  _ -> maybe (error ("cannot parse as GFTree: " ++ s)) id (readExpr s)
 
 ------
 
 mainCats :: S.Set Cat
 mainCats = S.fromList [mkCId c | c <- words
-  "Exp Prop Kind Proof ProofExp"
+  "Exp Prop Kind Proof ProofExp Unit"
   ]
 
 symbolicCats :: S.Set Cat
@@ -71,13 +61,12 @@ type DropTable = M.Map QIdent Int
 type MacroTable = M.Map String (Int, String)
 
 data ConstantTableEntry = ConstantTableEntry {
-  primary  :: (FunPrep, Type),
-  symbolics :: [(FunPrep, Type)],
-  synonyms :: [(FunPrep, Type)]
+  primary   ::  (Fun, Type),
+  symbolics :: [(Fun, Type)],
+  synonyms  :: [(Fun, Type)]
   }
 
-
-allGFFuns :: ConstantTable -> QIdent -> [(FunPrep, Type)]
+allGFFuns :: ConstantTable -> QIdent -> [(Fun, Type)]
 allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
@@ -94,49 +83,43 @@ showConstantTable = concat . map prEntry . M.toList where
         "symbolics: " ++ unwords (map prTyping (symbolics entry)),
         "synonyms: " ++ unwords (map prTyping (synonyms entry))
       ]
-  prTyping (fun, typ) = showFunPrep fun ++ " : " ++ showType [] typ ++ " ;"
+  prTyping (fun, typ) = showGFTree fun ++ " : " ++ showType [] typ ++ " ;"
 
--- looking for synonyms of primary constants in NLG
---- strings, which are arguments of Lex* constructors
-type SFun = String
-type SCat = String
-
-type SynonymConstantTableNLG = M.Map SFun ([(SFun, SCat)], [(SFun, SCat)])
+type SynonymConstantTableNLG = M.Map Fun ([(Fun, Type)], [(Fun, Type)])
 
 buildSynonymConstantTableNLG :: ConstantTable -> SynonymConstantTableNLG
 buildSynonymConstantTableNLG table = M.fromList [
-  (showFunPrep fun, (sfcs, vfcs)) | 
+  (fun, (synonyms entry, symbolics entry)) | 
     (_, entry) <- M.toList table,
-    let fun = fst (primary entry),
-    let sfcs = [(showFunPrep f, showCId (valCat typ)) | (f, typ) <- symbolics entry],
-    let vfcs = [(showFunPrep f, showCId (valCat typ)) | (f, typ) <- synonyms entry]
-  ]
+    let fun = fst (primary entry)
+    ]
 
 -- looking for core constants for their synonyms in semantics
-type SynonymConstantTableSem = M.Map SFun [(SFun, SCat)]
-
+type SynonymConstantTableSem = M.Map Fun [(Fun, Type)]
+--
+---- TODO: is this used at all ?
+--
 buildSynonymConstantTableSem :: ConstantTable -> SynonymConstantTableSem
 buildSynonymConstantTableSem table = M.fromListWith (++) [
-  (showFunPrep fun, [fc]) | 
+  (fun, [primary entry]) | 
     (_, entry) <- M.toList table,
-    (fun, _) <- symbolics entry ++ synonyms entry,
-    let (f, typ) = primary entry,
-    let fc = (showFunPrep f, showCId (valCat typ))
+    (fun, _)   <- symbolics entry ++ synonyms entry
   ]
 
-type BackConstantTable = M.Map QIdent [QIdent] -- maps "Adj+Prep" ident to original "Dk" idents
+type BackConstantTable = M.Map Fun [QIdent] -- maps GF idents to original "Dk" idents
 
 buildBackConstantTable :: ConstantTable -> BackConstantTable
 buildBackConstantTable table = M.fromListWith (++) [
-  (QIdent (showFunPrep fun), [qid]) | 
+  (fun, [qid]) | 
     (qid, entry) <- M.toList table,
     fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
   ]
 
+---- TODO: make this accessible from RunInformath
 printBackTable ::  BackConstantTable -> String
 printBackTable = unlines . map prEntry . M.toList where
-  prEntry :: (QIdent, [QIdent]) -> String
-  prEntry (QIdent f, qids) = f ++ ": " ++ unwords [g | QIdent g <- qids]
+  prEntry :: (Fun, [QIdent]) -> String
+  prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
 
 buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
 buildConstantTable pgf dkgfs = do
@@ -145,8 +128,8 @@ buildConstantTable pgf dkgfs = do
   let conversionlines = filter isConversion entrylines
   let droplines = filter isDrop entrylines
   let macrolines = filter isMacro entrylines
-  let constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map readFunPrep gfids)) | qid:gfids <- constantlines]
+  let constantTable = M.fromList [ ---- TODO: change this to work with arbitrary trees
+        (QIdent qid, mkConstantTableEntry pgf (map readGFTree gfids)) | qid:gfids <- constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
@@ -160,45 +143,46 @@ buildConstantTable pgf dkgfs = do
    isMacro line = head line == "#MACRO"
 
 
-mkConstantTableEntry :: PGF -> [FunPrep] -> ConstantTableEntry
-mkConstantTableEntry pgf (funps:funs) = ConstantTableEntry {
-  primary = (funps, funtype funps),
+mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
+mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
+  primary = (fun, funtype pgf fun),
   symbolics = [(f, typ) | (f, typ) <- symbs],
   synonyms = [(f, typ) | (f, typ) <- syns]
   }
  where
  
-   funtype (fun, ps) = case functionType pgf fun of
-     Just typ -> case ps of
-     {- -- don't change the type here, but in Dedukti2MathCore
-       [_] -> case showType [] typ of
-         "Adj" -> mkType [] (mkCId "Adj2") []
-         "Noun" -> mkType [] (mkCId "Fun") []
-	 sty -> error ("preposition-extended lexicon: expected Adj or Noun, found " ++ sty)
-      -}
-       _ -> typ
-     _ -> case showCId fun of
-       '\'':'\\':_ -> mkType [] (mkCId "MACRO") []
-       _ -> error ("cannot infer type of " ++ showCId fun)
-     
-   (symbs, syns) = partition (isSymbolic . snd) [(f, funtype f) | f <- funs]
+   funtype fun = inferFunType pgf
+
+   (symbs, syns) = partition (isSymbolic . snd) [(f, funtype pgf f) | f <- funs]
    isSymbolic typ = case unType typ of
      (_, cat, _) -> S.member cat symbolicCats
 
 
-mismatchingTypes :: MacroTable -> DkType -> Type -> FunPrep -> Maybe (Int, Int)
-mismatchingTypes mt dktyp gftyp funprep = arityMismatch dktyp (unType gftyp) where
+-- PGF: inferExpr :: PGF -> Expr -> Either TcError (Expr, Type)
+
+inferFunType :: PGF -> Fun -> Type
+inferFunType pgf fun = case inferExpr pgf fun of
+  Right (_, typ) -> typ
+  _ -> case showGFTree fun of
+     '\'':'\\':_ -> mkType [] (mkCId "MACRO") []
+     _ -> error ("cannot infer type of " ++ showGFTree fun)
+
+
+type DkType = ([Dedukti.AbsDedukti.Hypo], Exp)
+
+mismatchingTypes :: MacroTable -> DkType -> Type -> Fun -> Maybe (Int, Int)
+mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
   arityMismatch (dkhypos, _) (gfhypos, cid, _) = if dka /= gfa then Just (dka, gfa) else Nothing
     where
       dka = dkArity dkhypos
       gfa = gfArity gfhypos cid
   gfArity gfhypos cid = case showCId cid of
-    s | elem s (words "Adj Verb") -> 1 + length (snd funprep)
-    s | elem s (words "Fun Fam Noun1 Oper") -> 1
-    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2 FunC AdjC AdjE") -> 2  ---- C can be >2
+    s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
+    s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2 FunC AdjC AdjE") -> 2
     s | elem s (words "Adj3") -> 3
-    s | elem s (words "MACRO") -> maybe 0 fst (M.lookup (tail (filter (/='\'') (showCId (fst funprep)))) mt) --- '\\foo' -> \foo 
-    _ -> length gfhypos + length (snd funprep)
+    s | elem s (words "MACRO") ->   --- '\\foo' -> \foo 
+      maybe 0 fst (M.lookup (tail (filter (/='\'') (showGFTree fun))) mt)
+    _ -> length gfhypos
   dkArity dkhypos = foldl (+) 0 (map hypoArity dkhypos)
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
@@ -215,16 +199,11 @@ constantTableErrors dk pgf mt table =
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
-    [unwords ["MISMATCHING TYPES:", printTree dkfun, show e, "<>", showFunPrep gffun, show f] |
+    [unwords ["MISMATCHING TYPES:", printTree dkfun, show e, "<>", showGFTree gffun, show f] |
                       ((dkfun, gffun), (e, f)) <- mismatches]
-		      
-
-
-type DkType = ([Dedukti.AbsDedukti.Hypo], Exp)
 
 deduktiFunctions :: Module -> [(QIdent, DkType)]
 deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
-
   getFun :: Jmt -> [(QIdent, DkType)]
   getFun jmt = case jmt of
     JStatic fun typ -> return (fun, splitType typ)
@@ -235,36 +214,34 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
     
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
--- annotate idents with cats and funs, just the primary
+-- annotate idents with cats and funs, just the primary ; used only internally
 annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> DkTree a
 annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
 
+  -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> DkTree a
   annot bounds t = case t of
     QIdent _ | notElem t bounds -> annotId t
     EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
-    EFun h exp -> EFun (annot bounds h) (annot (hypo2topvars h ++ bounds) exp)
-    
-    -- don't annotate bound variables
+    EFun h exp -> EFun (annot bounds h) (annot (hypo2topvars h ++ bounds) exp)    
     BVar _ -> t
     BTyped v ty -> BTyped v (annot bounds ty)
     HVarExp v ty -> HVarExp v (annot bounds ty)
     HParVarExp v ty -> HParVarExp v (annot bounds ty)
     HLetExp v ty -> HLetExp v (annot bounds ty)
     HLetTyped v ty exp -> HLetTyped v (annot bounds ty) (annot bounds exp)
-
     _ -> composOp (annot bounds) t
 
   annotId c = case M.lookup c table of
     Just entry -> annotIdent c (primary entry)
     _ -> c
 
-annotIdent :: QIdent -> (FunPrep, Type) -> QIdent
+annotIdent :: QIdent -> (Fun, Type) -> QIdent
 annotIdent (QIdent s) (f, t) =
   QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t)
     where
       dk c = showCId c
-      dkp f = showFunPrep f
+      dkp f = showGFTree f
 
 valCat :: Type -> Cat
 valCat t = case unType t of (_, c, _) -> c

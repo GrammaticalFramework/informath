@@ -5,7 +5,8 @@ abstract Informath =
   SymbolicConstants,
   MathExtensions,
   WikidataWords,
-  UserExtensions
+  UserExtensions,
+  Annotations
   ** {
 
 flags startcat=Jmt ;
