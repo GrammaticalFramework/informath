@@ -16,8 +16,6 @@ data Env = Env {
   baseConstantModule :: Module,
   constantTable :: ConstantTable,
   conversionTable :: ConversionTable,
-  synonymConstantTableNLG :: SynonymConstantTableNLG,
-  synonymConstantTableSem :: SynonymConstantTableSem,
   backConstantTable :: BackConstantTable,
   dropTable :: DropTable,
   macroTable :: MacroTable,

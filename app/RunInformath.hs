@@ -41,7 +41,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
-      (ct, _, _, mt) <- readConstantTable (grammar env) [file]
+      (ct, _, _, mt) <- readConstantTable (grammar env) (fromLang env) [file]
       putStrLn (printConstantTable ct)
       putStrLn (checkConstantTable (baseConstantModule env) (grammar env) mt ct)
       
@@ -57,7 +57,7 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       mapM_ putStrLn (showGFFunctions env)
     Nothing | elem "-parse-example" args -> do
       s <- getContents
-      mapM_ putStrLn (parseFunExample env s)
+      mapM_ (putStrLn . unlines . parseFunExample env) (lines s)
     Nothing | elem "-formalize" args -> do
       s <- getContents 
       let results = processLatex env s

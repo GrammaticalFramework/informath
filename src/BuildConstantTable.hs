@@ -8,6 +8,7 @@ import Dedukti.PrintDedukti
 
 import CommonConcepts
 import DeduktiOperations
+import ParseInformath (parseExample)
 
 import PGF
 
@@ -26,6 +27,17 @@ showGFTree :: GFTree -> String
 showGFTree = showExpr []
 
 --- OK to fail, because it should stop compilation
+parseGFTree :: PGF -> Language -> String -> GFTree
+parseGFTree pgf lang s = case s of
+  '"':cs -> case parseExample pgf lang (init cs) of
+    [] -> error $ "cannot parse example: " ++ s
+    t:_ -> extract t ---- TODO: if many parses?
+  _ -> readGFTree s
+ where
+   extract t = case unApp t of
+     Just (_, ex:_) -> ex
+     _ -> error $ "cannot get example from: " ++ showGFTree t 
+
 readGFTree :: String -> GFTree
 readGFTree s = case s of
   '\\':_ -> mkApp (mkCId s) []
@@ -70,9 +82,17 @@ allGFFuns :: ConstantTable -> QIdent -> [(Fun, Type)]
 allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
-
+-- shown in the form that can be parsed as a constant table
 showConstantTable :: ConstantTable -> String
-showConstantTable = concat . map prEntry . M.toList where
+showConstantTable = unlines . map prEntry . M.toList where
+  prEntry :: (QIdent, ConstantTableEntry) -> String
+  prEntry (QIdent q, entry) =
+    unwords $ [q, ":"] ++
+    intersperse "|" (map (showGFTree . fst) (primary entry : synonyms entry ++ symbolics entry))
+
+-- shown in a longer format; not currently used
+showConstantTableLong :: ConstantTable -> String
+showConstantTableLong = concat . map prEntry . M.toList where
   prEntry :: (QIdent, ConstantTableEntry) -> String
   prEntry (QIdent q, entry) =
     unlines $ [
@@ -85,26 +105,6 @@ showConstantTable = concat . map prEntry . M.toList where
       ]
   prTyping (fun, typ) = showGFTree fun ++ " : " ++ showType [] typ ++ " ;"
 
-type SynonymConstantTableNLG = M.Map Fun ([(Fun, Type)], [(Fun, Type)])
-
-buildSynonymConstantTableNLG :: ConstantTable -> SynonymConstantTableNLG
-buildSynonymConstantTableNLG table = M.fromList [
-  (fun, (synonyms entry, symbolics entry)) | 
-    (_, entry) <- M.toList table,
-    let fun = fst (primary entry)
-    ]
-
--- looking for core constants for their synonyms in semantics
-type SynonymConstantTableSem = M.Map Fun [(Fun, Type)]
---
----- TODO: is this used at all ?
---
-buildSynonymConstantTableSem :: ConstantTable -> SynonymConstantTableSem
-buildSynonymConstantTableSem table = M.fromListWith (++) [
-  (fun, [primary entry]) | 
-    (_, entry) <- M.toList table,
-    (fun, _)   <- symbolics entry ++ synonyms entry
-  ]
 
 type BackConstantTable = M.Map Fun [QIdent] -- maps GF idents to original "Dk" idents
 
@@ -121,15 +121,15 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (Fun, [QIdent]) -> String
   prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
-buildConstantTable pgf dkgfs = do
+buildConstantTable :: PGF -> Language -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
+buildConstantTable pgf lang dkgfs = do
   entrylines <- mapM readFile dkgfs >>= return . filter (not . null) . map words . concatMap lines
   let constantlines = filter isConstantEntry entrylines
   let conversionlines = filter isConversion entrylines
   let droplines = filter isDrop entrylines
   let macrolines = filter isMacro entrylines
   let constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map readGFTree gfids)) |
+        (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
                      qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
   let conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |

@@ -203,7 +203,7 @@ lin
 
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
 
-  NounAdjNoun noun adj = mkCN adj noun ;
+  AdjNounNoun adj noun = mkCN adj noun ;
   
   NoPrep = strPrep "" ;
   betweenPrep = Syntax.between_Prep ;

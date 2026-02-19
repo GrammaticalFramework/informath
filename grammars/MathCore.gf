@@ -121,7 +121,7 @@ fun
 
   VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
   
-  NounAdjNoun : Noun -> Adj -> Noun ;
+  AdjNounNoun : Adj -> Noun -> Noun ;
 
   NoPrep : Prep ;
   betweenPrep : Prep ;

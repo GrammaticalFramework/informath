@@ -8,6 +8,10 @@
 
 ## NEWS
 
+19 February 2026: symbol tables are not generalized to contain full GF trees whose types are lexical categories. Such trees can also be parsed from quoted strings. In order to mark the boundaries between functions (which are no more single tokens), vertical bars `|` are now needed in symbol tables.See last chapter, "Symbol tables", for details.
+
+19 February 2026: fixed a logical flaw in synonym treatment. Synonyms were generated from primary GF functions instead of the original Dedukti identifiers. But this is reliable only if the primary GF functions are unique - which cannot be guaranteed.
+
 18 February 2026: support for adapting Informath to new data without changing the grammar. This will also enable a binary-only release of Informath, which does not require Haskell or GF. A description is found below in the "Symbol tables" section.
 
 18 February 2026: deprecated `-previous`; it can be restored by checking out the GitHub version before the deprecation commit, but there should be no need.
@@ -26,7 +30,7 @@
 
 ## Documentation
 
-[Informath Under the Hood](https://grammaticalframework.github.io/informath/doc/informath-under-the-hood.html)
+[Informath Under the Hood](https://grammaticalframework.github.io/informath/doc/informath-under-the-hood.html). Recommended if you want to change the GF grammar and not just the symbol table.
 
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
 
@@ -314,7 +318,7 @@ tells the conversion from Dedukti to GF to drop a number of initial arguments of
 ```
 defines a LaTeX macro, which can be used on lines that map Dedukti identifiers to GF. The parts of this line are also converted to LaTeX `\newcommand` statements and included in the file generated with the `-to-latex-doc` option. For example, the mapping
 ```
-congruent congruent_Adj3 \congruent
+congruent : congruent_Adj3 | \congruent
 ```
 gives, as the primary rendering, the three-place adjective producing "$m$ is congruent to $n$ modulo $k$". The second alternative is a macro, which is defined as 
 ```
@@ -354,7 +358,8 @@ even_Adj
 integer_Noun
 converge_Verb
 ```
-The following lexical categories are available for verbal renderings:
+The following lexical categories are available for verbal renderings.
+The "example" column shows how an item of this category behaves in linearizing an application of it to its arguments. But is also shows how the item can be given as a string in a symbol table, which is a "no-code" method for building symbol tables.  
 ```
 category  semantic type              example
 —-----------------------------------------------------------
@@ -362,7 +367,7 @@ Adj       Exp -> Prop                X is even
 Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
 AdjC      Exps -> Prop               X and Y are distinct
-AdjE      Exps -> Prop               X and Y are equal  (eqrel)
+AdjE      Exps -> Prop               X and Y are equal EQ
 Fam       Kind -> Kind               list of As
 Fam2      Kind -> Kind -> Kind       function from As to Bs
 Fun       Exp -> Exp                 the square of X
@@ -376,7 +381,10 @@ Noun2     Exp -> Exp -> Prop         X is a divisor of Y
 Verb      Exp -> Prop                X converges
 Verb2     Exp -> Exp -> Prop         X divides Y
 ```
-The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
+The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages. 
+
+The token `EQ` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQ` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
+
 
 The following categories are available for symbolic renderings:
 ```
@@ -428,12 +436,29 @@ There are three reasons for this:
 
 At the same time, most mathematical concepts *are* of complex categories, such as a noun or an adjective with a preposition. Changing the preposition can change the meaning of the base word. To make it possible to describe this accurately by just editing the symbol table (and not the grammar), a notation for **compound lexical entries** is made available. The syntax of a compound entry is the same as a complex GF tree (as a generalization from single function symbols). Here are some examples:
 ```
-AdjPrepAdj2 equal_Adj toPrep        -- equal to
-AdjAdjE equal_Adj                   -- (are) equal
-NounFun number_Noun ofPrep          -- the number of
-NounAdjNoun number_Noun complex_Adj -- complex number
+AdjPrepAdj2 equal_Adj toPrep         -- equal to
+AdjAdjE equal_Adj                    -- (are) equal
+NounFun number_Noun ofPrep           -- the number of
+AdjNounNoun complex_Adj number_Noun  -- complex number
 ```
-**Notice: this has not yet been fully implemented but is coming soon.**
+
+### Example-based lexical entries
+
+For maximal ease of use, Informath also allows symbol table entries to be given as natural language strings, which are parsed by the Informath grammar to trees. The strings must be included in double quotes to indicate that they need to be parsed. Here is an example symbol table entry, which gives two different ways to specify one and the same linearization:
+```
+even : "X is even" | even_Adj 
+```
+This functionality still need some work to deal with all cases correctly.
+
+It is possible to test such examples with the flag `-parse-example`:
+```
+$ echo "X is even" | RunInformath -parse-example
+
+AdjExample even_Adj X_Argument
+```
+Examples to this command can be read from a file line by line, without quotes.
+
+
 
 ### Type checking symbol tables
 

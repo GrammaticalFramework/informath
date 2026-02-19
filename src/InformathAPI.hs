@@ -59,16 +59,14 @@ readEnv args = do
         if flagHasValue "-add-symboltables" args
 	then constantTableFile : argValues "-add-symboltables" "" args
 	else argValues "-symboltables" constantTableFile args
-  (ct, cvt, dt, mt) <- readConstantTable gr symboltables
   let fro = mkLanguage gr (argValue "-from-lang" english args)
+  (ct, cvt, dt, mt) <- readConstantTable gr fro symboltables
   ifArg "-check-constant-table" args (checkConstantTable mo gr mt ct)
   return Env {
     flags = args,
     grammar = gr,
     constantTable = ct,
     conversionTable = cvt,
-    synonymConstantTableNLG = buildSynonymConstantTableNLG ct,
-    synonymConstantTableSem = buildSynonymConstantTableSem ct,
     backConstantTable = buildBackConstantTable ct,
     baseConstantModule = mo,
     dropTable = dt,
@@ -97,7 +95,7 @@ readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
 
 -- | To read a constant table from a .dkgf file. 
-readConstantTable :: PGF -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
+readConstantTable :: PGF -> Language -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
 readConstantTable = buildConstantTable
 
 -- | To construct a concrete syntax name from a 3-letter language code.

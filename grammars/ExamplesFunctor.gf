@@ -16,7 +16,7 @@ lin
   AdjExample adj x = mkExample (AdjProp adj x) ;
   Adj2Example adj x y = mkExample (Adj2Prop adj x y) ;
   AdjCExample adj x y = mkExample (AdjCProp adj x y) ;
-  AdjEExample adj x y = mkExample (AdjEProp adj x y) ;
+  AdjEExample adj x y = mkExample (mkExample (AdjEProp adj x y)) "EQ" ;
   Adj3Example adj x y z = mkExample (Adj3Prop adj x y z) ;
 
   NounExample noun = mkExample (NounKind noun) ;
@@ -47,6 +47,7 @@ oper
     mkExample : Prop -> Utt = \p -> mkUtt (topProp p) ;
     mkExample : Kind -> Utt = \p -> mkUtt (useKind p) ;
     mkExample : Exp -> Utt = \p -> mkUtt p ;
+    mkExample : Utt -> Str -> Utt = \u, s -> lin Utt {s = u.s ++ s} ;
     } ;
 
 

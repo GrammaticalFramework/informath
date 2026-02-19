@@ -46,7 +46,7 @@ succ : successor_Fun
 abs : absolute_value_Fun | absolute_value_Oper
 factorial : factorial_Fun | factorial_Oper
 gcd : gcd_FunC
-even : even_Adj
+even : "X is even"
 odd : odd_Adj
 prime : prime_Adj
 divisible : divisible_Adj2
@@ -107,6 +107,7 @@ sigma : SigmaExp | sigma_Term
 series : SeriesExp | series_Term
 integral : IntegralExp | integral_Term
 ni : contain_Verb2 | ni_Compar
+# disjoint : disjoint_AdjC | "X is disjoint from Y"
 disjoint : disjoint_AdjC | AdjPrepAdj2 disjoint_Adj fromPrep | disjoint_Compar
 empty : empty_Adj | \isempty
 inhabited : inhabited_Adj
