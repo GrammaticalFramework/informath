@@ -62,6 +62,7 @@ oper
   prove_VS = mkVS (mkV "démontrer") ;
   
   as_Prep : Prep = mkPrep "comme" ;
+  at_Prep : Prep = dative ;
 
   let_Str : Bool => Str = table {False => "soit" ; True => "soient"} ;
   assuming_Str = "en supposant :" ;

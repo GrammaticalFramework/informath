@@ -124,6 +124,9 @@ lin angle_between_Fun2 = mkFun2 (mkN "angle") (mkPrep "between") ;
 lin dot_product_FunC = mkFunC "dot product" ;
 lin vector_plus_FunC = mkFunC "sum" ;
 
+lin everywhere_Adverb = mkAdv "everywhere" ;
+lin almost_everywhere_Adverb = mkAdv "almost everywhere" ;
+lin uniformly_Adverb = mkAdv "uniformly" ;
 
 
 -- special constants

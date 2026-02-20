@@ -61,6 +61,7 @@ oper
   prove_VS = mkVS (mkV "beweisen") ;
   
   as_Prep : Prep = mkPrep "als" nominative ;
+  at_Prep : Prep = anDat_Prep ;
 
   alle_Det = M.mkWeakDet "all" plural ;
 

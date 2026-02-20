@@ -115,6 +115,9 @@ fun angle_between_Fun2 : Fun2 ;
 fun dot_product_FunC : FunC ;
 fun vector_plus_FunC : FunC ;
 
+fun everywhere_Adverb : Adverb ;
+fun almost_everywhere_Adverb : Adverb ;
+fun uniformly_Adverb : Adverb ;
 
 
 -- special constants

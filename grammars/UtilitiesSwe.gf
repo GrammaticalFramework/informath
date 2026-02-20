@@ -60,6 +60,7 @@ oper
   prove_VS = mkVS (mkV "bevisa") ;
   
   as_Prep : Prep = mkPrep "som" ;
+  at_Prep : Prep = mkPrep "på" ; ---
 
   let_Str : Bool => Str = \\_ => "låt" ;
   assuming_Str = "under följande antaganden:" ;

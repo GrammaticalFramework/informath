@@ -7,6 +7,7 @@ MATHMARK = 'LATEXMATH'
 #MATHMARK = '$X$'
 
 def untex(s):
+    s = s.replace('$$', '$')
     begtex = s.strip()[:1] == '$'   # line starts with $  
     ss = s.split('$')               # every other word is MATH
     ws = []

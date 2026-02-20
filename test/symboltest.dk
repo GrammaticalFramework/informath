@@ -17,6 +17,7 @@ cross : Elem Obj -> Elem Obj -> Prop.
 sim : Elem Obj -> Elem Obj -> Elem Obj -> Prop.
 root : Elem Obj -> Elem Obj -> Prop.
 gcd : Elem Obj -> Elem Obj -> Elem Obj.
+unicont : Elem Obj -> Prop.
 
 0 : Elem Obj.
 1 : Elem Obj.
@@ -39,6 +40,7 @@ g : Proof (cross A B).
 h : Proof (sim A B F).
 i : Proof (root 3 E).
 j : Proof (pr (gcd 6 9)).
+k : Proof (unicont F).
 
 
 

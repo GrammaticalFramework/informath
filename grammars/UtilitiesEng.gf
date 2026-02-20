@@ -60,6 +60,7 @@ oper
   prove_VS = mkVS (mkV "prove") ;
 
   as_Prep : Prep = mkPrep "as" ;
+  at_Prep : Prep = mkPrep "at" ;
 
   let_Str : Bool => Str = \\_ => "let" ;
 

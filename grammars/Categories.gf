@@ -24,6 +24,7 @@ cat
   Coercion ;
   [Ident] {1} ;
   Unit ;
+  Adverb ;
 
 -- lexicon, verbal
   Noun ;    -- Kind -- set

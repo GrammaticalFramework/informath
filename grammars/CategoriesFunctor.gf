@@ -30,8 +30,8 @@ lincat
   [Rule] = Text ;
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
-  Adj3 = Adj3T ;
   Unit = Text ;
+  Adverb = Adv ;
 
 -- lexicon, verbal
   Noun = CN ;
@@ -42,6 +42,7 @@ lincat
   Adj2 = Adj2T ;
   AdjE = AdjT ;
   AdjC = AdjT ;
+  Adj3 = Adj3T ;
   Verb = VerbT ;
   Verb2 = Verb2T ;
   Noun2 = {cn : CN ; prep : Prep} ;
@@ -55,6 +56,7 @@ lincat
 
 linref
   Kind = \kind -> (mkUtt (useKind kind)).s ;
+  Verb = \verb -> (mkUtt verb).s ;
   
 lin
 -- Base and Const for lists

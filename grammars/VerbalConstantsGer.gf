@@ -124,6 +124,9 @@ lin angle_between_Fun2 = mkFun2 (mkN "Winkel") (mkPrep "zwischen" dative) ;
 lin dot_product_FunC = mkFunC "Skalarprodukt" ;
 lin vector_plus_FunC = mkFunC "Summe" ;
 
+lin everywhere_Adverb = mkAdv "überall" ;
+lin almost_everywhere_Adverb = mkAdv "fast überall" ;
+lin uniformly_Adverb = mkAdv "gleichäßig" ;
 
 
 }

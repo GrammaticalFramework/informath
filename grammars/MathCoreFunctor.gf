@@ -183,38 +183,4 @@ lin
       (mkNP the_Det (mkCN coercion.from exp))
       (Syntax.mkAdv as_Prep (mkNP a_Det coercion.to)) ;
 
-  NounName noun = mkNP noun ;
-  DefNounName noun = mkNP the_Det noun ;
-
-  NounPrepFam noun prep = {cn = noun ; prep = prep ; isCollective = False} ;
-  --- isC only relevant for Fam2
-  NounPrepFam2 noun prep1 prep2 = {cn = noun ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
-  NounPrepFun noun prep = {cn = noun ; prep = prep} ;
-  NounPrepFun2 noun prep1 prep2 = {cn = noun ; prep1 = prep1 ; prep2 = prep2 ; isCollective = False} ;
-  NounPrepFunC noun prep = {cn = noun ; prep = prep} ;
-  
-  AdjPrepAdj2 adj prep = {ap = adj ; prep = prep} ;
-  AdjAdjC adj = adj ;
-  AdjAdjE adj = adj ;
-  AdjPrepAdj3 adj prep1 prep2 = {ap = adj ; prep1 = prep1 ; prep2 = prep2} ;
-  
-  NounNoun1 noun = noun ;
-  NounPrepNoun2 noun prep = {cn = noun ; prep = prep} ;
-
-  VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
-
-  AdjNounNoun adj noun = mkCN adj noun ;
-  
-  NoPrep = strPrep "" ;
-  betweenPrep = Syntax.between_Prep ;
-  byPrep = Syntax.by8means_Prep ;
-  forPrep = Syntax.for_Prep ;
-  fromPrep = Syntax.from_Prep ;
-  inPrep = Syntax.in_Prep ;
-  ofPrep = Syntax.possess_Prep ;
-  onPrep = Syntax.on_Prep ;
-  toPrep = Syntax.to_Prep ;
-  withPrep = Syntax.with_Prep ;
-
-
 }

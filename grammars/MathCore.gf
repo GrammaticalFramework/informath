@@ -99,39 +99,5 @@ fun
   ElemKind : Kind -> Kind ;
 
   CoercionExp : Coercion -> Exp -> Exp ;
-
--- extensions of lexicon definable in symbol tables
-
-  NounName : Noun -> Name ;
-  DefNounName : Noun -> Name ;
-
-  NounPrepFam : Noun -> Prep -> Fam ;
-  NounPrepFam2 : Noun -> Prep -> Prep -> Fam2 ;
-  NounPrepFun : Noun -> Prep -> Fun ;
-  NounPrepFun2 : Noun -> Prep -> Prep -> Fun2 ;
-  NounPrepFunC : Noun -> Prep -> FunC ;
-  
-  AdjPrepAdj2 : Adj -> Prep -> Adj2 ;
-  AdjAdjC : Adj -> AdjC ;
-  AdjAdjE : Adj -> AdjE ;
-  AdjPrepAdj3 : Adj -> Prep -> Prep -> Adj3 ;
-
-  NounNoun1 : Noun -> Noun1 ;
-  NounPrepNoun2 : Noun -> Prep -> Noun2 ;
-
-  VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
-  
-  AdjNounNoun : Adj -> Noun -> Noun ;
-
-  NoPrep : Prep ;
-  betweenPrep : Prep ;
-  byPrep : Prep ;
-  forPrep : Prep ;
-  fromPrep : Prep ;
-  inPrep : Prep ;
-  ofPrep : Prep ;
-  onPrep : Prep ;
-  toPrep : Prep ;
-  withPrep : Prep ;
   
 }
