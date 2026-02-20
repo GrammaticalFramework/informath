@@ -1,0 +1,44 @@
+(; test file for example-based symbol tables ;)
+
+Set : Type.
+Elem : Set -> Type.
+Prop : Type.
+Proof : Prop -> Type.
+Obj : Set.
+
+empset : Elem Obj.
+emp : Elem Obj -> Prop.
+pr : Elem Obj -> Prop.
+disj : Elem Obj -> Elem Obj -> Prop.
+conv : Elem Obj -> Elem Obj -> Prop.
+max : Elem Obj -> Elem Obj.
+iso : Elem Obj -> Elem Obj -> Prop.
+cross : Elem Obj -> Elem Obj -> Prop.
+sim : Elem Obj -> Elem Obj -> Elem Obj -> Prop.
+root : Elem Obj -> Elem Obj -> Prop.
+gcd : Elem Obj -> Elem Obj -> Elem Obj.
+
+0 : Elem Obj.
+1 : Elem Obj.
+2 : Elem Obj.
+3 : Elem Obj.
+6 : Elem Obj.
+9 : Elem Obj.
+A : Elem Obj.
+B : Elem Obj.
+E : Elem Obj.
+F : Elem Obj.
+
+a : Proof (emp empset).
+b : Proof (pr 2).
+c : Proof (disj 2 3).
+d : Proof (conv F 0).
+e : Proof (pr (max A)).
+f : Proof (iso A B).
+g : Proof (cross A B).
+h : Proof (sim A B F).
+i : Proof (root 3 E).
+j : Proof (pr (gcd 6 9)).
+
+
+

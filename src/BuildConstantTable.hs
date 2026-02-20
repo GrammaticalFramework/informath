@@ -147,14 +147,6 @@ splitEntry s = case split '|' s of
   fg : ws -> split ':' fg ++ ws
   _ -> []
 
---- Data.List.Split cannot be found...
-split :: Char -> String -> [String]
-split c cs = case break (==c) cs of
-  ([], []) -> []
-  (s,  []) -> [strip s]
-  (s, _:s2) -> strip s : split c s2
-
-strip = unwords . words
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"

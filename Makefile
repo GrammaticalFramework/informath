@@ -140,6 +140,11 @@ sigma:
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
+symboltest:
+	dk check test/symboltest.dk
+	RunInformath -base=test/symboltest.dk test/symboltest.dkgf
+	RunInformath -add-symboltables=test/symboltest.dkgf test/symboltest.dk
+
 natural_deduction:
 	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf

@@ -87,14 +87,24 @@ lookupConstant f = case splitConstant f of
 splitConstant :: String -> Either String [String]
 splitConstant f
   | isSuffixOf "|}" f = Left f
-  | otherwise = case words (map (\c -> if c=='#' then ' ' else c) f) of
+  | otherwise = case split '#' f of
       ws@(_:_:_) -> Right ws
       _ -> Left f
 
+-- leave only the first part, which is a GF function (can be a complex term)
 stripConstant :: String -> String
 stripConstant f = case splitConstant f of
   Left _ -> f
   Right (h:_) -> h
+
+--- Data.List.Split cannot be found...
+split :: Char -> String -> [String]
+split c cs = case break (==c) cs of
+  ([], []) -> []
+  (s,  []) -> [strip s]
+  (s, _:s2) -> strip s : split c s2
+ where
+  strip = unwords . words
 
 -- deal with {|ident|}
 unescapeConstant :: String -> String

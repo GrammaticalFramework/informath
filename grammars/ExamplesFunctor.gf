@@ -16,7 +16,7 @@ lin
   AdjExample adj x = mkExample (AdjProp adj x) ;
   Adj2Example adj x y = mkExample (Adj2Prop adj x y) ;
   AdjCExample adj x y = mkExample (AdjCProp adj x y) ;
-  AdjEExample adj x y = mkExample (mkExample (AdjEProp adj x y)) "EQ" ;
+  AdjEExample adj x y = mkExample (mkExample (AdjEProp adj x y)) "EQUIVALENCE" ;
   Adj3Example adj x y z = mkExample (Adj3Prop adj x y z) ;
 
   NounExample noun = mkExample (NounKind noun) ;
@@ -24,7 +24,7 @@ lin
   FamExample fam a = mkExample (FamKind fam a) ;
   Fam2Example fam a b = mkExample (Fam2Kind fam a b) ;
 
-  NameExample name = mkExample (NameExp name) ;
+  NameExample name = mkExample (mkExample (NameExp name)) "INDIVIDUAL" ;
   FunExample f x = mkExample (FunExp f x) ;
   Fun2Example f x y = mkExample (Fun2Exp f x y) ;
   FunCExample f x y = mkExample (FunCExp f x y) ;
