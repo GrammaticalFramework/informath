@@ -143,7 +143,7 @@ sigma:
 symboltest:
 	dk check test/symboltest.dk
 	RunInformath -base=test/symboltest.dk test/symboltest.dkgf
-	RunInformath -add-symboltables=test/symboltest.dkgf -variations test/symboltest.dk
+	RunInformath -add-symboltables=test/symboltest.dkgf -variations -to-latex-doc test/symboltest.dk
 
 natural_deduction:
 	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction_proofs.dk >out/nd.tex

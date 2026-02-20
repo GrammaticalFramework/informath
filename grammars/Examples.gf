@@ -28,7 +28,7 @@ fun
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;
 
-  NounName : Noun -> Name ;
+---  NounName : Noun -> Name ;
   DefNounName : Noun -> Name ;
 
   NounPrepFam : Noun -> Prep -> Fam ;

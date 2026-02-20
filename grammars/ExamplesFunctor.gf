@@ -25,7 +25,7 @@ lin
   FamExample fam a = mkExample (FamKind fam a) ;
   Fam2Example fam a b = mkExample (Fam2Kind fam a b) ;
 
-  NameExample name = mkExample (mkExample (NameExp name)) "SINGULAR" ;
+  NameExample name = mkExample (NameExp name) ;
   FunExample f x = mkExample (FunExp f x) ;
   Fun2Example f x y = mkExample (Fun2Exp f x y) ;
   FunCExample f x y = mkExample (FunCExp f x y) ;
@@ -43,7 +43,7 @@ lin
   A_KindArgument = NounKind (mkNoun "A") ;
   B_KindArgument = NounKind (mkNoun "B") ;
 
-  NounName noun = mkNP noun ;
+---  NounName noun = mkNP noun ;
   DefNounName noun = mkNP the_Det noun ;
 
   NounPrepFam noun prep = {cn = noun ; prep = prep ; isCollective = False} ;
