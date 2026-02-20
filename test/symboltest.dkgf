@@ -5,16 +5,21 @@ Obj : "object"
 Set : "set"
 Prop : "proposition"
 
-disj : "X is disjoint from Y"
-conv : "X converges to Y"
+disj : "X is disjoint from Y" | "X and Y are disjoint" | \isdisjoint
+conv : "X converges to Y" 
 emp : "X is empty"
 pr : "X is a prime number"
-empset : "the empty set SINGULAR"
-max : "the maximal element of X"
+empset : "the empty set SINGULAR" | \empset
+sing : "the singleton of X" | \singletonof
+max : "the maximal element of X" 
 iso : "X and Y are isomorphic EQUIVALENCE"
 cross : "X crosses Y"
 sim : "X is similar to Y in Z"
 root : "X is a root of Y"
 gcd : "the greatest common divisor of X and Y"
 unicont : "X is uniformly continuous"
+
+#MACRO \isdisjoint 2 #1 \mathrel{\not\meets} #1
+#MACRO \empset 0 \emptyset
+#MACRO \singletonof 1 \{ #1 \}
 

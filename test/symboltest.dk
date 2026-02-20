@@ -1,12 +1,13 @@
 (; test file for example-based symbol tables ;)
 
 Set : Type.
-Elem : Set -> Type.
+Elem : (A : Set) -> Type.
 Prop : Type.
-Proof : Prop -> Type.
+Proof : (A : Prop) -> Type.
 Obj : Set.
 
 empset : Elem Obj.
+sing : Elem Obj -> Elem Obj.
 emp : Elem Obj -> Prop.
 pr : Elem Obj -> Prop.
 disj : Elem Obj -> Elem Obj -> Prop.
@@ -41,6 +42,6 @@ h : Proof (sim A B F).
 i : Proof (root 3 E).
 j : Proof (pr (gcd 6 9)).
 k : Proof (unicont F).
-
+l : Proof (disj (sing empset) empset).
 
 
