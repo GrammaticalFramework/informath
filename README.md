@@ -6,29 +6,17 @@
 
 [Documents in github.io](https://grammaticalframework.github.io/informath/)
 
-## NEWS
+#### LATEST NEWS
 
-19 February 2026: symbol tables are not generalized to contain full GF trees whose types are lexical categories. Such trees can also be parsed from quoted strings. In order to mark the boundaries between functions (which are no more single tokens), vertical bars `|` are now needed in symbol tables.See last chapter, "Symbol tables", for details.
+22 February 2026: a very first attempt at a binary release, starting with MacOS. No need to install Haskell or GF. See below on "Using ready-made binaries".
 
-19 February 2026: fixed a logical flaw in synonym treatment. Synonyms were generated from primary GF functions instead of the original Dedukti identifiers. But this is reliable only if the primary GF functions are unique - which cannot be guaranteed.
+[Older news](./doc/old-news.md)
 
-18 February 2026: support for adapting Informath to new data without changing the grammar. This will also enable a binary-only release of Informath, which does not require Haskell or GF. A description is found below in the "Symbol tables" section.
 
-18 February 2026: deprecated `-previous`; it can be restored by checking out the GitHub version before the deprecation commit, but there should be no need.
-
-16 February 2026: a much larger lexicon in [WikidataWords.gf](grammars/WikidataWords.gf). About 2000 words in English, less in other languages. Mostly extracted from WikiData. Also other lexica extracted from Naproche and Rijke's HoTT book via Universal Dependency parsing. This is a preparation for a version of Informath that can be adapted to new data without editing the grammar.
-
-13 January 2026: divided this document to a basic part (this README file) and a new [Informath under the Hood document](./doc/informath-under-the-hood.md)).
-
-13 January 2026: enable reading standard input; see `RunInformath -help`.
-
-12 January 2026: a very rudimentary proof-of-concept [Dedukti implementation](./test/natural_deduction.dk) and [GF grammar](./grammars/NaturalDeduction.gf) for natural deduction proofs. You can test this with `make natural_deduction`.
-
-19 December 2025: paper [Multilingual Autoformalization via Fine-tuning Large Language Models with Symbolically Generated Data](https://epub.jku.at/doi/10.35011/risc-proceedings-scml.1) appeared. Its focus is on the use of Informath in training data generation.
-
-24 November 2025: The "-next" version is now default and "-previous" must be invoked with a flag. The previous version will be deprecated very soon, as all its functionality is available in the default version.
 
 ## Documentation
+
+This README: using Informath with ready-made binaries and grammars.
 
 [Informath Under the Hood](https://grammaticalframework.github.io/informath/doc/informath-under-the-hood.html). Recommended if you want to change the GF grammar and not just the symbol table.
 
@@ -87,25 +75,30 @@ More formalisms and informal languages will be added later. Also the scope of la
 
 ### From ready-made binaries
 
-*For this method, you don't need GF or Haskell. It should work for ARM-MacOS and Intel-Linux.*
+*For this method, you don't need GF or Haskell. It should work for ARM-MacOS and hopefully soon for Intel-Linux.*
 
 The quickest way to use Informath is to
 
 - clone this Git repository
-- downoload and uncompress the binary `RunInformath` for you OS architecture and put it into some place on your path of executables
-- download the OS-independent grammar binary `Informath.pgf` move it to the `share/` directory of thie Git repository
+- go to the [release page](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.1)
+- download and uncompress the binary `RunInformath` for you OS architecture and put it into some place on your path of executables; rename it to `RunInformath` to remove the OS-specific suffix
+- download and uncompress the OS-independent grammar binary `Informath.pgf` and move it to the `share/` directory of thie Git repository
 - point the environment variable `INFORMATH_ROOT` to the place where this Git repository is cloned in your system
 
 After that, you can do
 ```
+$ echo "c : Proof (Eq (plus 2 2) 4)." | RunInformath -variations
+```
+for a very quick example, or
+```
   $ make demo
 ```
-to see a number of examples.
+for many more examples.
 
 
 ### Compiling from source
 
-For a quick start, you can just do
+If you cannot use a ready-made binary, do
 ```
   $ make
 ```
@@ -193,6 +186,9 @@ The [src](./src/) directory contains
 - subdirectory in [typetheory](./src/typetheory/) with generated parser and printer for the proof systems [Dedukti](https://deducteam.github.io/), Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) 
 - a translator from MathCore to Dedukti and vice-versa
 - translations between MathCore and Informath
+
+The [share](./share/) directory contains
+
 - file [BaseConstants.dk](./share/baseconstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
 - file [baseconstants.dkgf](./share/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
 
@@ -204,19 +200,25 @@ The [grammars](./grammars) directory contains
 - [MathCore](./grammars/MathCore.gf), the abstract syntax of a minimal CNL for mathematics
 - [MathCoreEng](./grammars/MathCoreEng.gf), Fre, Ger, Swe - concrete syntaxes of MathCore 
 - [MathExtensions(./grammars/MathExtensions.gf), an extension of MathCore with alternative expressions, and corresponding concrete syntaxes
-- [VerbalConstants](./grammars/VerbalConstants.gf), lexicon of natural language mathematical concepts
-- [SymbolicConstants](./grammars/SymbolicConstants.gf), lexicon of symbolic concepts in LaTeX.
+- [WikidataWords](./grammars/WikidataWords.gf), lexicon of natural language words usable mathematical concepts
+- [ProperNames](./grammars/ProperNames.gf), a lexicon of mathematicians' names that appear in mathematical constants, such as "Hilbert space"
+- [VerbalConstants](./grammars/VerbalConstants.gf), a small lexicon of natural language mathematical concepts
+- [SymbolicConstants](./grammars/SymbolicConstants.gf), a small lexicon of symbolic concepts in LaTeX.
 - [Terms](./grammars/Terms.gf), grammar of formal notations, with a single concrete syntax [TermsLatex](./grammars/TermsLatex.gf)
-- [UserExtensions](./grammars/UserExtensions.gf), user-definable extension modules, such as Naproche and NaturalDeduction
+- [UserExtensions](./grammars/UserExtensions.gf), user-definable extension modules, such as Naproche, NaturalDeduction, HoTT, Godement
 - [Utilities](./grammars/Utilities.gf), auxiliary functions and type synonyms used in other modules, also usable in user extensions
 - [Informath](./grammars/Informath.gf), the top module that puts everything together
 
 In addition to the above grammars, which are used in the actual runtime, there are directories that can be used as libraries for implementing new constants:
+
 - [grammars/mathterms](./grammars/mathterms/), multilingual mathematics lexicon extracted from Wikidata
 - [grammars/extraction](./grammars/extraction/), auxiliary grammars used for the extraction task and also imported in the lexicon modules
-  
+
+However, much of this is also available by combining lexical items in symbol tables (see the last section of this document).
+
 The [scripts](./test/) directory contains 
-- Python scripts for various related tasks
+
+- Python scripts for various tasks in the development of Informath
 
 
 ## The structure of Informath
@@ -353,7 +355,9 @@ The resulting LaTeX command is
 ```
 which produces the rendering "$m \equiv n \, \text{mod} \, k$".
 
-The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+` where `base_constants.dkgf`can be one of the files. How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md).
+The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+`. The flag `-add-symboltables=<file.dhf>+` includes `base_constants.dkgf` as one of the files. 
+
+How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md). But this should not always be necessary, at least for English, which has a large lexicon.
 
 
 ### Syntactic and lexical categories
@@ -406,7 +410,7 @@ Verb2     Exp -> Exp -> Prop         X divides Y
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages. 
 
-The token `EQ` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQ` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
+The token `EQUIVALENCE` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQ` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
 
 
 The following categories are available for symbolic renderings:
@@ -471,8 +475,6 @@ For maximal ease of use, Informath also allows symbol table entries to be given 
 ```
 even : "X is even" | even_Adj 
 ```
-This functionality still need some work to deal with all cases correctly.
-
 It is possible to test such examples with the flag `-parse-example`:
 ```
 $ echo "X is even" | RunInformath -parse-example
