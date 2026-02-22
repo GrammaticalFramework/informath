@@ -12,6 +12,7 @@ type Flag = String
 
 data Env = Env {
   flags :: [Flag],
+  informathRoot :: String,
   grammar :: PGF,
   baseConstantModule :: Module,
   constantTable :: ConstantTable,

@@ -36,6 +36,7 @@ import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 import qualified Data.Set as S
+import System.Environment(getEnv)
 
 
 -- * The environment
@@ -51,19 +52,24 @@ The actual flags can be seen with RunInformath -help.
 The same flags can be written in the [Flag] list when calling readEnv as an API function.
 -}
 
+informathRootVar :: String
+informathRootVar = "INFORMATH_ROOT"
+
 readEnv :: [Flag] -> IO Env
 readEnv args = do
-  mo <- readDeduktiModule (argValues "-base" baseConstantFile args)
-  gr <- readGFGrammar (argValue "-grammar" grammarFile args)
+  root <- getEnv informathRootVar
+  mo <- readDeduktiModule (argValues "-base" (root ++ "/" ++ baseConstantFile) args)
+  gr <- readGFGrammar (argValue "-grammar" (root ++ "/" ++ grammarFile) args)
   let symboltables =
         if flagHasValue "-add-symboltables" args
 	then constantTableFile : argValues "-add-symboltables" "" args
-	else argValues "-symboltables" constantTableFile args
+	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   (ct, cvt, dt, mt) <- readConstantTable gr fro symboltables
   ifArg "-check-constant-table" args (checkConstantTable mo gr mt ct)
   return Env {
     flags = args,
+    informathRoot = root,
     grammar = gr,
     constantTable = ct,
     conversionTable = cvt,
@@ -106,9 +112,9 @@ mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
 
 -- * Default source files, which can be changed in Env flags (see RunInformath -help)
 
-grammarFile = "grammars/Informath.pgf" 
-baseConstantFile = "src/BaseConstants.dk"  
-constantTableFile = "src/baseconstants.dkgf"
+grammarFile = "share/Informath.pgf" 
+baseConstantFile = "share/baseconstants.dk"  
+constantTableFile = "share/baseconstants.dkgf"
 
 -- * Main types involved
 

@@ -8,15 +8,15 @@ lang=Eng
 
 all: Dedukti Agda Rocq Lean grammar RunInformath
 
-grammar: grammars/Informath.pgf
+grammar: share/Informath.pgf
 
 RunInformath:
 	stack install
 
 devel: grammar RunInformath
 
-grammars/Informath.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf
+share/Informath.pgf: $(GF_FILES)
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/
 
 
 Dedukti:
@@ -55,7 +55,7 @@ demo:
 	$(RUN) -from-lang=Eng out/exx.txt
 	echo "## parsing some natural English with conversions back to Dedukti"
 	$(RUN) -from-lang=Eng test/gflean-data.txt
-	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
+	cat share/baseconstants.dk test/exx.dk >out/bexx.dk
 	echo "## converting some simple arithmetic statements to Agda"
 	$(RUN) -to-formalism=agda test/exx.dk
 	echo "## converting some simple arithmetic statements to Rocq"
@@ -87,30 +87,30 @@ devdemo:
 	$(RUN) -from-lang=Eng out/exx.txt
 	echo "## parsing some natural English with conversions back to Dedukti"
 	$(RUN) -from-lang=Eng test/gflean-data.txt
-	cat src/BaseConstants.dk test/exx.dk >out/bexx.dk
+	cat share/baseconstants.dk test/exx.dk >out/bexx.dk
 	echo "## converting some simple arithmetic statements to Agda"
 	echo "open import BaseConstants\n\n" >out/exx.agda
 	$(RUN) -to-formalism=agda test/exx.dk >>out/exx.agda
-	cp -p src/BaseConstants.agda out/
+	cp -p share/baseconstants.agda out/
 	echo "## checking the generated file in Agda"
 	cd out ; agda --prop exx.agda
 	echo "## converting some simple arithmetic statements to Rocq"
 	$(RUN) -to-formalism=rocq test/exx.dk >out/exx.v
-	cat src/BaseConstants.v out/exx.v >out/bexx.v
+	cat share/baseconstants.v out/exx.v >out/bexx.v
 	echo "## checking the generated file in Rocq"
 	coqc out/bexx.v
 	echo "## converting some simple arithmetic statements to Lean"
 	$(RUN) -to-formalism=lean test/exx.dk >out/exx.lean
 	echo "## checking the generated file in Lean"
-	cat src/BaseConstants.lean out/exx.lean >out/bexx.lean
+	cat share/baseconstants.lean out/exx.lean >out/bexx.lean
 	lean out/bexx.lean
 	echo "# checking some set theory statements and generating LaTeX"
-	cat src/BaseConstants.dk test/sets.dk >out/sexx.dk
+	cat share/baseconstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
 	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
 	echo "## checking a selection of 100 theorems in Dedukti"
-	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 	echo "## parsing and regenerating a Naproche document"
 	make naproche
@@ -123,13 +123,13 @@ devdemo:
 top100:
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
-	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 top100single:
 	$(RUN) -to-latex-doc -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
-	cat src/BaseConstants.dk test/top100.dk >out/texx.dk
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 sets:
@@ -173,20 +173,20 @@ interpret_naproche:
 	cd out ; pdflatex -batchmode napzf.tex ; $(OPEN) napzf.pdf
 
 baseconstants:
-	cat src/BaseConstants.dk >tmp/baseconstants.dk
+	cat share/BaseConstants.dk >tmp/baseconstants.dk
 
 	$(RUN) -to-latex-file -variations tmp/baseconstants.dk >out/baseconstants.tex
 	cd out ; pdflatex baseconstants.tex ; $(OPEN) baseconstants.pdf
 
 parallel:
-	tail -150 src/BaseConstants.dk >tmp/parallel.dk
+	tail -150 share/baseconstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	cat test/top100.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data -variations -no-ranking tmp/parallel.dk >tmp/parallel-informath.jsonl
 
 parallel-def:
-	tail -150 src/BaseConstants.dk >tmp/parallel.dk
+	tail -150 share/baseconstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl

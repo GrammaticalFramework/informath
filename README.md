@@ -85,17 +85,40 @@ More formalisms and informal languages will be added later. Also the scope of la
 
 ## Using Informath
 
-The software included in this repository supports the translation of text and code files in batch mode. For a quick start, you can just do
+### From ready-made binaries
+
+*For this method, you don't need GF or Haskell. It should work for ARM-MacOS and Intel-Linux.*
+
+The quickest way to use Informath is to
+
+- clone this Git repository
+- downoload and uncompress the binary `RunInformath` for you OS architecture and put it into some place on your path of executables
+- download the OS-independent grammar binary `Informath.pgf` move it to the `share/` directory of thie Git repository
+- point the environment variable `INFORMATH_ROOT` to the place where this Git repository is cloned in your system
+
+After that, you can do
+```
+  $ make demo
+```
+to see a number of examples.
+
+
+### Compiling from source
+
+For a quick start, you can just do
 ```
   $ make
 ```
-to build the executable `RunInformath` and all its dependencies. After that, you can do
+to build the executable `RunInformath` and all its dependencies.
+You will need to set the environment variable `INFORMATH_ROOT` to point to the directory where the `share/` directory resides (the same as where this README.md resides).
+
+After that, you can do
 ```
   $ make demo
 ```
 which illustrates different functionalities: translating between Dedukti and natural languages, as well as from Dedukti to Agda, Rocq, and Lean. 
 
-Building the system requires the following software:
+Building the system from source requires the following software:
 
 - [GF](https://www.grammaticalframework.org/) >= 3.12 (both as executable and as the PGF library)
 - [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source)
@@ -170,8 +193,8 @@ The [src](./src/) directory contains
 - subdirectory in [typetheory](./src/typetheory/) with generated parser and printer for the proof systems [Dedukti](https://deducteam.github.io/), Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) 
 - a translator from MathCore to Dedukti and vice-versa
 - translations between MathCore and Informath
-- file [BaseConstants.dk](./src/BaseConstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
-- file [baseconstants.dkgf](./src/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
+- file [BaseConstants.dk](./share/baseconstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
+- file [baseconstants.dkgf](./share/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
 
 The [test](./test/) directory contains
 - some test data as `.dk`, `.tex`, and `.txt` files (see above)
@@ -217,7 +240,7 @@ Conversions from Dedukti to Agda, Coq, and Lean and back are mostly engineering 
 
 ### Type checking in Dedukti
 
-The type checking is based on the file [BaseConstants.dk](./src/BaseConstants.dk), which is meant to be extended as the project grows. This file type checks in Dedukti with the command
+The type checking is based on the file [BaseConstants.dk](./share/baseconstants.dk), which is meant to be extended as the project grows. This file type checks in Dedukti with the command
 ```
   $ dk check BaseConstants.dk
 ```
@@ -231,7 +254,7 @@ Since this is cumbersome, we will need to implement something more automatic in 
 
 ### Generating other type theories
 
-Each of Agda, Rocq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./src/BaseConstants.dk), with the format as in
+Each of Agda, Rocq, and Lean will be described below. A common feature to all of them are the conversion rules of constants stored in [BaseConstants.dk](./share/baseconstants.dk), with the format as in
 ```
 #CONV agda forall all
 #CONV rocq forall All
@@ -256,7 +279,7 @@ As shown by `make demo`, this process can produce valid Agda code:
 $ RunInformath -to-formalixm=agda test/exx.dk >exx.agda
 $ agda --prop exx.agda
 ```
-The base file [BaseConstants.agda](./src/BaseConstants.agda) is accessed by an `open import` statement.
+The base file [BaseConstants.agda](./share/baseconstants.agda) is accessed by an `open import` statement.
 
 ### Generating and type checking Rocq
 
@@ -282,7 +305,7 @@ This should be made less cumbersome in the future.
 
 You can in principle generate from any Dedukti (`.dk`) file, at least if it is well typed in Dedukti (which is not always necessary). However, the result will be quite bad unless you provide a symbol table with a `.dkgf` file, converting Dedukti identifiers to GF functions. This section describes the structure of this file. 
 
-There is a default symbol table, [baseconstants.dkgf](src/baseconstants.dkgf), which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table, by passing it to the flag `-symboltables`. An example is the conversion of a Matita dump:
+There is a default symbol table, [baseconstants.dkgf](share/baseconstants.dkgf), which works for the examples listed above. But for other Dedukti files, it can give strange results or even processing errors because of name clashes between that file and the default symbol table. The first aid to this is to use the empty symbol table, by passing it to the flag `-symboltables`. An example is the conversion of a Matita dump:
 ```
 $ RunInformath -symboltables=test/empty.dkgf test/mini-matita.dk
 ```
@@ -290,7 +313,7 @@ Notice that if you call `RunInformath` from another directory than the top direc
 
 If you don't want to replace `baseconstants.dkgf` but just add your own `.dkgf` files, you can use the flag `-add-symboltables`.
 
-Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](src/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](src/BaseConstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
+Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](share/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](share/baseconstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
 ```
 <DeduktiIdent> : <GFFunction> | ... | <GFFunction>
 ```
