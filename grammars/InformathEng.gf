@@ -7,5 +7,6 @@ concrete InformathEng of Informath =
   SymbolicConstantsLatex,
   MathExtensionsEng,
   WikidataWordsEng,
+  ProperNamesEng,
   UserExtensionsEng
   ;

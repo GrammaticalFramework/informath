@@ -45,6 +45,7 @@ lin
 
 ---  NounName noun = mkNP noun ;
   DefNounName noun = mkNP the_Det noun ;
+  ProperNameNounName name noun = npGenNounNP (mkNP name) noun ;
 
   NounPrepFam noun prep = {cn = noun ; prep = prep ; isCollective = False} ;
   --- isC only relevant for Fam2
@@ -65,7 +66,9 @@ lin
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
 
   AdjNounNoun adj noun = mkCN adj noun ;
-  
+  NounNounNoun noun1 noun2 = compoundCN noun1 noun2 ;
+  ProperNameNounNoun name noun = nameCompoundCN name noun ;
+
   NoPrep = strPrep "" ;
 
   atPrep = Utilities.at_Prep ;

@@ -53,6 +53,7 @@ lincat
   Label = LabelT ;
 
   Prep = Syntax.Prep ;
+  ProperName = PN ;
 
 linref
   Kind = \kind -> (mkUtt (useKind kind)).s ;

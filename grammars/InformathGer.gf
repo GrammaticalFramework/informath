@@ -6,6 +6,7 @@ concrete InformathGer of Informath =
   VerbalConstantsGer,
   SymbolicConstantsLatex,
   WikidataWordsGer,
+  ProperNamesGer,
   MathExtensionsGer,
   UserExtensionsGer
   ;

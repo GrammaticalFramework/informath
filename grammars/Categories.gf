@@ -46,6 +46,6 @@ cat
   Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
 
   Prep ;    -- used for symbol table extensions of grammar
-
+  ProperName ; -- names of mathematicians occurring in concepts
 
 }

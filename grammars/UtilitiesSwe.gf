@@ -8,7 +8,7 @@ open
   SymbolicSwe,
   MarkupSwe,
   (I=IrregSwe),
-  (E=ExtendSwe),
+  (Extend=ExtendSwe),
   (M=MakeStructuralSwe),
   Formal,
   Prelude
@@ -19,6 +19,15 @@ oper
 
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
+
+  compoundCN : CN -> CN -> CN = \cn1, cn2 ->
+    cn2 ** {s = \\n, d, c => (mkUtt cn1).s ++ Predef.BIND ++ cn2.s ! n ! d ! c} ;
+  
+  nameCompoundCN : PN -> CN -> CN = \pn, cn ->
+    cn ** {s = \\n, d, c => (mkUtt (mkNP pn)).s ++ Predef.BIND ++ cn.s ! n ! d ! c} ;
+
+  npGenNounNP : NP -> CN -> NP = \np, cn -> mkNP (Extend.GenNP np) cn ;
+
   
   negPol = negativePol ;
 

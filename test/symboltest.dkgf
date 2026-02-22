@@ -18,6 +18,11 @@ sim : "X is similar to Y in Z"
 root : "X is a root of Y"
 gcd : "the greatest common divisor of X and Y"
 unicont : "X is uniformly continuous"
+vectorspace : "vector space"
+hilbertspace : "Hilbert space"
+eulerconstant : "Euler's constant"
+lebesguemeasure : "the Lebesgue measure of X"
+
 
 #MACRO \isdisjoint 2 #1 \mathrel{\not\meets} #2
 #MACRO \empset 0 \emptyset

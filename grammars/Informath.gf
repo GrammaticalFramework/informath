@@ -5,6 +5,7 @@ abstract Informath =
   SymbolicConstants,
   MathExtensions,
   WikidataWords,
+  ProperNames,
   UserExtensions,
   Annotations
   ** {

@@ -6,6 +6,7 @@ concrete InformathFre of Informath =
   VerbalConstantsFre,
   SymbolicConstantsLatex,
   WikidataWordsFre,
+  ProperNamesFre,
   MathExtensionsFre,
   UserExtensionsFre
   ;

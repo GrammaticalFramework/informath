@@ -81,12 +81,12 @@ def gfrules(words, cat, oper=None, params=[]):
         mk_lin_rule(fun, lin)
       ]
 
-cats = {'A': 'Adj', 'N': 'Noun', 'V': 'Verb'}
+cats = {'A': 'Adj', 'N': 'Noun', 'V': 'Verb', 'PN': 'ProperName'}
 
 def gffun_rules(line):
     line = line.strip()
     words = line.split('_')
-    cat0 = words[-1]
+    cat0 = words[-1][:-1] if line.endswith("'") else words[-1]
     if cat0 in cats:
         cat = cats[cat0]
         fun = mk_fun_from_strs(words[:-1] + [cat])
@@ -109,9 +109,9 @@ if MODE == 'wordlist':  # bare words, CAT given as command-line argument
         if len(line) > 2 and all([c.isalpha() or c in "-'" for c in line]):
             for rule in gfrules(line.split(), CAT):
                 print(rule)
-elif MODE == 'funlist':  # lexical funs, CAT given as suffix
+elif MODE == 'funlist':  # lexical funs, CAT ignored (given as suffix)
     for line in sys.stdin:
-        if line.startsWith('--'):
+        if line.startswith('--'):
             print(line)
         if line.strip():
             for rule in gffun_rules(line):

@@ -4,6 +4,7 @@ open
   Syntax,
   Symbolic,
   Markup,
+  Extend,
   Formal,
   Prelude
 
@@ -74,6 +75,11 @@ oper
 
   postAdvS : S -> Adv -> S ;
   displayLatexS : Symb -> S ;
+
+  compoundCN : CN -> CN -> CN ;
+  nameCompoundCN : PN -> CN -> CN ;
+
+  npGenNounNP : NP -> CN -> NP ;
 
 
 -- type synonyms

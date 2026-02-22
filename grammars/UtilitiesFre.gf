@@ -19,6 +19,16 @@ oper
 
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = \\o => s.s ! o ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
+
+  compoundCN : CN -> CN -> CN = \cn1, cn2 ->
+    mkCN cn2 (S.mkAdv genitive (mkNP aPl_Det cn1)) ;  -- ensemble de nombres ; modifier in plural
+  
+  nameCompoundCN : PN -> CN -> CN = \pn, cn ->
+    mkCN cn (S.mkAdv genitive (mkNP pn)) ;  -- espace de Hilbert
+
+  npGenNounNP : NP -> CN -> NP =
+    \np, cn -> mkNP the_Det (mkCN cn (S.mkAdv genitive np)) ; -- la constante d'Euler
+
   
   negPol = negativePol ;
   

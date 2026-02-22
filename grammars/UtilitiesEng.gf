@@ -8,7 +8,8 @@ open
   SymbolicEng,
   MarkupEng,
   (I=IrregEng),
-  (E=ExtendEng),
+  (Extend=ExtendEng),
+  (X=ExtraEng),
   Formal,
   Prelude
 
@@ -19,7 +20,14 @@ oper
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
-  negPol : Pol = E.UncontractedNeg ;
+  compoundCN : CN -> CN -> CN = \cn1, cn2 -> X.CompoundCN cn1 cn2 ;
+  
+  nameCompoundCN : PN -> CN -> CN = \pn, cn ->
+    cn ** {s = \\n, c => (mkUtt (mkNP pn)).s ++ cn.s ! n ! c} ;
+
+  npGenNounNP : NP -> CN -> NP = \np, cn -> mkNP (Extend.GenNP np) cn ;
+
+  negPol : Pol = Extend.UncontractedNeg ;
   
   strN : Str -> N = mkN ;
   strA : Str -> A = mkA ;

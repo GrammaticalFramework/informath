@@ -6,6 +6,7 @@ concrete InformathSwe of Informath =
   VerbalConstantsSwe,
   SymbolicConstantsLatex,
   WikidataWordsSwe,
+  ProperNamesSwe,
   MathExtensionsSwe,
   UserExtensionsSwe
   ;

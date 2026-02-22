@@ -30,6 +30,7 @@ fun
 
 ---  NounName : Noun -> Name ;
   DefNounName : Noun -> Name ;
+  ProperNameNounName : ProperName -> Noun -> Name ; --- ProperName in genitive: Euler's constant
 
   NounPrepFam : Noun -> Prep -> Fam ;
   NounPrepFam2 : Noun -> Prep -> Prep -> Fam2 ;
@@ -49,6 +50,8 @@ fun
   VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
   
   AdjNounNoun : Adj -> Noun -> Noun ;
+  NounNounNoun : Noun -> Noun -> Noun ;
+  ProperNameNounNoun : ProperName -> Noun -> Noun ; -- ProperName in nominative: Hilbert space
 
   NoPrep : Prep ;
 
