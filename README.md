@@ -311,8 +311,6 @@ There is a default symbol table, [baseconstants.dkgf](share/baseconstants.dkgf),
 ```
 $ RunInformath -symboltables=test/empty.dkgf test/mini-matita.dk
 ```
-Notice that if you call `RunInformath` from another directory than the top directory of Informath (where this README resides), you need to pass a link to [informath/src/base_constants.dkgf](./informath/src/base_constants.dkgf) with the `-symboltables` flag, unless you use some other `.dkgf` file.
-
 If you don't want to replace `baseconstants.dkgf` but just add your own `.dkgf` files, you can use the flag `-add-symboltables`.
 
 Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](share/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](share/baseconstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
@@ -321,23 +319,19 @@ Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in
 ```
 This line maps the Dedukti identifier to the different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms. For example, the line
 ```
-Eq : Eq_Adj2 | Eq_AdjE | Eq_Compar
+disj : "X is disjoint from Y" | "X and Y are disjoint" | \isdisjoint
 ```
-says that the Dedukti constant `Eq` is primarily rendered with `Eq_Adj2`, which means that `Eq x y` becomes "$x$ is equal to $y$". The second alternative, `Eq_AdjE`, uses the collective predication form "$x$ and $y$ are equal". The third alternative `Eq_Compar` uses the fully symbolic expression "$x = y$".
+says that an applicaiton of the Dedukti constant `disj` to two arguments $x$ and $y$ is primarily rendered "$x$ is equal to $y$". The second alternative, uses the collective predication form "$x$ and $y$ are disjoint". The third alternative `\disjoint` uses the LaTeX macro expression `\isdisjoint{x}{y}`, assumed to create a symbolic expression in LaTeX's math mode (between dollar signs).
 
 In these symbol table lines, the first variant must always be a **verbal** function, that is, use words instead of mathematical symbols. This condition is needed to make informalization failure-free: a symbolic function can only be used if all of its arguments have symbolic renderings, which is not guaranteed for all concepts in informal mathematics.
 
-A GFFunction in a symbol table can be a single GF abstract syntax function, such as `Eq_Adj2`, or a complex syntax tree, as specified below.
+A GF function in a symbol table can be of any of the three kinds:
+
+- a natural-language expression in quotes, e.g. `"X is disjoint from Y"`
+- a GF abstract syntax expression from the Informath grammar, e.g. `disjoint_AdjC`
+- a LaTeX macro defined elsewhere, e.g. `\isdisjoint`
 
 In addition to mappings from Dedukti to GF, a `.dkgf` file can contain the following kind of lines:
-```
-#CONV <formalism> <DeduktiIdent> <FormalismIdent>
-``` 
-defines a conversion of a Dedukti identifier to another formalism, such as Lean, typically to a standard library function of that formalism.
-```
-#DROP <DeduktiIdent> <int>
-```
-tells the conversion from Dedukti to GF to drop a number of initial arguments of the function application. These are typically the "hidden arguments" in some other formalism, which Dedukti has to make explicit.
 ```
 #MACRO <macroname> <int> <definition>
 ```
@@ -354,6 +348,17 @@ The resulting LaTeX command is
 \newcommand{\congruent}[3]{#1 \equiv #2 \, \text{mod} \, #3}
 ```
 which produces the rendering "$m \equiv n \, \text{mod} \, k$".
+
+The symbol table line
+```
+#DROP <DeduktiIdent> <int>
+```
+tells the conversion from Dedukti to GF to drop a number of initial arguments of the function application. These are typically the "hidden arguments" in some other formalism, which Dedukti has to make explicit.
+
+```
+#CONV <formalism> <DeduktiIdent> <FormalismIdent>
+``` 
+defines a conversion of a Dedukti identifier to another formalism, such as Lean, typically to a standard library function of that formalism.
 
 The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+`. The flag `-add-symboltables=<file.dhf>+` includes `base_constants.dkgf` as one of the files. 
 
@@ -374,8 +379,56 @@ Formula    symbolic formula  TermPrec            x > 2
 ```
 The "linguistic type" here refers to a type in the [GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/), which is used in the implementation of the grammar. The category `TermPrec` means term with a precedence level, where a small integer controls the use of parentheses in combinations. 
 
-Unless you are willing to modify the GF grammars and the Haskell code, you will never have to write the name of a syntactic category. The only thing that you modify is the symbol table, which uses **lexical categories**, that is, categories of individual words such as "integer" and fixed multiword phrases such as "natural number". Informath comes with a large lexicon (of 3000 entries in English), from which you can pick ones that you need in your symbol table.
-Most of these entries follow a uniform naming convention:
+Unless you are willing to modify the GF grammars and the Haskell code, you will never have to write the name of a syntactic category. 
+The most intuitive way to adapt Informath to your Dedukti files is by using **example-based symbol table entries**.
+The things you need to know are
+
+- the intended **target type** of your Dedukti constant:
+  - if its value type in Dedukti is `Prop`, it is `Prop`
+  - if its value type in Dedukti is `Set`, it is `Kind`
+  - if its value type in Dedukti is `Elem` for some set, it is `Exp`
+- its **arity**, i.e. the number of argument it takes (after possibly dropping some initial arguments not to be shown in informal text)
+
+Given this information, you can use the following formats to write symbol table entries:
+```
+Prop, arity 1:  "X is <Adj>" | "X <Verb>s" | "X is a <Noun>"
+Prop, arity 2:  "X is <Adj> <Prep> Y" | "X and Y are <Adj> 
+              | "X <Verb>s <Prep> Y" | "X is a <Noun> <Prep> Y"
+Prop, arity 3: "X is <Adj> <Prep> Y <Prep> Z"
+
+Kind, arity 0: "<Noun>"
+Kind, arity 1: "<Noun> <Prep> As"
+Kind, arity 2: "<Noun> <Prep> As <Prep> Bs" | "the <Noun> <Prep> X and Y"
+
+Exp, arity 0: "the <Noun>"
+Exp, arity 1: "the <Noun> <Prep> X"
+Exp. arity 2: "the <Noun> <Prep> X <Prep> Y"
+```
+So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`?  
+They are expressions of **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". Informath comes with a large lexicon (of 3000 entries in English), from which you often pick the ones that you need in your symbol table. The lexicon consists of individual words, but they can be combined with the following rules:
+```
+<Adj>: <Adv> <Adj>
+<Noun>: <Adj> <Noun> | <Noun> <Noun> | <ProperName> <Noun>
+```
+Notice that these rules are inductive: they permit the formation of infinitely many multiword expressions. 
+For a (nonsensical) example,
+```
+uniformly closed topological Hilbert      space
+<Adv>     <Adj>  <Adj>       <PropeName>  <Noun>
+```
+is a `<Noun>`.
+You can test a candidate symbol table entry with the `-parse-example` flag:
+```
+$ echo "X is disjoint from Y" | RunInformath -parse-example
+
+Adj2Example (AdjPrepAdj2 disjoint_Adj fromPrep) X_Argument Y_Argument
+```
+If a result is shown, the entry is possible to use. 
+You can also paste the result to your symbol table instead of using a string; this can make processing a little bit faster.
+More importantly, if the command gives many alternatives, it is a way to choose the desired one of them.
+The part to be pasted is then the first argument of the applicative expression, in this case, `AdjPrepAdj2 disjoint_Adj fromPrep`.
+
+The words used internally in Informath are **abstract syntax functions** that follow a uniform naming convention:
 ```
 <word>_<category>
 ```
@@ -385,6 +438,47 @@ even_Adj
 integer_Noun
 converge_Verb
 ```
+
+### Inspecting the Informath lexicon
+
+The Informath lexicon contains entries from each of the lexical categories.
+It can be inspected with RunInformath itself by using the flag `-find-gf`:
+```
+$ echo "vector orthogonal" | RunInformath -find-gf
+
+vector : vector_Noun
+orthogonal : orthogonal_Adj
+```
+This command reads standard input and treats every word separately.
+
+Another view of the lexicon (and the whole grammar) can be obtained by the option `-all-gf-functions`, which lists all functions of the grammar with their types, as well as the languages for which they are implemented. Grepping with the category and the language focuses the view to what you are looking for:
+```
+$ RunInformath -all-gf-functions | grep Adj | grep Ger
+
+disjoint_Adj : Adj 	 Eng Fre Ger
+orthogonal_Adj : Adj 	 Eng Fre Ger Swe
+perpendicular_Adj : Adj 	 Eng Fre Ger Swe
+```
+(showing a small part of the result). To see what the rendering of a given function is in a given language, you can use the `-linearize` option:
+```
+$ echo "orthogonal_Adj" | RunInformath -linearize -to-lang=Ger
+
+orthogonal
+```
+
+### Type checking symbol tables
+
+It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may even cause run-time failures. Because of this, RunInformath provides a static checker of symbol tables, invoked as follows:
+```
+RunInformath -base=<file.dk> <file>.dkgf
+```
+This command checks if the types of the GF functions and symbolic macros are compatible with the types of the Dedukti functions that they are assigned to. It does not (yet) find all errors, but should be enough to guarantee that informalization is failure-free.
+
+
+### Fine-grained lexical categories
+
+*This section is becoming less relevant for users not writing grammars themselves, now that lexical entries can be given by parsing with the lexicon.*
+
 The following lexical categories are available for verbal renderings.
 The "example" column shows how an item of this category behaves in linearizing an application of it to its arguments. But is also shows how the item can be given as a string in a symbol table, which is a "no-code" method for building symbol tables.  
 ```
@@ -394,7 +488,7 @@ Adj       Exp -> Prop                X is even
 Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
 AdjC      Exps -> Prop               X and Y are distinct
-AdjE      Exps -> Prop               X and Y are equal EQ
+AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
 Fam       Kind -> Kind               list of As
 Fam2      Kind -> Kind -> Kind       function from As to Bs
 Fun       Exp -> Exp                 the square of X
@@ -410,49 +504,7 @@ Verb2     Exp -> Exp -> Prop         X divides Y
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages. 
 
-The token `EQUIVALENCE` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQ` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
-
-
-The following categories are available for symbolic renderings:
-```
-  category    semantic type            example
-—----------------------------------------------
-  Compar      Term -> Term -> Formula  X < Y
-  Const       Term                     \pi
-  Oper        Term -> Term             \sqrt{Y}
-  Oper2       Term -> Term -> Term     X + Y
-```
-The grammar contains some antries from each category. However, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories.
-
-### Inspecting the Informath lexicon
-
-The Informath lexicon contains entries from each of the lexical categories.
-It can be inspected with RunInformath itself by using the flag `-find-gf`:
-```
-$ echo "vector orthogonal" | RunInformath -find-gf
-
-vector : vector_Noun
-orthogonal : orthogonal_AdjC orthogonal_Adj2 orthogonal_Adj
-```
-This command reads standard input and treats every word separately.
-
-Another view of the lexicon (and the whole grammar) can be obtained by the option `-all-gf-functions`, which lists all functions of the grammar with their types, as well as the languages for which they are implemented. Grepping with the category and the language focuses the view to what you are looking for:
-```
-$ RunInformath -all-gf-functions | grep AdjC | grep Ger
-
-Neq_AdjC : AdjC 	 Eng Fre Ger Swe
-disjoint_AdjC : AdjC 	 Eng Fre Ger
-orthogonal_AdjC : AdjC 	 Eng Fre Ger Swe
-perpendicular_AdjC : AdjC 	 Eng Fre Ger Swe
-```
-(showing a part of the result). To see what the rendering of a given function is in a given language, you can use the `-linearize` option:
-```
-$ echo "disjoint_AdjC" | RunInformath -linearize -to-lang=Ger
-
-disjunkt
-```
-
-### Compound lexical entries
+The token `EQUIVALENCE` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQUIVALENCE` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
 
 Most of the words in the Informath lexicon belong to the base categories `Adj`, `Noun`, and `Verb`. Complex categories such as `Adj2` and `Fun` have very few entries.
 There are three reasons for this:
@@ -468,27 +520,13 @@ AdjAdjE equal_Adj                    -- (are) equal
 NounFun number_Noun ofPrep           -- the number of
 AdjNounNoun complex_Adj number_Noun  -- complex number
 ```
-
-### Example-based lexical entries
-
-For maximal ease of use, Informath also allows symbol table entries to be given as natural language strings, which are parsed by the Informath grammar to trees. The strings must be included in double quotes to indicate that they need to be parsed. Here is an example symbol table entry, which gives two different ways to specify one and the same linearization:
+The following fine-grained categories are available for symbolic renderings:
 ```
-even : "X is even" | even_Adj 
+  category    semantic type            example
+—----------------------------------------------
+  Compar      Term -> Term -> Formula  X < Y
+  Const       Term                     \pi
+  Oper        Term -> Term             \sqrt{Y}
+  Oper2       Term -> Term -> Term     X + Y
 ```
-It is possible to test such examples with the flag `-parse-example`:
-```
-$ echo "X is even" | RunInformath -parse-example
-
-AdjExample even_Adj X_Argument
-```
-Examples to this command can be read from a file line by line, without quotes.
-
-
-
-### Type checking symbol tables
-
-It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may even cause run-time failures. Because of this, RunInformath provides a static checker of symbol tables, invoked as follows:
-```
-RunInformath -base=<file.dk> <file>.dkgf
-```
-This command checks if the types of the GF functions and symbolic macros are compatible with the types of the Dedukti functions that they are assigned to. It does not (yet) find all errors, but should be enough to guarantee that informalization is failure-free.
+The grammar contains some antries from each category. However, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories.
