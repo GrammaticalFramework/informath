@@ -56,13 +56,25 @@ lin
     isNumber = False
     } ; 
 
-  MacroFormula ident terms =
-    constant (ident ++ terms) ;
-  MacroTerm ident terms =
-    constant (ident ++ terms) ** {isNumber = False} ; --- False impossible to know
+  MacroFormula ident =
+    constant (ident) ;
+  MacroTerm ident =
+    constant (ident) ** {isNumber = False} ; --- False impossible to know
 
-  NoTerms = [] ;
-  AddTerms term terms = curly (top term) ++ terms ;
+  App1MacroFormula ident term =
+    constant (ident ++ curly (top term)) ;
+  App1MacroTerm ident term =
+    constant (ident ++ curly (top term)) ** {isNumber = False} ; --- False impossible to know
+
+  App2MacroFormula ident x y =
+    constant (ident ++ curly (top x) ++ curly (top y)) ;
+  App2MacroTerm ident x y =
+    constant (ident ++ curly (top x) ++ curly (top y)) ** {isNumber = False} ; --- False impossible to know
+
+  App3MacroFormula ident x y z =
+    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ;
+  App3MacroTerm ident x y z =
+    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ** {isNumber = False} ; --- False impossible to know
 
   StringMacro s = s.s ;
   

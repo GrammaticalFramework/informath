@@ -33,7 +33,7 @@ applyLookBack mb t = case t of
     Just t -> t
     _ -> mkApp (mkCId (unescape s)) []
   unescape s = case s of
-    '{':'|':cs -> "'\\" ++ init (init cs) ++ "'" -- for macros ; --- cumbersome
+----    '\\':cs -> "'\\\\" ++ cs ++ "'" -- for macros ; --- cumbersome
     _ -> s
 
 jmt2jmt :: GJmt -> Jmt
@@ -167,7 +167,10 @@ formula2dedukti formula = case formula of
   GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
     foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
   ---- modulo_Formula : Term -> Term -> Term -> Formula
-  GMacroFormula ident terms -> foldl EApp (EIdent (macro2ident ident)) [] ---- (map term2dedukti (termsList terms)) 
+  GMacroFormula ident -> foldl EApp (EIdent (macro2ident ident)) []
+  GApp1MacroFormula ident term -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [term])
+  GApp2MacroFormula ident x y -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y])
+  GApp3MacroFormula ident x y z -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z])
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -254,13 +257,18 @@ term2dedukti term = case term of
     appIdent (showGF oper) (map term2dedukti [x, y])
   GNumberTerm (GInt n) -> int2exp n
   GIdentTerm ident -> EIdent (ident2ident ident)
-  GMacroTerm macro terms -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti (termsList terms)) 
+  GMacroTerm macro -> foldl EApp (EIdent (macro2ident macro)) []
+  GApp1MacroTerm macro term -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [term])
+  GApp2MacroTerm macro x y -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y])
+  GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z]) 
   _ -> eUndefinedDebug term ---- TODO
 
+{-
 termsList :: GTerms -> [GTerm]
 termsList terms = case terms of
   GAddTerms t tt -> t : termsList terms
-  GNoTerms -> []
+  GOneTerms t -> [t]
+-}
 
 exp2deduktiPatt :: GExp -> Patt
 exp2deduktiPatt exp = case exp of
@@ -294,7 +302,7 @@ ident2ident ident = case ident of
 
 macro2ident :: GMacro -> QIdent
 macro2ident ident = case ident of
-  GStringMacro (GString s) -> QIdent (escapeConstant s)
+  GStringMacro (GString s) -> QIdent ("'\\" ++ s ++ "'") ---- (escapeConstant s)
 
 exp2ident :: GExp -> QIdent
 exp2ident exp = case exp of

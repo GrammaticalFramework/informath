@@ -149,7 +149,10 @@ synonymize env t = symbs t ++ verbs t where
   sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
   sympred (fun, cat) xs = case (PGF.showType [] cat, xs) of
     ("Compar", [x, y]) -> GFormulaProp (GEquationFormula (GBinaryEquation (fg fun) x y))
-    ("MACRO", _) -> GFormulaProp (GMacroFormula (macroIdent fun) (gTerms xs))
+    ("MACRO", []) -> GFormulaProp (GMacroFormula (macroIdent fun))
+    ("MACRO", [x]) -> GFormulaProp (GApp1MacroFormula (macroIdent fun) x)
+    ("MACRO", [x, y]) -> GFormulaProp (GApp2MacroFormula (macroIdent fun) x y)
+    ("MACRO", [x, y, z]) -> GFormulaProp (GApp3MacroFormula (macroIdent fun) x y z)
     _ -> error $ "NOT YET sympred: " ++ show cat
 
   app :: (PGF.Expr, PGF.Type) -> [GTerm] -> GTerm
@@ -157,17 +160,21 @@ synonymize env t = symbs t ++ verbs t where
     ("Const", []) -> GConstTerm (fg fun)
     ("Oper", [x]) -> GOperTerm (fg fun) x
     ("Oper2", [x, y]) -> GOper2Term (fg fun) x y
-    ("MACRO", _) -> GMacroTerm (macroIdent fun) (gTerms xs)
+    ("MACRO", []) -> GMacroTerm (macroIdent fun)
+    ("MACRO", [x]) -> GApp1MacroTerm (macroIdent fun) x
+    ("MACRO", [x, y]) -> GApp2MacroTerm (macroIdent fun) x y
+    ("MACRO", [x, y, z]) -> GApp3MacroTerm (macroIdent fun) x y z
     _ -> error $ "NOT YET app: " ++ show cat
 
   macroIdent fun = GStringMacro (GString (init (drop 2 (PGF.showExpr [] fun))))  -- '\\foo' -> \foo
 
-
+{-
 gTerms :: [GTerm] -> GTerms
 gTerms terms = case terms of
-  [] -> GNoTerms
+  [t] -> GOneTerms t
   t : ts -> GAddTerms t (gTerms ts)
-     
+-}
+
 ---- also in DMC, IMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of

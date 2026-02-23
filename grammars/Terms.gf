@@ -41,11 +41,18 @@ fun
   OperTerm : Oper -> Term -> Term ;
   Oper2Term : Oper2 -> Term -> Term -> Term ;
 
-  MacroFormula : Macro -> Terms -> Formula ;
-  MacroTerm : Macro -> Terms -> Term ;
-  NoTerms : Terms ;
-  AddTerms : Term -> Terms -> Terms ;
-
+  MacroFormula : Macro -> Formula ;
+  MacroTerm : Macro -> Term ;
+  
+  App1MacroFormula : Macro -> Term -> Formula ;
+  App1MacroTerm : Macro -> Term -> Term ;
+  
+  App2MacroFormula : Macro -> Term -> Term -> Formula ;
+  App2MacroTerm : Macro -> Term -> Term -> Term ;
+  
+  App3MacroFormula : Macro -> Term -> Term -> Term -> Formula ;
+  App3MacroTerm : Macro -> Term -> Term -> Term -> Term ;
+  
   StringMacro : String -> Macro ;
   
 }

@@ -43,7 +43,7 @@ checkVariables env expr = case unApp expr of
  where
   isIdent s@(c:cs) = isAlpha c && all isAlphaNum cs
   isMacro s = case s of
-    '\\':'\\':cs -> isFlag "-parseusermacros" env && all isAlpha cs
+    '\\':'\\':cs -> {- isFlag "-parseusermacros" env && -} all isAlpha cs
     _ -> False
 
 

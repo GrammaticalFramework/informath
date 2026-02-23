@@ -117,7 +117,7 @@ helpMsg4 = unlines [
   just "-all-gf-functions" "show all GF functions with their types",
   just "-parse-example" "parse example candidate lexical item",
   just "-failures" "show lines that fail to parse",
-  just "-parseusermacros" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
+---  just "-parseusermacros" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",
   "* General output options:",
   "",

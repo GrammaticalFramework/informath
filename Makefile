@@ -21,6 +21,9 @@ rootlink:
 share/Informath.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/
 
+english_grammar:
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/
+
 
 Dedukti:
 	cd src/typetheory ; bnfc -m -p Dedukti --haskell-gadt Dedukti.bnf ; make
