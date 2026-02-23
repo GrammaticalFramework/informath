@@ -125,6 +125,7 @@ helpMsg4 = unlines [
   just "-no-unlex" "linearize to tokens separated by spaces",
   just "-dedukti-tokens" "print Dedukti code with tokens separated by spaces",
   just "-help" "show this help message",
+  just "-debug" "show debugging information (for Haskell developers)",
   "",
   "* Analysing and converting Dedukti:",
   "",

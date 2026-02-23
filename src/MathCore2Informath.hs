@@ -157,16 +157,15 @@ synonymize env t = symbs t ++ verbs t where
     ("Const", []) -> GConstTerm (fg fun)
     ("Oper", [x]) -> GOperTerm (fg fun) x
     ("Oper2", [x, y]) -> GOper2Term (fg fun) x y
-    ("MACRO", []) -> GIdentTerm (macroIdent fun)
     ("MACRO", _) -> GMacroTerm (macroIdent fun) (gTerms xs)
     _ -> error $ "NOT YET app: " ++ show cat
 
-  macroIdent fun = GStrIdent (GString (init (drop 2 (PGF.showExpr [] fun))))  -- '\\foo' -> \foo
+  macroIdent fun = GStringMacro (GString (init (drop 2 (PGF.showExpr [] fun))))  -- '\\foo' -> \foo
 
 
 gTerms :: [GTerm] -> GTerms
 gTerms terms = case terms of
-  [term] -> GOneTerms term
+  [] -> GNoTerms
   t : ts -> GAddTerms t (gTerms ts)
      
 ---- also in DMC, IMC

@@ -12,6 +12,7 @@ lincat
   Oper = OperT ;
   Oper2 = Oper2T ;
   Terms = Str ;
+  Macro = Str ;
 
 lin
   EquationFormula eq = constant eq.s ;
@@ -60,9 +61,11 @@ lin
   MacroTerm ident terms =
     constant (ident ++ terms) ** {isNumber = False} ; --- False impossible to know
 
-  OneTerms term = curly (top term) ;
+  NoTerms = [] ;
   AddTerms term terms = curly (top term) ++ terms ;
 
+  StringMacro s = s.s ;
+  
 oper
 
   tinfixl : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->

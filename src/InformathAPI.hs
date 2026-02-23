@@ -211,11 +211,10 @@ processLatexLine env s =
   let
     gr = grammar env
     trans = isFlag "-translate" env
-    macroidents = isFlag "-macroidents" env
     ls = lextex s
     (ils, tindex) = indexTex ls
     Just jmt = readType "Jmt"
-    (mts, msg) = parseJmt macroidents gr (fromLang env) jmt ils
+    (mts, msg) = parseJmt env jmt ils
     ts = maybe [] id mts
   in ParseResult {
     originalLine = s,
@@ -226,10 +225,11 @@ processLatexLine env s =
     unknownWords = missingWords env ils,
     parseResults = ts,
     formalResults = if trans then [] else [
-      (t, ut, gf ct, gjmt2dedukti env ct) |
+      (t, ut, trac env "CT: " (gf ct), gjmt2dedukti env ct) |
         t <- ts,
-        let ut = unindexGFTree macroidents gr (fromLang env) tindex t,
-        let ct = ext2core (fg ut)
+        let ut = trac env "UT: " (unindexGFTree env tindex t),
+        let fut = tracs env ("FUT.") (fg ut),
+        let ct = tracs env "CT." (ext2core  fut)
       ],
     transResults = [
       unindexString tindex
@@ -502,6 +502,5 @@ showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map sho
 
 -- | To parse an example to a tree
 parseFunExample :: Env -> String -> [String]
-parseFunExample env s =
-  map (showExpr []) (parseExample (grammar env) (fromLang env) s)
+parseFunExample env s = map (showExpr []) (parseExample env s)
 

@@ -167,7 +167,7 @@ formula2dedukti formula = case formula of
   GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
     foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
   ---- modulo_Formula : Term -> Term -> Term -> Formula
-  GMacroFormula ident terms -> foldl EApp (EIdent (ident2ident ident)) (map term2dedukti (termsList terms)) 
+  GMacroFormula ident terms -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti (termsList terms)) 
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -254,13 +254,13 @@ term2dedukti term = case term of
     appIdent (showGF oper) (map term2dedukti [x, y])
   GNumberTerm (GInt n) -> int2exp n
   GIdentTerm ident -> EIdent (ident2ident ident)
-  GMacroTerm ident terms -> foldl EApp (EIdent (ident2ident ident)) (map term2dedukti (termsList terms)) 
+  GMacroTerm macro terms -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti (termsList terms)) 
   _ -> eUndefinedDebug term ---- TODO
 
 termsList :: GTerms -> [GTerm]
 termsList terms = case terms of
   GAddTerms t tt -> t : termsList terms
-  GOneTerms t -> [t]
+  GNoTerms -> []
 
 exp2deduktiPatt :: GExp -> Patt
 exp2deduktiPatt exp = case exp of
@@ -291,6 +291,10 @@ proofexp2exp proofexp = case proofexp of
 ident2ident :: GIdent -> QIdent
 ident2ident ident = case ident of
   GStrIdent (GString s) -> QIdent (escapeConstant s)
+
+macro2ident :: GMacro -> QIdent
+macro2ident ident = case ident of
+  GStringMacro (GString s) -> QIdent (escapeConstant s)
 
 exp2ident :: GExp -> QIdent
 exp2ident exp = case exp of

@@ -1,20 +1,25 @@
 module ParseInformath where
 
+import Environment
 import PGF
 import Data.Char(isAlpha, isAlphaNum)
 import qualified Data.Map
 
 main_pgf = "grammars/Informath.pgf"
-max_number = 19 -- number of trees considered with checkVariables
+max_number = 199 -- number of trees considered with checkVariables
 max_number_taken = 3 -- number of trees considered for semantics
 
 -- this is the function to be exported to other modules
 
-parseJmt :: Bool -> PGF -> Language -> Type -> String -> (Maybe [Expr], String)
-parseJmt macroidents gr eng cat s =
+parseJmt :: Env -> Type -> String -> (Maybe [Expr], String)
+parseJmt env cat s =
+  let
+     gr = grammar env
+     eng = fromLang env
+  in
   case fst (parse_ gr eng cat (Just 4) s) of  --- Just 4 is default in PGF.parse
     ParseOk ps -> 
-         let trees = [t | t <- take max_number ps, checkVariables macroidents t]
+         let trees = [t | t <- take max_number ps, checkVariables env t]
          in
 	 if not (null trees)
             then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
@@ -24,25 +29,31 @@ parseJmt macroidents gr eng cat s =
     ParseIncomplete -> 
          (Nothing, "# FAILURE INCOMPLETE")
 
-
 -- quick hack to get the effect of a callback: check that variables are a(a|d|_|'|\)*
 -- and don't in particular overshadow digits
 
-checkVariables :: Bool -> Expr -> Bool
-checkVariables macroidents expr = case unApp expr of
+checkVariables :: Env -> Expr -> Bool
+checkVariables env expr = case unApp expr of
   Just (f, [x]) | showCId f == "StrIdent" -> case showExpr [] x of
-    c | isIdent (init (tail c)) -> True --- notElem c "CNQRZ"
-    _ -> False
-  Just (_, args) -> all (checkVariables macroidents) args
+    c -> trac env "IDENT? " (isIdent (tracs env c (init (tail c))))
+  Just (f, [x]) | showCId f == "StringMacro" -> case showExpr [] x of
+    c -> trac env "MACRO? " (isMacro (tracs env c (init (tail c))))
+  Just (_, args) -> all (checkVariables env) args
   _ -> True
  where
-  isIdent s@(c:cs) = (isAlpha c || isBackslash c)
-                  && (all (\x -> isAlphaNum x || elem x "_'" || isBackslash x) cs)
-  isBackslash c = macroidents && c == '\\'
+  isIdent s@(c:cs) = isAlpha c && all isAlphaNum cs
+  isMacro s = case s of
+    '\\':'\\':cs -> isFlag "-parseusermacros" env && all isAlpha cs
+    _ -> False
 
 
-unindexGFTree :: Bool -> PGF -> Language -> [String] -> Expr -> Expr
-unindexGFTree macroidents pgf lang termindex expr = maybe expr id (unind  expr) where
+unindexGFTree :: Env -> [String] -> Expr -> Expr
+unindexGFTree env termindex expr = case unind expr of
+  t:_ -> tracs env ("FOUND " ++ showExpr [] t) t
+  _ -> expr
+ where
+  pgf = grammar env
+  lang = fromLang env
   unind expr = case unApp expr of
     Just (f, [x]) -> case unInt x of
       Just i -> case showCId f of
@@ -64,13 +75,15 @@ unindexGFTree macroidents pgf lang termindex expr = maybe expr id (unind  expr) 
     _ -> return expr
 
   look i = termindex !! i
-  
-  parsed c s = do
-    cat <- readType c
-    let (mts, msg) = parseJmt macroidents pgf lang cat s
-    case mts of
-      Just (t:ts) -> return t ---- todo: ambiguity if ts
-      _ -> Nothing
 
-parseExample :: PGF -> Language -> String -> [Expr]
-parseExample pgf lang = parse pgf lang (maybe undefined id (readType "Example"))
+  mkTyp c = mkType [] (mkCId c) []
+
+  parsed c s = case parseJmt env (mkTyp c) s of
+      (Just (t:ts), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
+      _ -> []
+
+
+
+parseExample :: Env -> String -> [Expr]
+parseExample env = maybe [] id . fst . parseJmt env (maybe undefined id (readType "Example"))
+

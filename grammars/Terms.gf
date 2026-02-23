@@ -12,7 +12,8 @@ cat
   Const ;
   Oper ;
   Oper2 ;
-  Terms ; -- arguments of macros
+  Terms ; -- argument list for macros
+  Macro ; -- the macro itself
 
 fun
   EquationFormula : Equation -> Formula ;
@@ -40,9 +41,11 @@ fun
   OperTerm : Oper -> Term -> Term ;
   Oper2Term : Oper2 -> Term -> Term -> Term ;
 
-  MacroFormula : Ident -> Terms -> Formula ;
-  MacroTerm : Ident -> Terms -> Term ;
-  OneTerms : Term -> Terms ;
+  MacroFormula : Macro -> Terms -> Formula ;
+  MacroTerm : Macro -> Terms -> Term ;
+  NoTerms : Terms ;
   AddTerms : Term -> Terms -> Terms ;
+
+  StringMacro : String -> Macro ;
   
 }

@@ -8,7 +8,6 @@ import Dedukti.PrintDedukti
 
 import CommonConcepts
 import DeduktiOperations
-import ParseInformath (parseExample)
 
 import PGF
 
@@ -29,14 +28,17 @@ showGFTree = showExpr []
 --- OK to fail, because it should stop compilation
 parseGFTree :: PGF -> Language -> String -> GFTree
 parseGFTree pgf lang s = case s of
-  '"':cs -> case parseExample pgf lang (init cs) of
+  '"':cs -> case parseEx (init cs) of
     [] -> error $ "cannot parse example: " ++ s
     t:_ -> extract t ---- TODO: if many parses?
   _ -> readGFTree s
  where
    extract t = case unApp t of
      Just (_, ex:_) -> ex
-     _ -> error $ "cannot get example from: " ++ showGFTree t 
+     _ -> error $ "cannot get example from: " ++ showGFTree t
+
+   parseEx = parse pgf lang (maybe undefined id (readType "Example"))
+
 
 readGFTree :: String -> GFTree
 readGFTree s = case s of

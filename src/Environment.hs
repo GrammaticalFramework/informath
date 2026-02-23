@@ -8,6 +8,15 @@ import Utils
 import Data.List (intersperse, isPrefixOf)
 import Data.Char (isDigit)
 
+import Debug.Trace (traceShowId, trace)
+
+trac :: Show a => Env -> String -> a -> a 
+trac env s a = tracs env (s ++ show a) a
+
+tracs :: Env -> String -> a -> a 
+tracs env s a = if isFlag "-debug" env then trace s a else a
+
+
 type Flag = String
 
 data Env = Env {
