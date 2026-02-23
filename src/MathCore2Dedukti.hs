@@ -167,7 +167,7 @@ formula2dedukti formula = case formula of
   GEquationFormula (GBinaryEquation (LexCompar compar) term1 term2) ->
     foldl EApp (EIdent (QIdent compar)) (map term2dedukti [term1, term2])
   ---- modulo_Formula : Term -> Term -> Term -> Formula
-  GMacroFormula ident terms -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti (termsList terms)) 
+  GMacroFormula ident terms -> foldl EApp (EIdent (macro2ident ident)) [] ---- (map term2dedukti (termsList terms)) 
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]

@@ -186,6 +186,8 @@ sem env t = case t of
         GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
       sexp -> GAdjProp sa sexp
 
+  GAdjCCollProp adj (GManyExps (GListExp [x, y])) -> GAdjCProp adj (sem env x) (sem env y) 
+
   GBothAndProp a b -> GAndProp (GListProp [sem env a, sem env b])
   GBothAndAdj a b -> GAndAdj (GListAdj [sem env a, sem env b])
   GBothAndExp a b -> GAndExp (GListExp [sem env a, sem env b])

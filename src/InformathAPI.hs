@@ -168,6 +168,7 @@ data ParseResult = ParseResult {
   parseMessage  :: String,
   unknownWords  :: [String],
   parseResults  :: [GFTree],
+  unindexedResults :: [GFTree],
   formalResults :: [(GFTree, GFTree, GFTree, [Jmt])], -- | parsed, unindexed, normalized
   transResults  :: [String] -- | back-translation or translation to another language
   }
@@ -211,11 +212,13 @@ processLatexLine env s =
   let
     gr = grammar env
     trans = isFlag "-translate" env
+    parseonly = isFlag "-parse-only" env
     ls = lextex s
     (ils, tindex) = indexTex ls
     Just jmt = readType "Jmt"
     (mts, msg) = parseJmt env jmt ils
     ts = maybe [] id mts
+    uts = map (unindexGFTree env tindex) ts
   in ParseResult {
     originalLine = s,
     lexedLine = ls,
@@ -224,13 +227,17 @@ processLatexLine env s =
     parseMessage = msg,
     unknownWords = missingWords env ils,
     parseResults = ts,
-    formalResults = if trans then [] else [
-      (t, ut, trac env "CT: " (gf ct), gjmt2dedukti env ct) |
-        t <- ts,
-        let ut = trac env "UT: " (unindexGFTree env tindex t),
-        let fut = tracs env ("FUT.") (fg ut),
-        let ct = tracs env "CT." (ext2core  fut)
-      ],
+    unindexedResults = uts,
+    formalResults =
+      if trans || parseonly
+      then []
+      else [
+        (t, ut, gf ct, gjmt2dedukti env ct) |
+          t <- ts,
+          ut <- uts,
+          let fut = tracs env ("FUT.") (fg ut),
+          let ct = tracs env "CT." (ext2core  fut)
+          ],
     transResults = [
       unindexString tindex
         (unlex env (gftree2nat env (toLang env) t)) | t <- ts]
@@ -358,6 +365,8 @@ printParseResult env result = case 0 of
     [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
   _ | isFlag "-translate" env ->
     transResults result
+  _ | isFlag "-parse-only" env ->
+    map (showExpr []) (unindexedResults result)
   _ | isFlag "-failures" env ->
     if null (parseResults (result))
     then [originalLine result]

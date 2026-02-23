@@ -5,6 +5,7 @@ Obj : "object"
 Set : "set"
 Prop : "proposition"
 
+contradiction : FalseProp | \contradiction
 disj : "X is disjoint from Y" | "X and Y are disjoint" | \isdisjoint
 conv : "X converges to Y" 
 emp : "X is empty"
@@ -24,6 +25,7 @@ eulerconstant : "Euler's constant"
 lebesguemeasure : "the Lebesgue measure of X"
 
 
+#MACRO \contradiction 0 \bot
 #MACRO \isdisjoint 2 #1 \mathrel{\not\meets} #2
 #MACRO \empset 0 \emptyset
 #MACRO \singletonof 1 \{ #1 \}

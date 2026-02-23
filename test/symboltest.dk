@@ -6,6 +6,7 @@ Prop : Type.
 Proof : (A : Prop) -> Type.
 Obj : Set.
 
+contradiction : Prop.
 empset : Elem Obj.
 sing : Elem Obj -> Elem Obj.
 emp : Elem Obj -> Prop.
