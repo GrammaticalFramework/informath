@@ -9,6 +9,11 @@
 This document is a complement of the [README file of Informath](https://grammaticalframework.github.io/informath/).
 It can be read independently to get an idea about the theory, but you can also start with installing the software and experimenting with it as described in the README.
 
+This document serves two main purposes:
+
+- practical: help you extend contribute to Informath in a deeper way, by editing the grammar and the source code
+- theoretical: understand the theory behind Informath, its implementation, and its limitations
+
 ## The Informath project
 
 The Informath project addresses the problem of translating between formal and informal languages for mathematics. It aims to translate between multiple formal and informal languages in all directions: 
@@ -19,6 +24,12 @@ The Informath project addresses the problem of translating between formal and in
 - formal to formal (works in special cases)
 
 The formal languages included are Agda, Rocq (formerly Coq), Dedukti, and Lean. The informal languages are English, French, German, and Swedish. 
+The goal of Informath is 
+
+- to enable complete informalizations of formalisms expressible in Dedukti,
+- generate and analyse informal mathematical language in all of its variations.
+
+The latter goal is inspired by Mohan Ganesalingam's [*The Language of Mathematics*](https://link.springer.com/book/10.1007/978-3-642-37012-0) (2013).
 
 Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Also any of the natural languages could be used as the source:
 ```
@@ -37,13 +48,13 @@ Lean: axiom prop110 (a c : Int) (x : odd a ∧ odd c) :
   ∀ b : Int, even (a * b + b * c)
 ```
 
-- English: Prop110. Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
+- English: Prop110. Let $a$ and $c$ be integers. Assume that $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
 
-- French: Prop110. Soient $a$ et $c$ des entiers. Supposons qu'et $a$ et $c$ sont impairs. Alors $a b + b c$ est pair pour tous les entiers $b$.
+- French: Prop110. Soient $a$ et $c$ des entiers. Supposons qu $a$ et $c$ sont impairs. Alors $a b + b c$ est pair pour tous les entiers $b$.
 
-- German: Prop110. Seien $a$ und $c$ ganze Zahlen. Nimm an, dass sowohl $a$ als auch $c$ ungerade ist. Dann ist $a b + b c$ gerade für jede ganze Zahl $b$.
+- German: Prop110. Seien $a$ und $c$ ganze Zahlen. Nimm an, dass $a$ und $c$ ungerade sind. Dann ist $a b + b c$ gerade für jede ganze Zahl $b$.
 
-- Swedish: Prop110. Låt $a$ och $c$ vara heltal. Anta att både $a$ och $c$ är udda. Då är $a b + b c$ jämnt för alla heltal $b$.
+- Swedish: Prop110. Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda. Då är $a b + b c$ jämnt för alla heltal $b$.
 
 More formalisms and informal languages will be added later. Also the scope of language structures is at the moment theorem statements and definitions; proofs are included for the sake of completeness, but will require more work to enable more natural verbalizations.
 
@@ -107,11 +118,12 @@ The other forms of judgement in Dedukti, using keywords `thm` and `inj` instead 
 
 The parts of judgements are **expressions**, of some of the following forms:
 ```
-  Ident                 (; variable, constant ;)
-  Exp Exp               (; application ;)
-  Ident => Exp          (; abstraction ;)
-  (Ident : Exp) -> Exp  (; dependent function type ;)
-  Exp -> Exp            (; non-dependent function type ;)
+  Ident                        (; variable, constant ;)
+  Exp Exp                      (; application ;)
+  Ident => Exp                 (; abstraction ;)
+  (Ident : Exp) -> Exp         (; dependent function type ;)
+  Exp -> Exp                   (; non-dependent function type ;)
+  (Ident : Exp := Exp) => Exp  (; local definition ;)
 ```
 Comments in Dedukti are enclosed between `(;` and `;)`.
 
@@ -135,7 +147,7 @@ Here are some examples of how Dedukti has been used in Informath:
   plus : Elem Num -> Elem Num -> Elem Num.
   Eq : Elem Num -> Elem Num -> Prop.
 ```
-For more examples, we recommend to start with [BaseConstants.dk](./src/BaseConstants.dk).
+For more examples, we recommend to start with [BaseConstants.dk](../share/BaseConstants.dk).
 
 ### Identifiers and numerals
 
@@ -146,7 +158,6 @@ The use of **identifiers** as expressions has been applied in all example above 
   1 : Dig.
   2 : Dig.
   (; similarly for 3, 4, 5, 6, 7, 8, 9 ;) 
-  (; this is a Dedukti comment ;)
   
   Num : Set.
   nd : Dig -> Num.
@@ -174,7 +185,7 @@ so that `int x y` represents $x - y$. Real numbers have many alternative definit
 
 In the current use of Dedukti in Informath, we have chosen an approach known as **soft typing**, relying on just one Dedukti type, `Num`, of numbers. This is because we are interested in modelling informal mathematical language, where, contrary to foundational treatments, numbers can be considered as one and the same type, at least from the syntactic point of view. Thus, for instance, $1987$ *is* both a natural number, an integer, and a rational and a real and a complex number, despite their different formalizations in ZF set theory or in constructive type theory. Soft typing is known from some other formal systems, in particular Mizar (REF), which treats expressions such as "real" and "rational" as predicates over an untyped universe of entities. 
 
-The treatment of numbers as a single type is one of the points Ganesalingam argues for, because he sees it as the best fitting account of the actual usage of language in informal mathematics. The price we have to pay are complex details in translating between Dedukti and other type theories (Agda, Lean, Rocq). Each of them has its own views about what expressions and operators can be used for different number classes, and different kinds of **coercions** are needed to match these views. A typical coercion is
+The treatment of numbers as a single type is one of the points Ganesalingam argues for in his *Language of Mathematics*, because he sees it as the best fitting account of the actual usage of language in informal mathematics. The price we have to pay are complex details in translating between Dedukti and other type theories (Agda, Lean, Rocq). Each of them has its own views about what expressions and operators can be used for different number classes, and different kinds of **coercions** are needed to match these views. A typical coercion is
 ```
   def nat2int : Nat -> Int := n => int n 0.
 ```
@@ -198,7 +209,7 @@ $$\Gamma \vdash a : A$$
 
 where $\Gamma$ is a **context**, which assigns types to identifiers (i.e., variables and constants). The simplest typing rule is
 
-$\hspace{32mm} \Gamma \vdash x : A$, if $x : A$ is in $\Gamma$
+$$ \Gamma \vdash x : A, \text{if $x : A$ is in $\Gamma$} $$
 
 for identifier expressions $x$. Application expressions have the rule
 
@@ -216,8 +227,7 @@ The three typing rules look simple and natural. But this simplicity is deceptive
 
 $$\frac{\Gamma \vdash a : A \hspace{4mm} \Gamma \vdash A = B : Type}{\Gamma \vdash a : B}$$
 
-This rule also looks simple and natural, but it is impossible to follow in full generality. The reason lies in the undecidabilituy of the halting problem:
-
+This rule also looks simple and natural, but it is impossible to follow in full generality. The reason lies in the undecidability of the halting problem:
 The equality of the types $A$ and $B$ is usually checked by **normalization**, that is, by computing both expressions to a **normal form** and checking that the result is the same for both $A$ and $B$. However, computation in Dedukti includes execution of rewrite rules. Since the rewrite rules form a Turing-complete language,  there is no general guarantee that their execution terminates. Because of this, equality checking - and hence type checking - is undecidable.
 
 ## Agda, Rocq, and Lean
@@ -230,7 +240,7 @@ However, if Informath is to be used as an input tool by Agda, Rocq, and Lean use
 
 Another caveat is that Dedukti is, by design, more liberal than the other systems. Type checking of code generated from type-correct Dedukti code can therefore fail in them. This can sometimes be repaired by inserting extra code such as coercions, but this is still mostly future work.
 
-If you want to check the formal code in any of the proof systems, you must also install them. Informath itself does not require them, but at least Dedukti is useful to have so that you can check the input and output Dedukti code.
+If you want to check the formal code in any of the proof systems, you must also install them. Informath itself does not require them, but at least Dedukti is useful to have so that you can check the input and output Dedukti code. Here are the links to them:
 
 - [Dedukti](https://github.com/Deducteam/Dedukti)
 - [Agda](https://agda.readthedocs.io/en/latest/getting-started/installation.html)
@@ -249,44 +259,46 @@ The following subsections give a birds-eye view of the two languages and their d
 
 ### MathCore
 
-The MathCore language is meant to be the "core abstract syntax" in Informath. Technically, it is actually a subset of Informath: Informath is implemented as an extension of MathCore.
+The MathCore language is meant to be the "core abstract syntax" in Informath. Technically, it is just a subset of Informath: Informath is implemented by adding an extension module to MathCore.
 
-As shown in the picture above, informalization and autoformalization are in the first place defined between Dedukti and MathCore. On the type theory side, this is composed with translations between other frameworks and Dedukti. On the natural language side, mappings between MathCore and the full Informath are defined on the abstract syntax level of these languages. Input and output of actual natural languages is performed by generation and parsing with concrete syntaxes of each language.
+As shown in the picture above, informalization and autoformalization are in the first place defined between Dedukti and MathCore. On the type theory side, this is composed with translations between other frameworks and Dedukti. On the natural language side, mappings between MathCore and the full Informath are defined on  an **abstract syntax** level of these languages. Input and output of actual natural languages is performed by generation and parsing with the **concrete syntaxes** of each language. 
+
+At this point, it should be enough to say that an abstract syntax consist of trees, whereas a concrete syntax is a mapping between such trees and the strings of some language. Performing operations on the abstract syntax makes them shareable between multiple languages, which is the very idea of Grammatical Framework (GF), the grammar formalism that Informath uses. The section on GF will give the full details of these concepts.
 
 MathCore is a minimalistic grammar for mathematical language, based on the following principles:
 
 - **Completeness**: all Dedukti code can be translated to MathCore.
 - **Non-ambiguity**: all MathCore text has a unique translation to Dedukti.
-- **Losslessness**: MathCore is a lossless representation of Dedukti; that is, all Dedukti code translated to MathCore can be translated back to the same Dedukti code (modulo some differences to be specified).
+- **Losslessness**: MathCore is a lossless representation of Dedukti; that is, all Dedukti code translated to MathCore can be translated back to the same Dedukti code (modulo some differences such as renaming of variables).
 - **Traceability**: Dedukti code and MathCore text can be aligned part by part.
 - **Grammaticality**: MathCore text is grammatically correct natural language (with mathematical symbols and some mark-up such as parentheses to prevent ambiguity).
 - **Naturalness**: MathCore supports natural expressions for mathematical concepts using nouns, adjectives, verbs, and other structures conventionally used in mathematical text.
-- **Minimality**: MathCore is defined to have exactly one way to express each Dedukti judgement. Alternative ways are provided in Informath via NLG. Typically, the unique way is the most straightforward one. For example, complex mathematical expressions are given in their verbal forms ("the sum of x and y") rather than formulas ("x + y"), because formulas are not available when any of the constituents if not formal ("x + the successor of y").
+- **Minimality**: MathCore is defined to have exactly one way to express each Dedukti judgement. Alternative ways are provided in Informath via NLG. Typically, the unique way is the most verbose one. For example, complex mathematical expressions are given in their verbal forms ("the sum of $x$ and $y$") rather than formulas ("$x + y$"), because formulas are not available when any of the constituents if not formal ("$x +$ the successor of $y$").
 - **Extensibility**: MathCore can be extended with lexical information assigning natural language verbalizations to Dedukti identifiers.
 - **Multilinguality**: MathCore has been implemented by GF RGL and is therefore ready for concrete syntax in new languages.
 
 The following propertes are, however, *not* expected:
 
-- **Type correctness**: MathCore text can be semantically invalid, leading to syntactically correct Dedukti code that is rejected by Dedukti's type checker.
+- **Type correctness**: MathCore expressions can be semantically invalid, leading to syntactically correct Dedukti code that is rejected by Dedukti's type checker; this is because the type system is weaker and lacks dependent types
 - **Fluency**: MathCore text can be repetitive and hard to read; making it better is delegated to the Informath grammar via the NLG component.
-- **Compositionality**: The translation between Dedukti and MathCore is not compositional in the strict sense of GF, as the two languages have distinxt abstract syntaxes. MathCore has a larger set of syntactic categories than Dedukti, for instance distinguishing between expressions that represent kinds, objects, propositions, and proofs.
-- **Easy natural language input**: while the grammar of MathCore is reversible, it is tedious to write MathCore. It is intended to be produced indirectly: by conversion from Dedukti on one hand and from Informath on the other.
+- **Compositionality**: The translation between Dedukti and MathCore is not compositional in the strict sense of GF, as the two languages have different abstract syntaxes. MathCore has a larger set of syntactic categories than Dedukti, for instance distinguishing between expressions that represent kinds, objects, propositions, and proofs.
+- **Easy natural language input**: while the grammar of MathCore is reversible, it is tedious to write MathCore. It is intended to be generated automatically: by conversion from Dedukti on one hand and from Informath on the other.
 
 The rationale of this design is modularity and an optimal use of existing resources:
 
 - Type checking is delegated to Dedukti.
 - Conversions to different frameworks are also delegated to Dedukti.
-- Variation of natural language input and output is delegated to Informath.
+- Variation of natural language input and output is delegated to full Informath.
 
 
 ### Informath
 
-While being inspired by CNLs such as ForTheL and Naproche, covering a similar fragment of English, the Informath grammar differs from them in several ways:
+Informath has been inspired by controlled natural languages (CNLs) such as ForTheL and Naproche and aims to cover most of them as subsets. But Informath also differs from traditional CNLs in several ways:
 
 - **Grammaticality**: Informath follows the agreement rules of English (and other languages) instead of allowing free variation of e.g. singular and plural forms (as ForTheL and early versions of Naproche); this makes it more usable as the target of informalization.
-- **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic clues. This is in line with the findings in [*The language of Mathematics*](https://link.springer.com/book/10.1007/978-3-642-37012-0) by Mohan Ganesalingam.
-- **LaTeX**: The original ForTheL is plain text, whereas Informath (like some other later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
-- **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension should be equipped with a new semantic rule that converts it to MathCore.
+- **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic checking. This is in line with the findings of Ganesalingam's *Language of Mathematics*, showing that informal mathematics is syntactically ambiguous but disambiguated by semantic clues.
+- **LaTeX**: The original ForTheL is plain text, whereas Informath (like later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
+- **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension is equipped with a new semantic rule that converts it to MathCore and thereby to Dedukti.
 - **Omissions**: Informath is not guaranteed to cover everything that occurs in different CNLs. In particular, constructs that differ from grammatical English are usually omitted.
 - **Multilinguality**: Informath has several concrete syntaxes sharing a common abstract syntax.
 
@@ -317,6 +329,9 @@ MathCore renderings are designed to be unique for each Dedukti judgement. But th
 - Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then for all integers $b$, $a b + b c$ is even.
 Prop110. Let $a , c \in Z$. assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
 
+Some of the variants are stylistically better than others. 
+For example, segments of the form "for all integers $b$, $a b + b c$ is even" where two different symbolic expressions are separated by only a comma are often considered bad style.
+Informath has a scoring system that gives penalties to such features, as well as to length and complexity (tree depth), resulting in a ranking of alternative informalizations.
 
 
 ## Grammatical Framework
@@ -327,11 +342,11 @@ To put it briefly,
 - GF = LF + grammar
 
 If you are already familiar with GF, you can skip this section.
-If not, it tries to give you the prerequisites needed to apply and extend the GF grammar of Informath.
+If not, it aims to give you the prerequisites needed to apply and extend the GF grammar of Informath.
 
 ### GF as a logical framework: abstract syntax
 
-This framework is called **abstract syntax**, and it is to a large extent similar to Dedukti: it has both dependent types and variable bindings, enabling higher-order abstract syntax. Thus one *could* in GF define the types of sets and props and a universal quantifier just like in Dedukti:
+The LF part of GF is called **abstract syntax**, and it is to a large extent similar to Dedukti: it has both dependent types and variable bindings, enabling higher-order abstract syntax. Thus one *could* in GF define the types of sets and props and a universal quantifier just like in Dedukti; here is the precise GF module:
 ```
 abstract Logic = {
 cat Set ;
@@ -366,12 +381,13 @@ is represented as
 forall A x B
 ```
 There are several reasons for using a context-free abstract syntax in Informath:
+
 - grammar writing becomes more straightforward
 - GF tools for dealing with dependent types and higher-order abstract syntax are less developed than for context-free abstract syntax
 - ultimate type checking in Informath can be delegated to Dedukti and need not be performed in GF
-- in this way, we can easily deal with overloading of expressions, which is ubiquitous informal mathematical language
+- we can more easily deal with the **overloading** of expressions, which is ubiquitous informal mathematical language; giving every expression a precise but completely general type would be an overwhelming task
 
-In the above, we have already seen the syntax of GF's abstract syntax: it uses **modules** with the keyword `abstract` in the **header**, and has two forms of judgement:
+In the `Logic` modules above, we have already seen the syntax of GF's abstract syntax: it uses **modules** with the keyword `abstract` in the **header**, and has two forms of judgement:
 ```
 cat C
 fun f : T
@@ -394,12 +410,14 @@ lincat Ident = Str ;
 lincat Proof = Str ;
 
 lin forall set ident prop =
-  "for all" ++ ident ++ "in" ++ set ++ "," ++ prop ;
+  "for" ++ "all" ++ ident ++ "in" ++ set ++ "," ++ prop ;
 }
 ```
+The operator `++` performs **concatenation** of **token lists**. The resulting strings typically have spaces between the tokens, but this depends on the **unlexer** applied to the token list. For example, the unlexer used in Informath will add a space after the comma `","` but not before it.
+
 The combination of the abstract syntax Logic with LogicEng is equivalent to a context-free grammar with the rule
 ```
-Prop ::= "for all" Ident "in" Set "," Prop
+Prop ::= "for" "all" Ident "in" Set "," Prop
 ```
 In the opposite direction, the GF grammar can be seen as the result of taking apart **pure constituency** (the nonterminals) and **surface realization**. 
 This operation has several advantages.
@@ -407,7 +425,7 @@ The most obvious one is perhaps that one can vary the concrete syntax while keep
 For example, a corrsponding French grammar is obtained by changing the linearization rule of `forall` to
 ```
 lin forall set ident prop =
-  "pour tout" ++ ident ++ "dans" ++ set ++ "," ++ prop ;
+  "pour" ++ "tout" ++ ident ++ "dans" ++ set ++ "," ++ prop ;
 ```
 A **multilingual grammar** is a grammar with one abstract syntax and several concrete syntaxes.
 It can be used for **translation** by parsing the source language into an abstract syntax tree and linearizing the tree into the target language.
@@ -418,9 +436,9 @@ lin forall set ident prop =
   "forall" ++ set ++ "(" ++ ident ++ "=>" ++ prop ++ ")" ;
 ```
 This approach has been used in e.g. Ranta 2011 (CADE) and Pathak 2024 (GFLean). 
-While it gives a simple way to convert between formal and informal languages, it is limited by compositionality.
-Therefore, it cannot be used for languages with very different structures.
-The approach followed in Informath is to have one abstract syntaxes for Dedukti and another one for Dedukti: surprisingly, natural languages are structurally close enough for this to work fine.
+While it gives a simple way to convert between formal and informal languages, it is limited by the requirement of **compositionality**: the linearization of a tree operates on the *linearizations* of its subtrees and cannot perform deeper pattern matching on the subtrees.
+Therefore, a GF abstract syntax cannot be shared by languages with very different structures.
+The approach followed in Informath is to have one abstract syntaxes for Dedukti and another one for Dedukti: surprisingly, natural languages are structurally close enough for this to work fine for them.
 
 ### Concrete syntax beyond context-free
 
@@ -438,9 +456,11 @@ lin copy s = s ++ s ;
 ```
 using the built-in category `String` and leaving out the module structure.
 
+#### Parameters
+
 A more interesting question, in practice, is to see what one can do when leaving the limits of the context-free rule format. 
-This is in the first place expressed in the linearization types. 
-Turning back to the `Logic` example, we can generalize the type of `Set` by making it dependent on a **parameter**, grammatical number, which has values singular and plural.
+This is in the first place expressed in the linearization types (keyword `lincat`). 
+Turning back to the `Logic` example, we can generalize the linearization type of `Set` by making it dependent on a **parameter**, grammatical number, which has values singular and plural.
 This makes it possible to give both "integer" and "integers" the same abstract syntax.
 Some constructs will need the singular form, some the plural.
 
@@ -451,10 +471,12 @@ param Number = Sg | Pl ;
 lincat Set = Number => Str ;
 
 lin forall set ident prop =
-  "for all" ++ set ! Pl ++ ident ++ "," ++ prop ;
+  "for" + "all" ++ set ! Pl ++ ident ++ "," ++ prop ;
 ```
-with a new form of judgement for parameter type definitions. 
-They are in GF a special case of **algebraic datatypes** in languages like ML and Haskell.
+with a new form of judgement for parameter type definitions, `param`. 
+They are in GF a special case of **algebraic datatypes** in languages like ML and Haskell, restricted to finite types (enumrations and their combinations).
+The type `Number => Str` is a **table type**, whose objects are finite functions on parameter types, similar to *inflection tables* in traditional grammar.
+The **selection** operator `!` applies a table to an argument, selecting a valuel.
 
 The above grammar is still context-free in the weak generative sense, because the `Set` category can be expanded to two non-terminals.
 But this will in general also require a duplication of rules, whole number in the worst case is the produce of the numbers of parameters in the types involved.
@@ -476,8 +498,21 @@ lin forall set ident prop =
 oper tout : Gender => Str = table {Masc => "tout" ; Fem => "toutes"} ;
 ```
 The context-free expansion of the `forall` rule would here produce four rules, for each combination of the two genders with the two moods.
+The code also shows a **record type**, combining a table with a gender in the linearization type of `Set`.
 
 The keyword `oper`introduces yet another form of judgement: **auxiliary operations**. They are functions outside the `fun`/`lin` structure usable as auxiliaries in `lin` rules. The GF compiler eliminates them by inlining, and they are therefore unnecessary for the theoretical expression powerl. But they are an important part of grammar writing productivity, as they enable refactoring and reusability.
+
+#### Discontinuous constituents
+
+Linearization is not restricted to strings and tables that contain them: it can also produce **discontinuous constituents**, which are implemented as records containing severals strings and/or tables.
+Consider the following generalization of the English rules above:
+```
+lincat Set = {noun : Number => Str ; adverbial : Str}
+
+lin forall set ident prop =
+  "for" + "all" ++ set.noun ! Pl ++ ident ++ set.adverbial ++ "," ++ prop ;
+```
+Many set expressions consist in this way of `noun` part, which is the **head** of the construction (in the linguistic sense), and an `adverbial` part. For example, "list of integers" consists of "list" and "of integers". It is the head part that receives the plural ending, and variables are preferably placed between the two parts: "for all lists $l$ of integers". This separation is what makes the expression discontinuous. 
 
 
 ### Summary of GF notation
@@ -499,12 +534,13 @@ We have in the above code examples used or presupposed the following:
    - **case expressions** ``case e of {...}`` are syntactic sugar for `table {...} ! e`
 
 This machinery - generalizing linearization types from strings with records and tables - has proven sufficient for many different languages, enabling them to share the same abstract syntax. 
-The most substantial proof of this is the 
-[GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/index.html), which at the time of writing includes over 40 languages.
-The main significance of RGL for GF applications, including Informath, is that *the programmer does not need to care about low-level linguistic features* such as parameters, but can use the library instead. 
-In particular, the application programmer seldom needs to use the table and record syntax shown in this section, but mostly just function calls to the RGL.
 
 ### The GF Resource Grammar Library
+
+The most substantial example of a multilingual GF grammar is the 
+[GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/index.html), which at the time of writing includes over 40 languages.
+Its main significance for GF applications, including Informath, is that *the programmer does not need to care about low-level linguistic features* such as parameters, but can use the library instead. 
+In particular, the application programmer seldom needs to use the table and record syntax shown in this section, but mostly just function calls to the RGL.
 
 The RGL is divided into two main parts:
 
@@ -517,8 +553,8 @@ In addition, there are some smaller libraries, which are also used in Informath:
 - `Formal`, operations for formal expressions, such as definitions of infix, prefix, and postfix operators with different precedences
 - `Symbolic<LANG>`, functions for using formal expressions as parts of verbal text
 
-The suffix `<LANG>` it the 3-letter ISO-code for each language, e.g. `Eng` for English and `Fre` for French. 
-Most GF grammar names use the same codes, but this is not built in in GF.
+The suffix `<LANG>` it the 3-letter ISO 639-s (B) code for each language, e.g. `Eng` for English and `Fre` for French. 
+Most GF grammar names use these language codes, but this is just a recommendation, not a built-in feature of GF.
 
 Starting with `Syntax`, the RGL provides a few dozen categories and functions.
 The most important categories for Informath are the following:
@@ -547,7 +583,7 @@ The `Paradigms` functions build expressions of **lexical categories**, which con
 ### The Syntax API
 
 Expressions of each of these categories are constructed with **overloaded operations**, that is, sets of operations where the one and the same name is used for different types of functions. 
-For ease of use and memory, the name of an RGL operation forming an expresion of category $C$ is almost always `mk`$C$ (almost because sometimes we need more than one operation of the same type).
+For ease of use and memory, the name of an RGL operation forming an expresion of category $C$ is almost always `mk`$C$ (but just almost because sometimes we need more than one operation of the same type).
 Here are some that are widely used in Informath; for the full list, consult the [RGL synopsis](https://www.grammaticalframework.org/lib/doc/synopsis/index.html). 
 The synopsis gives an API consisting of a name, a type and an example, as we will also do here, using examples from Informath:
 ```
@@ -600,7 +636,7 @@ For example, the `CN` "natural number" can be built with both of
 mkCN (mkAP natural_A) (mkCN number_N)
 mkCN natural_A number_N
 ```
-Under the hood, the latter is defined in terms of the former, so there is no redundancy in the underlying layer of the grammar.
+Under the hood, the latter is defined in terms of the former, so there is no redundancy in the underlying core grammar.
 But the redundancies enable convenient shortcuts for the programmer.
 
 
@@ -608,7 +644,7 @@ But the redundancies enable convenient shortcuts for the programmer.
 
 The categories and functions in the Syntax API are defined for all languages in the RGL.
 This makes it straightforward to transfer code written for one language into another one.
-The morphological paradigms, however, are less portable, because the inflection tables and other information needed varies so much.
+The morphological paradigms, however, are less portable, because the inflection tables and other grammatical features vary so much.
 Thus the noun inflection in English only needs a singular and a plural form, whereas in French also a gender is needed, and in German, four cases in both singular and plural.
 This is reflected in the variants of overloaded functions for each language.
 
@@ -616,14 +652,11 @@ In English, we have for instance
 ```
 mkN : Str -> N                 number
 mkN : Str -> Str -> N          calculus, calculi
-
-mkA : Str -> A                 even
-
-mkV : Str -> V                 converge
-mkV : Str -> Str -> Str -> V   give, gave, given
-
-mkV2 : V -> V2                 contain (transitive)
-mkV2 : V -> Prep -> V2         differ, from
+```
+and in French,
+```
+mkN : Str -> N                 ligne (feminine, like most nouns ending -e)
+mkN : Str -> Gender -> N       ensemble (masculine)
 ```
 In general, every language in the RGL has, for each lexical category, a **smart paradigm** that infers the inflection and other properties from just one string.
 This is a qualified guess based on the characters contained in the string and statistics about the most common alternatives.
@@ -713,7 +746,7 @@ concrete MathFre of Math =
 ```
 Notice that
 
-- the implementation of `SyntaxFre` renders `Nat` in the correct word order, "nomber naturel",
+- the implementation of `mkCN` in `SyntaxFre` renders `Nat` in the correct word order, "nomber naturel",
 - the definition of "nombre" adds gender explicitly, because the default gender of nouns ending with "e" is feminine.
 
 Copying modules and changing language codes and words is a productive way to port GF grammars to new languages. 
@@ -769,7 +802,7 @@ concrete MathFre of Math = MathFunctor with
   (Words=WordsFre) ;
 ```
 Functors make it maximally easy to port GF grammars into new languages.
-One advantage over just copying the code is that when the abstract syntax is extended or changed, only the functor needs to be edited (and possibly the `Words` interface).
+One advantage over just copying the code is that, when the abstract syntax is extended or changed, only the functor needs to be edited - and of course, if new words are added, the `Words` interface and its instances.
 
 In addition to functors, GF grammars can be structured to modules in many different ways.
 Maintaining a `Words` interface as above is usually not the best way to do this: it can be better to divide the abstract syntax into a syntax part and a lexical part, where the syntax part only needs the RGL syntax as its interface:
@@ -811,25 +844,26 @@ concrete MathEng of Math = MathSyntaxEng **
 ```
 This examples shows **module extensions** marked with the operator `**`.
 The difference between extensions and opening is that the extending module **inherits** all rules of the extended module.
-Extensions create an inheritance hierarchy reminiscent of object-oriented programs, and designing it in a good way can require several rounds of trial and error. 
+
+Extensions create an **inheritance hierarchy** reminiscent of object-oriented programs, and designing it in a good way can require several rounds of trial and error. 
 The Informath grammar is not an exception: its internal structure has changed several times during one year of continuous development.
 The most important principle is
 
 - DRY: Don't repeat yourself.
 
-A derivative of this is
+A corollary of this rule is
 
 - The golden rule of functional programming: When you find yourself programming with copy and paste, write a function instead.
 
 GF supports this with the usual constructs of functional programming, in particular the `oper`definitions for auxiliary functions and libraries that can be opened. 
 Functors are an extension of it from expressions to modules: they are functions that produce modules, reducing the need to copy and paste.
 
-But this need not matter for the user: they can work with a pre-compiled version (see next section) or on isolated modules defining new concepts for their own fields of mathematics.
+Most users of Informath do not need to care about the internals of GF: they can work with a pre-compiled grammar (see next section) or at most on isolated lexicon modules defining new concepts for their own fields of mathematics.
 
 
 ### Compiling GF
 
-The GF software stack consists of related functionalities:
+The GF software infrastructure consists of related functionalities:
 
 - the GF shell, used for developing and testing grammars,
 - the GF compiler, used for building a binary file for runtime usage,
@@ -842,15 +876,14 @@ linearize :: PGF -> Language -> Tree -> String
 parse :: PGF -> Language -> Type -> String -> [Tree]
 ```
 The compiler can also produce a Haskell module `Informath.hs`, which exports the abstract syntax as a generalized algebraic datatype. 
-This type is intensely used in different manipulations of syntax trees, such as semantics and NLG.
-We will show examples from Informath later.
+This type is intensely used in the manipulations of syntax trees in Informath, especially semantics and NLG.
 
 
 ## The MathCore language
 
 ### The categories of MathCore
 
-The syntactic categories of MathCore are defined in the module [Categories](./grammars/Categories.gf). Here are some of the main ones:
+The syntactic categories of MathCore are defined in the module [Categories](../grammars/Categories.gf). Here are some of the main ones:
 ```
 category   name           linguistic type     example
 —-------------------------------------------------------------------
@@ -875,33 +908,43 @@ Jmt          Jmt
 ```
 Thus Dedukti's `Exp` is divided between many categories of MathCore, and the task of the conversion is to decide which one to choose. This choice is based on **symbol tables**, which define mappings between Dedukti constants and MathCore functions. The symbol tables have entries such as
 ```
-Int    integer_Noun
-even   even_Adj
-list   list_Fam
+Int : integer_Noun
+even : even_Adj
+Eq : equal_Adj2
 ```
 The left-hand side is a Dedukti constant and the right-hand side a MathCore function. These functions belong to some of the **lexical categories** of MathCore, which are listed in the following table:
 ```
 category  semantic type              example
 —-----------------------------------------------------------
-Adj       Exp -> Prop                even
-Adj2      Exp -> Exp -> Prop         divisible by
-Adj3      Exp -> Exp -> Exp -> Prop  congruent to y modulo z
-AdjC      Exps -> Prop               distinct (collective pred.)
-AdjE      Exps -> Prop               equal (equivalence rel.)
-Fam       Kind -> Kind               list of
-Fam2      Kind -> Kind -> Kind       function from ... to
-Fun       Exp -> Exp                 the square of
-Fun2      Exp -> Exp -> Exp          the quotient of
-FunC      Exps -> Exp                the sum of
+Adj       Exp -> Prop                X is even
+Adj2      Exp -> Exp -> Prop         X is divisible by Y
+Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
+AdjC      Exps -> Prop               X and Y are distinct (collective)
+AdjE      Exps -> Prop               X and Y are equal (equivalence)
+Fam       Kind -> Kind               list of As
+Fam2      Kind -> Kind -> Kind       function from As to Bs
+Fun       Exp -> Exp                 the square of X
+Fun2      Exp -> Exp -> Exp          the quotient of X and Y
+FunC      Exps -> Exp                the sum of X and Y
 Label     ProofExp                   theorem 1
 Name      Exp                        the empty set
 Noun      Kind                       integer
-Noun1     Exp -> Prop                (a) prime
-Noun2     Exp -> Exp -> Prop         (a) divisor of
-Verb      Exp -> Prop                converge
-Verb2     Exp -> Exp -> Prop         divide
+Noun1     Exp -> Prop                X is a prime
+Noun2     Exp -> Exp -> Prop         X is a divisor of Y
+Verb      Exp -> Prop                X converges
+Verb2     Exp -> Exp -> Prop         X divides Y
 ```
-The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages.
+The category `Exps` contains non-empty lists of expressions. The last two expressions in a list are combined with the conjunction "and" and its equivalent in different languages.
+
+The Informath software provides several ways to define symbol table entries.
+The least programming-intensive is to parse them with the Informath grammar from examples showing how words and variables are combined. Thus the above symbol table could also be given as follows:
+```
+Int : "integer"
+even : "X is even"
+Eq : "X is equal to Y"
+```
+Parsing of example strings can be performed from English or from any other Informath language. They are converted to abstract syntax, which makes the symbol table entries available for all languages. The symbol table is also checked for arity and superficial type. For instance, a two-place Dedukti function producing a `Prop` can only be linearized with a lexical entry whole semantic category (in the table above) is `Exp -> Exp -> Prop` or `Exps -> Prop`.
+
 
 ### The syntactic combination functions of MathCore
 
