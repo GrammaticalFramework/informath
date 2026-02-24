@@ -185,12 +185,14 @@ inferFunType pgf fun = case inferExpr pgf fun of
 
 type DkType = ([Dedukti.AbsDedukti.Hypo], Exp)
 
-mismatchingTypes :: MacroTable -> DkType -> Type -> Fun -> Maybe (Int, Int)
+mismatchingTypes :: MacroTable -> DkType -> Type -> Fun -> Maybe ((String, Int), ([String], Int))
 mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
-  arityMismatch (dkhypos, _) (gfhypos, cid, _) = if dka /= gfa then Just (dka, gfa) else Nothing
-    where
-      dka = dkArity dkhypos
-      gfa = gfArity gfhypos cid
+  arityMismatch (dkhypos, typ) (gfhypos, cid, _) =
+    let (dka, gfa) = (dkArity dkhypos typ, (gfCats cid, gfArity gfhypos cid)) in
+    if not (compatible dka gfa)
+    then Just (dka, gfa)
+    else Nothing
+  compatible (dkcat, dar) (gfcats, gar) = dar == gar && elem dkcat gfcats 
   gfArity gfhypos cid = case showCId cid of
     s | elem s (words "Adj Verb Fun Fam Noun1 Oper") -> 1
     s | elem s (words "Adj2 Verb2 Noun2 Fun2 Fam2 Compar Oper2 FunC AdjC AdjE") -> 2
@@ -198,7 +200,22 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
     s | elem s (words "MACRO") ->   --- '\\foo' -> \foo 
       maybe 0 fst (M.lookup (tail (filter (/='\'') (showGFTree fun))) mt)
     _ -> length gfhypos
-  dkArity dkhypos = foldl (+) 0 (map hypoArity dkhypos)
+  gfCats cid = case showCId cid of
+    s | elem s (words "Adj Verb Noun1 Adj2 Verb2 Noun2 Adj3 AdjC AdjE Compar Prop Formula") -> ["Prop"]
+    s | elem s (words "Noun Fam Fam2 Kind") -> ["Kind"]
+    s | elem s (words "Name Fun Fam Fun2 FunC Exp") -> ["Exp"]
+    s | elem s (words "Const Oper Oper2 Term") -> ["Exp", "Kind"]
+    s | elem s (words "Label ProofExp Proof") -> ["Proof"]
+    s | elem s (words "MACRO") -> ["Exp", "Kind", "Prop", "Proof"] --- uncertain; any may work
+    _ -> ["UNKNOWN-GF"]
+  dkArity dkhypos typ = (valCat typ, foldl (+) 0 (map hypoArity dkhypos))
+  valCat typ = case fst (splitApp typ) of
+    EIdent f | f == identProp -> "Prop"
+    EIdent f | elem f [identSet, identType] -> "Kind"
+    EIdent f | f == identElem -> "Exp"
+    EIdent f | f == identProof -> "Proof"
+    _ -> "UNKNOWN-DK" ---- default, but not accurate
+
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
 
@@ -216,7 +233,8 @@ constantTableErrors dk pgf dt mt table bset =
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
-    [unwords ["MISMATCHING TYPES:", printTree dkfun, show e, "<>", showGFTree gffun, show f] |
+    [unwords ["MISMATCHING TYPES:", printTree dkfun,
+              show e, "<>", showGFTree gffun, show f] |
                       ((dkfun, gffun), (e, f)) <- mismatches]
 
 deduktiFunctions :: Module -> [(QIdent, DkType)]
