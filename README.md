@@ -360,6 +360,11 @@ tells the conversion from Dedukti to GF to drop a number of initial arguments of
 ``` 
 defines a conversion of a Dedukti identifier to another formalism, such as Lean, typically to a standard library function of that formalism.
 
+```
+#BUILTIN <DeduktiIdent>+
+``` 
+lists Dedukti identifiers that have built-in mappings in Informath's Haskell code. These lines are included to prevent spurious warnings when checking the symbol table. In `baseconstants.dkgf`, they include digits and a few other functions.  
+
 The coverage of Informath can be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+`. The flag `-add-symboltables=<file.dhf>+` includes `base_constants.dkgf` as one of the files. 
 
 How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md). But this should not always be necessary, at least for English, which has a large lexicon.
@@ -470,9 +475,9 @@ orthogonal
 
 It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may even cause run-time failures. Because of this, RunInformath provides a static checker of symbol tables, invoked as follows:
 ```
-RunInformath -base=<file.dk> <file>.dkgf
+$ RunInformath -base=<file.dk> <file>.dkgf
 ```
-This command checks if the types of the GF functions and symbolic macros are compatible with the types of the Dedukti functions that they are assigned to. It does not (yet) find all errors, but should be enough to guarantee that informalization is failure-free.
+This command checks if the types of the GF functions and symbolic macros are compatible with the types of the Dedukti functions that they are assigned to. It does not (yet) find all errors, but only arity mismatches. This can in most cases guarantee that informalization is failure-free.
 
 
 ### Fine-grained lexical categories

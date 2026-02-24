@@ -121,8 +121,10 @@ sameParity : sameParityProp
 #CONV rocq Nat nat
 #CONV rocq _ x_
 
-Equ Eq_Adj2 Eq_AdjE Eq_Compar
+Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #DROP Equ 1
+
+#BUILTIN Elem Proof Enum nd nn 0 1 2 3 4 5 6 7 8 9
 
 #DROP id 3
 #DROP {|!_∘_|} 6

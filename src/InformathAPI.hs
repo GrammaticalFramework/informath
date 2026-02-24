@@ -65,8 +65,8 @@ readEnv args = do
 	then constantTableFile : argValues "-add-symboltables" "" args
 	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
-  (ct, cvt, dt, mt) <- readConstantTable gr fro symboltables
-  ifArg "-check-constant-table" args (checkConstantTable mo gr mt ct)
+  (ct, cvt, dt, mt, bs) <- readConstantTable gr fro symboltables
+  ifArg "-check-constant-table" args (unlines (checkConstantTable mo gr dt mt ct bs))
   return Env {
     flags = args,
     informathRoot = root,
@@ -101,8 +101,11 @@ readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
 
 -- | To read a constant table from a .dkgf file. 
-readConstantTable :: PGF -> Language -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
-readConstantTable = buildConstantTable
+readConstantTable :: PGF -> Language -> [FilePath] ->
+      IO (ConstantTable, ConversionTable, DropTable, MacroTable, BuiltinSet)
+readConstantTable pgf lang dkgfs = do
+  ls <- mapM readFile dkgfs >>= return . concatMap lines 
+  return $ buildConstantTable pgf lang ls
 
 -- | To construct a concrete syntax name from a 3-letter language code.
 mkLanguage :: PGF -> String -> Language
@@ -269,8 +272,9 @@ annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
-checkConstantTable :: Module -> PGF -> MacroTable -> ConstantTable -> String
-checkConstantTable mo gr mt ct = unlines (constantTableErrors mo gr mt ct)
+-- | Check type mismatches and missing items; performed as a part of building Env
+checkConstantTable :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
+checkConstantTable = constantTableErrors
 
 printConstantTable :: ConstantTable -> String
 printConstantTable = showConstantTable

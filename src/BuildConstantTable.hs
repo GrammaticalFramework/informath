@@ -110,6 +110,8 @@ showConstantTableLong = concat . map prEntry . M.toList where
 
 type BackConstantTable = M.Map Fun [QIdent] -- maps GF idents to original "Dk" idents
 
+type BuiltinSet = S.Set QIdent -- built-in constants not expected in ConstantTable
+
 buildBackConstantTable :: ConstantTable -> BackConstantTable
 buildBackConstantTable table = M.fromListWith (++) [
   (fun, [qid]) | 
@@ -123,27 +125,32 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (Fun, [QIdent]) -> String
   prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> Language -> [FilePath] -> IO (ConstantTable, ConversionTable, DropTable, MacroTable)
-buildConstantTable pgf lang dkgfs = do
-  entrylines <- mapM readFile dkgfs >>= return . filter (not . null) . map words . concatMap lines
-  let constantlines = filter isConstantEntry entrylines
-  let conversionlines = filter isConversion entrylines
-  let droplines = filter isDrop entrylines
-  let macrolines = filter isMacro entrylines
-  let constantTable = M.fromList [
+buildConstantTable :: PGF -> Language -> [String] ->
+  (ConstantTable, ConversionTable, DropTable, MacroTable, BuiltinSet)
+buildConstantTable pgf lang ls =
+    (constantTable, conversionTable, dropTable, macroTable, builtinSet)
+  where
+    entrylines = filter (not . null) (map words ls)
+    constantlines = filter isConstantEntry entrylines
+    conversionlines = filter isConversion entrylines
+    droplines = filter isDrop entrylines
+    macrolines = filter isMacro entrylines
+    builtinlines = filter isBuiltin entrylines
+    constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
                      qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
-  let conversionTable = M.fromList [
+    conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
-  let dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
-  let macroTable = M.fromList [(c, (read n, unwords rest)) | _:c:n:rest <- macrolines]
-  return (constantTable, conversionTable, dropTable, macroTable)
- where
-   isConstantEntry line = head (head line) /= '#'
-   isConversion line = head line == "#CONV"
-   isDrop line = head line == "#DROP"
-   isMacro line = head line == "#MACRO"
+    dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
+    macroTable = M.fromList [(c, (read n, unwords rest)) | _:c:n:rest <- macrolines]
+    builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
+    
+    isConstantEntry line = head (head line) /= '#'
+    isConversion line = head line == "#CONV"
+    isDrop line = head line == "#DROP"
+    isMacro line = head line == "#MACRO"
+    isBuiltin line = head line == "#BUILTIN"
 
 splitEntry s = case split '|' s of
   fg : ws -> split ':' fg ++ ws
@@ -195,14 +202,16 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
 
- ---- TODO: check more than arity
+ ---- TODO: check more than arity: return Maybe ((Cat, Int), (Cat, Int))
 
-constantTableErrors :: Module -> PGF -> MacroTable -> ConstantTable -> [String]
-constantTableErrors dk pgf mt table = 
+constantTableErrors :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
+constantTableErrors dk pgf dt mt table bset = 
   let funs = deduktiFunctions dk
-      missing = [fun | (fun, _) <- funs, M.notMember fun table]
+      missing = [fun | (fun, _) <- funs, M.notMember fun table, S.notMember fun bset]
       mismatches = [((dkfun, gffun), (e, f)) |
-                      (dkfun, dktyp) <- funs,
+                      (dkfun, (hypos, valtype)) <- funs,
+		      let drops = maybe 0 id (M.lookup dkfun dt),
+		      let dktyp = (drop drops hypos, valtype),
 		      (gffun, gftyp) <- allGFFuns table dkfun,
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
