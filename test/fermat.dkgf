@@ -1,2 +1,6 @@
 fermat1 : "Fermat's theorem ."
 fermat2 : "Fermat's last theorem ."
+
+#DROP fermat1 8
+#DROP fermat2 4
+

@@ -67,13 +67,15 @@ readEnv args = do
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   (ct, cvt, dt, mt, bs) <- readConstantTable gr fro symboltables
   ifArg "-check-constant-table" args (unlines (checkConstantTable mo gr dt mt ct bs))
+  let bt = buildBackConstantTable ct
   return Env {
     flags = args,
     informathRoot = root,
     grammar = gr,
     constantTable = ct,
     conversionTable = cvt,
-    backConstantTable = buildBackConstantTable ct,
+    backConstantTable = bt,
+    reachableFunctions = reachableGFFunctions bt,
     baseConstantModule = mo,
     dropTable = dt,
     macroTable = mt,
@@ -516,4 +518,11 @@ showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map sho
 -- | To parse an example to a tree
 parseFunExample :: Env -> String -> [String]
 parseFunExample env s = map (showExpr []) (parseExample env s)
+
+-- | lexical functions reachable from the current symbol table
+reachableGFFunctions :: BackConstantTable -> S.Set CId
+reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
+  ids t = case unApp t of
+    Just (f, xs) -> f : concatMap ids xs
+    _ -> []
 

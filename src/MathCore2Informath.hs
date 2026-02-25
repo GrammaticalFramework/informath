@@ -178,7 +178,7 @@ gTerms terms = case terms of
 ---- also in DMC, IMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
----  [exp] -> GOneExps exp
+  [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
   
@@ -437,17 +437,14 @@ varless t = case t of
 
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
-----  GOneExps e -> [e]
+  GOneExps e -> [e]
   GManyExps (GListExp es) -> es
 
 list2mexps :: [GExp] -> Maybe GExps
 list2mexps exps = case exps of
-----  [e] -> return $ GOneExps e
+  [e] -> return $ GOneExps e
   _ : _ -> return $ GManyExps (GListExp exps)
   [] -> Nothing
-
-flattenExps :: [GExps] -> Maybe GExps -- Nothing for empty list
-flattenExps = list2mexps .  concatMap exps2list
 
 collectivize :: Tree a -> [Tree a]
 collectivize t = case t of
@@ -455,13 +452,13 @@ collectivize t = case t of
   -- put together instances of an equivalence relation that have common elements
   GAndProp (GListProp props) -> maybe [t] return $ do
     (adjc, expss) <- commonRel props
-    nexps <- list2mexps $ nub $ expss 
+    let nexps = GListExp (nub expss) 
     return $ GAdjECollProp adjc nexps
 
   -- put together arguments of collective functions
   GFunCExp func x y -> do
     let args = collectArgs func [x, y]
-    let Just margs = list2mexps args
+    let margs = GListExp args
     return $ GFunCCollExp func margs
 
   _ -> composOpM collectivize t
@@ -492,8 +489,8 @@ negated :: Tree a -> Tree a
 negated t = case t of
   GCoreNotProp (GAdjProp adj x) -> GNotAdjProp adj x
   GCoreNotProp (GAdj2Prop adj x y) -> GNotAdj2Prop adj x y
-  GCoreNotProp (GAdjCProp adj x y) -> GNotAdjCProp adj (gExps [x, y])
-  GCoreNotProp (GAdjEProp adj x y) -> GNotAdjEProp adj (gExps [x, y])
+  GCoreNotProp (GAdjCProp adj x y) -> GNotAdjCProp adj (GListExp [x, y])
+  GCoreNotProp (GAdjEProp adj x y) -> GNotAdjEProp adj (GListExp [x, y])
   GCoreNotProp (GNoun1Prop adj x) -> GNotNoun1Prop adj x
   GCoreNotProp (GNoun2Prop adj x y) -> GNotNoun2Prop adj x y
   GCoreNotProp (GVerbProp adj x) -> GNotVerbProp adj x

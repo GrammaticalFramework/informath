@@ -46,8 +46,8 @@ lin
 
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
   NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;
-  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
-  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl exps.np adj)) ;
+  NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) adj)) ;
+  NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) adj)) ;
   NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
   NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
@@ -127,8 +127,8 @@ lin
     } ;
   NoKindExp kind = mkNP no_Quant (mkCN kind.cn kind.adv) ;
 
-  AdjCCollProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  AdjECollProp adj exps = simpleProp (mkS (mkCl exps.np adj)) ;
-  FunCCollExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep exps.np)) ;
+  AdjCCollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
+  AdjECollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
+  FunCCollExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep (mkNP and_Conj exps))) ;
   
 }

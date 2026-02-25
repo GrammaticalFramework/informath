@@ -112,11 +112,12 @@ helpMsg4 = unlines [
   just "-from-lang=<lang>" "parse from <lang>",
   just "-translate" "translate text without parsing parts in $...$",
   just "-parse-only" "return GF syntax trees, also parsing the parts in $...$",
+  just "-include-unreachable" "include trees with functions unreachable from symbol table",
   just "-unknown-words" "show words in text file not in grammar",
   just "-find-gf" "shows GF functions that match each word in standard input",
   just "-linearize" "linearize GF trees given line by line in standard input",
   just "-all-gf-functions" "show all GF functions with their types",
-  just "-parse-example" "parse example candidate lexical item",
+  just "-parse-example" "parse example candidate lexical item (includes unreachables)",
   just "-failures" "show lines that fail to parse",
 ---  just "-parseusermacros" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",
@@ -140,6 +141,8 @@ helpMsg4 = unlines [
   ]
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
+
+--- validOptions = S.fromList [o | o:_ <- map words helpMsg4]
 
 
 loopInformath env = do

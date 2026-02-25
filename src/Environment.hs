@@ -8,6 +8,8 @@ import Utils
 import Data.List (intersperse, isPrefixOf)
 import Data.Char (isDigit)
 
+import qualified Data.Set as Set
+
 import Debug.Trace (traceShowId, trace)
 
 trac :: Show a => Env -> String -> a -> a 
@@ -27,6 +29,7 @@ data Env = Env {
   constantTable :: ConstantTable,
   conversionTable :: ConversionTable,
   backConstantTable :: BackConstantTable,
+  reachableFunctions :: Set.Set CId,
   dropTable :: DropTable,
   macroTable :: MacroTable,
   formalisms :: [String],

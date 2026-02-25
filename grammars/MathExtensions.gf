@@ -29,8 +29,8 @@ fun
 
   NotAdjProp : Adj -> Exp -> Prop ;
   NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
-  NotAdjCProp : AdjC -> Exps -> Prop ;
-  NotAdjEProp : AdjE -> Exps -> Prop ;
+  NotAdjCProp : AdjC -> [Exp] -> Prop ;
+  NotAdjEProp : AdjE -> [Exp] -> Prop ;
   NotNoun1Prop : Noun1 -> Exp -> Prop ;
   NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
   NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
@@ -93,8 +93,8 @@ fun
   NoKindExp : Kind -> Exp ;
 ----  NoIdentsSetExp : [Ident] -> Set -> Exp ;
 
-  AdjCCollProp : AdjC -> Exps -> Prop ;
-  AdjECollProp : AdjE -> Exps -> Prop ;
-  FunCCollExp : FunC -> Exps -> Exp ;
+  AdjCCollProp : AdjC -> [Exp] -> Prop ;
+  AdjECollProp : AdjE -> [Exp] -> Prop ;
+  FunCCollExp : FunC -> [Exp] -> Exp ;
 
 }

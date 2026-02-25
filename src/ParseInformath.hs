@@ -1,9 +1,11 @@
 module ParseInformath where
 
 import Environment
+import BuildConstantTable (verbalCats)
 import PGF
 import Data.Char(isAlpha, isAlphaNum)
-import qualified Data.Map
+import qualified Data.Map as Map
+import qualified Data.Set as Set
 
 main_pgf = "grammars/Informath.pgf"
 max_number = 199 -- number of trees considered with checkVariables
@@ -16,10 +18,11 @@ parseJmt env cat s =
   let
      gr = grammar env
      eng = fromLang env
+     notspur =  if isFlag "-include-unreachable" env then (const True) else (not . isSpurious env)
   in
-  case fst (parse_ gr eng cat (Just 4) s) of  --- Just 4 is default in PGF.parse
+  case (fst (parse_ gr eng cat (Just 4) s)) of  --- Just 4 is default in PGF.parse
     ParseOk ps -> 
-         let trees = [t | t <- take max_number ps, checkVariables env t]
+         let trees = [t | t <- take max_number ps, notspur t, checkVariables env t]
          in
 	 if not (null trees)
             then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
@@ -30,13 +33,25 @@ parseJmt env cat s =
          (Nothing, "# FAILURE INCOMPLETE")
 
 parseExample :: Env -> String -> [Expr]
-parseExample env = maybe [] id . fst . parseJmt env (maybe undefined id (readType "Example"))
+parseExample env = maybe [] id . fst . parseJmt ienv (maybe undefined id (readType "Example"))
+  where
+   ienv = env{flags = "-include-unreachable" : flags env}
 
 ---------------
 
 -- spurious tree: containing lexical functions not mapped to/from Dedukti
 isSpurious :: Env -> Expr -> Bool
-isSpurious env expr = False ----
+isSpurious env expr = case unApp expr of
+  Just (f, []) -> not (reachable f)
+  Just (_, xs) -> any (isSpurious env) xs
+  _ -> False
+ where
+   reachable f = case functionType pgf f of
+     Just ty -> case unType ty of
+       (_, c, _) | Set.member c verbalCats -> Set.member f (reachableFunctions env)
+       _ -> True
+     _ -> True
+   pgf = grammar env
 
 -- quick hack to get the effect of a callback: check that variables are a(a|d|_|'|\)*
 -- and don't in particular overshadow digits

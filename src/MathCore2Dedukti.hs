@@ -33,7 +33,6 @@ applyLookBack mb t = case t of
     Just t -> t
     _ -> mkApp (mkCId (unescape s)) []
   unescape s = case s of
-----    '\\':cs -> "'\\\\" ++ cs ++ "'" -- for macros ; --- cumbersome
     _ -> s
 
 jmt2jmt :: GJmt -> Jmt
@@ -314,6 +313,7 @@ label2ident label = case label of
   LexLabel s -> QIdent (s)
   GIdentLabel ident -> ident2ident ident
   GcrefLabel ident -> ident2ident ident
+  _ -> iUndefinedDebug label
 
 kind2ident :: GKind -> QIdent
 kind2ident kind = case kind of
@@ -328,9 +328,12 @@ prop2deduktiIdent prop = case prop of
 eUndefined :: Exp
 eUndefined = EIdent (QIdent "UNDEFINED")
 
+iUndefinedDebug :: Gf a => a -> QIdent
+iUndefinedDebug t =
+  QIdent (concat (intersperse "_" ("{|" : "UNDEFINED" : words (showExpr [] (gf t)))) ++ "|}")
+
 eUndefinedDebug :: Gf a => a -> Exp
-eUndefinedDebug t =
-  EIdent (QIdent (concat (intersperse "_" ("{|" : "UNDEFINED" : words (showExpr [] (gf t)))) ++ "|}"))
+eUndefinedDebug t = EIdent (iUndefinedDebug t)
 
 appIdent :: String -> [Exp] -> Exp
 appIdent f exps = foldl EApp (EIdent (QIdent f)) exps
@@ -345,6 +348,6 @@ showGF = showGFTree . gf
 --- also in MCI
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
-----  GOneExps e -> [e]
+  GOneExps e -> [e]
   GManyExps (GListExp es) -> es
 

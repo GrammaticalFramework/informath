@@ -193,10 +193,10 @@ sem env t = case t of
         GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
       sexp -> GAdjProp sa sexp
 
-  GAdjCCollProp adj (GManyExps (GListExp [x, y])) -> GAdjCProp adj (sem env x) (sem env y)
+  GAdjCCollProp adj (GListExp [x, y]) -> GAdjCProp adj (sem env x) (sem env y)
   ---- TODO: AdjCColl properly implemented in Dedukti
   
-  GAdjECollProp adj (GManyExps (GListExp xs)) ->
+  GAdjECollProp adj (GListExp xs) ->
     GAndProp (GListProp [GAdjEProp adj x y | (x, y) <- subsequentPairs (map (sem env) xs)])
 
   GBothAndProp a b -> GAndProp (GListProp [sem env a, sem env b])
@@ -340,7 +340,7 @@ getAndProps prop = case prop of
 --- also in DMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
-----  [exp] -> GOneExps exp
+  [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
 
