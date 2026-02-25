@@ -366,7 +366,7 @@ checkJmt jmt = True ----
 printParseResult :: Env -> ParseResult -> [String]
 printParseResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
-    [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+    [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- nub jmts]
   _ | isFlag "-translate" env ->
     transResults result
   _ | isFlag "-parse-only" env ->
@@ -393,7 +393,7 @@ printParseResult env result = case 0 of
 -- | Print just the resulting Dedukti code.
 printDeduktiOutput :: Env -> ParseResult -> [String]
 printDeduktiOutput env result =
-  [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+  nub [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
 
 -- | Print both GF trees and resulting Dedukti, in JSON. 
 printFinalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> String

@@ -25,6 +25,7 @@ fun
   IffProp : Prop -> Prop -> Prop ;
   AllProp : [ArgKind] -> Prop -> Prop ;
   ExistProp : [ArgKind] -> Prop -> Prop ; 
+  ExistNoProp : [ArgKind] -> Prop -> Prop ;
 
   NotAdjProp : Adj -> Exp -> Prop ;
   NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;
@@ -51,8 +52,6 @@ fun
   EitherOrExp : Exp -> Exp -> Exp ;
 
   OnlyIfProp : Prop -> Prop -> Prop ;
-
-  ExistNoProp : [ArgKind] -> Prop -> Prop ;
 
   Adj2Adj : Adj2 -> Exp -> Adj ;
   Adj3Adj : Adj3 -> Exp -> Exp -> Adj ;

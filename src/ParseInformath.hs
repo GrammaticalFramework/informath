@@ -9,7 +9,7 @@ main_pgf = "grammars/Informath.pgf"
 max_number = 199 -- number of trees considered with checkVariables
 max_number_taken = 3 -- number of trees considered for semantics
 
--- this is the function to be exported to other modules
+-- these are the functions to be exported to other modules
 
 parseJmt :: Env -> Type -> String -> (Maybe [Expr], String)
 parseJmt env cat s =
@@ -28,6 +28,15 @@ parseJmt env cat s =
          (Nothing, "# FAILURE AT " ++ show pos)
     ParseIncomplete -> 
          (Nothing, "# FAILURE INCOMPLETE")
+
+parseExample :: Env -> String -> [Expr]
+parseExample env = maybe [] id . fst . parseJmt env (maybe undefined id (readType "Example"))
+
+---------------
+
+-- spurious tree: containing lexical functions not mapped to/from Dedukti
+isSpurious :: Env -> Expr -> Bool
+isSpurious env expr = False ----
 
 -- quick hack to get the effect of a callback: check that variables are a(a|d|_|'|\)*
 -- and don't in particular overshadow digits
@@ -81,9 +90,4 @@ unindexGFTree env termindex expr = case unind expr of
   parsed c s = case parseJmt env (mkTyp c) s of
       (Just (t:ts), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
       _ -> []
-
-
-
-parseExample :: Env -> String -> [Expr]
-parseExample env = maybe [] id . fst . parseJmt env (maybe undefined id (readType "Example"))
 

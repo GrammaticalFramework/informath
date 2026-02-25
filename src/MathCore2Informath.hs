@@ -178,7 +178,7 @@ gTerms terms = case terms of
 ---- also in DMC, IMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
-  [exp] -> GOneExps exp
+---  [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
   
@@ -437,12 +437,12 @@ varless t = case t of
 
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
-  GOneExps e -> [e]
+----  GOneExps e -> [e]
   GManyExps (GListExp es) -> es
 
 list2mexps :: [GExp] -> Maybe GExps
 list2mexps exps = case exps of
-  [e] -> return $ GOneExps e
+----  [e] -> return $ GOneExps e
   _ : _ -> return $ GManyExps (GListExp exps)
   [] -> Nothing
 

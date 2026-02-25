@@ -68,7 +68,7 @@ fun
   AppProofExp : ProofExp -> Exps -> ProofExp ;
   AbsProofExp : [Hypo] -> ProofExp -> ProofExp ;
 
-  OneExps : Exp -> Exps ;
+----  OneExps : Exp -> Exps ; --- spurious
   ManyExps : [Exp] -> Exps ;
 
 -- using Constants

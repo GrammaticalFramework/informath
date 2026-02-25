@@ -127,8 +127,7 @@ lin
   AbsProofExp hypos proofexp =
     mkNP proofexp <lin Adv (prefixText assuming_Str hypos.text) : Adv> ; ---- quick hack for completeness
 
-  OneExps exp =
-    {np = exp ; isPl = False} ;
+----  OneExps exp = {np = exp ; isPl = False} ;
   ManyExps listexp =
     {np = mkNP and_Conj listexp ; isPl = True} ;
 

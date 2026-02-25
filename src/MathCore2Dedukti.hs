@@ -11,7 +11,7 @@ import BuildConstantTable
 import PGF (showExpr, readExpr, showCId, mkApp, mkCId)
 
 import Data.Char
-import Data.List (intersperse)
+import Data.List (intersperse, nub)
 import qualified Data.Map as M
 
 
@@ -345,6 +345,6 @@ showGF = showGFTree . gf
 --- also in MCI
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of
-  GOneExps e -> [e]
+----  GOneExps e -> [e]
   GManyExps (GListExp es) -> es
 

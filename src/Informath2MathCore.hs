@@ -11,7 +11,7 @@ initSEnv = SEnv {varlist = []}
 
 -- used when no Kind is given e.g. as quantifier domain
 unspecifiedKind :: GKind
-unspecifiedKind = GNounKind (LexNoun "number_Noun")
+unspecifiedKind = GNounKind (LexNoun "object_Noun")
 
 newVar :: SEnv -> (GIdent, SEnv)
 newVar senv = (xi, senv{varlist = x : varlist senv}) where
@@ -109,6 +109,8 @@ sem env t = case t of
   GFormulaImpliesProp cond prop ->
     sem env (GIfProp (GFormulaProp cond) (GFormulaProp prop))
 
+  GExistNoProp argkinds prop -> GCoreNotProp (sem env (GExistProp argkinds prop))
+
   GPostQuantProp prop exp -> case sem env exp of
     GEveryIdentKindExp ident kind ->
       sem env (GCoreAllProp kind ident prop)
@@ -138,6 +140,7 @@ sem env t = case t of
     let (var, nenv) = newVar env
     in GSuchThatKind (sem nenv kind) var (sem nenv (GAdjProp adj (GTermExp (GIdentTerm var))))
 
+  ---- TODO: generalize agremment and in situ resolution to all predication functions
   GAdjProp adj (GAllIdentsKindExp (GListIdent [x]) kind) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GAdjProp adj (GTermExp (GIdentTerm x))))
@@ -179,6 +182,10 @@ sem env t = case t of
     GOrAdj (GListAdj adjs)  ->
       let sx = sem env exp
       in GOrProp (GListProp [GAdjProp adj sx | adj <- adjs])
+    GAdj2Adj adj2 exp2 ->
+      GAdj2Prop adj2 (sem env exp) (sem env exp2)
+    GAdj3Adj adj3 exp2 exp3 ->
+      GAdj3Prop adj3 (sem env exp) (sem env exp2) (sem env exp3)
     sa -> case sem env exp of
       (GAndExp (GListExp exps)) ->
         GAndProp (GListProp [GAdjProp sa exp | exp <- exps])
@@ -186,7 +193,11 @@ sem env t = case t of
         GOrProp (GListProp [GAdjProp sa exp | exp <- exps])
       sexp -> GAdjProp sa sexp
 
-  GAdjCCollProp adj (GManyExps (GListExp [x, y])) -> GAdjCProp adj (sem env x) (sem env y) 
+  GAdjCCollProp adj (GManyExps (GListExp [x, y])) -> GAdjCProp adj (sem env x) (sem env y)
+  ---- TODO: AdjCColl properly implemented in Dedukti
+  
+  GAdjECollProp adj (GManyExps (GListExp xs)) ->
+    GAndProp (GListProp [GAdjEProp adj x y | (x, y) <- subsequentPairs (map (sem env) xs)])
 
   GBothAndProp a b -> GAndProp (GListProp [sem env a, sem env b])
   GBothAndAdj a b -> GAndAdj (GListAdj [sem env a, sem env b])
@@ -197,7 +208,13 @@ sem env t = case t of
   GEitherOrExp a b -> GOrExp (GListExp [sem env a, sem env b])
 
   GNotAdjProp adj exp -> GCoreNotProp (sem env (GAdjProp adj exp))
-  ---- TODO: more cases here
+  GNotAdj2Prop adj x y -> GCoreNotProp (sem env (GAdj2Prop adj x y))
+  GNotAdjCProp adj exps -> GCoreNotProp (sem env (GAdjCCollProp adj exps))
+  GNotAdjEProp adj exps -> GCoreNotProp (sem env (GAdjECollProp adj exps))
+  GNotNoun1Prop adj exp -> GCoreNotProp (sem env (GNoun1Prop adj exp))
+  GNotNoun2Prop adj x y -> GCoreNotProp (sem env (GNoun2Prop adj x y))
+  GNotVerbProp adj exp -> GCoreNotProp (sem env (GVerbProp adj exp))
+  GNotVerb2Prop adj x y -> GCoreNotProp (sem env (GVerb2Prop adj x y))
 
   GKindArgKind kind -> 
     let (var, nenv) = newVar env
@@ -218,14 +235,8 @@ sem env t = case t of
     GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
       (sem env (GTermExp term1))
 -}
+
 {-
-  GTermExp (GConstTerm const) -> GConstExp const
-  GTermExp (GAppOperTerm oper x y) ->
-    GOperListExp oper (GManyExps (GListExp [sem env (GTermExp x), sem env (GTermExp y)]))
-  GTermExp (GAppOperOneTerm (LexOper "minus_Oper") x) ->  ---- should not be needed
-    GOperListExp (LexOper "neg_Oper") (GOneExps (sem env (GTermExp x)))
-  GTermExp (GAppOperOneTerm oper x) ->
-    GOperListExp oper (GOneExps (sem env (GTermExp x)))
   GTermExp (GTSum3dots m m1 n) ->
     let
       [sm, sm1, sn] = map (sem env) [m, m1, n]
@@ -329,7 +340,7 @@ getAndProps prop = case prop of
 --- also in DMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
-  [exp] -> GOneExps exp
+----  [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
 
@@ -337,3 +348,5 @@ gExps exps = case exps of
 unknownTerm :: GTerm
 unknownTerm = GIdentTerm (GStrIdent (GString "UNKNOWN"))
 
+-- used for decomposing AdjE over a list
+subsequentPairs xs = [(xs !! k, xs !! (k+1)) | k <- [0..(length xs - 2)] ]

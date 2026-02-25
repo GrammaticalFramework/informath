@@ -58,5 +58,5 @@ specialDedukti2Informath callbacks exp = case lambdaFlatten exp of
 
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
-  [exp] -> GOneExps exp
+----  [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
