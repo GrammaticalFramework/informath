@@ -24,6 +24,7 @@ fun
   Verb2Example : Verb2 -> Argument -> Argument -> Example ;
   Noun2Example : Noun2 -> Argument -> Argument -> Example ;
   Adj3Example : Adj3 -> Argument -> Argument -> Argument -> Example ;
+  LabelExample : Label -> Example ;
 
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;
@@ -52,6 +53,13 @@ fun
   AdjNounNoun : Adj -> Noun -> Noun ;
   NounNounNoun : Noun -> Noun -> Noun ;
   ProperNameNounNoun : ProperName -> Noun -> Noun ; -- ProperName in nominative: Hilbert space
+
+  NounLabel : Noun -> Label ;                          -- extensionality axiom
+  DefNounLabel : Noun -> Label ;                       -- the pidgeonhole principle
+  NounIntLabel : Noun -> Int -> Label ;                -- theorem 5
+  NounIdentLabel : Noun -> Ident -> Label ;            -- hypothesis h
+  NounOfNounLabel : Noun -> Noun -> Label ;            -- the axiom of choice
+  ProperNameNounLabel : ProperName -> Noun -> Label ;  -- Fermat's theorem
 
   NoPrep : Prep ;
 

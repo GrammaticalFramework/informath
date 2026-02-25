@@ -1,0 +1,5 @@
+fermat1 : (a : Elem Nat) -> (b : Elem Nat) -> (c : Elem Nat) -> (n : Elem Nat) -> Proof (Gt a 0) -> Proof (Gt b 0) -> Proof (Gt c 0) -> Proof (Gt n 2) -> Proof (Neq (plus (pow a n) (pow b n)) (pow c n)).
+
+fermat2 : (a : Elem Nat) -> (b : Elem Nat) -> (c : Elem Nat) ->
+  Proof (and (and (positive a) (positive b)) (positive c)) ->
+    Proof (not (exists Nat (n => and (Gt n 2) (Eq (plus (pow a n) (pow b n)) (pow c n))))).

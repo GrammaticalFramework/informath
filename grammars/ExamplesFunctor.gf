@@ -4,6 +4,7 @@ open
   Syntax,
   MathCore,
   Utilities,
+  Symbolic,
   Prelude
 
 in {
@@ -35,6 +36,8 @@ lin
 
   VerbExample verb x = mkExample (VerbProp verb x) ;
   Verb2Example verb x y = mkExample (Verb2Prop verb x y) ;
+
+  LabelExample label = mkExample (mkUtt label.np) "." ;
 
   X_Argument = NameExp (mkName "X") ;
   Y_Argument = NameExp (mkName "Y") ;
@@ -68,6 +71,14 @@ lin
   AdjNounNoun adj noun = mkCN adj noun ;
   NounNounNoun noun1 noun2 = compoundCN noun1 noun2 ;
   ProperNameNounNoun name noun = nameCompoundCN name noun ;
+
+  NounLabel noun = mkLabel (mkNP noun) ;
+  DefNounLabel noun = mkLabel (mkNP the_Det noun) ;
+  NounIntLabel noun int = mkLabel (mkNP (mkCN noun <symb int : NP>)) ;
+  NounIdentLabel noun ident = mkLabel (mkNP (mkCN noun <symb (mkSymb ident) : NP>)) ;
+  NounOfNounLabel noun1 noun2 = mkLabel (mkNP the_Det (mkCN noun1 (mkAdv ofPrep (mkNP noun2)))) ;
+  ProperNameNounLabel name noun = mkLabel (npGenNounNP (mkNP name) noun) ;
+
 
   NoPrep = strPrep "" ;
 

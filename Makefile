@@ -203,3 +203,6 @@ matita:
 gflean:
 	$(RUN) test/gflean-data.txt
 
+fermat:
+	$(RUN) -add-symboltables=test/fermat.dkgf -variations test/fermat.dk
+
