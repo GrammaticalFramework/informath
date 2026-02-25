@@ -136,26 +136,28 @@ prop2dedukti prop = case prop of
     propSigma (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
   GAppProp ident exps ->
     foldl1 EApp ((EIdent (ident2ident ident)) : map exp2dedukti (exps2list exps))
-    
-  GAdj3Prop adj a b c ->
-    foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b, c])
-    
+
+  GAdjProp adj exp ->
+    EApp (EIdent (QIdent (showGF adj))) (exp2dedukti exp)
   GAdj2Prop adj a b ->
     foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b])
-
   GAdjCProp adj a b ->
     foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b])
   GAdjEProp adj a b ->
     foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b])
+  GAdj3Prop adj a b c ->
+    foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b, c])
     
-  GAdjProp (LexAdj adj) exp ->
-    EApp (EIdent (QIdent (adj))) (exp2dedukti exp)
-  GVerbProp (LexVerb verb) exp ->
-    EApp (EIdent (QIdent (verb))) (exp2dedukti exp)
-  GVerb2Prop (LexVerb2 verb) x y ->
-    EApp (EApp (EIdent (QIdent (verb))) (exp2dedukti x)) (exp2dedukti y)
-  GNoun2Prop (LexNoun2 noun) x y ->
-    EApp (EApp (EIdent (QIdent (noun))) (exp2dedukti x)) (exp2dedukti y)
+  GVerbProp verb exp ->
+    EApp (EIdent (QIdent (showGF verb))) (exp2dedukti exp)
+  GVerb2Prop verb x y ->
+    EApp (EApp (EIdent (QIdent (showGF verb))) (exp2dedukti x)) (exp2dedukti y)
+    
+  GNoun1Prop noun exp ->
+    EApp (EIdent (QIdent (showGF noun))) (exp2dedukti exp)
+  GNoun2Prop noun x y ->
+    EApp (EApp (EIdent (QIdent (showGF noun))) (exp2dedukti x)) (exp2dedukti y)
+    
   GIndexedFormulaProp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GFormulaProp formula -> formula2dedukti formula
   _ -> eUndefinedDebug prop ---- TODO complete Informath2Core
