@@ -1193,18 +1193,14 @@ Assuming that this is the case with `prop30`, the following MathCore text is gen
 
 The relevant part of symbol table used here is
 ```
-Nat   natural_Noun natural_Const
-even  even_Adj
-odd   odd_Adj
-plus  plus_FunC plus_Oper2
+Nat : natural_Noun
+even : even_Adj
+odd : odd_Adj
+plus : plus_FunC
 ```
-Each line has the form
-```
-<DeduktiId>  <GFId> <GFId>*
-```
-where the first `<GFId>` is the "canonical" function used in MathCore and the remaining ones are synonyms that can be used in full Informathl.
+In MathCore, we only use the first GF `<GFId>` on each line; the remaining ones are synonyms that can be used in full Informathl.
 The types of the GF identifiers are looked up from the grammar and therefore not written explicitly in the symbol table.
-We use the word "canonical" in quotes here, because a MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous.
+Notice that a MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous.
 
 After selecting the form of GF judgement, the translator descends recursively to the parts of the hypothesis, the type, and the possible defining part.
 These parts are mostly built with function applications, and the translation uses the symbol table to identify the GF function and its type for each function head, to select the proper GF term to translate the application.
@@ -1256,12 +1252,28 @@ to
 ```
 noLabel : Proof (even (nd 8)) .
 ```
+Recall the use of the wrapper function `nd` converting digits to elements of the set `Number`.
 When an English theorem statement has no label, the identifier `noLabel` is used in Dedukti.
-If some of the words can be parsed in GF but is not find in the symbol table, the identifier `UNDEFINED_<GFId>` is created.
+If some of the words can be parsed in GF but are not found in the symbol table, the identifier `UNDEFINED_<GFExp>` is created.
 
 
 ## The full Informath language
 
+The extension of MathCore to full Informath contains
+
+- synonyms of lexical functions
+- symbolic expressions from standard mathematical notations
+- flattening and aggregation expressions, producing shorter expressions
+- *in situ* quantifier phrases, with or without explicitly bound variables
+- word order variations, such as "B if A" as a variant of "if A then B"
+- pronouns and other anaphoric expressions
+
+While MathCore has an open-ended lexicon, full Informath also has open-ended syntax.
+In order to keep the translation to Dedukti simple, syntax extensions are equipped with rules that map them to MathInformath.
+Lexicon extensions get their interpretations via symbol tables.
+
+
+### Synonyms
 
 ### Symbolic terms and constants
 
