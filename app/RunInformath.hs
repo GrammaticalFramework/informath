@@ -92,7 +92,7 @@ helpMsg4 = unlines [
   just "-base=<file.dk>+" ("base Dedukti constants, default " ++ baseConstantFile),
   just "-symboltables=<file.dkgf>+" ("map from Dedukti to GF, replacing the default " ++ constantTableFile),
   just "-add-symboltables=<file.dkgf>+" ("map from Dedukti to GF,  added to" ++ constantTableFile),
-  just "-grammar=<file.pgf>" ("GF grammar used, default " ++ grammarFile),
+  just "-grammar=<file.pgf>" ("GF grammar used, default " ++ engGrammarFile ++ " or (if -to-lang or -for-lang is not Eng) " ++ fullGrammarFile),
   "",
   "* Translating from Dedukti:",
   "",

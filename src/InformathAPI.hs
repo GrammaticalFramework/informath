@@ -59,7 +59,7 @@ readEnv :: [Flag] -> IO Env
 readEnv args = do
   root <- getEnv informathRootVar
   mo <- readDeduktiModule (argValues "-base" (root ++ "/" ++ baseConstantFile) args)
-  gr <- readGFGrammar (argValue "-grammar" (root ++ "/" ++ grammarFile) args)
+  gr <- readGFGrammar (argValue "-grammar" (root ++ "/" ++ grammarFile args) args)
   let symboltables =
         if flagHasValue "-add-symboltables" args
 	then constantTableFile : argValues "-add-symboltables" "" args
@@ -117,9 +117,17 @@ mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
 
 -- * Default source files, which can be changed in Env flags (see RunInformath -help)
 
-grammarFile = "share/Informath.pgf" 
+engGrammarFile = "share/InformathEng.pgf" 
+fullGrammarFile = "share/InformathFull.pgf" 
 baseConstantFile = "share/baseconstants.dk"  
 constantTableFile = "share/baseconstants.dkgf"
+
+-- * select English-only (default) or full grammar (if -to-lang or -for-lang is other than Eng)
+-- * can be overridden with the -grammar=<file>.pgf flag
+grammarFile :: [Flag] -> FilePath
+grammarFile args = case (argValue "-from-lang" english args, argValue "-to-lang" english args) of
+  ("Eng", "Eng") -> engGrammarFile
+  _ -> fullGrammarFile
 
 -- * Main types involved
 

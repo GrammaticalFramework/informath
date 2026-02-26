@@ -6,23 +6,23 @@ lang=Eng
 
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
 
-all: Dedukti Agda Rocq Lean grammar RunInformath rootlink
+all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
 
-grammar: share/Informath.pgf
+english_grammar: share/InformathEng.pgf
 
 RunInformath:
 	stack install
 
-devel: grammar RunInformath rootlink
+devel: english_grammar RunInformath rootlink
 
 rootlink:
-	export INFORMATH_ROOT=`pwd`
+	export INFORMATH_ROOT=$(CURDIR)
 
-share/Informath.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/
+full_grammar:
+	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
-english_grammar:
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/
+share/InformathEng.pgf: $(GF_FILES)
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
 
 
 Dedukti:
