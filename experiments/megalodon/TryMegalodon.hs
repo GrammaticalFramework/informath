@@ -5,18 +5,10 @@
 module Main where
 
 import Prelude
-  ( ($), (.)
-  , Either(..)
-  , Int, (>)
-  , String, (++), concat, unlines
-  , Show, show
-  , IO, (>>), (>>=), mapM_, putStrLn
-  , FilePath
-  , getContents, readFile, lines, map, unwords, putStr, zip, uncurry
-  )
 import System.Environment ( getArgs )
 import System.Exit        ( exitFailure )
 import Control.Monad      ( when )
+import Data.Char (isSpace)
 
 import AbsMegalodon   ()
 import LexMegalodon   ( Token, mkPosToken )
@@ -32,7 +24,17 @@ putStrV :: Verbosity -> String -> IO ()
 putStrV v s = when (v > 1) $ putStrLn s
 
 runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
-runFile v p f = putStrLn f >> readFile f >>= \f -> mapM_ (run v p) (zip [1..] (lines f))
+runFile v p f = putStrLn f >> readFile f >>= \f -> mapM_ (run v p) (zip [1..] (jments f))
+
+jments :: String -> [String]
+jments = filter (not . null) . map (unwords . words) . split '.'
+
+--- Data.List.Split cannot be found...
+split :: Char -> String -> [String]
+split c cs = case break (==c) cs of
+  ([], []) -> []
+  (s,  []) -> [s]
+  (s, c:s2) -> (s ++ [c]) : split c s2
 
 run :: (Print a, Show a) => Verbosity -> ParseFun a -> (Int, String) -> IO ()
 run v p (n, s) =
