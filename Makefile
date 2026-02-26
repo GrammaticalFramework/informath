@@ -1,4 +1,4 @@
-RUN  := stack exec RunInformath --
+RUN  := RunInformath
 OPEN := open  # pdf viewer command
 GF_FILES := $(wildcard grammars/*.gf)
 

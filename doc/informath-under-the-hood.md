@@ -970,7 +970,7 @@ Jmt ::=
   | Label "." Hypo* Kind "is a basic type "."
   | Label "." Hypo* Exp "is a" Kind ()"defined as" Exp)? "."
 ```
-The hypothesis are either assumptions of propositions or declarations of variables.
+The hypotheses are either assumptions of propositions or declarations of variables.
 ```
 Hypo ::=
     "Assume that" Prop "."
@@ -1036,6 +1036,17 @@ Prop ::=
 ```
 The item `prep` in these rules, with or without a numeric index, refers to the inherent preposition of the predicate.
 It can also be empty, as in the case of transitive `V2`.
+
+Recall that every rule in the context free grammars we show corresponds to a GF abstract syntax function.
+The functions associated with lexican categories as the ones above will be called **lexical application functions**.
+Their types - and indeed their internal names - can be read from the context-free rules:
+```
+fun AdjProp : Adj -> Exp -> Prop
+fun Adj2Prop : Adj2 -> Exp -> Exp -> Prop
+fun AdjCProp : AdjC -> Exp -> Exp -> Prop
+```
+and so on; notice that the lexical item itself is always listed as the first argument.
+Users of Informath do not need to see these abstract syntax function names except when changing the grammar or debugging the parser.
 
 
 #### Kinds
@@ -1161,16 +1172,18 @@ Needless to say, these rule produce rough "verbalizations" that can hardly be re
 The translation from Dedukti to MathCore is defined in a Haskell module that maps Dedukti abstract syntax trees to MathCore abstract syntax trees.
 It is defined top-down starting from judgements, and descending to the smallest parts of them, guided by the symbol table.
 
-The symbol table is given by the user as pairs of Dedukti and MathCore constants.
-The table actually used in the translator is constructed from this information by consulting the actual GF grammar.
+The symbol table is given by the user as a mapping from Dedukti constants to lists of MathCore functions.
+The table actually used in the translator also contains type information, which is derived from the actual GF grammar.
+This process can also fail, if there is a type mismatch between the Dedukti constant and the GF function.
 
-The first step is to select the form of judgement in MathCore that is used for the Dedukti judgement.
+The first step in translation is to select the form of judgement in MathCore that is used for the Dedukti judgement.
 Recall that MathCore has four kinds of judgement, defining or postulating either propositions (usually, predicates forming them), kinds, expressions, or proofs.
-From the typing part of a Dedukti judgement, of the form
+
+A Dedukti typing judgement (ignoring definition parts for the moment), has the form
 ```
 Ident ":" Hypo* Exp 
 ```
-where the type expression is divided into a hypothesis part and the part that follows them.
+where the type expression can be divided into a hypothesis part and the part that follows them.
 This division is performed by following the syntax of the type as long as it has one of one of the forms $(x : A) \rightarrow B$ or $A \rightarrow B$.
 The extracted hypotheses form the **context** of the judgement.
 For example, the Dedukti judgement
@@ -1182,7 +1195,7 @@ is analysed into
 prop30 : (n : Elem Nat) (Proof (odd n)) ==> Proof (even (plus n 1)).
 ```
 where we mark the end of the context part with `==>`.
-Judgements with defining parts (Dedukti's `def` and `thm`) are analysed in the same way.
+Judgements with defining parts (Dedukti's `def` and `thm`) are analysed in the same way; they typically contain abstractions over variables for each type belonging to the hypotheses.
 
 A look-up in the symbol table tries to find the MathCore function of `Ident` and its type.
 If this fails, the translator tries another look-up at the head of `Exp`.
@@ -1198,13 +1211,17 @@ even : even_Adj
 odd : odd_Adj
 plus : plus_FunC
 ```
-In MathCore, we only use the first GF `<GFId>` on each line; the remaining ones are synonyms that can be used in full Informathl.
-The types of the GF identifiers are looked up from the grammar and therefore not written explicitly in the symbol table.
-Notice that a MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous.
+When generating MathCore, only the first GF function on each line is used. 
+The remaining ones are synonyms that can be used in full Informathl.
+Notice that one and the same MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous; this ambiguity should ideally be possible to resolve by type checking.
 
 After selecting the form of GF judgement, the translator descends recursively to the parts of the hypothesis, the type, and the possible defining part.
-These parts are mostly built with function applications, and the translation uses the symbol table to identify the GF function and its type for each function head, to select the proper GF term to translate the application.
-If the form is not an application or an identifier found in the symbol table, the back-up rules are used to form a baseline translation.
+These parts are mostly built with function applications, and the translation uses the symbol table to identify the GF function and its type for each function head, to select the proper GF expression to translate the application.
+If we denote the GF function assigned to the constant $c$ by $c^{G}$, the lexical application function of its category by $c^{C}$, and the translation a complex expression $e$ as $e^{T}$, we can define the translation concisely as follows:
+
+$$ (c a_1 \ldots a_n)^{T} = c^{C} c^{G} a_1^{T} ... a_n^{T} $$
+
+If the Dedukti expression is not an application or an identifier found in the symbol table, the back-up rules are used to form a baseline translation.
 
 If the Dedukti judgement has a definition part, this part is typically an abstraction expression with the same number of variable bindings as there are hypotheses.
 Here is an example:
@@ -1259,21 +1276,69 @@ If some of the words can be parsed in GF but are not found in the symbol table, 
 
 ## The full Informath language
 
-The extension of MathCore to full Informath contains
+The extension of MathCore to full Informath enables the following steps.
+They are performed in the following steps, which come in an order where earlier steps can feed later ones.
+Consider an example where each of these steps produces a different expression, starting from
+```
+c : Proof (not (exists Nat (n => (and (prime n) (divisible n (times 2 3)))))).
+```
+The direct MathCore informalization (of the proposition, omitting the proof label) is
 
-- synonyms of lexical functions
-- symbolic expressions from standard mathematical notations
-- flattening and aggregation expressions, producing shorter expressions
-- *in situ* quantifier phrases, with or without explicitly bound variables
-- word order variations, such as "B if A" as a variant of "if A then B"
-- pronouns and other anaphoric expressions
+- We can prove that it is not the case that there exists a natural number $n$, such that ( $n$ is a prime number and $n$ is divisible by the product of $2$ and $3$ ).
 
-While MathCore has an open-ended lexicon, full Informath also has open-ended syntax.
-In order to keep the translation to Dedukti simple, syntax extensions are equipped with rules that map them to MathInformath.
-Lexicon extensions get their interpretations via symbol tables.
+The first step performs unpeeling of coercions and disambiguating parentheses:
+
+- It is not the case that there exists a natural number $n$, such that $n$ is a prime number and $n$ is divisible by the product of $2$ and $3$.
+
+The second step is to generate symbolic expressions with standard mathematical notations, which here affects just the last part:
+
+- It is not the case that there exists a natural number $n$, such that $n$ is a prime number and $n$ is divisible by $2 \times 3$.
+
+The third step is to generate synonyms of lexical functions, here "is prime" from "is a prime number":
+
+- It is not the case that there exists a natural number $n$, such that $n$ is prime and $n$ is divisible by $2 \times 3$.
+
+The fourth step is to flatten conjunctions and disjunctions. It will convert propositions of the forms "A and (B and C)" and "(A and B) and C" to the flattened **list conjunction** form "A, B and C". 
+This step has no effect on our example.
+
+The fifth step is the **aggregation** of shared parts of expressions. In our example, the variable $n$ is a shared subject of two adjectival phrases, and the sentence-level conjunction can be made into a conjunction of adjectives:
+
+- It is not the case that there exists a natural number $n$, such that $n$ is prime and divisible by $2 \times 3$.
+
+The next step is to form *in situ* quantifier phrase, which appear as syntactic arguments of predicates.
+This is possible only when the bound quantifier occurs exactly once in its scope; thus it is here made possible by aggregation:
+
+- It is not the case that some natural number $n$ is prime and divisible by $2 \times 3$.
+
+The next step is to remove variable symbols that do not appear anywhere except in their bindings:
+
+- It is not the case that some natural number is prime and divisible by $2 \times 3$.
+
+Finally, the awkward negation of the existential can be fused into a single quantifier phrase:
+
+- No natural number is prime and divisible by $2 \times 3$.
+
+Negations can also be fused with atomic predications, producing "$n$ is nof odd" from "it is not the case that $n$ is odd"; notice that aggregation gives more opportunities to this trnansformation.
+
+In addition to the steps mentioned above, there is a growing number of syntactic structures that can produce more variants:
+
+- **discontinuous connectives**, such as "both A and B" as a variant of "A and B"
+- word order variations, such as "B if A" as a variant of "if A then B", and **post-quantifiers**, "B for all x in A" as a variant of "for all x in A, B"
+- pronouns and other anaphoric expressions: "it", "its", "the number", etc, when their reference is unique in the context
+
+The total effect of such transformations easily grows to hundreds of variants, and there is no upper limit.
+There is a rudimentary **ranking** that favours short verbalizations using the maximum of mathematical symbolism.
+On the other hand, it also gives penalties to ambiguous statements.
+A brief description of the best verbalization is maybe: the shortest possible unambiguous one.
 
 
-### Synonyms
+### The semantics of Informath
+
+The semantics of MathCore is given by its translation to Dedukti. 
+MathCore has an open-ended lexicon, and lexical items get their semantics via symbol tables that map them to Dedukti constant.
+In the full Informath grammar, also the syntax is open-ended.
+To guarantee the preservation of meaning, every syntax extension must be equipped with a rule that maps it back to MathCore and thereby to Dedukti.
+
 
 ### Symbolic terms and constants
 
@@ -1286,6 +1351,67 @@ Every entry in a symbol table must have a verbal function as its primary renderi
   Oper        Term -> Term             \sqrt
   Oper2       Term -> Term -> Term     +
 ```
+A few constants of each of these categories are provided, dating back to an early version of the grammar.
+They permit the generation and parsing of common expressions and formulas such as 
+```
+  $a^{n} + b^{n} \neq c^{n}$
+```
+which LaTeX renders as
+
+$$ a ^ {n} + b ^ {n} \neq c ^ {n} $$
+
+Here, `+` and `^` belong to the category `Oper2`, whereas `\neq` is in `Compar`.
+
+LaTeX notation defined by grammar comes with two issues:
+
+- It is brittle, because mathematicians use LaTeX in different ways, for instance, adding spacing to make the layout prettier.
+- All new notations must be included in the grammar, which must then be recompiled.
+
+A more robust and scalable way to deal with LaTeX is hence to support the definition of arbitrary **macros** in symbol tables.
+A macro symbol can then be included in the symbol table entry and its definition given in a separate `#MACRO` directive.
+For example,
+```
+congruent : "X is congruent to Y modulo X" | \congruent
+
+#MACRO \congruent 3 #1 \equiv #2 \, \text{mod} \, #3
+```
+This words very well in informalization, whereas formalization only works for LaTeX code that is written by using the macros declared.
+
+
+### Generating symbolic notation
+
+The generation of symbolic notation operates on two different categories: propositions (`Prop`), symbolized as formulas (`Formula`), and expressions (`Exp`), symbolized as terms (`Term`).
+Only atomic propositions (formed by adjectives, nouns, and verbs) can currently be made symbolic, not logically complex ones.
+This follows the traditional style of informal mathematics.
+If the object language is formal logic, then it is of course possible to define complex formulas as expressions.
+
+The generation is driven by symbol tables, which assign GF functions (including LaTeX macros) to Dedukti constants.
+Some of these functions, as well as all macros, are classified as symbolic.
+If we denote the set of symbolic functions for constant $c$ by $c^{F}$, the lexical application function of the category of such a function $f$ by $f^{C}$, and the set of symbolic variants of a complex expression $e$ as $e^{S}$ as we can define set of symbolic formulas and terms concisely:
+
+$$ (c a_1 \ldots a_n)^{S} = \{  f^{C} f s_1 ... s_n  \mid f \in c^{F}, s_1 \in a_1^{S}, \ldots, s_n \in a_n^{S}  \}$$
+
+Notice that the arities of Dedukti constants and their associated symbolic functions must match.
+This is guaranteed by the type checking of the symbol tables.
+
+A built-in restriction of this definition is that symbolic terms (and formulas) can only have symbolic parts. 
+This excludes, for the time being, some symbolic expressions with formal parts, such as comprehensions.
+It would probably not be difficult to add support them, but excluding them promotes a more succinct style.
+
+
+### Synonyms
+
+Symbolic notations are a special case of **synonyms**: alternative expression for one and the same Dedukti constant.
+Verbal synonyms are given in symbol table similarly to symbolic ones.
+They are used in a similar way when generating alternative expressions:
+
+$$ (c a_1 \ldots a_n)^{V} = \{ f^{C} f v_1 ... v_n  \mid f \in f^{G}, v_1 \in a_1^{V}, \ldots, v_n \in a_n^{V}  \}$$
+
+Here, $c^{G}$ denotes the verbal functions (adjective, nouns, verbs) assigned to $c$, and $e^{V}$ contains *both* verbal and symbolic variants of $e$.
+The rationale is that a verbal function can always take symbolic expressions as arguments.
+
+
+
 
 ### Flattening and aggregation
 
@@ -1293,5 +1419,5 @@ Every entry in a symbol table must have a verbal function as its primary renderi
 ### In situ quantification
 
 
-### Parsing via Informath
+## Parsing via Informath
 
