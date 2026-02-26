@@ -22,7 +22,6 @@ executable RunInformath
     Environment
     Informath
     Lexing
-    MkConstants
     ParseInformath
     Ranking
     SpecialDeduktiConversions
