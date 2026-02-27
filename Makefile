@@ -53,8 +53,8 @@ demo:
 	echo "## parsing generated English with conversions back to Dedukti"
 	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
 	$(RUN) -from-lang=Eng out/exx.txt
-	echo "## parsing some natural English with conversions back to Dedukti"
-	$(RUN) -from-lang=Eng test/gflean-data.txt
+	echo "## parsing examples from Chartrand et al. with conversions to Dedukti"
+	$(RUN) -from-lang=Eng test/gflean-data.txt | grep -v UN
 	cat share/baseconstants.dk test/exx.dk >out/bexx.dk
 	echo "## converting some simple arithmetic statements to Agda"
 	$(RUN) -to-formalism=agda test/exx.dk
@@ -197,8 +197,11 @@ matita:
 	$(RUN) -symboltables=test/empty.dkgf test/mini-matita.dk
 
 gflean:
+	echo "## parsing examples from Chartrand et al. with conversions to Dedukti"
 	$(RUN) test/gflean-data.txt
 
 fermat:
 	$(RUN) -add-symboltables=test/fermat.dkgf -variations test/fermat.dk
 
+cartesian:
+	RunInformath -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk

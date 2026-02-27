@@ -919,14 +919,14 @@ category  semantic type              example
 Adj       Exp -> Prop                X is even
 Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
-AdjC      Exps -> Prop               X and Y are distinct (collective)
-AdjE      Exps -> Prop               X and Y are equal (equivalence)
+AdjC      Exps -> Prop               X and Y are distinct
+AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
 Fam       Kind -> Kind               list of As
 Fam2      Kind -> Kind -> Kind       function from As to Bs
 Fun       Exp -> Exp                 the square of X
 Fun2      Exp -> Exp -> Exp          the quotient of X and Y
 FunC      Exps -> Exp                the sum of X and Y
-Label     ProofExp                   theorem 1
+Label     ProofExp                   theorem 1 .
 Name      Exp                        the empty set
 Noun      Kind                       integer
 Noun1     Exp -> Prop                X is a prime
@@ -934,7 +934,7 @@ Noun2     Exp -> Exp -> Prop         X is a divisor of Y
 Verb      Exp -> Prop                X converges
 Verb2     Exp -> Exp -> Prop         X divides Y
 ```
-The category `Exps` contains non-empty lists of expressions. The last two expressions in a list are combined with the conjunction "and" and its equivalent in different languages.
+The category `Exps` contains non-empty lists of expressions. The last two expressions in a list are combined with the conjunction "and" and its equivalent in different languages. The token EQUIVALENCE does not belong to the output, but is shown here to distinguish `AdjE` from `AdjC`.
 
 The Informath software provides several ways to define symbol table entries.
 The least programming-intensive is to parse them with the Informath grammar from examples showing how words and variables are combined. Thus the above symbol table could also be given as follows:
@@ -989,7 +989,7 @@ Prop ::=
   | Prop "iff" Prop
   | "it is not the case that" Prop
   | "for all"  Kind Ident "," Prop
-  | "there exists a" Kind Ident "such that" Prop
+  | "there exists a" Kind Ident "," "such that" Prop
 ```
 These rules correspond one-to-one to a common formalization of logical constants in Dedukti.
 To prevent ambiguity, complex propositions (ones formed by logical constants) that appear as parts of other propositions are enclosed in brackets.
@@ -1039,14 +1039,15 @@ It can also be empty, as in the case of transitive `V2`.
 
 Recall that every rule in the context free grammars we show corresponds to a GF abstract syntax function.
 The functions associated with lexican categories as the ones above will be called **lexical application functions**.
-Their types - and indeed their internal names - can be read from the context-free rules:
+Their types can be read from the context-free rules, and their abstract syntax names are formed from the lexical category and the value type; for example,
 ```
 fun AdjProp : Adj -> Exp -> Prop
 fun Adj2Prop : Adj2 -> Exp -> Exp -> Prop
 fun AdjCProp : AdjC -> Exp -> Exp -> Prop
+fun Verb2Prop : Verb2 -> Exp -> Exp -> Prop
 ```
 and so on; notice that the lexical item itself is always listed as the first argument.
-Users of Informath do not need to see these abstract syntax function names except when changing the grammar or debugging the parser.
+Users of Informath do not need to see the abstract syntax function names except when changing the grammar or debugging the parser.
 
 
 #### Kinds
@@ -1093,7 +1094,7 @@ Term :=
     Ident
   | Int
 ```
-But it will be extended with many more rules in the full Informath.
+But it is extended with many more rules in the full Informath.
 There we will also extend the `Exp` category with rules that form quantifier phrases (such as "ever number") and other expressions that are not singular terms in the logical sense.
 
 
@@ -1118,31 +1119,45 @@ The above categories of nouns, adjectives, and verbs cover a large part of verba
 However, there are cases where this does not hold.
 Such cases are taken care of GF functions that, instead of being constants of the lexical categories, take arguments and return values of the basic types, that is, `Prop`, `Kind`, `Exp`, and `Proof`. 
 Also `Ident` can occur as an argument, corresponding to a bound variable in higher-order abstract syntax.
-We have already seen examples, the logical constants, such as
+We have already seen examples of this: the logical constants, such as
 
 - Dedukti: `and : Prop -> Prop -> Prop`
 - Informath: `CoreAndProp : Prop -> Prop -> Prop`
-- symbol table: `and CoreAndProp`
+- symbol table: `and : CoreAndProp`
 
 - Dedukti `forAll : (A : Set) -> (Elem A -> Prop) -> Prop`
 - GF: `CoreAllProp : Kind -> Ident -> Prop -> Prop`
-- symbol table: `forAll CoreAllProp`
+- symbol table: `forAll : CoreAllProp`
 
 Another example is sum expressions:
 
 - Dedukti : `sigma : Elem Num -> Elem Num -> (Elem Num -> Elem Num) -> Elem Num`
 - GF: `SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp`
-- symbol table: `sigma SigmaExp`
+- symbol table: `sigma : SigmaExp`
 
 The symbol table entries work if the Dedukti and GF types match.
-Run-time errors can (for the time being) happen if the code contains.
+Run-time errors can occur if the Dedukti code contains function applications with different arities than those expected by the symbol table.
 If they are difficult to fix in the source code, using the empty symbol table should always produce failure-free verbalizations.
+
+But one special case is possible to treat in a symbol table: dropping initial arguments. 
+These are typically hidden arguments in another formalism, but Dedukti makes them explicit.
+For example, one might have
+
+- Dedukti : `pair : (A : Set) -> (B : Set) -> Elem A -> Elem B -> Elem (Cart A B)`
+- GF : `pair_FunC : Exp -> Exp -> Exp`
+- symbol table : `pair : pair_FunC`
+
+In this case, the symbol table entry
+```
+#DROP pair 2
+```
+directs Informath to drop the first two arguments when converting a `pair` expression to a GF tree.
 
 
 
 #### Dedukti expressions outside the grammar
 
-To achieve the full potential of informalization, all constants in the Dedukti file should have entries in a symbol table that maps them to lexical constants in the GF grammar.
+To reach the full potential of informalization, all constants in the Dedukti file should have entries in a symbol table that maps them to lexical constants in the GF grammar.
 However, for the sake of completeness, Informath also has rules corresponding to raw Dedukti terms, that is, 
 
 - variables
@@ -1172,8 +1187,8 @@ Needless to say, these rule produce rough "verbalizations" that can hardly be re
 The translation from Dedukti to MathCore is defined in a Haskell module that maps Dedukti abstract syntax trees to MathCore abstract syntax trees.
 It is defined top-down starting from judgements, and descending to the smallest parts of them, guided by the symbol table.
 
-The symbol table is given by the user as a mapping from Dedukti constants to lists of MathCore functions.
-The table actually used in the translator also contains type information, which is derived from the actual GF grammar.
+The symbol table is provided by the user as a mapping from Dedukti constants to lists of GF functions.
+The table actually used in the translator also contains type information, which is derived from the GF grammar.
 This process can also fail, if there is a type mismatch between the Dedukti constant and the GF function.
 
 The first step in translation is to select the form of judgement in MathCore that is used for the Dedukti judgement.

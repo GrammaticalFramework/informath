@@ -1,0 +1,4 @@
+Cart : (A : Set) -> (B : Set) -> Set.
+pair : (A : Set) -> (B : Set) -> Elem A -> Elem B -> Elem (Cart A B).
+
+xy : Proof (if (Eq x y) (Eq (pair A B x y) (pair A B y x))).

@@ -1,143 +1,146 @@
-let $ x \in \textbf { R } $ . if $ x < 0 $ , then $ x ^ { 2 } + 1 > 0 $ .
+% from Mathematical Proofs: A Transition to Advanced Mathematics by Chartrand et al,
+% as used in Pathak's GFLean project. 
 
-let $ x \in \textbf { R } $ . if $ x ^ { 2 } - 2 x + 2 \leq 0 $ , then $ x ^ { 3 } \geq 8 $ .
+ex. let $ x \in \textbf { R } $ . if $ x < 0 $ , then $ x ^ { 2 } + 1 > 0 $ .
 
-let $ S = \{ n \in \textbf { Z } : n \geq 2 \} $ and let $ n \in S $ . if $ 2 n + \frac { 2 } { n } \leq 5 $ , then $ 4 n ^ { 2 } + \frac { 4 } { n ^ { 2 } } < 25 $ .
+ex. let $ x \in \textbf { R } $ . if $ x ^ { 2 } - 2 x + 2 \leq 0 $ , then $ x ^ { 3 } \geq 8 $ .
 
-let $ x \in \textbf { R } $ . if $ 0 < x < 1 $ , then $ x ^ { 2 } - 2 x + 2 \neq 0 $ .
+ex. let $ S = \{ n \in \textbf { Z } : n \geq 2 \} $ and ex. let $ n \in S $ . if $ 2 n + \frac { 2 } { n } \leq 5 $ , then $ 4 n ^ { 2 } + \frac { 4 } { n ^ { 2 } } < 25 $ .
 
-let $ n \in \textbf { N } $ . if $ | n - 1 | + | n + 1 | \leq 1 $ , then $ | n ^ { 2 } - 1 | \leq 4 $ .
+ex. let $ x \in \textbf { R } $ . if $ 0 < x < 1 $ , then $ x ^ { 2 } - 2 x + 2 \neq 0 $ .
 
-let $ r \in \textbf { Q } ^ { + } $ . if $ \frac { r ^ { 2 } + 1 } { r } \leq 1 $ , then $ \frac { r ^ { 2 } + 2 } { r } \leq 2 $ .
+ex. let $ n \in \textbf { N } $ . if $ | n - 1 | + | n + 1 | \leq 1 $ , then $ | n ^ { 2 } - 1 | \leq 4 $ .
 
-let $ x \in \textbf { R } $ . if $ x ^ { 3 } - 5 x - 1 \geq 0 $ , then $ ( x - 1 ) ( x - 3 ) \geq - 2 $ .
+ex. let $ r \in \textbf { Q } ^ { + } $ . if $ \frac { r ^ { 2 } + 1 } { r } \leq 1 $ , then $ \frac { r ^ { 2 } + 2 } { r } \leq 2 $ .
 
-let $ n \in \textbf { N } $ . if $ n + \frac { 1 } { n } < 2 $ , then $ n ^ 2 + \frac { 1 } { n ^ { 2 } } < 4 $ .
+ex. let $ x \in \textbf { R } $ . if $ x ^ { 3 } - 5 x - 1 \geq 0 $ , then $ ( x - 1 ) ( x - 3 ) \geq - 2 $ .
 
-an integer $ n $ is defined to be \textbf { even } if $ n = 2 k $ for some integer $ k $ .
+ex. let $ n \in \textbf { N } $ . if $ n + \frac { 1 } { n } < 2 $ , then $ n ^ 2 + \frac { 1 } { n ^ { 2 } } < 4 $ .
 
-we define an integer $ n $ to be \textbf { odd } if $ n = 2 k + 1 $ for some integer $ k $ .
+ex. an integer $ n $ is defined to be \textbf { even } if $ n = 2 k $ for some integer $ k $ .
 
-if $ a , b $ and $ c $ are odd integers such that $ a + b + c = 0 $ , then $ a b c < 0 $ .
+ex. we define an integer $ n $ to be \textbf { odd } if $ n = 2 k + 1 $ for some integer $ k $ .
 
-if $ x , y $ and $ z $ are three real numbers such that $ x ^ { 2 } + y ^ { 2 } + z ^ { 2 } < x y + x z + y z $ , then $ x + y + z > 0 $ .
+ex. if$ a , b $ and $ c $ are odd integers such that $ a + b + c = 0 $ , then $ a b c < 0 $ .
 
-if $ n $ is an odd integer , then $ 3 n + 7 $ is an even integer .
+ex. if$ x , y $ and $ z $ are three real numbers such that $ x ^ { 2 } + y ^ { 2 } + z ^ { 2 } < x y + x z + y z $ , then $ x + y + z > 0 $ .
 
-if $ n $ is an even integer , then $ - 5 n - 3 $ is an odd integer .
+ex. if$ n $ is an odd integer , then $ 3 n + 7 $ is an even integer .
 
-if $ n $ is an odd integer , then $ 4 n ^ { 3 } + 2 n - 1 $ is odd .
+ex. if$ n $ is an even integer , then $ - 5 n - 3 $ is an odd integer .
 
-let $ S = \{ 1 , 2 , 3 \} $ and let $ n \in S $ . if $ \frac { n ( n + 3 ) } { 2 } $ is even , then $ \frac { ( n + 2 ) ( n - 5 ) } { 2 } $ is even .
+ex. if$ n $ is an odd integer , then $ 4 n ^ { 3 } + 2 n - 1 $ is odd .
 
-if $ n $ is an even integer , then $ 3 n ^ { 5 } $ is an even integer .
+ex. let $ S = \{ 1 , 2 , 3 \} $ and ex. let $ n \in S $ . if $ \frac { n ( n + 3 ) } { 2 } $ is even , then $ \frac { ( n + 2 ) ( n - 5 ) } { 2 } $ is even .
 
-if $ x $ is an odd integer , then $ 9 x + 5 $ is even .
+ex. if$ n $ is an even integer , then $ 3 n ^ { 5 } $ is an even integer .
 
-if $ x $ is an even integer , then $ 5 x - 3 $ is an odd integer .
+ex. if$ x $ is an odd integer , then $ 9 x + 5 $ is even .
 
-if $ a $ and $ c $ are odd integers , then $ a b + b c $ is even for every integer $ b $ .
+ex. if$ x $ is an even integer , then $ 5 x - 3 $ is an odd integer .
 
-let $ n \in \textbf { Z } $ . if $ 1 - n ^ { 2 } > 0 $ , then $ 3 n - 2 $ is an even integer .
+ex. if$ a $ and $ c $ are odd integers , then $ a b + b c $ is even for every integer $ b $ .
 
-let $ x \in \textbf { Z } $ . if $ 2 ^ { 2 x } $ is an odd integer , then $ 2 ^ { - 2 x } $ is an odd integer .
+ex. let $ n \in \textbf { Z } $ . if $ 1 - n ^ { 2 } > 0 $ , then $ 3 n - 2 $ is an even integer .
 
-let $ S = \{ 0 , 1 , 2 \} $ and let $ n \in S $ . if $ ( n + 1 ) ^ { 2 } ( n + 2 ) ^ { 2 } / 4 $ is even , then $ ( n + 2 ) ^ { 2 } ( n + 3 ) ^ { 2 } / 4 $ is even .
+ex. let $ x \in \textbf { Z } $ . if $ 2 ^ { 2 x } $ is an odd integer , then $ 2 ^ { - 2 x } $ is an odd integer .
 
-let $ S = \{ 1 , 5 , 9 \} $ . if $ n \in S $ and $ \frac { n ^ { 2 } + n - 6 } { 2 } $ is odd , then $ \frac { 2 n ^ { 3 } + 3 n ^ { 2 } + n } { 6 } $ is even .
+ex. let $ S = \{ 0 , 1 , 2 \} $ and ex. let $ n \in S $ . if $ ( n + 1 ) ^ { 2 } ( n + 2 ) ^ { 2 } / 4 $ is even , then $ ( n + 2 ) ^ { 2 } ( n + 3 ) ^ { 2 } / 4 $ is even .
 
-let $ A = \{ n \in \textbf { Z } : n > 2 \text { and $ n $ is odd } \} $ and $ B = \{ n \in \textbf { Z } : n < 11 \} $ . if $ n \in A \cap B $ , then $ n ^ { 2 } - 2 $ is prime .
+ex. let $ S = \{ 1 , 5 , 9 \} $ . if $ n \in S $ and $ \frac { n ^ { 2 } + n - 6 } { 2 } $ is odd , then $ \frac { 2 n ^ { 3 } + 3 n ^ { 2 } + n } { 6 } $ is even .
 
-let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is even , then $ x $ is odd .
+ex. let $ A = \{ n \in \textbf { Z } : n > 2 \text { and $ n $ is odd } \} $ and $ B = \{ n \in \textbf { Z } : n < 11 \} $ . if $ n \in A \cap B $ , then $ n ^ { 2 } - 2 $ is prime .
 
-let $ x \in \textbf { Z } $ . then $ 11 x - 7 $ is even if and only if $ x $ is odd .
+ex. let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is even , then $ x $ is odd .
 
-let $ x \in \textbf { Z } $ . then $ x ^ { 2 } $ is even if and only if $ x $ is even .
+ex. let $ x \in \textbf { Z } $ . then $ 11 x - 7 $ is even if and only if $ x $ is odd .
 
-let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is odd , then $ x $ is even .
+ex. let $ x \in \textbf { Z } $ . then $ x ^ { 2 } $ is even if and only if $ x $ is even .
 
-let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is odd , then $ 9 x + 2 $ is even .
+ex. let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is odd , then $ x $ is even .
 
-let $ x \in \textbf { Z } $ . if $ 7 x + 5 $ is odd , then $ x $ is even .
+ex. let $ x \in \textbf { Z } $ . if $ 5 x - 7 $ is odd , then $ 9 x + 2 $ is even .
 
-let $ n \in \textbf { Z } $ . if $ 15 n $ is even , then $ 9 n $ is even .
+ex. let $ x \in \textbf { Z } $ . if $ 7 x + 5 $ is odd , then $ x $ is even .
 
-let $ x \in \textbf { Z } $ . then $ 5 x - 11 $ is even if and only if $ x $ is odd .
+ex. let $ n \in \textbf { Z } $ . if $ 15 n $ is even , then $ 9 n $ is even .
 
-let $ x \in \textbf { Z } $ . if $ 7 x + 4 $ is even , then $ 3 x - 11 $ is odd .
+ex. let $ x \in \textbf { Z } $ . then $ 5 x - 11 $ is even if and only if $ x $ is odd .
 
-let $ x \in \textbf { Z } $ . then $ 3 x + 1 $ is even if and only if $ 5 x - 2 $ is odd .
+ex. let $ x \in \textbf { Z } $ . if $ 7 x + 4 $ is even , then $ 3 x - 11 $ is odd .
 
-let $ n \in \textbf { Z } $ . then $ ( n + 1 ) ^ { 2 } - 1 $ is even if and only if $ 5 x - 2 $ is odd .
+ex. let $ x \in \textbf { Z } $ . then $ 3 x + 1 $ is even if and only if $ 5 x - 2 $ is odd .
 
-let $ S = \{ 2 , 3 , 4 \} $ and let $ n \in S $ . if $ n ^ { 2 } ( n - 1 ) ^ { 2 } / 4 $ is even , then $ n ^ { 2 } ( n + 1 ) ^ { 2 } / 4 $ is even .
+ex. let $ n \in \textbf { Z } $ . then $ ( n + 1 ) ^ { 2 } - 1 $ is even if and only if $ 5 x - 2 $ is odd .
 
-let $ A = \{ 0 , 1 , 2 \} $ and $ B = \{ 4 , 5 , 6 \} $ be subsets of $ S = \{ 0 , 1 , \ldots , 6 \} $ . let $ n \in S $ . if $ \frac { n ( n - 1 ) ( n - 2 ) } { 6 } $ is even , then $ n \in A \cup B $ .
+ex. let $ S = \{ 2 , 3 , 4 \} $ and ex. let $ n \in S $ . if $ n ^ { 2 } ( n - 1 ) ^ { 2 } / 4 $ is even , then $ n ^ { 2 } ( n + 1 ) ^ { 2 } / 4 $ is even .
 
-let $ n \in \textbf { Z } $ . then $ 2 n ^ { 2 } + n $ is odd if and only if $ \cos { \frac { n \pi } { 2 } } $ is even .
+ex. let $ A = \{ 0 , 1 , 2 \} $ and $ B = \{ 4 , 5 , 6 \} $ be subsets of $ S = \{ 0 , 1 , \ldots , 6 \} $ . ex. let $ n \in S $ . if $ \frac { n ( n - 1 ) ( n - 2 ) } { 6 } $ is even , then $ n \in A \cup B $ .
 
-let $ \{ A , B \} $ be a partition of the set of $ S = \{ 1 , 2 , \ldots , 7 \} $ , where $ A = \{ 1 , 4 , 5 \} $ and $ B = \{ 2 , 3 , 6 , 7 \} $ . let $ n \in S $ . if $ \frac { n ^ { 2 } + 3 n - 4 } { 2 } $ is even , then $ n \in A $ .
+ex. let $ n \in \textbf { Z } $ . then $ 2 n ^ { 2 } + n $ is odd if and only if $ \cos { \frac { n \pi } { 2 } } $ is even .
 
-if $ n \in \textbf { Z } $ , then $ n ^ { 2 } + 3 n + 5 $ is an odd integer .
+ex. let $ \{ A , B \} $ be a partition of the set of $ S = \{ 1 , 2 , \ldots , 7 \} $ , where $ A = \{ 1 , 4 , 5 \} $ and $ B = \{ 2 , 3 , 6 , 7 \} $ . ex. let $ n \in S $ . if $ \frac { n ^ { 2 } + 3 n - 4 } { 2 } $ is even , then $ n \in A $ .
 
-two integers $ x $ and $ y $ are said to be \textbf { of the same parity } if $ x $ and $ y $ are both even or are both odd .
+ex. if $ n \in \textbf { Z } $ , then $ n ^ { 2 } + 3 n + 5 $ is an odd integer .
 
-the integers $ x $ and $ y $ are \textbf { of opposite parity } if one of $ x $ and $ y $ is even and the other is odd .
+ex. two integers $ x $ and $ y $ are said to be \textbf { of the same parity } if $ x $ and $ y $ are both even or are both odd .
 
-let $ x , y \in \textbf { Z } $ . then $ x $ and $ y $ are of the same parity if and only if $ x + y $ is even .
+ex. the integers $ x $ and $ y $ are \textbf { of opposite parity } if one of $ x $ and $ y $ is even and the other is odd .
 
-let $ a $ and $ b $ be integers . then $ a b $ is even if and only if $ a $ is even or $ b $ is even .
+ex. let $ x , y \in \textbf { Z } $ . then $ x $ and $ y $ are of the same parity if and only if $ x + y $ is even .
 
-let $ \mathcal { P } = \{ A , B , C \} $ be a partition of the set \textbf{Z} of integers , where $$ a = \{ n : n = 2a \text { where $ a $ is an odd integer } \} $$ , $$ b = \{ n : n = 2 b \text { where $ b $ is an even integer } \} $$ , $$ c = \{ n : n \text { is an odd integer } \} . $$ if $ x $ and $ y $ are integers belonging to distinct elements of $ \mathcal { P } $ , then $ x + y \in A \cup C $ .
+ex. let $ a $ and $ b $ be integers . then $ a b $ is even if and only if $ a $ is even or $ b $ is even .
 
-if $ n \in \textbf { Z } $ , then $ n ^ { 2 } - 3 n + 9 $ is odd .
+ex. let $ \mathcal { P } = \{ A , B , C \} $ be a partition of the set \textbf{Z} of integers , where $$ a = \{ n : n = 2a \text { where $ a $ is an odd integer } \} $$ , $$ b = \{ n : n = 2 b \text { where $ b $ is an even integer } \} $$ , $$ c = \{ n : n \text { is an odd integer } \} . $$ if $ x $ and $ y $ are integers belonging to distinct elements of $ \mathcal { P } $ , then $ x + y \in A \cup C $ .
 
-if $ n \in \textbf { Z } $ , then $ n ^ { 3 } - n $ is even .
+ex. if $ n \in \textbf { Z } $ , then $ n ^ { 2 } - 3 n + 9 $ is odd .
 
-let $ x , y \in \textbf { Z } $ . if $ x y $ is odd , then $ x $ and $ y $ are odd .
+ex. if $ n \in \textbf { Z } $ , then $ n ^ { 3 } - n $ is even .
 
-let $ a , b \in \textbf { Z } $ . if $ a b $ is odd , then $ a ^ { 2 } + b ^ { 2 } $ is even .
+ex. let $ x , y \in \textbf { Z } $ . if $ x y $ is odd , then $ x $ and $ y $ are odd .
 
-let $ x , y \in \textbf { Z } $ . then $ x - y $ is even if and only if $ x $ and $ y $ are of the same parity .
+ex. let $ a , b \in \textbf { Z } $ . if $ a b $ is odd , then $ a ^ { 2 } + b ^ { 2 } $ is even .
 
-let $ a , b \in \textbf { Z } $ . if $ a + b $ and $ a b $ are of the same parity , then $ a $ and $ b $ are even .
+ex. let $ x , y \in \textbf { Z } $ . then $ x - y $ is even if and only if $ x $ and $ y $ are of the same parity .
 
-let $ x $ and $ y $ be integers . then $ ( x + y ) ^ { 2 } $ is even if and only if $ x $ and $ y $ are of the same parity .
+ex. let $ a , b \in \textbf { Z } $ . if $ a + b $ and $ a b $ are of the same parity , then $ a $ and $ b $ are even .
 
-let $ A = \{ 1 , 2 , 3 \} $ and $ B = \{ 2 , 3 , 4 \} $ be subsets of $ S = \{ 1 , 2 , 3 , 4 \} $ . let $ n \in S $ . then $ 2 n ^ { 2 } - 5 n $ is either (a) positive and even or (b) negative and odd if and only if $ n \notin A \cap B $ .
+ex. let $ x $ and $ y $ be integers . then $ ( x + y ) ^ { 2 } $ is even if and only if $ x $ and $ y $ are of the same parity .
 
-let $ A = \{ 3 , 4 \} $ be a subset of $ S = \{ 1 , 2 , \ldots , 6 \} $ . let $ n \in S $ . if $ \frac { n ^ { 2 } ( n + 1 ) ^ { 2 } } { 4 } $ is even , then $ n \in A $ .
+ex. let $ A = \{ 1 , 2 , 3 \} $ and $ B = \{ 2 , 3 , 4 \} $ be subsets of $ S = \{ 1 , 2 , 3 , 4 \} $ . ex. let $ n \in S $ . then $ 2 n ^ { 2 } - 5 n $ is either (a) positive and even or (b) negative and odd if and only if $ n \notin A \cap B $ .
 
-for every nonnegative integer $ n $ , $ 2 ^ { n } + 6 ^ { n } $ is an even integer .
+ex. let $ A = \{ 3 , 4 \} $ be a subset of $ S = \{ 1 , 2 , \ldots , 6 \} $ . ex. let $ n \in S $ . if $ \frac { n ^ { 2 } ( n + 1 ) ^ { 2 } } { 4 } $ is even , then $ n \in A $ .
 
-let $ x , y \in \textbf { Z } $ . if $ 3 x + 4 y $ and $ 4 x + 5 y $ are both even , then $ x $ and $ y $ are both even .
+ex. for every nonnegative integer $ n $ , $ 2 ^ { n } + 6 ^ { n } $ is an even integer .
 
-let $ x , y , z \in \textbf { Z } $ . if exactly two of the three integers $ x , y , z $ are even , then $ 3 x + 5 y + 7 z $ is odd .
+ex. let $ x , y \in \textbf { Z } $ . if $ 3 x + 4 y $ and $ 4 x + 5 y $ are both even , then $ x $ and $ y $ are both even .
 
-let $ S = \{ 8 , 12 , 20 , 24 \} $ . if $ \{ x , y \} $ is a $ 2 $ -element subset of $ S $ , then either $ x + y = 8 k $ for some even integer $ k $ or $ x + y = 4 l $ for some odd integer $ l $ .
+ex. let $ x , y , z \in \textbf { Z } $ . if exactly two of the three integers $ x , y , z $ are even , then $ 3 x + 5 y + 7 z $ is odd .
 
-let $ A , B $ and $ C $ be sets . if $ x \notin A \cup B $ and $ x \notin B \cup C $ , then $ x \notin A \cup C $ .
+ex. let $ S = \{ 8 , 12 , 20 , 24 \} $ . if $ \{ x , y \} $ is a $ 2 $ -element subset of $ S $ , then either $ x + y = 8 k $ for some even integer $ k $ or $ x + y = 4 l $ for some odd integer $ l $ .
 
-a collection of a nonempty subsets of a nonempty set $ S $ is called a \textbf{cover} of $ S $ if every element of $ S $ belongs to atleast one of the subsets .
+ex. let $ A , B $ and $ C $ be sets . if $ x \notin A \cup B $ and $ x \notin B \cup C $ , then $ x \notin A \cup C $ .
 
-let $ a , b \in \textbf { Z } $ . if $ a $ is even or $ b $ is even , then $ a b $ is even .
+ex. a collection of a nonempty subsets of a nonempty set $ S $ is called a \textbf{cover} of $ S $ if every element of $ S $ belongs to atleast one of the subsets .
 
-if $ n $ is an odd integer , then $ 3 n - 5 $ is an even integer .
+ex. let $ a , b \in \textbf { Z } $ . if $ a $ is even or $ b $ is even , then $ a b $ is even .
 
-let $ n $ be an integer . if $ 3 n - 5 $ is an odd integer , then $ n $ is an even integer .
+ex. if $ n $ is an odd integer , then $ 3 n - 5 $ is an even integer .
 
-if $ x $ and $ y $ are integers of the same parity , then $ x - y $ is even .
+ex. let $ n $ be an integer . if $ 3 n - 5 $ is an odd integer , then $ n $ is an even integer .
 
-if $ m $ is an even integer and $ n $ is an odd integer , then $ 3 m + 5 n $ is odd .
+ex. if $ x $ and $ y $ are integers of the same parity , then $ x - y $ is even .
 
-let $ a , b \in \textbf { Z } $ . if $ a $ and $ b $ are of the same parity , then $ a ^ { 2 } - b ^ { 2 } $ is even .
+ex. if $ m $ is an even integer and $ n $ is an odd integer , then $ 3 m + 5 n $ is odd .
 
-let $ n \in \textbf { Z } $ . if $ 3 n - 8 $ is odd , then $ n $ is odd .
+ex. let $ a , b \in \textbf { Z } $ . if $ a $ and $ b $ are of the same parity , then $ a ^ { 2 } - b ^ { 2 } $ is even .
 
-let $ a , b \in \textbf { Z } $ . then $ a - b $ is even if and only if $ a $ and $ b $ are of the same parity .
+ex. let $ n \in \textbf { Z } $ . if $ 3 n - 8 $ is odd , then $ n $ is odd .
 
-let $ x , y \in \textbf { Z } $ . if $ x $ or $ y $ is even , then $ x y ^ { 2 } $ is even .
+ex. let $ a , b \in \textbf { Z } $ . then $ a - b $ is even if and only if $ a $ and $ b $ are of the same parity .
 
-let $ x \in \textbf { Z } $ . if $ 7 x - 3 $ is even , then $ 3 x + 8 $ is odd .
+ex. let $ x , y \in \textbf { Z } $ . if $ x $ or $ y $ is even , then $ x y ^ { 2 } $ is even .
 
-let $ n \in \textbf { Z } $ . then $ ( n - 5 ) ( n + 7 ) ( n + 13 ) $ is odd if and only if $ n $ is even .
+ex. let $ x \in \textbf { Z } $ . if $ 7 x - 3 $ is even , then $ 3 x + 8 $ is odd .
+
+ex. let $ n \in \textbf { Z } $ . then $ ( n - 5 ) ( n + 7 ) ( n + 13 ) $ is odd if and only if $ n $ is even .
