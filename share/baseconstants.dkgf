@@ -131,8 +131,9 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #DROP const 4
 #DROP Π-swap 6
 
-#MACRO \congruent 3 #1 \equiv #2 \, \mbox{mod} \, #3
-#MACRO \isempty 1 #1 = \emptyset
-#MACRO \divides 2 #1 \mid #2
+#MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+#MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
+#MACRO \newcommand{\divides}[2]{#1 \mid #2}
+
 
 

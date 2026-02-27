@@ -25,8 +25,9 @@ eulerconstant : "Euler's constant"
 lebesguemeasure : "the Lebesgue measure of X"
 
 
-#MACRO \contradiction 0 \bot
-#MACRO \isdisjoint 2 #1 \mathrel{\not\meets} #2
-#MACRO \empset 0 \emptyset
-#MACRO \singletonof 1 \{ #1 \}
+#MACRO \newcommand{\contradiction}{\bot}
+#MACRO \newcommand{\isdisjoint}[2]{#1 \mathrel{\not\meets} #2}
+#MACRO \newcommadn{\empset}{\emptyset}
+#MACRO \newcommand{\singletonof}[1]{\{ #1 \}}
+
 

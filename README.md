@@ -358,25 +358,21 @@ A GF function in a symbol table can be of any of the three kinds:
 
 - a natural-language expression in quotes, e.g. `"X is disjoint from Y"`
 - a GF abstract syntax expression from the Informath grammar, e.g. `disjoint_AdjC`
-- a LaTeX macro defined elsewhere, e.g. `\isdisjoint`
+- a LaTeX macro, e.g. `\isdisjoint`
 
 In addition to mappings from Dedukti to GF, a `.dkgf` file can contain the following kind of lines:
 ```
-#MACRO <macroname> <int> <definition>
+#MACRO <latex_newcommand>
 ```
-defines a LaTeX macro, which can be used on lines that map Dedukti identifiers to GF. The parts of this line are also converted to LaTeX `\newcommand` statements and included in the file generated with the `-to-latex-doc` option. For example, the mapping
+defines a LaTeX macro, which can be used on lines that map Dedukti identifiers to GF. The `\newcommand` directive on this line is included in the file generated with the `-to-latex-doc` option. For example, the mapping
 ```
 congruent : congruent_Adj3 | \congruent
 ```
-gives, as the primary rendering, the three-place adjective producing "$m$ is congruent to $n$ modulo $k$". The second alternative is a macro, which is defined as 
+gives, as the primary rendering, the three-place adjective producing "$m$ is congruent to $n$ modulo $k$". The second alternative is a macro, which is defined as a LaTeX `\newcommand` directive,
 ```
-#MACRO \congruent 3 #1 \equiv #2 \, \text{mod} \, #3
+#MACRO \newcommand{\congruent}[3]{#1 \equiv #2 \, \text{mod} \, #3}
 ```
-The resulting LaTeX command is
-```
-\newcommand{\congruent}[3]{#1 \equiv #2 \, \text{mod} \, #3}
-```
-which produces the rendering "$m \equiv n \, \text{mod} \, k$".
+This produces the rendering "$m \equiv n \, \text{mod} \, k$".
 
 The symbol table line
 ```

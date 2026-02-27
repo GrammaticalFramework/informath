@@ -16,6 +16,7 @@ import Utils
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (partition, sortOn, sort, groupBy, intersperse)
+import Data.Char (isDigit)
 
 type GFTree = PGF.Tree
 type Fun = GFTree
@@ -143,7 +144,7 @@ buildConstantTable pgf lang ls =
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
-    macroTable = M.fromList [(c, (read n, unwords rest)) | _:c:n:rest <- macrolines]
+    macroTable = M.fromList [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)]
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
     
     isConstantEntry line = head (head line) /= '#'
@@ -155,6 +156,18 @@ buildConstantTable pgf lang ls =
 splitEntry s = case split '|' s of
   fg : ws -> split ':' fg ++ ws
   _ -> []
+
+-- works on \newcommand{\foo}[n]{def}, also \renewcommand and with no [n]
+splitNewcommand :: String -> [String]
+splitNewcommand s = case break (=='{') s of
+  (_, _:rest) -> case break (=='}') rest of
+    (macro, _:mrest) -> macro : case mrest of
+      '[':nrest -> case break (==']') nrest of
+        (n@(_:_), _:drest) | all isDigit n -> n : [init (tail drest)]
+      _ -> "0" : [init (tail mrest)]
+    _ -> error ("expected valid newcommand, found: " ++ s)
+  _ -> error ("expected valid newcommand, found: " ++ s)
+
 
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry

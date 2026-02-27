@@ -3,6 +3,7 @@ pair : "the pair of X and Y" | \cartpair
 
 #DROP pair 2
 
-#MACRO \Cart 2 #1 \times #2
-#MACRO \cartpair 2 ( #1 , #2 )
+#MACRO \newcommand{\Cart}[2]{#1 \times #2}
+#MACRO \newcommand{\cartpair}[2]{( #1 , #2 )}
+
 
