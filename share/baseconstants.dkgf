@@ -46,7 +46,7 @@ succ : successor_Fun
 abs : absolute_value_Fun | absolute_value_Oper
 factorial : factorial_Fun | factorial_Oper
 gcd : gcd_FunC
-even : "X is even"
+even : even_Adj
 odd : odd_Adj
 prime : prime_Adj
 divisible : divisible_Adj2

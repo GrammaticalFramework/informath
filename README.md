@@ -42,7 +42,7 @@ The Informath project addresses the problem of translating between formal and in
 
 The formal languages included are Agda, Rocq (formerly Coq), Dedukti, and Lean. The informal languages are English, French, German, and Swedish. 
 
-Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. Also any of the natural languages could be used as the source:
+Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. 
 ```
 Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
   Proof (and (odd a) (odd c)) ->
@@ -59,16 +59,20 @@ Lean: axiom prop110 (a c : Int) (x : odd a ∧ odd c) :
   ∀ b : Int, even (a * b + b * c)
 ```
 
-- English: Prop110. Let $a$ and $c$ be integers. Assume that both $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
+- English: Prop110. Let $a$ and $c$ be integers. Assume that $a$ and $c$ are odd. Then $a b + b c$ is even for all integers $b$.
 
-- French: Prop110. Soient $a$ et $c$ des entiers. Supposons qu'et $a$ et $c$ sont impairs. Alors $a b + b c$ est pair pour tous les entiers $b$.
+- French: Prop110. Soient $a$ et $c$ des entiers. Supposons que $a$ et $c$ sont impairs. Alors $a b + b c$ est pair pour tous les entiers $b$.
 
-- German: Prop110. Seien $a$ und $c$ ganze Zahlen. Nimm an, dass sowohl $a$ als auch $c$ ungerade ist. Dann ist $a b + b c$ gerade für jede ganze Zahl $b$.
+- German: Prop110. Seien $a$ und $c$ ganze Zahlen. Nimm an, dass $a$ und $c$ ungerade sind. Dann ist $a b + b c$ gerade für jede ganze Zahl $b$.
 
-- Swedish: Prop110. Låt $a$ och $c$ vara heltal. Anta att både $a$ och $c$ är udda. Då är $a b + b c$ jämnt för alla heltal $b$.
+- Swedish: Prop110. Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda. Då är $a b + b c$ jämnt för alla heltal $b$.
 
+Any of the natural languages could also in principle be used as the source, if written in the same LaTeX code as Informath produces.
+However, the translation will usually produce some garbage, which can only be excluded by type checking in Dedukti. 
+Moreover, there are some language-specific lexing and parsing issues that have not been completely solved, especially for the LaTeX parts of text and for other languages than English.
 
-More formalisms and informal languages will be added later. Also the scope of language structures is at the moment theorem statements and definitions; proofs are included for the sake of completeness, but will require more work to enable natural verbalizations.
+More formalisms and informal languages will be added later. 
+Also the scope of language structures is at the moment theorem statements and definitions; proofs are included for the sake of completeness, but will require more work to enable natural verbalizations.
 
 
 ## Using Informath
