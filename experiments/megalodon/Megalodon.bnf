@@ -25,7 +25,7 @@ JNextJmt.    Jmt ::= "}" Jmt ;
 SLet.     Step ::= "let" Exp "." ;
 STLet.    Step ::= "let" Ident ":" Exp "." ;
 STDLet.   Step ::= "Let" Ident ":" Exp ":=" Exp "." ;
-SAssume.  Step ::= "assume" Exp "." ;
+SAssume.  Step ::= "assume" [Var] "." ;
 SHAssume. Step ::= "assume" Ident ":" Exp "." ;
 SHClaim.  Step ::= "claim" Ident ":" Exp "." ;
 SExact.   Step ::= "exact" Exp "." ;
@@ -46,9 +46,11 @@ terminator nonempty Step "." ;
 
 EIdent.   Exp8 ::= Ident ;
 EInt.     Exp8 ::= Integer ;
+EQuest.   Exp8 ::= "??" ;
 ECompr.   Exp8 ::= "{" Exp "|" Exp "}" ;
 EEnu.     Exp8 ::= "{" [Exp] "}" ;
 ESet.     Exp8 ::= "set" ;
+EPrime.   Exp7 ::= Ident "'" ;
 EApp.     Exp7 ::= Exp7 Exp8 ;
 EPrefix.  Exp6 ::= Prefix Exp6 ; --- follow prec given in file
 EInfix.   Exp5 ::= Exp5 Infix Exp6 ; --- infix left
@@ -80,7 +82,11 @@ ICAnd. Infix ::= ":/\\:" ;
 IOr.  Infix ::= "\\/" ;
 ICOr. Infix ::= ":\\/:" ;
 ISetm. Infix ::= ":\\:" ;
+ICAdd. Infix ::= ":+:" ;
 IEq.  Infix ::= "=" ;
+ILEq. Infix ::= "<=" ;
+ILt.  Infix ::= "<" ;
+ICEq. Infix ::= "c=" ;
 INeq. Infix ::= "<>" ;
 IIff. Infix ::= "<->" ;
 IIn.  Infix ::= ":e" ;
