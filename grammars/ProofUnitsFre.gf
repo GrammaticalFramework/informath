@@ -22,8 +22,8 @@ lin
     mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ; 
   IdentExpAssumption exp ident =
     mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp)) ; 
-  PropAssumption prop =
-    prefixText "supposons que" (propText prop) ;
+  PropAssumption prop label =
+    ccText (prefixText "supposons que" (propText prop)) (strText ("(" ++ (mkUtt label.np).s ++ ")")) ;
 
   PropConclusion hence prop =
     prefixText hence.s (propText prop) ;
@@ -48,8 +48,8 @@ lin
     strText "par recurrence :" ;
   CasesGoal =
     strText "par cas :" ;
-  CaseGoal A =
-    prefixText "\\item supposons que" (propText A) ;
+  CaseGoal A h =
+      ccText (prefixText "\\item supposons que" (propText A)) (strText ("(" ++ h ++ ")")) ;
 
   noHence = P.mkAdv "" ;
   henceHence = P.mkAdv "donc" ;

@@ -32,11 +32,11 @@ lin
     ccText b (PropConclusion afortioriHence (CoreOrProp A B)) ;
 
   orEProof A B C c x d y e = 
-    ccText c CasesGoal (ccText (CaseGoal A) d (CaseGoal B) e)
+    ccText c CasesGoal (ccText (CaseGoal A x) d (CaseGoal B y) e)
       (PropConclusion henceHence C) ;
     
   ifIProof A B h b =
-    ccText (PropAssumption A) b (PropConclusion henceHence (CoreIfProp A B)) ;
+    ccText (PropAssumption A (IdentLabel h)) b (PropConclusion henceHence (CoreIfProp A B)) ;
 
   ifEProof A B a b =
     ccText a b (PropConclusion henceHence B) ;
@@ -51,7 +51,7 @@ lin
     ccText b (PropConclusion henceHence (CoreExistProp A x B)) ;
 
   existsEProof A x B C c x y d =
-    ccText c (IdentKindAssumption A x) (PropAssumption B) d (PropConclusion weConcludeHence C);
+    ccText c (IdentKindAssumption A x) (PropAssumption B (IdentLabel y)) d (PropConclusion weConcludeHence C);
 
   hypoProof A h = prefixText ("by" ++ h ++ ",") (mkText (topProp A)) ;
   
@@ -63,7 +63,7 @@ lin
   NatIndProof x C d n h e =
     ccText InductionGoal
       (ccText (IdentExpAssumption (TermExp (NumberTerm (lin Int {s = "0"}))) x) d)
-      (ccText (IdentKindAssumption natKind x) (PropAssumption C) e)
+      (ccText (IdentKindAssumption natKind x) (PropAssumption C (IdentLabel h)) e)
       (PropConclusion weConcludeHence (CoreAllProp natKind x C)) ;
 
   evenZeroProof = strText "by the first axiom of parity , $ 0 $ is even ." ;

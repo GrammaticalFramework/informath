@@ -6,7 +6,7 @@ Label : Type.
 Unit : Type.
 
 elemAssumption : (A : Set) -> (a : Elem A) -> Unit.
-propAssumption : (A : Prop) -> Unit.
+propAssumption : (A : Prop) -> (h : Label) -> Unit.
 
 propConclusion : (A : Prop) -> Unit.
 sinceConclusion : (A : Prop) -> (B : Prop) -> Unit.

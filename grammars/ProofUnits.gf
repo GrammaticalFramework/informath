@@ -12,7 +12,7 @@ fun
   HyposAssumption : [Hypo] -> Unit ;
   IdentKindAssumption : Kind -> Ident -> Unit ;
   IdentExpAssumption : Exp -> Ident -> Unit ;
-  PropAssumption : Prop -> Unit ;
+  PropAssumption : Prop -> Label -> Unit ;
   
   PropConclusion : Hence -> Prop -> Unit ;
   SinceConclusion : Prop -> Prop -> Unit ;
@@ -26,7 +26,7 @@ fun
   SinceGoal : Prop -> Prop -> Unit ;
   CasesGoal : Unit ;
   InductionGoal : Unit ;
-  CaseGoal : Prop -> Unit ;
+  CaseGoal : Prop -> Ident -> Unit ;
 
   noHence : Hence ;
   henceHence : Hence ;

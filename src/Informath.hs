@@ -837,7 +837,7 @@ data Tree :: * -> * where
   GStringTitle :: GString -> Tree GTitle_
   GBeginEnvironmentUnit :: GEnvironment -> GLabel -> Tree GUnit_
   GBeginProofMethodUnit :: GLabel -> GMethod -> Tree GUnit_
-  GCaseGoal :: GProp -> Tree GUnit_
+  GCaseGoal :: GProp -> GIdent -> Tree GUnit_
   GCasesGoal :: Tree GUnit_
   GEndEnvironmentUnit :: GEnvironment -> Tree GUnit_
   GEnoughGoal :: GProp -> Tree GUnit_
@@ -851,7 +851,7 @@ data Tree :: * -> * where
   GLabelConclusion :: GLabel -> Tree GUnit_
   GLabelUnit :: GLabel -> Tree GUnit_
   GObviousConclusion :: Tree GUnit_
-  GPropAssumption :: GProp -> Tree GUnit_
+  GPropAssumption :: GProp -> GLabel -> Tree GUnit_
   GPropConclusion :: GHence -> GProp -> Tree GUnit_
   GPropLabelConclusion :: GHence -> GProp -> GLabel -> Tree GUnit_
   GSectionUnit :: GTitle -> GLabel -> Tree GUnit_
@@ -1531,7 +1531,7 @@ instance Eq (Tree a) where
     (GStringTitle x1,GStringTitle y1) -> and [ x1 == y1 ]
     (GBeginEnvironmentUnit x1 x2,GBeginEnvironmentUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GBeginProofMethodUnit x1 x2,GBeginProofMethodUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GCaseGoal x1,GCaseGoal y1) -> and [ x1 == y1 ]
+    (GCaseGoal x1 x2,GCaseGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCasesGoal,GCasesGoal) -> and [ ]
     (GEndEnvironmentUnit x1,GEndEnvironmentUnit y1) -> and [ x1 == y1 ]
     (GEnoughGoal x1,GEnoughGoal y1) -> and [ x1 == y1 ]
@@ -1545,7 +1545,7 @@ instance Eq (Tree a) where
     (GLabelConclusion x1,GLabelConclusion y1) -> and [ x1 == y1 ]
     (GLabelUnit x1,GLabelUnit y1) -> and [ x1 == y1 ]
     (GObviousConclusion,GObviousConclusion) -> and [ ]
-    (GPropAssumption x1,GPropAssumption y1) -> and [ x1 == y1 ]
+    (GPropAssumption x1 x2,GPropAssumption y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GPropConclusion x1 x2,GPropConclusion y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GPropLabelConclusion x1 x2 x3,GPropLabelConclusion y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GSectionUnit x1 x2,GSectionUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -3350,7 +3350,7 @@ instance Gf GTitle where
 instance Gf GUnit where
   gf (GBeginEnvironmentUnit x1 x2) = mkApp (mkCId "BeginEnvironmentUnit") [gf x1, gf x2]
   gf (GBeginProofMethodUnit x1 x2) = mkApp (mkCId "BeginProofMethodUnit") [gf x1, gf x2]
-  gf (GCaseGoal x1) = mkApp (mkCId "CaseGoal") [gf x1]
+  gf (GCaseGoal x1 x2) = mkApp (mkCId "CaseGoal") [gf x1, gf x2]
   gf GCasesGoal = mkApp (mkCId "CasesGoal") []
   gf (GEndEnvironmentUnit x1) = mkApp (mkCId "EndEnvironmentUnit") [gf x1]
   gf (GEnoughGoal x1) = mkApp (mkCId "EnoughGoal") [gf x1]
@@ -3364,7 +3364,7 @@ instance Gf GUnit where
   gf (GLabelConclusion x1) = mkApp (mkCId "LabelConclusion") [gf x1]
   gf (GLabelUnit x1) = mkApp (mkCId "LabelUnit") [gf x1]
   gf GObviousConclusion = mkApp (mkCId "ObviousConclusion") []
-  gf (GPropAssumption x1) = mkApp (mkCId "PropAssumption") [gf x1]
+  gf (GPropAssumption x1 x2) = mkApp (mkCId "PropAssumption") [gf x1, gf x2]
   gf (GPropConclusion x1 x2) = mkApp (mkCId "PropConclusion") [gf x1, gf x2]
   gf (GPropLabelConclusion x1 x2 x3) = mkApp (mkCId "PropLabelConclusion") [gf x1, gf x2, gf x3]
   gf (GSectionUnit x1 x2) = mkApp (mkCId "SectionUnit") [gf x1, gf x2]
@@ -3376,7 +3376,7 @@ instance Gf GUnit where
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "BeginEnvironmentUnit" -> GBeginEnvironmentUnit (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "BeginProofMethodUnit" -> GBeginProofMethodUnit (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "CaseGoal" -> GCaseGoal (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "CaseGoal" -> GCaseGoal (fg x1) (fg x2)
       Just (i,[]) | i == mkCId "CasesGoal" -> GCasesGoal 
       Just (i,[x1]) | i == mkCId "EndEnvironmentUnit" -> GEndEnvironmentUnit (fg x1)
       Just (i,[x1]) | i == mkCId "EnoughGoal" -> GEnoughGoal (fg x1)
@@ -3390,7 +3390,7 @@ instance Gf GUnit where
       Just (i,[x1]) | i == mkCId "LabelConclusion" -> GLabelConclusion (fg x1)
       Just (i,[x1]) | i == mkCId "LabelUnit" -> GLabelUnit (fg x1)
       Just (i,[]) | i == mkCId "ObviousConclusion" -> GObviousConclusion 
-      Just (i,[x1]) | i == mkCId "PropAssumption" -> GPropAssumption (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "PropAssumption" -> GPropAssumption (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "PropConclusion" -> GPropConclusion (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "PropLabelConclusion" -> GPropLabelConclusion (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "SectionUnit" -> GSectionUnit (fg x1) (fg x2)
@@ -3683,7 +3683,7 @@ instance Compos Tree where
     GStringTitle x1 -> r GStringTitle `a` f x1
     GBeginEnvironmentUnit x1 x2 -> r GBeginEnvironmentUnit `a` f x1 `a` f x2
     GBeginProofMethodUnit x1 x2 -> r GBeginProofMethodUnit `a` f x1 `a` f x2
-    GCaseGoal x1 -> r GCaseGoal `a` f x1
+    GCaseGoal x1 x2 -> r GCaseGoal `a` f x1 `a` f x2
     GEndEnvironmentUnit x1 -> r GEndEnvironmentUnit `a` f x1
     GEnoughGoal x1 -> r GEnoughGoal `a` f x1
     GFirstVerifyGoal x1 -> r GFirstVerifyGoal `a` f x1
@@ -3694,7 +3694,7 @@ instance Compos Tree where
     GImportUnit x1 -> r GImportUnit `a` f x1
     GLabelConclusion x1 -> r GLabelConclusion `a` f x1
     GLabelUnit x1 -> r GLabelUnit `a` f x1
-    GPropAssumption x1 -> r GPropAssumption `a` f x1
+    GPropAssumption x1 x2 -> r GPropAssumption `a` f x1 `a` f x2
     GPropConclusion x1 x2 -> r GPropConclusion `a` f x1 `a` f x2
     GPropLabelConclusion x1 x2 x3 -> r GPropLabelConclusion `a` f x1 `a` f x2 `a` f x3
     GSectionUnit x1 x2 -> r GSectionUnit `a` f x1 `a` f x2

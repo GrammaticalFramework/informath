@@ -97,7 +97,7 @@ unit2exp :: GUnit -> Exp
 unit2exp unit = case unit of
   GBeginEnvironmentUnit (LexEnvironment s) label -> wrap "BeginEnvironmentUnit" [EIdent (QIdent s)]
   GBeginProofMethodUnit label method_ -> wrap "BeginProofMethodUnit" [EIdent (label2ident label)]
-  GCaseGoal prop -> wrap "CaseGoal" [prop2dedukti prop]
+  GCaseGoal prop ident -> wrap "CaseGoal" [prop2dedukti prop, EIdent (ident2ident ident)] 
   GCasesGoal -> uni "CasesGoal"
   GEndEnvironmentUnit (LexEnvironment s) -> wrap "EndAbbreviationUnit" [EIdent (QIdent s)] ;
   GEnoughGoal prop -> wrap "EnoughGoal" [prop2dedukti prop]
@@ -109,7 +109,7 @@ unit2exp unit = case unit of
   GInductionGoal -> uni "InductionGoal"
   GLabelConclusion label -> wrap "LabelConclution" [EIdent (label2ident label)]
   GObviousConclusion -> uni "ObviousConclusion"
-  GPropAssumption prop -> wrap "PropAssumption" [prop2dedukti prop]
+  GPropAssumption prop label -> wrap "PropAssumption" [prop2dedukti prop, EIdent (label2ident label)]
   GPropConclusion hence prop -> wrap "PropConclusion" [prop2dedukti prop]
   GPropLabelConclusion hence prop label -> wrap "PropLabelConclusion" [prop2dedukti prop, EIdent (label2ident label)]
   GSinceConclusion a b -> wrap "SinceConclusion" [prop2dedukti a, prop2dedukti b]

@@ -24,8 +24,8 @@ lin
     mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ; 
   IdentExpAssumption exp ident =
     mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp)) ; 
-  PropAssumption prop =
-    prefixText "assume that" (propText prop) ;
+  PropAssumption prop label =
+    ccText (prefixText "assume that" (propText prop)) (strText ("(" ++ (mkUtt label.np).s ++ ")")) ;
 
   PropConclusion hence prop =
     prefixText hence.s (propText prop) ;
@@ -50,8 +50,8 @@ lin
     strText "we reason by induction :" ;
   CasesGoal =
     strText "we reason by cases :" ;
-  CaseGoal A =
-    prefixText "\\item assume that" (propText A) ;
+  CaseGoal A h =
+    ccText (prefixText "\\item assume that" (propText A)) (strText ("(" ++ h ++ ")")) ;
 
   noHence = P.mkAdv "" ;
   henceHence = P.mkAdv "hence" ;
