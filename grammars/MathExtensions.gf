@@ -33,7 +33,9 @@ fun
   NotAdjEProp : AdjE -> [Exp] -> Prop ;
   NotNoun1Prop : Noun1 -> Exp -> Prop ;
   NotNoun2Prop : Noun2 -> Exp -> Exp -> Prop ;
+  NotNounCProp : NounC -> [Exp] -> Prop ;
   NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
+  NotVerbCProp : VerbC -> [Exp] -> Prop ;
   NotVerbProp : Verb -> Exp -> Prop ;
 
   AndAdj : [Adj] -> Adj ;

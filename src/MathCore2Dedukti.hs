@@ -152,10 +152,14 @@ prop2dedukti prop = case prop of
     EApp (EIdent (QIdent (showGF verb))) (exp2dedukti exp)
   GVerb2Prop verb x y ->
     EApp (EApp (EIdent (QIdent (showGF verb))) (exp2dedukti x)) (exp2dedukti y)
+  GVerbCProp verb x y ->
+    EApp (EApp (EIdent (QIdent (showGF verb))) (exp2dedukti x)) (exp2dedukti y)
     
   GNoun1Prop noun exp ->
     EApp (EIdent (QIdent (showGF noun))) (exp2dedukti exp)
   GNoun2Prop noun x y ->
+    EApp (EApp (EIdent (QIdent (showGF noun))) (exp2dedukti x)) (exp2dedukti y)
+  GNounCProp noun x y ->
     EApp (EApp (EIdent (QIdent (showGF noun))) (exp2dedukti x)) (exp2dedukti y)
     
   GIndexedFormulaProp (GInt i) -> EIdent (unresolvedIndexIdent i)

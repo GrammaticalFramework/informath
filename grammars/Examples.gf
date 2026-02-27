@@ -22,14 +22,15 @@ fun
   Noun1Example : Noun1 -> Argument -> Example ;
   VerbExample : Verb -> Argument -> Example ;
   Verb2Example : Verb2 -> Argument -> Argument -> Example ;
+  VerbCExample : VerbC -> Argument -> Argument -> Example ;
   Noun2Example : Noun2 -> Argument -> Argument -> Example ;
+  NounCExample : NounC -> Argument -> Argument -> Example ;
   Adj3Example : Adj3 -> Argument -> Argument -> Argument -> Example ;
   LabelExample : Label -> Example ;
 
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;
 
----  NounName : Noun -> Name ;
   DefNounName : Noun -> Name ;
   ProperNameNounName : ProperName -> Noun -> Name ; --- ProperName in genitive: Euler's constant
 
@@ -47,8 +48,11 @@ fun
 
   NounNoun1 : Noun -> Noun1 ;
   NounPrepNoun2 : Noun -> Prep -> Noun2 ;
+  NounNounC : Noun -> NounC ;
 
+  VerbPrepNounVerb : Verb -> Prep -> Noun -> Verb ;
   VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
+  VerbVerbC : Verb -> VerbC ;
   
   AdjNounNoun : Adj -> Noun -> Noun ;
   NounNounNoun : Noun -> Noun -> Noun ;

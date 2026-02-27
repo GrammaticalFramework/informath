@@ -45,7 +45,9 @@ lincat
   Adj3 = Adj3T ;
   Verb = VerbT ;
   Verb2 = Verb2T ;
+  VerbC = VerbT ;
   Noun2 = {cn : CN ; prep : Prep} ;
+  NounC = CN ;
   Name = NP ;
   Fun = FunT ;
   Fun2 = Fun2T ;

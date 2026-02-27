@@ -135,6 +135,8 @@ type GNoun1 = Tree GNoun1_
 data GNoun1_
 type GNoun2 = Tree GNoun2_
 data GNoun2_
+type GNounC = Tree GNounC_
+data GNounC_
 type GOper = Tree GOper_
 data GOper_
 type GOper2 = Tree GOper2_
@@ -161,6 +163,8 @@ type GVerb = Tree GVerb_
 data GVerb_
 type GVerb2 = Tree GVerb2_
 data GVerb2_
+type GVerbC = Tree GVerbC_
+data GVerbC_
 type GCoercion = Tree GCoercion_
 data GCoercion_
 type GTerms = Tree GTerms_
@@ -222,8 +226,10 @@ data Tree :: * -> * where
   GNameExample :: GName -> Tree GExample_
   GNoun1Example :: GNoun1 -> GArgument -> Tree GExample_
   GNoun2Example :: GNoun2 -> GArgument -> GArgument -> Tree GExample_
+  GNounCExample :: GNounC -> GArgument -> GArgument -> Tree GExample_
   GNounExample :: GNoun -> Tree GExample_
   GVerb2Example :: GVerb2 -> GArgument -> GArgument -> Tree GExample_
+  GVerbCExample :: GVerbC -> GArgument -> GArgument -> Tree GExample_
   GVerbExample :: GVerb -> GArgument -> Tree GExample_
   GAbsExp :: GListIdent -> GExp -> Tree GExp_
   GAllIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
@@ -358,6 +364,8 @@ data Tree :: * -> * where
   LexNoun1 :: String -> Tree GNoun1_
   GNounPrepNoun2 :: GNoun -> GPrep -> Tree GNoun2_
   LexNoun2 :: String -> Tree GNoun2_
+  GNounNounC :: GNoun -> Tree GNounC_
+  LexNounC :: String -> Tree GNounC_
   LexOper :: String -> Tree GOper_
   LexOper2 :: String -> Tree GOper2_
   LexPrep :: String -> Tree GPrep_
@@ -429,15 +437,19 @@ data Tree :: * -> * where
   GNotAdjProp :: GAdj -> GExp -> Tree GProp_
   GNotNoun1Prop :: GNoun1 -> GExp -> Tree GProp_
   GNotNoun2Prop :: GNoun2 -> GExp -> GExp -> Tree GProp_
+  GNotNounCProp :: GNounC -> GListExp -> Tree GProp_
   GNotVerb2Prop :: GVerb2 -> GExp -> GExp -> Tree GProp_
+  GNotVerbCProp :: GVerbC -> GListExp -> Tree GProp_
   GNotVerbProp :: GVerb -> GExp -> Tree GProp_
   GNoun1Prop :: GNoun1 -> GExp -> Tree GProp_
   GNoun2Prop :: GNoun2 -> GExp -> GExp -> Tree GProp_
+  GNounCProp :: GNounC -> GExp -> GExp -> Tree GProp_
   GOnlyIfProp :: GProp -> GProp -> Tree GProp_
   GOrProp :: GListProp -> Tree GProp_
   GPostQuantProp :: GProp -> GExp -> Tree GProp_
   GProofProp :: GProp -> Tree GProp_
   GVerb2Prop :: GVerb2 -> GExp -> GExp -> Tree GProp_
+  GVerbCProp :: GVerbC -> GExp -> GExp -> Tree GProp_
   GVerbProp :: GVerb -> GExp -> Tree GProp_
   GWeHaveProp :: GProp -> Tree GProp_
   GsameParityProp :: GExp -> GExp -> Tree GProp_
@@ -858,9 +870,12 @@ data Tree :: * -> * where
   GSinceConclusion :: GProp -> GProp -> Tree GUnit_
   GSinceGoal :: GProp -> GProp -> Tree GUnit_
   GSubsectionUnit :: GTitle -> GLabel -> Tree GUnit_
+  GVerbPrepNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   LexVerb :: String -> Tree GVerb_
   GVerbPrepVerb2 :: GVerb -> GPrep -> Tree GVerb2_
   LexVerb2 :: String -> Tree GVerb2_
+  GVerbVerbC :: GVerb -> Tree GVerbC_
+  LexVerbC :: String -> Tree GVerbC_
   GString :: String -> Tree GString_
   GInt :: Int -> Tree GInt_
   GFloat :: Double -> Tree GFloat_
@@ -916,8 +931,10 @@ instance Eq (Tree a) where
     (GNameExample x1,GNameExample y1) -> and [ x1 == y1 ]
     (GNoun1Example x1 x2,GNoun1Example y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun2Example x1 x2 x3,GNoun2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNounCExample x1 x2 x3,GNounCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNounExample x1,GNounExample y1) -> and [ x1 == y1 ]
     (GVerb2Example x1 x2 x3,GVerb2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GVerbCExample x1 x2 x3,GVerbCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbExample x1 x2,GVerbExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAbsExp x1 x2,GAbsExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAllIdentsKindExp x1 x2,GAllIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1052,6 +1069,8 @@ instance Eq (Tree a) where
     (LexNoun1 x,LexNoun1 y) -> x == y
     (GNounPrepNoun2 x1 x2,GNounPrepNoun2 y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (LexNoun2 x,LexNoun2 y) -> x == y
+    (GNounNounC x1,GNounNounC y1) -> and [ x1 == y1 ]
+    (LexNounC x,LexNounC y) -> x == y
     (LexOper x,LexOper y) -> x == y
     (LexOper2 x,LexOper2 y) -> x == y
     (LexPrep x,LexPrep y) -> x == y
@@ -1123,15 +1142,19 @@ instance Eq (Tree a) where
     (GNotAdjProp x1 x2,GNotAdjProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun1Prop x1 x2,GNotNoun1Prop y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun2Prop x1 x2 x3,GNotNoun2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNotNounCProp x1 x2,GNotNounCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotVerb2Prop x1 x2 x3,GNotVerb2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNotVerbCProp x1 x2,GNotVerbCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotVerbProp x1 x2,GNotVerbProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun1Prop x1 x2,GNoun1Prop y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun2Prop x1 x2 x3,GNoun2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNounCProp x1 x2 x3,GNounCProp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GOnlyIfProp x1 x2,GOnlyIfProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GOrProp x1,GOrProp y1) -> and [ x1 == y1 ]
     (GPostQuantProp x1 x2,GPostQuantProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GProofProp x1,GProofProp y1) -> and [ x1 == y1 ]
     (GVerb2Prop x1 x2 x3,GVerb2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GVerbCProp x1 x2 x3,GVerbCProp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbProp x1 x2,GVerbProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GWeHaveProp x1,GWeHaveProp y1) -> and [ x1 == y1 ]
     (GsameParityProp x1 x2,GsameParityProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1552,9 +1575,12 @@ instance Eq (Tree a) where
     (GSinceConclusion x1 x2,GSinceConclusion y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSinceGoal x1 x2,GSinceGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSubsectionUnit x1 x2,GSubsectionUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbPrepNounVerb x1 x2 x3,GVerbPrepNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (LexVerb x,LexVerb y) -> x == y
     (GVerbPrepVerb2 x1 x2,GVerbPrepVerb2 y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (LexVerb2 x,LexVerb2 y) -> x == y
+    (GVerbVerbC x1,GVerbVerbC y1) -> and [ x1 == y1 ]
+    (LexVerbC x,LexVerbC y) -> x == y
     (GString x, GString y) -> x == y
     (GInt x, GInt y) -> x == y
     (GFloat x, GFloat y) -> x == y
@@ -1741,8 +1767,10 @@ instance Gf GExample where
   gf (GNameExample x1) = mkApp (mkCId "NameExample") [gf x1]
   gf (GNoun1Example x1 x2) = mkApp (mkCId "Noun1Example") [gf x1, gf x2]
   gf (GNoun2Example x1 x2 x3) = mkApp (mkCId "Noun2Example") [gf x1, gf x2, gf x3]
+  gf (GNounCExample x1 x2 x3) = mkApp (mkCId "NounCExample") [gf x1, gf x2, gf x3]
   gf (GNounExample x1) = mkApp (mkCId "NounExample") [gf x1]
   gf (GVerb2Example x1 x2 x3) = mkApp (mkCId "Verb2Example") [gf x1, gf x2, gf x3]
+  gf (GVerbCExample x1 x2 x3) = mkApp (mkCId "VerbCExample") [gf x1, gf x2, gf x3]
   gf (GVerbExample x1 x2) = mkApp (mkCId "VerbExample") [gf x1, gf x2]
 
   fg t =
@@ -1761,8 +1789,10 @@ instance Gf GExample where
       Just (i,[x1]) | i == mkCId "NameExample" -> GNameExample (fg x1)
       Just (i,[x1,x2]) | i == mkCId "Noun1Example" -> GNoun1Example (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Noun2Example" -> GNoun2Example (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "NounCExample" -> GNounCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1]) | i == mkCId "NounExample" -> GNounExample (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "Verb2Example" -> GVerb2Example (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "VerbCExample" -> GVerbCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "VerbExample" -> GVerbExample (fg x1) (fg x2)
 
 
@@ -2316,6 +2346,17 @@ instance Gf GNoun2 where
       Just (i,[]) -> LexNoun2 (showCId i)
       _ -> error ("no Noun2 " ++ show t)
 
+instance Gf GNounC where
+  gf (GNounNounC x1) = mkApp (mkCId "NounNounC") [gf x1]
+  gf (LexNounC x) = mkApp (mkCId x) []
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "NounNounC" -> GNounNounC (fg x1)
+
+      Just (i,[]) -> LexNounC (showCId i)
+      _ -> error ("no NounC " ++ show t)
+
 instance Gf GOper where
   gf (LexOper x) = mkApp (mkCId x) []
 
@@ -2455,15 +2496,19 @@ instance Gf GProp where
   gf (GNotAdjProp x1 x2) = mkApp (mkCId "NotAdjProp") [gf x1, gf x2]
   gf (GNotNoun1Prop x1 x2) = mkApp (mkCId "NotNoun1Prop") [gf x1, gf x2]
   gf (GNotNoun2Prop x1 x2 x3) = mkApp (mkCId "NotNoun2Prop") [gf x1, gf x2, gf x3]
+  gf (GNotNounCProp x1 x2) = mkApp (mkCId "NotNounCProp") [gf x1, gf x2]
   gf (GNotVerb2Prop x1 x2 x3) = mkApp (mkCId "NotVerb2Prop") [gf x1, gf x2, gf x3]
+  gf (GNotVerbCProp x1 x2) = mkApp (mkCId "NotVerbCProp") [gf x1, gf x2]
   gf (GNotVerbProp x1 x2) = mkApp (mkCId "NotVerbProp") [gf x1, gf x2]
   gf (GNoun1Prop x1 x2) = mkApp (mkCId "Noun1Prop") [gf x1, gf x2]
   gf (GNoun2Prop x1 x2 x3) = mkApp (mkCId "Noun2Prop") [gf x1, gf x2, gf x3]
+  gf (GNounCProp x1 x2 x3) = mkApp (mkCId "NounCProp") [gf x1, gf x2, gf x3]
   gf (GOnlyIfProp x1 x2) = mkApp (mkCId "OnlyIfProp") [gf x1, gf x2]
   gf (GOrProp x1) = mkApp (mkCId "OrProp") [gf x1]
   gf (GPostQuantProp x1 x2) = mkApp (mkCId "PostQuantProp") [gf x1, gf x2]
   gf (GProofProp x1) = mkApp (mkCId "ProofProp") [gf x1]
   gf (GVerb2Prop x1 x2 x3) = mkApp (mkCId "Verb2Prop") [gf x1, gf x2, gf x3]
+  gf (GVerbCProp x1 x2 x3) = mkApp (mkCId "VerbCProp") [gf x1, gf x2, gf x3]
   gf (GVerbProp x1 x2) = mkApp (mkCId "VerbProp") [gf x1, gf x2]
   gf (GWeHaveProp x1) = mkApp (mkCId "WeHaveProp") [gf x1]
   gf (GsameParityProp x1 x2) = mkApp (mkCId "sameParityProp") [gf x1, gf x2]
@@ -2511,15 +2556,19 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "NotAdjProp" -> GNotAdjProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotNoun1Prop" -> GNotNoun1Prop (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "NotNoun2Prop" -> GNotNoun2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "NotNounCProp" -> GNotNounCProp (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "NotVerb2Prop" -> GNotVerb2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "NotVerbCProp" -> GNotVerbCProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotVerbProp" -> GNotVerbProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "Noun1Prop" -> GNoun1Prop (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Noun2Prop" -> GNoun2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "NounCProp" -> GNounCProp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "OnlyIfProp" -> GOnlyIfProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "OrProp" -> GOrProp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "PostQuantProp" -> GPostQuantProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ProofProp" -> GProofProp (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "Verb2Prop" -> GVerb2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "VerbCProp" -> GVerbCProp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "VerbProp" -> GVerbProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "WeHaveProp" -> GWeHaveProp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "sameParityProp" -> GsameParityProp (fg x1) (fg x2)
@@ -3402,10 +3451,12 @@ instance Gf GUnit where
       _ -> error ("no Unit " ++ show t)
 
 instance Gf GVerb where
+  gf (GVerbPrepNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepNounVerb") [gf x1, gf x2, gf x3]
   gf (LexVerb x) = mkApp (mkCId x) []
 
   fg t =
     case unApp t of
+      Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepNounVerb" -> GVerbPrepNounVerb (fg x1) (fg x2) (fg x3)
 
       Just (i,[]) -> LexVerb (showCId i)
       _ -> error ("no Verb " ++ show t)
@@ -3420,6 +3471,17 @@ instance Gf GVerb2 where
 
       Just (i,[]) -> LexVerb2 (showCId i)
       _ -> error ("no Verb2 " ++ show t)
+
+instance Gf GVerbC where
+  gf (GVerbVerbC x1) = mkApp (mkCId "VerbVerbC") [gf x1]
+  gf (LexVerbC x) = mkApp (mkCId x) []
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "VerbVerbC" -> GVerbVerbC (fg x1)
+
+      Just (i,[]) -> LexVerbC (showCId i)
+      _ -> error ("no VerbC " ++ show t)
 
 instance Show GCoercion
 
@@ -3475,8 +3537,10 @@ instance Compos Tree where
     GNameExample x1 -> r GNameExample `a` f x1
     GNoun1Example x1 x2 -> r GNoun1Example `a` f x1 `a` f x2
     GNoun2Example x1 x2 x3 -> r GNoun2Example `a` f x1 `a` f x2 `a` f x3
+    GNounCExample x1 x2 x3 -> r GNounCExample `a` f x1 `a` f x2 `a` f x3
     GNounExample x1 -> r GNounExample `a` f x1
     GVerb2Example x1 x2 x3 -> r GVerb2Example `a` f x1 `a` f x2 `a` f x3
+    GVerbCExample x1 x2 x3 -> r GVerbCExample `a` f x1 `a` f x2 `a` f x3
     GVerbExample x1 x2 -> r GVerbExample `a` f x1 `a` f x2
     GAbsExp x1 x2 -> r GAbsExp `a` f x1 `a` f x2
     GAllIdentsKindExp x1 x2 -> r GAllIdentsKindExp `a` f x1 `a` f x2
@@ -3581,6 +3645,7 @@ instance Compos Tree where
     GProperNameNounNoun x1 x2 -> r GProperNameNounNoun `a` f x1 `a` f x2
     GNounNoun1 x1 -> r GNounNoun1 `a` f x1
     GNounPrepNoun2 x1 x2 -> r GNounPrepNoun2 `a` f x1 `a` f x2
+    GNounNounC x1 -> r GNounNounC `a` f x1
     GAbsProof x1 x2 -> r GAbsProof `a` f x1 `a` f x2
     GAnnotateProof x1 x2 -> r GAnnotateProof `a` f x1 `a` f x2
     GAppProof x1 x2 -> r GAppProof `a` f x1 `a` f x2
@@ -3647,15 +3712,19 @@ instance Compos Tree where
     GNotAdjProp x1 x2 -> r GNotAdjProp `a` f x1 `a` f x2
     GNotNoun1Prop x1 x2 -> r GNotNoun1Prop `a` f x1 `a` f x2
     GNotNoun2Prop x1 x2 x3 -> r GNotNoun2Prop `a` f x1 `a` f x2 `a` f x3
+    GNotNounCProp x1 x2 -> r GNotNounCProp `a` f x1 `a` f x2
     GNotVerb2Prop x1 x2 x3 -> r GNotVerb2Prop `a` f x1 `a` f x2 `a` f x3
+    GNotVerbCProp x1 x2 -> r GNotVerbCProp `a` f x1 `a` f x2
     GNotVerbProp x1 x2 -> r GNotVerbProp `a` f x1 `a` f x2
     GNoun1Prop x1 x2 -> r GNoun1Prop `a` f x1 `a` f x2
     GNoun2Prop x1 x2 x3 -> r GNoun2Prop `a` f x1 `a` f x2 `a` f x3
+    GNounCProp x1 x2 x3 -> r GNounCProp `a` f x1 `a` f x2 `a` f x3
     GOnlyIfProp x1 x2 -> r GOnlyIfProp `a` f x1 `a` f x2
     GOrProp x1 -> r GOrProp `a` f x1
     GPostQuantProp x1 x2 -> r GPostQuantProp `a` f x1 `a` f x2
     GProofProp x1 -> r GProofProp `a` f x1
     GVerb2Prop x1 x2 x3 -> r GVerb2Prop `a` f x1 `a` f x2 `a` f x3
+    GVerbCProp x1 x2 x3 -> r GVerbCProp `a` f x1 `a` f x2 `a` f x3
     GVerbProp x1 x2 -> r GVerbProp `a` f x1 `a` f x2
     GWeHaveProp x1 -> r GWeHaveProp `a` f x1
     GsameParityProp x1 x2 -> r GsameParityProp `a` f x1 `a` f x2
@@ -3701,7 +3770,9 @@ instance Compos Tree where
     GSinceConclusion x1 x2 -> r GSinceConclusion `a` f x1 `a` f x2
     GSinceGoal x1 x2 -> r GSinceGoal `a` f x1 `a` f x2
     GSubsectionUnit x1 x2 -> r GSubsectionUnit `a` f x1 `a` f x2
+    GVerbPrepNounVerb x1 x2 x3 -> r GVerbPrepNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepVerb2 x1 x2 -> r GVerbPrepVerb2 `a` f x1 `a` f x2
+    GVerbVerbC x1 -> r GVerbVerbC `a` f x1
     GListAdj x1 -> r GListAdj `a` foldr (a . a (r (:)) . f) (r []) x1
     GListArgKind x1 -> r GListArgKind `a` foldr (a . a (r (:)) . f) (r []) x1
     GListExp x1 -> r GListExp `a` foldr (a . a (r (:)) . f) (r []) x1

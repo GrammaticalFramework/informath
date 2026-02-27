@@ -33,9 +33,11 @@ lin
 
   Noun1Example noun x = mkExample (Noun1Prop noun x) ;
   Noun2Example noun x y = mkExample (Noun2Prop noun x y) ;
+  NounCExample noun x y = mkExample (NounCProp noun x y) ;
 
   VerbExample verb x = mkExample (VerbProp verb x) ;
   Verb2Example verb x y = mkExample (Verb2Prop verb x y) ;
+  VerbCExample verb x y = mkExample (VerbCProp verb x y) ;
 
   LabelExample label = mkExample (mkUtt label.np) "." ;
 
@@ -65,8 +67,11 @@ lin
   
   NounNoun1 noun = noun ;
   NounPrepNoun2 noun prep = {cn = noun ; prep = prep} ;
+  NounNounC noun = noun ;
 
+  VerbPrepNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP a_Det noun)) ;
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
+  VerbVerbC verb = verb ;
 
   AdjNounNoun adj noun = mkCN adj noun ;
   NounNounNoun noun1 noun2 = compoundCN noun1 noun2 ;

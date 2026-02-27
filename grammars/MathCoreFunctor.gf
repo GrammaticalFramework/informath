@@ -161,8 +161,12 @@ lin
     } ;
   Noun1Prop noun exp = simpleProp (mkS (mkCl exp noun)) ; 
   VerbProp verb exp = simpleProp (mkS (mkCl exp verb)) ; 
-  Verb2Prop verb x y = simpleProp (mkS (mkCl x (mkVP verb.vp (Syntax.mkAdv verb.prep y)))) ; 
-  Noun2Prop rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  Verb2Prop verb x y = simpleProp (mkS (mkCl x (mkVP verb.vp (Syntax.mkAdv verb.prep y)))) ;
+  VerbCProp verb x y = simpleProp (mkS (mkCl (mkNP and_Conj x y) verb)) ;
+
+  Noun2Prop rel x y = simpleProp (mkS (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ;
+  NounCProp noun x y = simpleProp (mkS (mkCl (mkNP and_Conj x y) noun)) ;
+
   Adj3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 

@@ -49,9 +49,11 @@ lin
   NotAdjCProp adj exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) adj)) ;
   NotAdjEProp adj exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) adj)) ;
   NotNoun1Prop noun exp = simpleProp (mkS negPol (mkCl exp noun)) ; 
-  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ; 
+  NotNoun2Prop rel x y = simpleProp (mkS negPol (mkCl x (mkCN rel.cn (Syntax.mkAdv rel.prep y)))) ;
+  NotNounCProp noun exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) noun)) ;
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
   NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x (mkVP verb.vp (Syntax.mkAdv verb.prep y)))) ; 
+  NotVerbCProp verb exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) verb)) ;
 
   AndAdj adjs = mkAP and_Conj adjs | mkAP both7and_DConj adjs ;
   OrAdj adjs = mkAP or_Conj adjs  | mkAP either7or_DConj adjs ;

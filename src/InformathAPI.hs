@@ -65,7 +65,8 @@ readEnv args = do
 	then constantTableFile : argValues "-add-symboltables" "" args
 	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
-  (ct, cvt, dt, mt, bs) <- readConstantTable gr fro symboltables
+  let sym = mkLanguage gr (argValue "-symboltable-lang" english args)
+  (ct, cvt, dt, mt, bs) <- readConstantTable gr sym symboltables
   ifArg "-check-constant-table" args (unlines (checkConstantTable mo gr dt mt ct bs))
   let bt = buildBackConstantTable ct
   return Env {
@@ -125,8 +126,10 @@ constantTableFile = "share/baseconstants.dkgf"
 -- * select English-only (default) or full grammar (if -to-lang or -for-lang is other than Eng)
 -- * can be overridden with the -grammar=<file>.pgf flag
 grammarFile :: [Flag] -> FilePath
-grammarFile args = case (argValue "-from-lang" english args, argValue "-to-lang" english args) of
-  ("Eng", "Eng") -> engGrammarFile
+grammarFile args = case (argValue "-from-lang" english args,
+                         argValue "-to-lang" english args,
+			 argValue "-symboltable-lang" english args) of
+  ("Eng", "Eng", "Eng") -> engGrammarFile
   _ -> fullGrammarFile
 
 -- * Main types involved

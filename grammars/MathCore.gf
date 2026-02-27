@@ -88,7 +88,9 @@ fun
   Noun1Prop : Noun1 -> Exp -> Prop ;
   VerbProp : Verb -> Exp -> Prop ;
   Verb2Prop : Verb2 -> Exp -> Exp -> Prop ;
+  VerbCProp : VerbC -> Exp -> Exp -> Prop ;
   Noun2Prop : Noun2 -> Exp -> Exp -> Prop ;
+  NounCProp : NounC -> Exp -> Exp -> Prop ;
   Adj3Prop : Adj3 -> Exp -> Exp -> Exp -> Prop ;
 
 -- coercions, to disappear in Core2Informath

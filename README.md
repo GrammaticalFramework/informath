@@ -97,7 +97,10 @@ for a very quick example, or
 ```
 $ make demo
 ```
-for many more examples. This uses only English, but if you want to see something more in another language (Fre, Ger, Swe), also do e.g.
+for many more examples. 
+If you are not on a Mac, you will have to change the variable OPEN in the Makefile to point to the command you use for opening .pdf files.
+
+The former uses only English, but if you want to see something more in another language (Fre, Ger, Swe), also do e.g.
 ```
 $ make lang=Fre fulldemo
 ```
@@ -425,6 +428,7 @@ Given this information, you can use the following formats to write symbol table 
 Prop, arity 1:  "X is <Adj>" | "X <Verb>s" | "X is a <Noun>"
 Prop, arity 2:  "X is <Adj> <Prep> Y" | "X and Y are <Adj> 
               | "X <Verb>s <Prep> Y" | "X is a <Noun> <Prep> Y"
+              | "X and Y <Verb>" | "X and Y are <Noun>s"
 Prop, arity 3: "X is <Adj> <Prep> Y <Prep> Z"
 
 Kind, arity 0: "<Noun>"
@@ -438,8 +442,9 @@ Exp. arity 2: "the <Noun> <Prep> X <Prep> Y"
 So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`?  
 They are expressions of **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". Informath comes with a large lexicon (of 3000 entries in English), from which you often pick the ones that you need in your symbol table. The lexicon consists of individual words, but they can be combined with the following rules:
 ```
-<Adj>: <Adv> <Adj>
+<Adj>: <Adverb> <Adj>
 <Noun>: <Adj> <Noun> | <Noun> <Noun> | <ProperName> <Noun>
+<Verb>: <Verb> <Prep> a <Noun>
 ```
 Notice that these rules are inductive: they permit the formation of infinitely many multiword expressions. 
 For a (nonsensical) example,
@@ -531,8 +536,10 @@ Name      Exp                        the empty set
 Noun      Kind                       integer
 Noun1     Exp -> Prop                X is a prime
 Noun2     Exp -> Exp -> Prop         X is a divisor of Y
+NounC     Exps -> Prop               X and Y are relative primes
 Verb      Exp -> Prop                X converges
 Verb2     Exp -> Exp -> Prop         X divides Y
+VerbC     Exps -> Prop               X and Y coincide
 ```
 The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages. 
 

@@ -54,7 +54,7 @@ jmt2jmt jmt = case jmt of
               (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
               (exp2kind kind)
           _ | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "AdjE",
-	              "Verb2", "Noun2", "Adj3", "Prop"] ->
+	              "Verb2", "Noun2", "Adj3", "VerbC", "NounC", "Prop"] ->
             (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
               (GListHypo chypos)
@@ -129,8 +129,10 @@ funListProp ident exps = annotateProp ident $ case ident of
     (Just ("Adj3", c), [x, y, z]) -> GAdj3Prop (fgTree c) x y z
     (Just ("Verb", c), [x]) -> GVerbProp (fgTree c) x
     (Just ("Verb2", c), [x, y]) -> GVerb2Prop (fgTree c) x y
+    (Just ("VerbC", c), [x, y]) -> GVerbCProp (fgTree c) x y
     (Just ("Noun1", c), [x]) -> GNoun1Prop (fgTree c) x
     (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
+    (Just ("NounC", c), [x, y]) -> GNounCProp (fgTree c) x y
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
       _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps) ---- TODO: this causes "Gt holds for ..." etc
