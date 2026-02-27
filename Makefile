@@ -47,15 +47,9 @@ cleangrammars:
 	cd grammars && rm *.gfo *.pgf *.hs
 
 demo:
-	echo "## The main user demo, only requiring Informath and Latex"
+	echo "## The first user demo, only requiring Informath and Latex"
 	echo "## converting some simple arithmetic statements to English"
 	$(RUN) -to-lang=Eng test/exx.dk
-	echo "## converting some simple arithmetic statements to French"
-	$(RUN) -to-lang=Fre test/exx.dk
-	echo "## converting some simple arithmetic statements to German"
-	$(RUN) -to-lang=Ger test/exx.dk
-	echo "## converting some simple arithmetic statements to Swedish"
-	$(RUN) -to-lang=Swe test/exx.dk
 	echo "## parsing generated English with conversions back to Dedukti"
 	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
 	$(RUN) -from-lang=Eng out/exx.txt
@@ -75,25 +69,28 @@ demo:
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 
-
-devdemo:
-	echo "## The development demo, needs Dedukti, Agda, Lean, Rocq"
-	echo "## checking some simple arithmetic statements in Dedukti"
-	dk check out/bexx.dk
-	echo "## converting some simple arithmetic statements to English"
-	$(RUN) -to-lang=Eng test/exx.dk
+fulldemo:
+	make demo
 	echo "## converting some simple arithmetic statements to French"
 	$(RUN) -to-lang=Fre test/exx.dk
 	echo "## converting some simple arithmetic statements to German"
 	$(RUN) -to-lang=Ger test/exx.dk
 	echo "## converting some simple arithmetic statements to Swedish"
 	$(RUN) -to-lang=Swe test/exx.dk
-	echo "## parsing generated English with conversions back to Dedukti"
-	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
-	$(RUN) -from-lang=Eng out/exx.txt
-	echo "## parsing some natural English with conversions back to Dedukti"
-	$(RUN) -from-lang=Eng test/gflean-data.txt
-	cat share/baseconstants.dk test/exx.dk >out/bexx.dk
+
+
+devtest:
+	make fulldemo
+	make top100check
+	make typechecks
+	make sets
+	make naproche
+	make interpret_naproche
+	make natural_deduction
+	make symboltest
+
+
+typechecks:
 	echo "## converting some simple arithmetic statements to Agda"
 	echo "open import BaseConstants\n\n" >out/exx.agda
 	$(RUN) -to-formalism=agda test/exx.dk >>out/exx.agda
@@ -110,43 +107,39 @@ devdemo:
 	echo "## checking the generated file in Lean"
 	cat share/baseconstants.lean out/exx.lean >out/bexx.lean
 	lean out/bexx.lean
-	echo "# checking some set theory statements and generating LaTeX"
-	cat share/baseconstants.dk test/sets.dk >out/sexx.dk
-	dk check out/sexx.dk
-	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
-	echo "consider pdflatex out/sets.tex"
-	echo "## checking a selection of 100 theorems in Dedukti"
-	cat share/baseconstants.dk test/top100.dk >out/texx.dk
-	dk check out/texx.dk
-	echo "## parsing and regenerating a Naproche document"
-	make naproche
-	echo "## generating some natural deduction proofs"
-	make natural_deduction
-	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
-	make top100
 
 
 top100:
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
-	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
+	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100$(lang).tex
+	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
+
+top100check:
+	echo "## type-checking the theorems in Dedukti"
 	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 top100single:
+	echo "## generating only the best-ranked verbalizations of 100 theorems"
 	$(RUN) -to-latex-doc -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 sets:
+	echo "# checking some set theory statements and generating LaTeX"
+	cat share/baseconstants.dk test/sets.dk >out/sexx.dk
+	dk check out/sexx.dk
 	$(RUN) -variations -to-latex-doc -to-lang=$(lang) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
 sigma:
+	echo "# generating some expressions with sums and integrals"
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
 symboltest:
+	echo "# testing an example-based symbol table"
 	dk check test/symboltest.dk
 	RunInformath -base=test/symboltest.dk test/symboltest.dkgf
 	RunInformath -add-symboltables=test/symboltest.dkgf -variations -to-latex-doc test/symboltest.dk
@@ -156,6 +149,7 @@ natural_deduction:
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
 natural_deduction_rules:
+	echo "## generating some natural deduction proofs"
 	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction.dk >out/ndr.tex
 	cd out ; pdflatex ndr.tex ; $(OPEN) ndr.pdf
 
@@ -170,13 +164,15 @@ mathextensions_examples:
 	$(RUN) -add-symboltables=test/natural_deduction.dkgf test/mathextensions_examples.dk
 
 naproche:
+	echo "## parsing and regenerating a Naproche document without going through Dedukti"
 	$(RUN) -translate -to-latex-doc -variations -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
 	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
 
 interpret_naproche:
+	echo "## parsing and regenerating a Naproche document going through Dedukti"
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) tmp/napzf.dk >out/napzf.tex
-	cd out ; pdflatex -batchmode napzf.tex ; $(OPEN) napzf.pdf
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
+	cd out ; pdflatex -batchmode inapzf.tex ; $(OPEN) inapzf.pdf
 
 baseconstants:
 	cat share/BaseConstants.dk >tmp/baseconstants.dk
