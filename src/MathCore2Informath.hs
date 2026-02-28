@@ -9,7 +9,7 @@ import Utils
 import BuildConstantTable (symbolics, synonyms, primary)
 import qualified PGF
 
-import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM)
+import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM, composOpMPlus)
 
 import Data.List (nub, sortOn)
 import Data.Char (isDigit)
@@ -62,7 +62,7 @@ uncoerce t = case t of
 -- works on lookup with Dedukti QIdent, which annotates applicative trees
 
 synonymize :: forall a. Env -> Tree a -> [Tree a]
-synonymize env t = symbs t ++ verbs t where
+synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ concatMap verbs st where
 
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
   ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
@@ -85,6 +85,19 @@ synonymize env t = symbs t ++ verbs t where
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAnnotateProp c (GAdjEProp _ x y) ->
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAnnotateProp c (GNoun1Prop _ x) ->
+      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
+    GAnnotateProp c (GNoun2Prop _ x y) ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAnnotateProp c (GNounCProp _ x y) ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAnnotateProp c (GVerbProp _ x) ->
+      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
+    GAnnotateProp c (GVerb2Prop _ x y) ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAnnotateProp c (GVerbCProp _ x y) ->
+      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+ 
     GNameExp _     -> map GTermExp (terms t)
     GFunExp _ _    -> map GTermExp (terms t)
     GFun2Exp _ _ _ -> map GTermExp (terms t)
@@ -92,16 +105,24 @@ synonymize env t = symbs t ++ verbs t where
 ----    GNounKind _    -> map (GExpKind . GTermExp) (terms t)
 ----    GFamKind _ _   -> map GTermKind (terms t)
 ----    GFam2Kind _ _ _ -> map GTermKind (terms t)
+
+    GAndProp (GListProp props) -> [GAndProp (GListProp ps) | ps <- sequence (map tsymbs props)]
+    GOrProp (GListProp props) -> [GOrProp (GListProp ps) | ps <- sequence (map tsymbs props)]
+    GIfProp a b -> [GIfProp sa sb | sa <- tsymbs a, sb <- tsymbs b]
+    GIffProp a b -> [GIffProp sa sb | sa <- tsymbs a, sb <- tsymbs b]
+    
     _ -> composOpM symbs t
+
+  tsymbs t = t : symbs t
 
   terms :: GExp -> [GTerm]
   terms t = case t of
+    GAnnotateExp c (GFunExp _ x) ->
+      [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GAnnotateExp c (GFun2Exp _ x y) ->
       [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAnnotateExp c (GFunCExp _ x y) ->
       [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateExp c (GFunExp _ x) ->
-      [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GAnnotateExp c (GNameExp _) ->
       [app alt [] | alt <- ssyns c]
     GAnnotateKind c (GNounKind _) ->
@@ -124,14 +145,16 @@ synonymize env t = symbs t ++ verbs t where
     GAnnotateProp c (GAdj3Prop _ x y z) ->  [pred alt [sx, sy, sz] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y, sz <- tverbs z]
     GAnnotateProp c (GNoun1Prop _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
     GAnnotateProp c (GNoun2Prop _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
+    GAnnotateProp c (GNounCProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
     GAnnotateProp c (GVerbProp _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
     GAnnotateProp c (GVerb2Prop _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
+    GAnnotateProp c (GVerbCProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
+    GFunExp _ _ ->  map GTermExp (terms t)  ---- TODO: also Noun, Fam
     GFun2Exp _ _ _ ->  map GTermExp (terms t) ---- TODO: also verbal synonyms
     GFunCExp _ _ _ ->  map GTermExp (terms t)
-    GFunExp _ _ ->  map GTermExp (terms t)  ---- TODO: also Noun, Fam
     _ -> composOpM verbs t
    where
-     tverbs x = verbs x ++ map GTermExp (terms x)
+     tverbs x = x : verbs x ++ map GTermExp (terms x)
 
   ---- TODO: define this once and for all in a shared place (also needed in Dedukti2MathCore)
   pred (fun, cat) xs = case (PGF.showType [] cat, xs) of
