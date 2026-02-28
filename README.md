@@ -429,7 +429,8 @@ Prop, arity 3: "X is <Adj> <Prep> Y <Prep> Z"
 
 Kind, arity 0: "<Noun>"
 Kind, arity 1: "<Noun> <Prep> As"
-Kind, arity 2: "<Noun> <Prep> As <Prep> Bs" | "the <Noun> <Prep> X and Y"
+Kind, arity 2: "<Noun> <Prep> As <Prep> Bs" | "<Noun> <Prep> As <Prep> Bs"
+              | "<Noun> <Prep> X" | "<Noun> <Prep> X <Prep> Y" | "<Noun> <Prep> X and Y"
 
 Exp, arity 0: "the <Noun>"
 Exp, arity 1: "the <Noun> <Prep> X"
@@ -522,6 +523,9 @@ Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
 AdjC      Exps -> Prop               X and Y are distinct
 AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
+Dep       Exp -> Kind                root of X
+Dep2      Exp -> Exp -> Kind         interval from X to Y
+DepC      Exps -> Kind               path between X and Y
 Fam       Kind -> Kind               list of As
 Fam2      Kind -> Kind -> Kind       function from As to Bs
 Fun       Exp -> Exp                 the square of X

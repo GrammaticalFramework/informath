@@ -921,6 +921,9 @@ Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
 AdjC      Exps -> Prop               X and Y are distinct
 AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
+Dep       Exp -> Kind                root of X
+Dep2      Exp -> Exp -> Kind         interval from X to Y
+DepC      Exps -> Kind               path between X and Y
 Fam       Kind -> Kind               list of As
 Fam2      Kind -> Kind -> Kind       function from As to Bs
 Fun       Exp -> Exp                 the square of X
@@ -1069,6 +1072,9 @@ Kind :=
   | Noun -
   | Fam - prep Kind
   | Fam2 - prep1 Kind prep2 Kind
+  | Dep - prep Exp
+  | Dep2 - prep1 Exp prep2 Exp
+  | DepC - prep Exp "and" Exp
 ```
 Notice that the second rule is actually a bit more complicated, because the CN-Adv boundary may occur inside the argument `Kind`, such as in
 
