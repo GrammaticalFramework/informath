@@ -171,6 +171,16 @@ lin
   Adj3Prop pred x y z =
     simpleProp (mkS (mkCl x (AdvAP (AdvAP pred.ap (Syntax.mkAdv pred.prep1 y)) (Syntax.mkAdv pred.prep2 z)))) ;
 
+  DepKind dep exp = {cn = dep.cn ; adv = Syntax.mkAdv dep.prep exp} ;
+  Dep2Kind dep x y = {
+    cn = dep.cn ;
+    adv = ccAdv (Syntax.mkAdv dep.prep1 x) (Syntax.mkAdv dep.prep2 y)
+    } ;
+  DepCKind dep x y = {
+    cn = dep.cn ;
+    adv = Syntax.mkAdv dep.prep (mkNP and_Conj x y)
+    } ;
+
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
 

@@ -61,6 +61,12 @@ type GConst = Tree GConst_
 data GConst_
 type GDeclaration = Tree GDeclaration_
 data GDeclaration_
+type GDep = Tree GDep_
+data GDep_
+type GDep2 = Tree GDep2_
+data GDep2_
+type GDepC = Tree GDepC_
+data GDepC_
 type GEnvironment = Tree GEnvironment_
 data GEnvironment_
 type GEquation = Tree GEquation_
@@ -209,6 +215,12 @@ data Tree :: * -> * where
   LexConst :: String -> Tree GConst_
   GElemDeclaration :: GListTerm -> GTerm -> Tree GDeclaration_
   GFunctionDeclaration :: GIdent -> GTerm -> GTerm -> Tree GDeclaration_
+  GNounPrepDep :: GNoun -> GPrep -> Tree GDep_
+  LexDep :: String -> Tree GDep_
+  GNounPrepDep2 :: GNoun -> GPrep -> GPrep -> Tree GDep2_
+  LexDep2 :: String -> Tree GDep2_
+  GNounPrepDepC :: GNoun -> GPrep -> Tree GDepC_
+  LexDepC :: String -> Tree GDepC_
   LexEnvironment :: String -> Tree GEnvironment_
   GBinaryEquation :: GCompar -> GTerm -> GTerm -> Tree GEquation_
   GChainEquation :: GCompar -> GTerm -> GEquation -> Tree GEquation_
@@ -217,6 +229,9 @@ data Tree :: * -> * where
   GAdjCExample :: GAdjC -> GArgument -> GArgument -> Tree GExample_
   GAdjEExample :: GAdjE -> GArgument -> GArgument -> Tree GExample_
   GAdjExample :: GAdj -> GArgument -> Tree GExample_
+  GDep2Example :: GDep2 -> GArgument -> GArgument -> Tree GExample_
+  GDepCExample :: GDepC -> GArgument -> GArgument -> Tree GExample_
+  GDepExample :: GDep -> GArgument -> Tree GExample_
   GFam2Example :: GFam2 -> GKindArgument -> GKindArgument -> Tree GExample_
   GFamExample :: GFam -> GKindArgument -> Tree GExample_
   GFun2Example :: GFun2 -> GArgument -> GArgument -> Tree GExample_
@@ -319,6 +334,9 @@ data Tree :: * -> * where
   GWeDefineAdjJmt :: GLabel -> GListHypo -> GExp -> GAdj -> GProp -> Tree GJmt_
   GAdjKind :: GAdj -> GKind -> Tree GKind_
   GAnnotateKind :: GIdent -> GKind -> Tree GKind_
+  GDep2Kind :: GDep2 -> GExp -> GExp -> Tree GKind_
+  GDepCKind :: GDepC -> GExp -> GExp -> Tree GKind_
+  GDepKind :: GDep -> GExp -> Tree GKind_
   GElemKind :: GKind -> Tree GKind_
   GExpKind :: GExp -> Tree GKind_
   GFam2Kind :: GFam2 -> GKind -> GKind -> Tree GKind_
@@ -912,6 +930,12 @@ instance Eq (Tree a) where
     (LexConst x,LexConst y) -> x == y
     (GElemDeclaration x1 x2,GElemDeclaration y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFunctionDeclaration x1 x2 x3,GFunctionDeclaration y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNounPrepDep x1 x2,GNounPrepDep y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (LexDep x,LexDep y) -> x == y
+    (GNounPrepDep2 x1 x2 x3,GNounPrepDep2 y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (LexDep2 x,LexDep2 y) -> x == y
+    (GNounPrepDepC x1 x2,GNounPrepDepC y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (LexDepC x,LexDepC y) -> x == y
     (LexEnvironment x,LexEnvironment y) -> x == y
     (GBinaryEquation x1 x2 x3,GBinaryEquation y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GChainEquation x1 x2 x3,GChainEquation y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -920,6 +944,9 @@ instance Eq (Tree a) where
     (GAdjCExample x1 x2 x3,GAdjCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjEExample x1 x2 x3,GAdjEExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjExample x1 x2,GAdjExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GDep2Example x1 x2 x3,GDep2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepCExample x1 x2 x3,GDepCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepExample x1 x2,GDepExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFam2Example x1 x2 x3,GFam2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GFamExample x1 x2,GFamExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFun2Example x1 x2 x3,GFun2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1022,6 +1049,9 @@ instance Eq (Tree a) where
     (GWeDefineAdjJmt x1 x2 x3 x4 x5,GWeDefineAdjJmt y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GAdjKind x1 x2,GAdjKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAnnotateKind x1 x2,GAnnotateKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GDep2Kind x1 x2 x3,GDep2Kind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepCKind x1 x2 x3,GDepCKind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepKind x1 x2,GDepKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GElemKind x1,GElemKind y1) -> and [ x1 == y1 ]
     (GExpKind x1,GExpKind y1) -> and [ x1 == y1 ]
     (GFam2Kind x1 x2 x3,GFam2Kind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1727,6 +1757,39 @@ instance Gf GDeclaration where
 
       _ -> error ("no Declaration " ++ show t)
 
+instance Gf GDep where
+  gf (GNounPrepDep x1 x2) = mkApp (mkCId "NounPrepDep") [gf x1, gf x2]
+  gf (LexDep x) = mkApp (mkCId x) []
+
+  fg t =
+    case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "NounPrepDep" -> GNounPrepDep (fg x1) (fg x2)
+
+      Just (i,[]) -> LexDep (showCId i)
+      _ -> error ("no Dep " ++ show t)
+
+instance Gf GDep2 where
+  gf (GNounPrepDep2 x1 x2 x3) = mkApp (mkCId "NounPrepDep2") [gf x1, gf x2, gf x3]
+  gf (LexDep2 x) = mkApp (mkCId x) []
+
+  fg t =
+    case unApp t of
+      Just (i,[x1,x2,x3]) | i == mkCId "NounPrepDep2" -> GNounPrepDep2 (fg x1) (fg x2) (fg x3)
+
+      Just (i,[]) -> LexDep2 (showCId i)
+      _ -> error ("no Dep2 " ++ show t)
+
+instance Gf GDepC where
+  gf (GNounPrepDepC x1 x2) = mkApp (mkCId "NounPrepDepC") [gf x1, gf x2]
+  gf (LexDepC x) = mkApp (mkCId x) []
+
+  fg t =
+    case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "NounPrepDepC" -> GNounPrepDepC (fg x1) (fg x2)
+
+      Just (i,[]) -> LexDepC (showCId i)
+      _ -> error ("no DepC " ++ show t)
+
 instance Gf GEnvironment where
   gf (LexEnvironment x) = mkApp (mkCId x) []
 
@@ -1754,6 +1817,9 @@ instance Gf GExample where
   gf (GAdjCExample x1 x2 x3) = mkApp (mkCId "AdjCExample") [gf x1, gf x2, gf x3]
   gf (GAdjEExample x1 x2 x3) = mkApp (mkCId "AdjEExample") [gf x1, gf x2, gf x3]
   gf (GAdjExample x1 x2) = mkApp (mkCId "AdjExample") [gf x1, gf x2]
+  gf (GDep2Example x1 x2 x3) = mkApp (mkCId "Dep2Example") [gf x1, gf x2, gf x3]
+  gf (GDepCExample x1 x2 x3) = mkApp (mkCId "DepCExample") [gf x1, gf x2, gf x3]
+  gf (GDepExample x1 x2) = mkApp (mkCId "DepExample") [gf x1, gf x2]
   gf (GFam2Example x1 x2 x3) = mkApp (mkCId "Fam2Example") [gf x1, gf x2, gf x3]
   gf (GFamExample x1 x2) = mkApp (mkCId "FamExample") [gf x1, gf x2]
   gf (GFun2Example x1 x2 x3) = mkApp (mkCId "Fun2Example") [gf x1, gf x2, gf x3]
@@ -1776,6 +1842,9 @@ instance Gf GExample where
       Just (i,[x1,x2,x3]) | i == mkCId "AdjCExample" -> GAdjCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "AdjEExample" -> GAdjEExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "AdjExample" -> GAdjExample (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "Dep2Example" -> GDep2Example (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "DepCExample" -> GDepCExample (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "DepExample" -> GDepExample (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Fam2Example" -> GFam2Example (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "FamExample" -> GFamExample (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Fun2Example" -> GFun2Example (fg x1) (fg x2) (fg x3)
@@ -2076,6 +2145,9 @@ instance Gf GJmt where
 instance Gf GKind where
   gf (GAdjKind x1 x2) = mkApp (mkCId "AdjKind") [gf x1, gf x2]
   gf (GAnnotateKind x1 x2) = mkApp (mkCId "AnnotateKind") [gf x1, gf x2]
+  gf (GDep2Kind x1 x2 x3) = mkApp (mkCId "Dep2Kind") [gf x1, gf x2, gf x3]
+  gf (GDepCKind x1 x2 x3) = mkApp (mkCId "DepCKind") [gf x1, gf x2, gf x3]
+  gf (GDepKind x1 x2) = mkApp (mkCId "DepKind") [gf x1, gf x2]
   gf (GElemKind x1) = mkApp (mkCId "ElemKind") [gf x1]
   gf (GExpKind x1) = mkApp (mkCId "ExpKind") [gf x1]
   gf (GFam2Kind x1 x2 x3) = mkApp (mkCId "Fam2Kind") [gf x1, gf x2, gf x3]
@@ -2088,6 +2160,9 @@ instance Gf GKind where
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "AdjKind" -> GAdjKind (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AnnotateKind" -> GAnnotateKind (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "Dep2Kind" -> GDep2Kind (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "DepCKind" -> GDepCKind (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "DepKind" -> GDepKind (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ElemKind" -> GElemKind (fg x1)
       Just (i,[x1]) | i == mkCId "ExpKind" -> GExpKind (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "Fam2Kind" -> GFam2Kind (fg x1) (fg x2) (fg x3)
@@ -3513,6 +3588,9 @@ instance Compos Tree where
     GKindArgKind x1 -> r GKindArgKind `a` f x1
     GElemDeclaration x1 x2 -> r GElemDeclaration `a` f x1 `a` f x2
     GFunctionDeclaration x1 x2 x3 -> r GFunctionDeclaration `a` f x1 `a` f x2 `a` f x3
+    GNounPrepDep x1 x2 -> r GNounPrepDep `a` f x1 `a` f x2
+    GNounPrepDep2 x1 x2 x3 -> r GNounPrepDep2 `a` f x1 `a` f x2 `a` f x3
+    GNounPrepDepC x1 x2 -> r GNounPrepDepC `a` f x1 `a` f x2
     GBinaryEquation x1 x2 x3 -> r GBinaryEquation `a` f x1 `a` f x2 `a` f x3
     GChainEquation x1 x2 x3 -> r GChainEquation `a` f x1 `a` f x2 `a` f x3
     GAdj2Example x1 x2 x3 -> r GAdj2Example `a` f x1 `a` f x2 `a` f x3
@@ -3520,6 +3598,9 @@ instance Compos Tree where
     GAdjCExample x1 x2 x3 -> r GAdjCExample `a` f x1 `a` f x2 `a` f x3
     GAdjEExample x1 x2 x3 -> r GAdjEExample `a` f x1 `a` f x2 `a` f x3
     GAdjExample x1 x2 -> r GAdjExample `a` f x1 `a` f x2
+    GDep2Example x1 x2 x3 -> r GDep2Example `a` f x1 `a` f x2 `a` f x3
+    GDepCExample x1 x2 x3 -> r GDepCExample `a` f x1 `a` f x2 `a` f x3
+    GDepExample x1 x2 -> r GDepExample `a` f x1 `a` f x2
     GFam2Example x1 x2 x3 -> r GFam2Example `a` f x1 `a` f x2 `a` f x3
     GFamExample x1 x2 -> r GFamExample `a` f x1 `a` f x2
     GFun2Example x1 x2 x3 -> r GFun2Example `a` f x1 `a` f x2 `a` f x3
@@ -3609,6 +3690,9 @@ instance Compos Tree where
     GWeDefineAdjJmt x1 x2 x3 x4 x5 -> r GWeDefineAdjJmt `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GAdjKind x1 x2 -> r GAdjKind `a` f x1 `a` f x2
     GAnnotateKind x1 x2 -> r GAnnotateKind `a` f x1 `a` f x2
+    GDep2Kind x1 x2 x3 -> r GDep2Kind `a` f x1 `a` f x2 `a` f x3
+    GDepCKind x1 x2 x3 -> r GDepCKind `a` f x1 `a` f x2 `a` f x3
+    GDepKind x1 x2 -> r GDepKind `a` f x1 `a` f x2
     GElemKind x1 -> r GElemKind `a` f x1
     GExpKind x1 -> r GExpKind `a` f x1
     GFam2Kind x1 x2 x3 -> r GFam2Kind `a` f x1 `a` f x2 `a` f x3

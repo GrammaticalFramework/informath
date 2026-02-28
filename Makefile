@@ -22,7 +22,7 @@ full_grammar:
 	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 share/InformathEng.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
+	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
 
 
 Dedukti:

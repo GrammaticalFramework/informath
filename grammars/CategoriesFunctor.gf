@@ -53,6 +53,9 @@ lincat
   Fun2 = Fun2T ;
   FunC = FunT ;
   Label = LabelT ;
+  Dep = {cn : CN ; prep : Prep} ;
+  Dep2 =  {cn : CN ; prep1, prep2 : Prep} ;
+  DepC =  {cn : CN ; prep : Prep} ;
 
   Prep = Syntax.Prep ;
   ProperName = PN ;

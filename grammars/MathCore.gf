@@ -93,6 +93,9 @@ fun
   Noun2Prop : Noun2 -> Exp -> Exp -> Prop ;
   NounCProp : NounC -> Exp -> Exp -> Prop ;
   Adj3Prop : Adj3 -> Exp -> Exp -> Exp -> Prop ;
+  DepKind : Dep -> Exp -> Kind ;
+  Dep2Kind : Dep2 -> Exp -> Exp -> Kind ;
+  DepCKind : DepC -> Exp -> Exp -> Kind ;
 
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti

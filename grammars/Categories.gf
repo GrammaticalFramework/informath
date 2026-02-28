@@ -46,6 +46,9 @@ cat
   FunC ;    -- [Exp] -> Exp         -- the sum of
   Label ;   -- Exp                  -- theorem 1
   Adj3 ;    -- Exp -> Exp -> Exp -> Prop -- congruent to y modulo z
+  Dep ;     -- Exp -> Kind          -- divisor of x
+  Dep2 ;    -- Exp -> Exp -> Kind   -- path from x to y
+  DepC ;    -- [Exp] -> Kind        -- connection between x and y
 
   Prep ;    -- used for symbol table extensions of grammar
   ProperName ; -- names of mathematicians occurring in concepts

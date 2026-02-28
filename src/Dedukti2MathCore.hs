@@ -42,7 +42,7 @@ jmt2jmt jmt = case jmt of
               (ident2label ident)
               (GListHypo (hypos2hypos hypos))
               (exp2prop kind)
-          _ | elem c ["Fam", "Fam2", "Noun", "Kind"] ->
+          _ | elem c ["Fam", "Fam2", "Noun", "Dep", "Dep2", "DepC", "Kind"] ->
             (maybe (GAxiomKindJmt axiomLabel)
 	        (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
               (GListHypo chypos)
@@ -114,6 +114,9 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Noun", c), []) -> GNounKind (fgTree c)
     (Just ("Fam",  c), [x]) -> GFamKind (fgTree c) (exp2kind x) 
     (Just ("Fam2", c), [x, y]) -> GFam2Kind (fgTree c) (exp2kind x) (exp2kind y)
+    (Just ("Dep",  c), [x]) -> GDepKind (fgTree c) (exp2exp x) 
+    (Just ("Dep2", c), [x, y]) -> GDep2Kind (fgTree c) (exp2exp x) (exp2exp y)
+    (Just ("DepC", c), [x, y]) -> GDepCKind (fgTree c) (exp2exp x) (exp2exp y)
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))

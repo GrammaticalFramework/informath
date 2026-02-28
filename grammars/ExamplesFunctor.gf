@@ -39,6 +39,10 @@ lin
   Verb2Example verb x y = mkExample (Verb2Prop verb x y) ;
   VerbCExample verb x y = mkExample (VerbCProp verb x y) ;
 
+  DepExample f x = mkExample (DepKind f x) ;
+  Dep2Example f x y = mkExample (Dep2Kind f x y) ;
+  DepCExample f x y = mkExample (DepCKind f x y) ;
+
   LabelExample label = mkExample (mkUtt label.np) "." ;
 
   X_Argument = NameExp (mkName "X") ;
@@ -72,6 +76,10 @@ lin
   VerbPrepNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP a_Det noun)) ;
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
   VerbVerbC verb = verb ;
+
+  NounPrepDep noun prep = {cn = noun ; prep = prep} ;
+  NounPrepDep2 noun prep1 prep2 = {cn = noun ; prep1 = prep1 ; prep2 = prep2} ;
+  NounPrepDepC noun prep = {cn = noun ; prep = prep} ;
 
   AdjNounNoun adj noun = mkCN adj noun ;
   NounNounNoun noun1 noun2 = compoundCN noun1 noun2 ;

@@ -223,6 +223,12 @@ kind2dedukti kind = case kind of
     EApp (EIdent (QIdent (showGF fam))) (kind2dedukti exp)
   GFam2Kind fam exp1 exp2 ->
     EApp (EApp (EIdent (QIdent (showGF fam))) (kind2dedukti exp1)) (kind2dedukti exp2)
+  GDepKind fam exp ->
+    EApp (EIdent (QIdent (showGF fam))) (exp2dedukti exp)
+  GDep2Kind fam exp1 exp2 ->
+    EApp (EApp (EIdent (QIdent (showGF fam))) (exp2dedukti exp1)) (exp2dedukti exp2)
+  GDepCKind fam exp1 exp2 ->
+    EApp (EApp (EIdent (QIdent (showGF fam))) (exp2dedukti exp1)) (exp2dedukti exp2)
   GExpKind exp -> exp2dedukti exp
   GNounKind noun ->
     EIdent (QIdent (showGF noun))
