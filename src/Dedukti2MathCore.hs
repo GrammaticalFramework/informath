@@ -116,7 +116,7 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Fam2", c), [x, y]) -> GFam2Kind (fgTree c) (exp2kind x) (exp2kind y)
     _ -> case exps of
       [] -> ident2kind ident
-      _:_ -> GAppKind (ident2ident ident) (gExps (map exp2exp exps))
+      _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))
 
 
 funListProp :: QIdent -> [GExp] -> GProp
@@ -312,7 +312,7 @@ ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
-    _ -> GTermKind (GIdentTerm (ident2ident ident))
+    _ -> GExpKind (GTermExp (GIdentTerm (ident2ident ident)))
 
 bind2coreIdent :: Bind -> GIdent
 bind2coreIdent = ident2ident . bind2ident

@@ -7,7 +7,6 @@ cat
   [Adj] {2} ;
 
 fun
-  TermKind : Term -> Kind ;
   FormulaProp : Formula -> Prop ;
   DisplayFormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;

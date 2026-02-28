@@ -17,11 +17,6 @@ lincat
   [Adj] = Syntax.ListAP ;
 
 lin
-  TermKind term = {
-    cn = mkCN element_N ;
-    adv = Syntax.mkAdv possess_Prep (latexNP (mkSymb term.s))
-    } ;
-
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
   
   DisplayFormulaProp formula = simpleProp (displayLatexS (mkSymb formula.s)) ;

@@ -121,7 +121,7 @@ finite : Set -> Prop.
 def infinite : Set -> Prop := A => not (finite A).
 
 suchthat : (A : Set) -> (B : Elem A -> Prop) -> Set.
-fst : (A : Set) -> (B : (Elem A -> Prop)) -> Elem (suchthat A B) -> Elem A.
+fst : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Elem (suchthat A (x => B x)) -> Elem A.
 
 def congruent : (a : Elem Int) -> (b : Elem Int) -> (m : Elem Nat) -> Prop :=
   a => b => m => exists Nat (k => Eq (minus a b) (times k m)).

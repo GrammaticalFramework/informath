@@ -89,7 +89,7 @@ synonymize env t = symbs t ++ verbs t where
     GFunExp _ _    -> map GTermExp (terms t)
     GFun2Exp _ _ _ -> map GTermExp (terms t)
     GFunCExp _ _ _ -> map GTermExp (terms t)
-----    GNounKind _    -> map GTermKind (terms t)
+----    GNounKind _    -> map (GExpKind . GTermExp) (terms t)
 ----    GFamKind _ _   -> map GTermKind (terms t)
 ----    GFam2Kind _ _ _ -> map GTermKind (terms t)
     _ -> composOpM symbs t
@@ -104,8 +104,8 @@ synonymize env t = symbs t ++ verbs t where
       [app alt [sx] | alt <- ssyns c, sx <- terms x]
     GAnnotateExp c (GNameExp _) ->
       [app alt [] | alt <- ssyns c]
-----    GAnnotateKind c (GNounKind _) ->
-----      [app alt [] | alt <- ssyns c]
+    GAnnotateKind c (GNounKind _) ->
+      [app alt [] | alt <- ssyns c]
     GSigmaExp m n i f ->
       [Gsigma_Term tm tn i tf | tm <- terms m, tn <- terms n, tf <- terms f]
     GSeriesExp m i f ->
@@ -317,7 +317,7 @@ variations tree = case tree of
 	  prop2 <- variations prop,
 	  hypoprop <- concatMap variations (hypoProp hypos2 prop2)
 	  ]
-  GVarsHypo (GListIdent xs) (GTermKind term) ->
+  GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
 ----  GVarsHypo fs@(GListIdent [f]) (GFam2Kind fam@(LexFam "function_Fam") (GSetKind a) (GSetKind b)) ->
 ----    [tree, GVarsHypo fs (GFam2Kind fam (GTermKind (GSetTerm a)) (GTermKind (GSetTerm b)))]

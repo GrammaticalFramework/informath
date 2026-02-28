@@ -319,15 +319,13 @@ data Tree :: * -> * where
   GWeDefineAdjJmt :: GLabel -> GListHypo -> GExp -> GAdj -> GProp -> Tree GJmt_
   GAdjKind :: GAdj -> GKind -> Tree GKind_
   GAnnotateKind :: GIdent -> GKind -> Tree GKind_
-  GAppKind :: GIdent -> GExps -> Tree GKind_
   GElemKind :: GKind -> Tree GKind_
+  GExpKind :: GExp -> Tree GKind_
   GFam2Kind :: GFam2 -> GKind -> GKind -> Tree GKind_
   GFamKind :: GFam -> GKind -> Tree GKind_
   GFunKind :: GListArgKind -> GKind -> Tree GKind_
-  GIdentKind :: GIdent -> Tree GKind_
   GNounKind :: GNoun -> Tree GKind_
   GSuchThatKind :: GKind -> GIdent -> GProp -> Tree GKind_
-  GTermKind :: GTerm -> Tree GKind_
   GA_KindArgument :: Tree GKindArgument_
   GB_KindArgument :: Tree GKindArgument_
   GDefNounLabel :: GNoun -> Tree GLabel_
@@ -1024,15 +1022,13 @@ instance Eq (Tree a) where
     (GWeDefineAdjJmt x1 x2 x3 x4 x5,GWeDefineAdjJmt y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GAdjKind x1 x2,GAdjKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAnnotateKind x1 x2,GAnnotateKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GAppKind x1 x2,GAppKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GElemKind x1,GElemKind y1) -> and [ x1 == y1 ]
+    (GExpKind x1,GExpKind y1) -> and [ x1 == y1 ]
     (GFam2Kind x1 x2 x3,GFam2Kind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GFamKind x1 x2,GFamKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFunKind x1 x2,GFunKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GIdentKind x1,GIdentKind y1) -> and [ x1 == y1 ]
     (GNounKind x1,GNounKind y1) -> and [ x1 == y1 ]
     (GSuchThatKind x1 x2 x3,GSuchThatKind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
-    (GTermKind x1,GTermKind y1) -> and [ x1 == y1 ]
     (GA_KindArgument,GA_KindArgument) -> and [ ]
     (GB_KindArgument,GB_KindArgument) -> and [ ]
     (GDefNounLabel x1,GDefNounLabel y1) -> and [ x1 == y1 ]
@@ -2080,29 +2076,25 @@ instance Gf GJmt where
 instance Gf GKind where
   gf (GAdjKind x1 x2) = mkApp (mkCId "AdjKind") [gf x1, gf x2]
   gf (GAnnotateKind x1 x2) = mkApp (mkCId "AnnotateKind") [gf x1, gf x2]
-  gf (GAppKind x1 x2) = mkApp (mkCId "AppKind") [gf x1, gf x2]
   gf (GElemKind x1) = mkApp (mkCId "ElemKind") [gf x1]
+  gf (GExpKind x1) = mkApp (mkCId "ExpKind") [gf x1]
   gf (GFam2Kind x1 x2 x3) = mkApp (mkCId "Fam2Kind") [gf x1, gf x2, gf x3]
   gf (GFamKind x1 x2) = mkApp (mkCId "FamKind") [gf x1, gf x2]
   gf (GFunKind x1 x2) = mkApp (mkCId "FunKind") [gf x1, gf x2]
-  gf (GIdentKind x1) = mkApp (mkCId "IdentKind") [gf x1]
   gf (GNounKind x1) = mkApp (mkCId "NounKind") [gf x1]
   gf (GSuchThatKind x1 x2 x3) = mkApp (mkCId "SuchThatKind") [gf x1, gf x2, gf x3]
-  gf (GTermKind x1) = mkApp (mkCId "TermKind") [gf x1]
 
   fg t =
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "AdjKind" -> GAdjKind (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AnnotateKind" -> GAnnotateKind (fg x1) (fg x2)
-      Just (i,[x1,x2]) | i == mkCId "AppKind" -> GAppKind (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ElemKind" -> GElemKind (fg x1)
+      Just (i,[x1]) | i == mkCId "ExpKind" -> GExpKind (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "Fam2Kind" -> GFam2Kind (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "FamKind" -> GFamKind (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "FunKind" -> GFunKind (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "IdentKind" -> GIdentKind (fg x1)
       Just (i,[x1]) | i == mkCId "NounKind" -> GNounKind (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "SuchThatKind" -> GSuchThatKind (fg x1) (fg x2) (fg x3)
-      Just (i,[x1]) | i == mkCId "TermKind" -> GTermKind (fg x1)
 
 
       _ -> error ("no Kind " ++ show t)
@@ -3617,15 +3609,13 @@ instance Compos Tree where
     GWeDefineAdjJmt x1 x2 x3 x4 x5 -> r GWeDefineAdjJmt `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GAdjKind x1 x2 -> r GAdjKind `a` f x1 `a` f x2
     GAnnotateKind x1 x2 -> r GAnnotateKind `a` f x1 `a` f x2
-    GAppKind x1 x2 -> r GAppKind `a` f x1 `a` f x2
     GElemKind x1 -> r GElemKind `a` f x1
+    GExpKind x1 -> r GExpKind `a` f x1
     GFam2Kind x1 x2 x3 -> r GFam2Kind `a` f x1 `a` f x2 `a` f x3
     GFamKind x1 x2 -> r GFamKind `a` f x1 `a` f x2
     GFunKind x1 x2 -> r GFunKind `a` f x1 `a` f x2
-    GIdentKind x1 -> r GIdentKind `a` f x1
     GNounKind x1 -> r GNounKind `a` f x1
     GSuchThatKind x1 x2 x3 -> r GSuchThatKind `a` f x1 `a` f x2 `a` f x3
-    GTermKind x1 -> r GTermKind `a` f x1
     GDefNounLabel x1 -> r GDefNounLabel `a` f x1
     GIdentLabel x1 -> r GIdentLabel `a` f x1
     GNounIdentLabel x1 x2 -> r GNounIdentLabel `a` f x1 `a` f x2

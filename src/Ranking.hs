@@ -51,16 +51,6 @@ scoreString env s = Scores {
      _:tt -> initdollars tt
      _ -> 0
 
-treeLength :: Expr -> Int
-treeLength t = case unApp t of
-  Just (f, ts@(_:_)) -> 1 + sum (map treeLength ts)
-  _ -> 1
-
-treeDepth :: Expr -> Int
-treeDepth t = case unApp t of
-  Just (f, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
-  _ -> 1
-
 -- returns all scores and their weighted sum
 scoreTreeAndString :: Env -> (Expr, String) -> (Scores, Int)
 scoreTreeAndString env (t, s) =

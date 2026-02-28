@@ -212,7 +212,6 @@ argkind2dedukti argkind = case argkind of
 kind2dedukti :: GKind -> Exp
 kind2dedukti kind = case kind of
   GElemKind k -> EApp (EIdent (QIdent "Elem")) (kind2dedukti k)
-  GTermKind (GIdentTerm ident) -> EIdent (ident2ident ident)
   {- ----
   GSuchThatKind kind ident prop ->
     propSigma
@@ -224,8 +223,7 @@ kind2dedukti kind = case kind of
     EApp (EIdent (QIdent (showGF fam))) (kind2dedukti exp)
   GFam2Kind fam exp1 exp2 ->
     EApp (EApp (EIdent (QIdent (showGF fam))) (kind2dedukti exp1)) (kind2dedukti exp2)
-  GAppKind ident exps ->
-    foldl1 EApp (EIdent (ident2ident ident) : map exp2dedukti (exps2list exps))
+  GExpKind exp -> exp2dedukti exp
   GNounKind noun ->
     EIdent (QIdent (showGF noun))
   _ -> eUndefinedDebug kind ---- TODO
@@ -323,7 +321,7 @@ label2ident label = case label of
 
 kind2ident :: GKind -> QIdent
 kind2ident kind = case kind of
-  GTermKind (GIdentTerm ident) -> ident2ident ident
+  GExpKind (GTermExp (GIdentTerm ident)) -> ident2ident ident
   _ -> QIdent (takeWhile isAlpha (show (gf kind))) ---- TODO
 
 prop2deduktiIdent :: GProp -> QIdent

@@ -73,7 +73,8 @@ semArgkind argkind = case argkind of
   GIdentArgKind kind ident -> [(ident, kind)]
   GIdentsArgKind kind (GListIdent idents) -> [(ident, kind) | ident <- idents]
   GIndexedDeclarationArgKind (GInt i) ->
-     [((GStrIdent (GString ("UNRESOLVED_" ++ show i))), GIdentKind (GStrIdent (GString "UNRESOLVED_KIND")))]
+     [((GStrIdent (GString ("UNRESOLVED_" ++ show i))),
+       GExpKind (GTermExp (GIdentTerm (GStrIdent (GString "UNRESOLVED_KIND")))))]
   GKindArgKind kind -> [(GStrIdent (GString "KIND_"), kind)]
   GBareIdentsArgKind (GListIdent idents) -> [(ident, unspecifiedKind) | ident <- idents]
   --- these should have been resolved in sem
@@ -261,9 +262,9 @@ sem env t = case t of
   GDeclarationArgKind declaration -> case sem env declaration of
    ---- TODO: check that all are idents
     GElemDeclaration (GListTerm terms) term ->
-      GIdentsArgKind (GTermKind term) (GListIdent [x | GIdentTerm x <- terms])
+      GIdentsArgKind (GExpKind (GTermExp term)) (GListIdent [x | GIdentTerm x <- terms])
     GElemDeclaration (GListTerm terms) term -> 
-      GIdentsArgKind (GTermKind term) (GListIdent [x | GIdentTerm x <- terms])
+      GIdentsArgKind (GExpKind (GTermExp term)) (GListIdent [x | GIdentTerm x <- terms])
     _ -> t ---- error "cannot use declaration as argkind yet"
   GNoCommaExistProp argkinds prop ->
     sem env (GExistProp argkinds prop)

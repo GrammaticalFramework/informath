@@ -4,6 +4,7 @@ import Environment
 import BuildConstantTable (verbalCats)
 import PGF
 import Data.Char(isAlpha, isAlphaNum)
+import Data.List(sortOn)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
@@ -22,7 +23,8 @@ parseJmt env cat s =
   in
   case (fst (parse_ gr eng cat (Just 4) s)) of  --- Just 4 is default in PGF.parse
     ParseOk ps -> 
-         let trees = [t | t <- take max_number ps, notspur t, checkVariables env t]
+         let trees = sortOn treeDepth
+	       [t | t <- take max_number ps, notspur t, checkVariables env t]
          in
 	 if not (null trees)
             then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
@@ -105,4 +107,14 @@ unindexGFTree env termindex expr = case unind expr of
   parsed c s = case parseJmt env (mkTyp c) s of
       (Just (t:ts), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
       _ -> []
+
+treeLength :: Expr -> Int
+treeLength t = case unApp t of
+  Just (f, ts@(_:_)) -> 1 + sum (map treeLength ts)
+  _ -> 1
+
+treeDepth :: Expr -> Int
+treeDepth t = case unApp t of
+  Just (f, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
+  _ -> 1
 
