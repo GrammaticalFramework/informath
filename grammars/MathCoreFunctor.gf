@@ -181,6 +181,18 @@ lin
     adv = Syntax.mkAdv dep.prep (mkNP and_Conj x y)
     } ;
 
+  BinderExp binder ident exp =
+    mkNP the_Det (mkCN (mkCN binder exp) (Syntax.mkAdv possess_Prep (latexNP (mkSymb ident)))) ;
+
+  Binder1Exp binder ident exp kind =
+    mkNP the_Det (mkCN (mkCN binder (Syntax.mkAdv possess_Prep exp))
+      (mkQS (mkQCl where_IAdv (mkCl (latexNP (mkSymb ident)) (useKind kind))))) ;
+
+  Binder2Exp binder ident exp lower upper =
+    mkNP the_Det (mkCN (mkCN binder (Syntax.mkAdv possess_Prep exp))
+      (mkQS (mkQCl where_IAdv (mkCl (latexNP (mkSymb ident))
+             (mkVP range_V3 lower upper))))) ;
+
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
 

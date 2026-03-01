@@ -69,7 +69,9 @@ oper
   prove_VS = mkVS (mkV "bevisa") ;
   
   as_Prep : Prep = mkPrep "som" ;
-  at_Prep : Prep = mkPrep "på" ; ---
+  at_Prep : Prep = mkPrep "vid" ;
+  over_Prep : Prep = mkPrep "over" ;
+  
 
   let_Str : Bool => Str = \\_ => "låt" ;
   assuming_Str = "under följande antaganden:" ;
@@ -81,7 +83,7 @@ oper
   only_if_Subj : Subj = mkSubj "endast om" ;
 
   number_Noun = mkCN (mkN "tal" "tal") ;
-  range_V3 = mkV3 (mkV "löper") from_Prep to_Prep ;
+  range_V3 = mkV3 I.gå_V from_Prep to_Prep ;
   sum_N = mkN "summa" ;
   where_Subj = mkSubj "där" ;
 

@@ -73,7 +73,10 @@ oper
   
   as_Prep : Prep = mkPrep "als" nominative ;
   at_Prep : Prep = anDat_Prep ;
+  over_Prep : Prep = mkPrep "über" accusative ; --- dative?
 
+  range_V3 = mkV3 (mkV "reichen") from_Prep to_Prep ;
+  
   alle_Det = M.mkWeakDet "all" plural ;
 
   let_Str : Bool => Str = \\_ => "sei" ;
@@ -86,7 +89,6 @@ oper
 
 {-
   number_Noun = mkNoun (mkN "tal" "tal") ;
-  range_V3 = mkV3 (mkV "löper") from_Prep to_Prep ;
   sum_N = mkN "summa" ;
   where_Subj = mkSubj "där" ;
   given_A2 = mkA2 (mkA "given") as_Prep ;

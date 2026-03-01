@@ -55,6 +55,14 @@ type GArgKind = Tree GArgKind_
 data GArgKind_
 type GArgument = Tree GArgument_
 data GArgument_
+type GBinder = Tree GBinder_
+data GBinder_
+type GBinder1 = Tree GBinder1_
+data GBinder1_
+type GBinder2 = Tree GBinder2_
+data GBinder2_
+type GBoundVariable = Tree GBoundVariable_
+data GBoundVariable_
 type GCompar = Tree GCompar_
 data GCompar_
 type GConst = Tree GConst_
@@ -211,6 +219,11 @@ data Tree :: * -> * where
   GX_Argument :: Tree GArgument_
   GY_Argument :: Tree GArgument_
   GZ_Argument :: Tree GArgument_
+  GNounBinder :: GNoun -> Tree GBinder_
+  GNounBinder1 :: GNoun -> Tree GBinder1_
+  GNounBinder2 :: GNoun -> Tree GBinder2_
+  Gi_BoundVariable :: Tree GBoundVariable_
+  Gx_BoundVariable :: Tree GBoundVariable_
   LexCompar :: String -> Tree GCompar_
   LexConst :: String -> Tree GConst_
   GElemDeclaration :: GListTerm -> GTerm -> Tree GDeclaration_
@@ -229,6 +242,9 @@ data Tree :: * -> * where
   GAdjCExample :: GAdjC -> GArgument -> GArgument -> Tree GExample_
   GAdjEExample :: GAdjE -> GArgument -> GArgument -> Tree GExample_
   GAdjExample :: GAdj -> GArgument -> Tree GExample_
+  GBinder1Example :: GBinder1 -> GBoundVariable -> GArgument -> GKindArgument -> Tree GExample_
+  GBinder2Example :: GBinder2 -> GBoundVariable -> GArgument -> GArgument -> GArgument -> Tree GExample_
+  GBinderExample :: GBinder -> GBoundVariable -> GArgument -> Tree GExample_
   GDep2Example :: GDep2 -> GArgument -> GArgument -> Tree GExample_
   GDepCExample :: GDepC -> GArgument -> GArgument -> Tree GExample_
   GDepExample :: GDep -> GArgument -> Tree GExample_
@@ -252,6 +268,9 @@ data Tree :: * -> * where
   GAndExp :: GListExp -> Tree GExp_
   GAnnotateExp :: GIdent -> GExp -> Tree GExp_
   GAppExp :: GExp -> GExps -> Tree GExp_
+  GBinder1Exp :: GBinder1 -> GIdent -> GExp -> GKind -> Tree GExp_
+  GBinder2Exp :: GBinder2 -> GIdent -> GExp -> GExp -> GExp -> Tree GExp_
+  GBinderExp :: GBinder -> GIdent -> GExp -> Tree GExp_
   GBothAndExp :: GExp -> GExp -> Tree GExp_
   GCoercionExp :: GCoercion -> GExp -> Tree GExp_
   GCoreAbsExp :: GIdent -> GExp -> Tree GExp_
@@ -926,6 +945,11 @@ instance Eq (Tree a) where
     (GX_Argument,GX_Argument) -> and [ ]
     (GY_Argument,GY_Argument) -> and [ ]
     (GZ_Argument,GZ_Argument) -> and [ ]
+    (GNounBinder x1,GNounBinder y1) -> and [ x1 == y1 ]
+    (GNounBinder1 x1,GNounBinder1 y1) -> and [ x1 == y1 ]
+    (GNounBinder2 x1,GNounBinder2 y1) -> and [ x1 == y1 ]
+    (Gi_BoundVariable,Gi_BoundVariable) -> and [ ]
+    (Gx_BoundVariable,Gx_BoundVariable) -> and [ ]
     (LexCompar x,LexCompar y) -> x == y
     (LexConst x,LexConst y) -> x == y
     (GElemDeclaration x1 x2,GElemDeclaration y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -944,6 +968,9 @@ instance Eq (Tree a) where
     (GAdjCExample x1 x2 x3,GAdjCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjEExample x1 x2 x3,GAdjEExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjExample x1 x2,GAdjExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GBinder1Example x1 x2 x3 x4,GBinder1Example y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
+    (GBinder2Example x1 x2 x3 x4 x5,GBinder2Example y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
+    (GBinderExample x1 x2 x3,GBinderExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GDep2Example x1 x2 x3,GDep2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GDepCExample x1 x2 x3,GDepCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GDepExample x1 x2,GDepExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -967,6 +994,9 @@ instance Eq (Tree a) where
     (GAndExp x1,GAndExp y1) -> and [ x1 == y1 ]
     (GAnnotateExp x1 x2,GAnnotateExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAppExp x1 x2,GAppExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GBinder1Exp x1 x2 x3 x4,GBinder1Exp y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
+    (GBinder2Exp x1 x2 x3 x4 x5,GBinder2Exp y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
+    (GBinderExp x1 x2 x3,GBinderExp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GBothAndExp x1 x2,GBothAndExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCoercionExp x1 x2,GCoercionExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCoreAbsExp x1 x2,GCoreAbsExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1727,6 +1757,48 @@ instance Gf GArgument where
 
       _ -> error ("no Argument " ++ show t)
 
+instance Gf GBinder where
+  gf (GNounBinder x1) = mkApp (mkCId "NounBinder") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "NounBinder" -> GNounBinder (fg x1)
+
+
+      _ -> error ("no Binder " ++ show t)
+
+instance Gf GBinder1 where
+  gf (GNounBinder1 x1) = mkApp (mkCId "NounBinder1") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "NounBinder1" -> GNounBinder1 (fg x1)
+
+
+      _ -> error ("no Binder1 " ++ show t)
+
+instance Gf GBinder2 where
+  gf (GNounBinder2 x1) = mkApp (mkCId "NounBinder2") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "NounBinder2" -> GNounBinder2 (fg x1)
+
+
+      _ -> error ("no Binder2 " ++ show t)
+
+instance Gf GBoundVariable where
+  gf Gi_BoundVariable = mkApp (mkCId "i_BoundVariable") []
+  gf Gx_BoundVariable = mkApp (mkCId "x_BoundVariable") []
+
+  fg t =
+    case unApp t of
+      Just (i,[]) | i == mkCId "i_BoundVariable" -> Gi_BoundVariable 
+      Just (i,[]) | i == mkCId "x_BoundVariable" -> Gx_BoundVariable 
+
+
+      _ -> error ("no BoundVariable " ++ show t)
+
 instance Gf GCompar where
   gf (LexCompar x) = mkApp (mkCId x) []
 
@@ -1817,6 +1889,9 @@ instance Gf GExample where
   gf (GAdjCExample x1 x2 x3) = mkApp (mkCId "AdjCExample") [gf x1, gf x2, gf x3]
   gf (GAdjEExample x1 x2 x3) = mkApp (mkCId "AdjEExample") [gf x1, gf x2, gf x3]
   gf (GAdjExample x1 x2) = mkApp (mkCId "AdjExample") [gf x1, gf x2]
+  gf (GBinder1Example x1 x2 x3 x4) = mkApp (mkCId "Binder1Example") [gf x1, gf x2, gf x3, gf x4]
+  gf (GBinder2Example x1 x2 x3 x4 x5) = mkApp (mkCId "Binder2Example") [gf x1, gf x2, gf x3, gf x4, gf x5]
+  gf (GBinderExample x1 x2 x3) = mkApp (mkCId "BinderExample") [gf x1, gf x2, gf x3]
   gf (GDep2Example x1 x2 x3) = mkApp (mkCId "Dep2Example") [gf x1, gf x2, gf x3]
   gf (GDepCExample x1 x2 x3) = mkApp (mkCId "DepCExample") [gf x1, gf x2, gf x3]
   gf (GDepExample x1 x2) = mkApp (mkCId "DepExample") [gf x1, gf x2]
@@ -1842,6 +1917,9 @@ instance Gf GExample where
       Just (i,[x1,x2,x3]) | i == mkCId "AdjCExample" -> GAdjCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "AdjEExample" -> GAdjEExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "AdjExample" -> GAdjExample (fg x1) (fg x2)
+      Just (i,[x1,x2,x3,x4]) | i == mkCId "Binder1Example" -> GBinder1Example (fg x1) (fg x2) (fg x3) (fg x4)
+      Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "Binder2Example" -> GBinder2Example (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
+      Just (i,[x1,x2,x3]) | i == mkCId "BinderExample" -> GBinderExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "Dep2Example" -> GDep2Example (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "DepCExample" -> GDepCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "DepExample" -> GDepExample (fg x1) (fg x2)
@@ -1870,6 +1948,9 @@ instance Gf GExp where
   gf (GAndExp x1) = mkApp (mkCId "AndExp") [gf x1]
   gf (GAnnotateExp x1 x2) = mkApp (mkCId "AnnotateExp") [gf x1, gf x2]
   gf (GAppExp x1 x2) = mkApp (mkCId "AppExp") [gf x1, gf x2]
+  gf (GBinder1Exp x1 x2 x3 x4) = mkApp (mkCId "Binder1Exp") [gf x1, gf x2, gf x3, gf x4]
+  gf (GBinder2Exp x1 x2 x3 x4 x5) = mkApp (mkCId "Binder2Exp") [gf x1, gf x2, gf x3, gf x4, gf x5]
+  gf (GBinderExp x1 x2 x3) = mkApp (mkCId "BinderExp") [gf x1, gf x2, gf x3]
   gf (GBothAndExp x1 x2) = mkApp (mkCId "BothAndExp") [gf x1, gf x2]
   gf (GCoercionExp x1 x2) = mkApp (mkCId "CoercionExp") [gf x1, gf x2]
   gf (GCoreAbsExp x1 x2) = mkApp (mkCId "CoreAbsExp") [gf x1, gf x2]
@@ -1905,6 +1986,9 @@ instance Gf GExp where
       Just (i,[x1]) | i == mkCId "AndExp" -> GAndExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "AnnotateExp" -> GAnnotateExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AppExp" -> GAppExp (fg x1) (fg x2)
+      Just (i,[x1,x2,x3,x4]) | i == mkCId "Binder1Exp" -> GBinder1Exp (fg x1) (fg x2) (fg x3) (fg x4)
+      Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "Binder2Exp" -> GBinder2Exp (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
+      Just (i,[x1,x2,x3]) | i == mkCId "BinderExp" -> GBinderExp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "BothAndExp" -> GBothAndExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "CoercionExp" -> GCoercionExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "CoreAbsExp" -> GCoreAbsExp (fg x1) (fg x2)
@@ -3586,6 +3670,9 @@ instance Compos Tree where
     GIdentsArgKind x1 x2 -> r GIdentsArgKind `a` f x1 `a` f x2
     GIndexedDeclarationArgKind x1 -> r GIndexedDeclarationArgKind `a` f x1
     GKindArgKind x1 -> r GKindArgKind `a` f x1
+    GNounBinder x1 -> r GNounBinder `a` f x1
+    GNounBinder1 x1 -> r GNounBinder1 `a` f x1
+    GNounBinder2 x1 -> r GNounBinder2 `a` f x1
     GElemDeclaration x1 x2 -> r GElemDeclaration `a` f x1 `a` f x2
     GFunctionDeclaration x1 x2 x3 -> r GFunctionDeclaration `a` f x1 `a` f x2 `a` f x3
     GNounPrepDep x1 x2 -> r GNounPrepDep `a` f x1 `a` f x2
@@ -3598,6 +3685,9 @@ instance Compos Tree where
     GAdjCExample x1 x2 x3 -> r GAdjCExample `a` f x1 `a` f x2 `a` f x3
     GAdjEExample x1 x2 x3 -> r GAdjEExample `a` f x1 `a` f x2 `a` f x3
     GAdjExample x1 x2 -> r GAdjExample `a` f x1 `a` f x2
+    GBinder1Example x1 x2 x3 x4 -> r GBinder1Example `a` f x1 `a` f x2 `a` f x3 `a` f x4
+    GBinder2Example x1 x2 x3 x4 x5 -> r GBinder2Example `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
+    GBinderExample x1 x2 x3 -> r GBinderExample `a` f x1 `a` f x2 `a` f x3
     GDep2Example x1 x2 x3 -> r GDep2Example `a` f x1 `a` f x2 `a` f x3
     GDepCExample x1 x2 x3 -> r GDepCExample `a` f x1 `a` f x2 `a` f x3
     GDepExample x1 x2 -> r GDepExample `a` f x1 `a` f x2
@@ -3621,6 +3711,9 @@ instance Compos Tree where
     GAndExp x1 -> r GAndExp `a` f x1
     GAnnotateExp x1 x2 -> r GAnnotateExp `a` f x1 `a` f x2
     GAppExp x1 x2 -> r GAppExp `a` f x1 `a` f x2
+    GBinder1Exp x1 x2 x3 x4 -> r GBinder1Exp `a` f x1 `a` f x2 `a` f x3 `a` f x4
+    GBinder2Exp x1 x2 x3 x4 x5 -> r GBinder2Exp `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
+    GBinderExp x1 x2 x3 -> r GBinderExp `a` f x1 `a` f x2 `a` f x3
     GBothAndExp x1 x2 -> r GBothAndExp `a` f x1 `a` f x2
     GCoercionExp x1 x2 -> r GCoercionExp `a` f x1 `a` f x2
     GCoreAbsExp x1 x2 -> r GCoreAbsExp `a` f x1 `a` f x2

@@ -6,6 +6,7 @@ cat
   Example ;
   Argument ;
   KindArgument ;
+  BoundVariable ;
 
 fun
   AdjExample : Adj -> Argument -> Example ;
@@ -31,8 +32,13 @@ fun
   Dep2Example : Dep2 -> Argument -> Argument -> Example ;
   DepCExample : DepC -> Argument -> Argument -> Example ;
 
+  BinderExample : Binder -> BoundVariable -> Argument -> Example ;
+  Binder1Example : Binder1 -> BoundVariable -> Argument -> KindArgument -> Example ;
+  Binder2Example : Binder2 -> BoundVariable -> Argument -> Argument -> Argument -> Example ;
+
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;
+  x_BoundVariable, i_BoundVariable : BoundVariable ;
 
   DefNounName : Noun -> Name ;
   ProperNameNounName : ProperName -> Noun -> Name ; --- ProperName in genitive: Euler's constant
@@ -72,19 +78,24 @@ fun
   NounPrepDep2 : Noun -> Prep -> Prep -> Dep2 ;
   NounPrepDepC : Noun -> Prep -> DepC ;
 
+  NounBinder : Noun -> Binder ;
+  NounBinder1 : Noun -> Binder1 ;
+  NounBinder2 : Noun -> Binder2 ;
 
-  NoPrep : Prep ;
+  noPrep : Prep ;
 
   at_Prep : Prep ;
-  betweenPrep : Prep ;
-  byPrep : Prep ;
-  forPrep : Prep ;
-  fromPrep : Prep ;
-  inPrep : Prep ;
-  moduloPrep : Prep ;
-  ofPrep : Prep ;
-  onPrep : Prep ;
-  toPrep : Prep ;
-  withPrep : Prep ;
+  between_Prep : Prep ;
+  by_Prep : Prep ;
+  for_Prep : Prep ;
+  from_Prep : Prep ;
+  in_Prep : Prep ;
+  modulo_Prep : Prep ;
+  of_Prep : Prep ;
+  on_Prep : Prep ;
+  over_Prep : Prep ;
+  to_Prep : Prep ;
+  under_Prep : Prep ;
+  with_Prep : Prep ;
 
 }

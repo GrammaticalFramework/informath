@@ -97,6 +97,11 @@ fun
   Dep2Kind : Dep2 -> Exp -> Exp -> Kind ;
   DepCKind : DepC -> Exp -> Exp -> Kind ;
 
+  BinderExp : Binder -> Ident -> Exp -> Exp ;
+  Binder1Exp : Binder1 -> Ident -> Exp -> Kind -> Exp ;
+  Binder2Exp : Binder2 -> Ident -> Exp -> Exp -> Exp -> Exp ;
+
+
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
 -- only few are needed if Number types are identified following Ganesalingam

@@ -73,7 +73,10 @@ oper
   
   as_Prep : Prep = mkPrep "comme" ;
   at_Prep : Prep = dative ;
+  over_Prep : Prep = on_Prep ;
 
+  range_V3 = mkV3 I.aller_V from_Prep to_Prep ;
+  
   let_Str : Bool => Str = table {False => "soit" ; True => "soient"} ;
   assuming_Str = "en supposant :" ;
 
@@ -83,7 +86,7 @@ oper
 
 {-
   number_Noun = mkCN (mkN "tal" "tal") ;
-  range_V3 = mkV3 (mkV "löper") from_Prep to_Prep ;
+
   sum_N = mkN "summa" ;
   where_Subj = mkSubj "där" ;
 

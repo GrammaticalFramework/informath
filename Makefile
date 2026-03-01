@@ -18,6 +18,9 @@ devel: english_grammar RunInformath rootlink
 rootlink:
 	export INFORMATH_ROOT=$(CURDIR)
 
+multi_grammar:
+	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
 full_grammar:
 	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
@@ -69,14 +72,17 @@ demo:
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 
-fulldemo:
+multidemo:
 	make demo
 	echo "## converting some simple arithmetic statements to French"
 	$(RUN) -to-lang=Fre test/exx.dk
-	echo "## converting some simple arithmetic statements to German"
-	$(RUN) -to-lang=Ger test/exx.dk
 	echo "## converting some simple arithmetic statements to Swedish"
 	$(RUN) -to-lang=Swe test/exx.dk
+
+fulldemo:
+	make multidemo
+	echo "## converting some simple arithmetic statements to German"
+	$(RUN) -to-lang=Ger test/exx.dk
 
 
 devtest:
@@ -86,7 +92,7 @@ devtest:
 	make sets
 	make naproche
 	make interpret_naproche
-	make natural_deduction
+#	make natural_deduction
 	make symboltest
 
 

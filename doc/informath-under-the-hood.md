@@ -1232,9 +1232,10 @@ even : even_Adj
 odd : odd_Adj
 plus : plus_FunC
 ```
-When generating MathCore, only the first GF function on each line is used. 
+When generating MathCore, only the first GF function in each symbol table entry is used. 
 The remaining ones are synonyms that can be used in full Informathl.
-Notice that one and the same MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous; this ambiguity should ideally be possible to resolve by type checking.
+Notice that one and the same MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous when translating natural language back to Dedukti. 
+This ambiguity should ideally resolved by type checking, which should accept only one of the translations.
 
 After selecting the form of GF judgement, the translator descends recursively to the parts of the hypothesis, the type, and the possible defining part.
 These parts are mostly built with function applications, and the translation uses the symbol table to identify the GF function and its type for each function head, to select the proper GF expression to translate the application.
@@ -1295,6 +1296,8 @@ When an English theorem statement has no label, the identifier `noLabel` is used
 If some of the words can be parsed in GF but are not found in the symbol table, the identifier `UNDEFINED_<GFExp>` is created.
 
 
+
+
 ## The full Informath language
 
 The extension of MathCore to full Informath enables the following steps.
@@ -1350,7 +1353,7 @@ In addition to the steps mentioned above, there is a growing number of syntactic
 The total effect of such transformations easily grows to hundreds of variants, and there is no upper limit.
 There is a rudimentary **ranking** that favours short verbalizations using the maximum of mathematical symbolism.
 On the other hand, it also gives penalties to ambiguous statements.
-A brief description of the best verbalization is maybe: the shortest possible unambiguous one.
+A brief description of the best verbalization is: the shortest possible unambiguous one.
 
 
 ### The semantics of Informath
@@ -1394,9 +1397,9 @@ For example,
 ```
 congruent : "X is congruent to Y modulo X" | \congruent
 
-#MACRO \congruent 3 #1 \equiv #2 \, \text{mod} \, #3
+#MACRO \newcommand{\congruent}[3]{ #1 \equiv #2 \, \text{mod} \, #3 }
 ```
-This words very well in informalization, whereas formalization only works for LaTeX code that is written by using the macros declared.
+This works very well in informalization, whereas formalization only works for LaTeX code that is written by using the macros declared.
 
 
 ### Generating symbolic notation

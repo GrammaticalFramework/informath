@@ -49,6 +49,10 @@ cat
   Dep ;     -- Exp -> Kind          -- divisor of x
   Dep2 ;    -- Exp -> Exp -> Kind   -- path from x to y
   DepC ;    -- [Exp] -> Kind        -- connection between x and y
+  Binder ;
+  Binder1 ;
+  Binder2 ;
+  
 
   Prep ;    -- used for symbol table extensions of grammar
   ProperName ; -- names of mathematicians occurring in concepts

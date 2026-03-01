@@ -69,6 +69,9 @@ oper
 
   as_Prep : Prep = mkPrep "as" ;
   at_Prep : Prep = mkPrep "at" ;
+  over_Prep : Prep = mkPrep "over" ;
+
+  range_V3 = mkV3 (mkV "range") from_Prep to_Prep ;
 
   let_Str : Bool => Str = \\_ => "let" ;
 
@@ -77,7 +80,6 @@ oper
   imply_V2 : V2 = mkV2 (mkV "imply") ;
   only_if_Subj : Subj = mkSubj "only if" ;
 
-  range_V3 = mkV3 (mkV "range") from_Prep to_Prep ;
   sum_N = mkN "sum" ;
   where_Subj = mkSubj "where" ;
   number_N = mkN "number" ;

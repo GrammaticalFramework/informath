@@ -321,6 +321,9 @@ oper
   arbitrary_A : A ;
   set_N : N ;
   at_Prep : Prep ;
+  over_Prep : Prep ;
+  
+  range_V3 : V3 ;
 
   iff_Subj : Subj ;
   commaConj : Conj ;

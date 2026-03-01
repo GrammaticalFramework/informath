@@ -57,6 +57,10 @@ lincat
   Dep2 =  {cn : CN ; prep1, prep2 : Prep} ;
   DepC =  {cn : CN ; prep : Prep} ;
 
+  Binder = CN ;
+  Binder1 = CN ;
+  Binder2 = CN ;
+
   Prep = Syntax.Prep ;
   ProperName = PN ;
 

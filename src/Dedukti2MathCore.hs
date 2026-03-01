@@ -47,7 +47,7 @@ jmt2jmt jmt = case jmt of
 	        (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
               (GListHypo chypos)
 	      (exp2kind (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-          _ | elem c ["Fun", "Fun2", "FunC", "Exp", "Name", "Unknown"] ->
+          _ | elem c ["Fun", "Fun2", "FunC", "Exp", "Name", "Unknown", "Binder", "Binder1", "Binder2"] ->
             (maybe (GAxiomExpJmt axiomLabel)
 	        (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
               (GListHypo chypos)
