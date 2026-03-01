@@ -98,8 +98,8 @@ fun
   DepCKind : DepC -> Exp -> Exp -> Kind ;
 
   BinderExp : Binder -> Ident -> Exp -> Exp ;
-  Binder1Exp : Binder1 -> Ident -> Exp -> Kind -> Exp ;
-  Binder2Exp : Binder2 -> Ident -> Exp -> Exp -> Exp -> Exp ;
+  Binder1Exp : Binder1 -> Kind -> Ident -> Exp -> Exp ;
+  Binder2Exp : Binder2 -> Exp -> Exp -> Ident -> Exp -> Exp ;
 
 
 -- coercions, to disappear in Core2Informath

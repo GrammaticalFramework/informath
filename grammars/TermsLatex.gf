@@ -69,12 +69,17 @@ lin
   App2MacroFormula ident x y =
     constant (ident ++ curly (top x) ++ curly (top y)) ;
   App2MacroTerm ident x y =
-    constant (ident ++ curly (top x) ++ curly (top y)) ** {isNumber = False} ; --- False impossible to know
+    constant (ident ++ curly (top x) ++ curly (top y)) ** {isNumber = False} ; --- isNumber and precedence impossible to know
 
   App3MacroFormula ident x y z =
     constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ;
   App3MacroTerm ident x y z =
     constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ** {isNumber = False} ; --- False impossible to know
+
+  App4MacroFormula ident x y z u =
+    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z) ++ curly (top u)) ;
+  App4MacroTerm ident x y z u =
+    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z) ++ curly (top u)) ** {isNumber = False} ; --- False impossible to know
 
   StringMacro s = s.s ;
   

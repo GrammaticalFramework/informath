@@ -33,8 +33,8 @@ fun
   DepCExample : DepC -> Argument -> Argument -> Example ;
 
   BinderExample : Binder -> BoundVariable -> Argument -> Example ;
-  Binder1Example : Binder1 -> BoundVariable -> Argument -> KindArgument -> Example ;
-  Binder2Example : Binder2 -> BoundVariable -> Argument -> Argument -> Argument -> Example ;
+  Binder1Example : Binder1 -> KindArgument -> BoundVariable -> Argument -> Example ;
+  Binder2Example : Binder2 -> Argument -> Argument -> BoundVariable -> Argument -> Example ;
 
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;

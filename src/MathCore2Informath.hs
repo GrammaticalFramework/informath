@@ -123,6 +123,12 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
       [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAnnotateExp c (GFunCExp _ x y) ->
       [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+    GAnnotateExp c (GBinderExp _ i x) ->
+      [app alt [GIdentTerm i, sx] | alt <- ssyns c, sx <- terms x]
+    GAnnotateExp c (GBinder1Exp _ k i z) ->
+      [app alt [sk, GIdentTerm i, sz] | alt <- ssyns c, sk <- terms (GKindExp k), sz <- terms z]
+    GAnnotateExp c (GBinder2Exp _ x y i z) ->
+      [app alt [sx, sy, GIdentTerm i, sz] | alt <- ssyns c, sx <- terms x, sy <- terms y, sz <- terms z]
     GAnnotateExp c (GNameExp _) ->
       [app alt [] | alt <- ssyns c]
     GAnnotateKind c (GNounKind _) ->
@@ -187,6 +193,7 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
     ("MACRO", [x]) -> GApp1MacroTerm (macroIdent fun) x
     ("MACRO", [x, y]) -> GApp2MacroTerm (macroIdent fun) x y
     ("MACRO", [x, y, z]) -> GApp3MacroTerm (macroIdent fun) x y z
+    ("MACRO", [x, y, z, u]) -> GApp4MacroTerm (macroIdent fun) x y z u
     _ -> error $ "NOT YET app: " ++ show cat
 
   macroIdent fun = GStringMacro (GString (init (drop 2 (PGF.showExpr [] fun))))  -- '\\foo' -> \foo

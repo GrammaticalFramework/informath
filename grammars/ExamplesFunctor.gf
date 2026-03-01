@@ -45,8 +45,8 @@ lin
   DepCExample f x y = mkExample (DepCKind f x y) ;
 
   BinderExample b i f = mkExample (BinderExp b i f) ;
-  Binder1Example b i f k = mkExample (Binder1Exp b i f k) ;
-  Binder2Example b i f x y = mkExample (Binder2Exp b i f x y) ;
+  Binder1Example b k i f = mkExample (Binder1Exp b k i f) ;
+  Binder2Example b x y i f = mkExample (Binder2Exp b x y i f) ;
 
   LabelExample label = mkExample (mkUtt label.np) "." ;
 

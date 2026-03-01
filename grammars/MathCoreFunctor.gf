@@ -184,11 +184,11 @@ lin
   BinderExp binder ident exp =
     mkNP the_Det (mkCN (mkCN binder exp) (Syntax.mkAdv possess_Prep (latexNP (mkSymb ident)))) ;
 
-  Binder1Exp binder ident exp kind =
+  Binder1Exp binder kind ident exp =
     mkNP the_Det (mkCN (mkCN binder (Syntax.mkAdv possess_Prep exp))
       (mkQS (mkQCl where_IAdv (mkCl (latexNP (mkSymb ident)) (useKind kind))))) ;
 
-  Binder2Exp binder ident exp lower upper =
+  Binder2Exp binder lower upper ident exp =
     mkNP the_Det (mkCN (mkCN binder (Syntax.mkAdv possess_Prep exp))
       (mkQS (mkQCl where_IAdv (mkCl (latexNP (mkSymb ident))
              (mkVP range_V3 lower upper))))) ;

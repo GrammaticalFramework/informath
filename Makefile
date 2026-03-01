@@ -211,3 +211,7 @@ fermat:
 
 cartesian:
 	RunInformath -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
+
+bind:
+	RunInformath -add-symboltables=test/bind.dkgf -variations test/bind.dk
+

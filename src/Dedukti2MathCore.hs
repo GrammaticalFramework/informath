@@ -97,16 +97,19 @@ annotateProof qid exp = GAnnotateProof (ident2ident qid) exp
 annotateProofExp :: QIdent -> GProofExp -> GProofExp
 annotateProofExp qid exp = GAnnotateProofExp (ident2ident qid) exp
 
-funListExp :: QIdent -> [GExp] -> GExp
+funListExp :: QIdent -> [Exp] -> GExp
 funListExp ident exps = annotateExp ident $ case ident of
   QIdent s -> case (lookupConstant s, exps) of
     (Just ("Name", c), []) -> GNameExp (fgTree c)
-    (Just ("Fun", c), [x]) -> GFunExp (fgTree c) x
-    (Just ("Fun2", c), [x, y]) -> GFun2Exp (fgTree c) x y
-    (Just ("FunC", c), [x, y]) -> GFunCExp (fgTree c) x y
+    (Just ("Fun", c), [x]) -> GFunExp (fgTree c) (exp2exp x)
+    (Just ("Fun2", c), [x, y]) -> GFun2Exp (fgTree c) (exp2exp x) (exp2exp y)
+    (Just ("FunC", c), [x, y]) -> GFunCExp (fgTree c) (exp2exp x) (exp2exp y)
+    (Just ("Binder", c), [EAbs b y]) -> GBinderExp (fgTree c) (bind2coreIdent b) (exp2exp y) 
+    (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
+    (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y) 
     _ -> case exps of
       [] -> ident2exp ident
-      _:_ -> GAppExp (ident2exp ident) (gExps exps)
+      _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
 
 funListKind :: QIdent -> [Exp] -> GKind
 funListKind ident exps = annotateKind ident $ case ident of
@@ -253,7 +256,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
         EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GTermExp (GNumberTerm (GInt (read s)))
 	  _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-        EIdent ident@(QIdent f) -> funListExp ident (map exp2exp args)
+        EIdent ident@(QIdent f) -> funListExp ident args
         _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))      
     EAbs _ _ -> case splitAbs exp of
       (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
@@ -285,14 +288,16 @@ exp2proofExp exp = case exp of
     (binds, body) -> GAbsProofExp (GListHypo (map bind2coreHypo binds)) (exp2proofExp body)
 
 patt2exp :: Patt -> GExp
-patt2exp patt = case patt of
-  PVar ident -> ident2exp ident
-  PApp _ _ -> case splitPatt patt of
-    (fun, args) -> case fun of
-      PVar ident ->
-        funListExp ident (map patt2exp args)
-  PBracket p -> patt2exp p --- ?
-  PBind bind p -> GAbsExp (GListIdent [bind2coreIdent bind]) (patt2exp p) --- splitAbs?
+patt2exp = exp2exp . patt2dexp where
+  patt2dexp :: Patt -> Exp
+  patt2dexp patt = case patt of
+    PVar ident -> EIdent ident
+    PApp _ _ -> case splitPatt patt of
+      (fun, args) -> case fun of
+        PVar ident ->
+          foldl EApp (EIdent ident) (map patt2dexp args)
+    PBracket p -> patt2dexp p --- ?
+    PBind bind p -> EAbs bind (patt2dexp p)
 
 ident2ident :: QIdent -> GIdent
 ident2ident ident = case ident of

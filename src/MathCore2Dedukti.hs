@@ -176,6 +176,7 @@ formula2dedukti formula = case formula of
   GApp1MacroFormula ident term -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [term])
   GApp2MacroFormula ident x y -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y])
   GApp3MacroFormula ident x y z -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z])
+  GApp4MacroFormula ident x y z u -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z, u])
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -250,10 +251,16 @@ exp2dedukti exp = case exp of
 
   GFun2Exp f x y -> appIdent (showGF f) (map exp2dedukti [x, y])
   GFunCExp f x y -> appIdent (showGF f) (map exp2dedukti [x, y])
+
+  GBinderExp f i x -> appIdent (showGF f) [EAbs (BVar (ident2ident i)) (exp2dedukti x)]
+  GBinder1Exp f k i x -> appIdent (showGF f) [kind2dedukti k, EAbs (BVar (ident2ident i)) (exp2dedukti x)]
+  GBinder2Exp f low up i x -> appIdent (showGF f) [exp2dedukti low, exp2dedukti up, EAbs (BVar (ident2ident i)) (exp2dedukti x)]
+
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
   GSigmaExp m n i f ->
-    EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f)) ---- TODO: in SpecialConstants
+    EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f)) ---- TODO: deprecate
+  
   _ -> eUndefinedDebug exp ---- TODO
 
 term2dedukti :: GTerm -> Exp

@@ -1,0 +1,11 @@
+PiB : (A : Set) -> (B : (x : Elem A) -> Set) -> Set.
+Summa : Elem Nat -> Elem Nat -> (F : (i : Elem Nat) -> Elem Real) -> Elem Real.
+Integral : Elem Real -> Elem Real -> (F : (x : Elem Real) -> Elem Real) -> Elem Real.
+
+c : Proof (even (Summa 1 9 (n => times n n))).
+
+d : Proof (empty (PiB Nat (x => Real))).
+
+e : Proof (Lt (Integral 0 1 (x => minus (square x) x)) 0).
+
+

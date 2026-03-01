@@ -1,0 +1,8 @@
+PiB:  "the cartesian product of X where $ x $ is an A" | \PiB
+Summa : "the sum of X where $ i $ ranges from Y to Z" | \Summa
+Integral : "the definite integral of X where $ x $ ranges from Y to Z" | \Integral
+
+#MACRO \newcommadn{\PiB}[3]{(\Pi #2 \in #1)#3}
+#MACRO \newcommadn{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+#MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+

@@ -242,8 +242,8 @@ data Tree :: * -> * where
   GAdjCExample :: GAdjC -> GArgument -> GArgument -> Tree GExample_
   GAdjEExample :: GAdjE -> GArgument -> GArgument -> Tree GExample_
   GAdjExample :: GAdj -> GArgument -> Tree GExample_
-  GBinder1Example :: GBinder1 -> GBoundVariable -> GArgument -> GKindArgument -> Tree GExample_
-  GBinder2Example :: GBinder2 -> GBoundVariable -> GArgument -> GArgument -> GArgument -> Tree GExample_
+  GBinder1Example :: GBinder1 -> GKindArgument -> GBoundVariable -> GArgument -> Tree GExample_
+  GBinder2Example :: GBinder2 -> GArgument -> GArgument -> GBoundVariable -> GArgument -> Tree GExample_
   GBinderExample :: GBinder -> GBoundVariable -> GArgument -> Tree GExample_
   GDep2Example :: GDep2 -> GArgument -> GArgument -> Tree GExample_
   GDepCExample :: GDepC -> GArgument -> GArgument -> Tree GExample_
@@ -268,8 +268,8 @@ data Tree :: * -> * where
   GAndExp :: GListExp -> Tree GExp_
   GAnnotateExp :: GIdent -> GExp -> Tree GExp_
   GAppExp :: GExp -> GExps -> Tree GExp_
-  GBinder1Exp :: GBinder1 -> GIdent -> GExp -> GKind -> Tree GExp_
-  GBinder2Exp :: GBinder2 -> GIdent -> GExp -> GExp -> GExp -> Tree GExp_
+  GBinder1Exp :: GBinder1 -> GKind -> GIdent -> GExp -> Tree GExp_
+  GBinder2Exp :: GBinder2 -> GExp -> GExp -> GIdent -> GExp -> Tree GExp_
   GBinderExp :: GBinder -> GIdent -> GExp -> Tree GExp_
   GBothAndExp :: GExp -> GExp -> Tree GExp_
   GCoercionExp :: GCoercion -> GExp -> Tree GExp_
@@ -307,6 +307,7 @@ data Tree :: * -> * where
   GApp1MacroFormula :: GMacro -> GTerm -> Tree GFormula_
   GApp2MacroFormula :: GMacro -> GTerm -> GTerm -> Tree GFormula_
   GApp3MacroFormula :: GMacro -> GTerm -> GTerm -> GTerm -> Tree GFormula_
+  GApp4MacroFormula :: GMacro -> GTerm -> GTerm -> GTerm -> GTerm -> Tree GFormula_
   GElemFormula :: GListTerm -> GTerm -> Tree GFormula_
   GEquationFormula :: GEquation -> Tree GFormula_
   GMacroFormula :: GMacro -> Tree GFormula_
@@ -865,6 +866,7 @@ data Tree :: * -> * where
   GApp1MacroTerm :: GMacro -> GTerm -> Tree GTerm_
   GApp2MacroTerm :: GMacro -> GTerm -> GTerm -> Tree GTerm_
   GApp3MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> Tree GTerm_
+  GApp4MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> GTerm -> Tree GTerm_
   GAppFunctionTerm :: GFunction -> GListTerm -> Tree GTerm_
   GComprehensionTerm :: GTerm -> GTerm -> GFormula -> Tree GTerm_
   GConstTerm :: GConst -> Tree GTerm_
@@ -1033,6 +1035,7 @@ instance Eq (Tree a) where
     (GApp1MacroFormula x1 x2,GApp1MacroFormula y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GApp2MacroFormula x1 x2 x3,GApp2MacroFormula y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GApp3MacroFormula x1 x2 x3 x4,GApp3MacroFormula y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
+    (GApp4MacroFormula x1 x2 x3 x4 x5,GApp4MacroFormula y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GElemFormula x1 x2,GElemFormula y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEquationFormula x1,GEquationFormula y1) -> and [ x1 == y1 ]
     (GMacroFormula x1,GMacroFormula y1) -> and [ x1 == y1 ]
@@ -1591,6 +1594,7 @@ instance Eq (Tree a) where
     (GApp1MacroTerm x1 x2,GApp1MacroTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GApp2MacroTerm x1 x2 x3,GApp2MacroTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GApp3MacroTerm x1 x2 x3 x4,GApp3MacroTerm y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
+    (GApp4MacroTerm x1 x2 x3 x4 x5,GApp4MacroTerm y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GAppFunctionTerm x1 x2,GAppFunctionTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GComprehensionTerm x1 x2 x3,GComprehensionTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GConstTerm x1,GConstTerm y1) -> and [ x1 == y1 ]
@@ -2067,6 +2071,7 @@ instance Gf GFormula where
   gf (GApp1MacroFormula x1 x2) = mkApp (mkCId "App1MacroFormula") [gf x1, gf x2]
   gf (GApp2MacroFormula x1 x2 x3) = mkApp (mkCId "App2MacroFormula") [gf x1, gf x2, gf x3]
   gf (GApp3MacroFormula x1 x2 x3 x4) = mkApp (mkCId "App3MacroFormula") [gf x1, gf x2, gf x3, gf x4]
+  gf (GApp4MacroFormula x1 x2 x3 x4 x5) = mkApp (mkCId "App4MacroFormula") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GElemFormula x1 x2) = mkApp (mkCId "ElemFormula") [gf x1, gf x2]
   gf (GEquationFormula x1) = mkApp (mkCId "EquationFormula") [gf x1]
   gf (GMacroFormula x1) = mkApp (mkCId "MacroFormula") [gf x1]
@@ -2077,6 +2082,7 @@ instance Gf GFormula where
       Just (i,[x1,x2]) | i == mkCId "App1MacroFormula" -> GApp1MacroFormula (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "App2MacroFormula" -> GApp2MacroFormula (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3,x4]) | i == mkCId "App3MacroFormula" -> GApp3MacroFormula (fg x1) (fg x2) (fg x3) (fg x4)
+      Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "App4MacroFormula" -> GApp4MacroFormula (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2]) | i == mkCId "ElemFormula" -> GElemFormula (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "EquationFormula" -> GEquationFormula (fg x1)
       Just (i,[x1]) | i == mkCId "MacroFormula" -> GMacroFormula (fg x1)
@@ -3495,6 +3501,7 @@ instance Gf GTerm where
   gf (GApp1MacroTerm x1 x2) = mkApp (mkCId "App1MacroTerm") [gf x1, gf x2]
   gf (GApp2MacroTerm x1 x2 x3) = mkApp (mkCId "App2MacroTerm") [gf x1, gf x2, gf x3]
   gf (GApp3MacroTerm x1 x2 x3 x4) = mkApp (mkCId "App3MacroTerm") [gf x1, gf x2, gf x3, gf x4]
+  gf (GApp4MacroTerm x1 x2 x3 x4 x5) = mkApp (mkCId "App4MacroTerm") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GAppFunctionTerm x1 x2) = mkApp (mkCId "AppFunctionTerm") [gf x1, gf x2]
   gf (GComprehensionTerm x1 x2 x3) = mkApp (mkCId "ComprehensionTerm") [gf x1, gf x2, gf x3]
   gf (GConstTerm x1) = mkApp (mkCId "ConstTerm") [gf x1]
@@ -3517,6 +3524,7 @@ instance Gf GTerm where
       Just (i,[x1,x2]) | i == mkCId "App1MacroTerm" -> GApp1MacroTerm (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "App2MacroTerm" -> GApp2MacroTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3,x4]) | i == mkCId "App3MacroTerm" -> GApp3MacroTerm (fg x1) (fg x2) (fg x3) (fg x4)
+      Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "App4MacroTerm" -> GApp4MacroTerm (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2]) | i == mkCId "AppFunctionTerm" -> GAppFunctionTerm (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "ComprehensionTerm" -> GComprehensionTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1]) | i == mkCId "ConstTerm" -> GConstTerm (fg x1)
@@ -3748,6 +3756,7 @@ instance Compos Tree where
     GApp1MacroFormula x1 x2 -> r GApp1MacroFormula `a` f x1 `a` f x2
     GApp2MacroFormula x1 x2 x3 -> r GApp2MacroFormula `a` f x1 `a` f x2 `a` f x3
     GApp3MacroFormula x1 x2 x3 x4 -> r GApp3MacroFormula `a` f x1 `a` f x2 `a` f x3 `a` f x4
+    GApp4MacroFormula x1 x2 x3 x4 x5 -> r GApp4MacroFormula `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GElemFormula x1 x2 -> r GElemFormula `a` f x1 `a` f x2
     GEquationFormula x1 -> r GEquationFormula `a` f x1
     GMacroFormula x1 -> r GMacroFormula `a` f x1
@@ -3900,6 +3909,7 @@ instance Compos Tree where
     GApp1MacroTerm x1 x2 -> r GApp1MacroTerm `a` f x1 `a` f x2
     GApp2MacroTerm x1 x2 x3 -> r GApp2MacroTerm `a` f x1 `a` f x2 `a` f x3
     GApp3MacroTerm x1 x2 x3 x4 -> r GApp3MacroTerm `a` f x1 `a` f x2 `a` f x3 `a` f x4
+    GApp4MacroTerm x1 x2 x3 x4 x5 -> r GApp4MacroTerm `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GAppFunctionTerm x1 x2 -> r GAppFunctionTerm `a` f x1 `a` f x2
     GComprehensionTerm x1 x2 x3 -> r GComprehensionTerm `a` f x1 `a` f x2 `a` f x3
     GConstTerm x1 -> r GConstTerm `a` f x1
