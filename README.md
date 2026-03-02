@@ -209,7 +209,7 @@ The [share](./share/) directory contains
 - file [BaseConstants.dk](./share/baseconstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
 - file [baseconstants.dkgf](./share/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
 - binary file `InformathEng.pgf`, the runtime grammar with only English
-- binary file `InformathFull.pgf`, the runtime grammar with all available languages; this is much larger and somewhat slower to use than the English-only version
+- binary file `InformathFull.pgf`, the runtime grammar with all available languages; this is much larger and somewhat slower to use than the English-only version (you can also build a smaller one with `make multi_grammar` for just the languages you want; edit the Makefile entry to select the languages)
 
 The [test](./test/) directory contains
 - some test data as `.dk`, `.tex`, and `.txt` files (see above)
@@ -400,10 +400,12 @@ How to define new GF functions is covered in the [under the hood document](./doc
 A majority of Dedukti expressions are function applications (of the form `f x1 ... xn`), which are rendered in a category determined by the symbol table mapping of the function `f`. The resulting informalizations belong to one of the following **syntactic categories** in GF:
 ```
 category   name              linguistic type     example
-—---------------------------------------------------------------
+—-------------------------------------------------------------------------
 Exp        expression        NP (noun phrase)    the empty set
 Kind       kind              CN (commoun noun)   integer
 Prop       proposition       S (sentence)        2 is even
+Proof      proof             Text                by Theorem 1, x is prime                 
+ProofExp   theorem label     NP                  Theorem 1
 Term       symbolic term     TermPrec            x + 2
 Formula    symbolic formula  TermPrec            x > 2
 ```
@@ -421,23 +423,61 @@ The things you need to know are
 
 Given this information, you can use the following formats to write symbol table entries:
 ```
-Prop, arity 1:  "X is <Adj>" | "X <Verb>s" | "X is a <Noun>"
-Prop, arity 2:  "X is <Adj> <Prep> Y" | "X and Y are <Adj> 
-              | "X <Verb>s <Prep> Y" | "X is a <Noun> <Prep> Y"
-              | "X and Y <Verb>" | "X and Y are <Noun>s"
-Prop, arity 3: "X is <Adj> <Prep> Y <Prep> Z"
+Prop, arity 1:  
+    "X is <Adj>" 
+  | "X <Verb>s" 
+  | "X is a <Noun>"
+Prop, arity 2:  
+    "X is <Adj> <Prep> Y" 
+  | "X and Y are <Adj> 
+  | "X <Verb>s <Prep> Y" 
+  | "X is a <Noun> <Prep> Y"
+  | "X and Y <Verb>" 
+  | "X and Y are <Noun>s"
+Prop, arity 3: 
+    "X is <Adj> <Prep> Y <Prep> Z"
 
-Kind, arity 0: "<Noun>"
-Kind, arity 1: "<Noun> <Prep> As"
-Kind, arity 2: "<Noun> <Prep> As <Prep> Bs" | "<Noun> <Prep> As <Prep> Bs"
-              | "<Noun> <Prep> X" | "<Noun> <Prep> X <Prep> Y" | "<Noun> <Prep> X and Y"
+Kind, arity 0: 
+    "<Noun>"
+Kind, 1 Kind argument (type constructor): 
+    "<Noun> <Prep> As"
+Kind, 1 Exp argument (dependent type):
+  | "<Noun> <Prep> X" 
+Kind, 2 Kind arguments: 
+    "<Noun> <Prep> As <Prep> Bs" 
+Kind, 2 Exp arguments: 
+  | "<Noun> <Prep> X <Prep> Y" 
+  | "<Noun> <Prep> X and Y"
 
-Exp, arity 0: "the <Noun>"
-Exp, arity 1: "the <Noun> <Prep> X"
-Exp. arity 2: "the <Noun> <Prep> X <Prep> Y"
+Exp, arity 0: 
+    "the <Noun>"
+Exp, arity 1: 
+    "the <Noun> <Prep> X"
+Exp, arity 2: 
+    "the <Noun> <Prep> X <Prep> Y"
+
+Exp, higher order argument x => X (Ident x bound in Exp X): 
+    "the <Noun> X of $ x $"
+Exp, arguments A, x => X (A is a Kind that x ranges over): 
+    "the <Noun> of X where $ x $ is an A"
+Exp, arguments X, Y, x => Z (X and Y are bounds; e.g. sum, integral): 
+    "the <Noun> of Z where $ x $ ranges from X to Y"
+
+ProofExp: 
+    <Noun> .
+  | the <Noun> .
+  | <Noun> <Int> .
+  | <Noun> <Ident> .
+  | the <Noun> of <Noun> .
+  | <ProperName>'s <Noun> .
 ```
-So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`?  
-They are expressions of **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". Informath comes with a large lexicon (of 3000 entries in English), from which you often pick the ones that you need in your symbol table. The lexicon consists of individual words, but they can be combined with the following rules:
+So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`, `<ProperName>`, `<Ident>`, `<Int>`?  
+All but the last two are **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". 
+`<ProperName>`s are typically last names of mathematicians, such as "Fermat", "Hilbert"; there is a list of them in the grammar file [ProperNames.gf](grammars/ProperNames.gf).
+`<Ident>`s are identifiers such as "h".
+`<Int>`s are 
+
+Informath comes with a large lexicon (of 3000 entries in English, plus over 300 proper names), from which you often pick the ones that you need in your symbol table. The lexicon consists of individual words, but they can be combined with the following rules:
 ```
 <Adj>: <Adverb> <Adj>
 <Noun>: <Adj> <Noun> | <Noun> <Noun> | <ProperName> <Noun>
@@ -447,7 +487,7 @@ Notice that these rules are inductive: they permit the formation of infinitely m
 For a (nonsensical) example,
 ```
 uniformly closed topological Hilbert      space
-<Adv>     <Adj>  <Adj>       <PropeName>  <Noun>
+<Adv>     <Adj>  <Adj>       <ProperName> <Noun>
 ```
 is a `<Noun>`.
 You can test a candidate symbol table entry with the `-parse-example` flag:
@@ -458,7 +498,7 @@ Adj2Example (AdjPrepAdj2 disjoint_Adj fromPrep) X_Argument Y_Argument
 ```
 If a result is shown, the entry is possible to use. 
 You can also paste the result to your symbol table instead of using a string; this can make later processing a little bit faster.
-More importantly, if the command gives many alternatives, it is a way to choose the desired one of them.
+More importantly, if the command gives many alternatives, this is a reliable way to choose the desired one of them.
 The part to be pasted is then the first argument of the applicative expression, in this case, `AdjPrepAdj2 disjoint_Adj fromPrep`.
 (The `baseconstants.dkgf` symbol table uses explicit GF abstract syntax expressions in order to be fast and unambiguous.)
 
@@ -517,12 +557,15 @@ The following lexical categories are available for verbal renderings.
 The "example" column shows how an item of this category behaves in linearizing an application of it to its arguments. At the same time, it shows how the item can be given as a string in a symbol table, which is a "no-code" method for building symbol tables.  
 ```
 category  semantic type              example
-—-----------------------------------------------------------
+—----------------------------------------------------------------------------------
 Adj       Exp -> Prop                X is even
 Adj2      Exp -> Exp -> Prop         X is divisible by Y
 Adj3      Exp -> Exp -> Exp -> Prop  X is congruent to Y modulo Z
 AdjC      Exps -> Prop               X and Y are distinct
 AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
+Binder    (Exp->Exp) -> Exp          the function sum of X of $x$  
+Binder1   Kind -> (Exp->Exp) -> Exp  the disjoint union of X where $x$ is an A
+Binder2   Exp->Exp->(Exp->Exp)->Exp  the integral of Z where $x$ ranges from X to Y      
 Dep       Exp -> Kind                root of X
 Dep2      Exp -> Exp -> Kind         interval from X to Y
 DepC      Exps -> Kind               path between X and Y
@@ -541,7 +584,7 @@ Verb      Exp -> Prop                X converges
 Verb2     Exp -> Exp -> Prop         X divides Y
 VerbC     Exps -> Prop               X and Y coincide
 ```
-The category `Exps` contains non-empty lists of expressions. The last two expressions are combined with the conjunction "and" and its equivalent in different languages. 
+The category `Exps` contains non-empty lists of expressions. The last two expressions of the list are combined with the conjunction "and" or its equivalents in different languages. 
 
 The token `EQUIVALENCE` in the `AdjE` example is used for marking the operator as an **equivalence relation**, which has certain NLG properties that `AdjC` does not have. The token `EQUIVALENCE` does *not* appear in the linearization of the application, but is needed in example-based parsing to distintuish it from `AdjC`.
 
