@@ -12,11 +12,15 @@ import ConstantData
 
 import Data.Char
 import qualified Data.Map as M
+import qualified Data.Set as S
 
 -- frequency map of identifiers in code, excluding bound variables
 
 identsInTypes :: Tree a -> M.Map QIdent Int
-identsInTypes t = M.fromListWith (+) [(x, 1) | x <- ids t] where
+identsInTypes t = M.fromListWith (+) [(x, 1) | x <- identsInTree t] where
+
+identsInTree :: Tree a -> [QIdent]
+identsInTree = ids where
   ids :: Tree a -> [QIdent]
   ids tree = case tree of
     EIdent qident -> [qident]
@@ -204,7 +208,7 @@ catExp :: Exp -> String
 catExp e = case e of
   EApp _ _ -> case splitApp e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
-      Just (k, _) | elem k ["Adj", "Adj2", "AdjC", "AdjE", "Adj3", "Noun1", "Noun2", "Verb","Verb2"] -> "Prop"
+      Just (k, _) | S.member k propCats -> "Prop"
       _ | elem f [identConj, identDisj, identImpl,
                   identEquiv, identPi, identSigma, identNeg, identProof] -> "Prop"
       _ -> "Kind"
@@ -364,29 +368,4 @@ stripQualifiers t = case t of
 
 deduktiTokens :: String -> [String]
 deduktiTokens = map prToken . myLexer
-
---------- only needed in previous
--- deciding the kind of a new constant
-guessCat :: QIdent -> Exp -> String
-guessCat ident@(QIdent c) typ =
-  let
-    (hypos, val) = splitType typ
-    arity = length hypos
-  in case lookupConstant c of
-    Just (cat, _) -> cat
-    _ -> case splitApp val of
-      (EIdent f, _) | f == identProp -> case arity of
-        0 -> "Name" --- not really
-        1 -> "Adj"
-        2 -> "Reladj"
-        _ -> "Fun"
-      (EIdent f, _) | elem f [identSet, identType] -> case arity of
-        0 -> "Noun"
-        _ -> "Fun"
-      (EIdent f, _) | f == identElem -> case arity of
-        0 -> "Name"
-        _ -> "Fun"
-      (EIdent f, _) | f == identProof -> "Label"
-      _ -> "UnresolvedConstant_" ++ c --- error ("Unresolved constant " ++ c)
-
 

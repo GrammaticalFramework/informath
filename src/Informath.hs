@@ -285,14 +285,11 @@ data Tree :: * -> * where
   GIndefIdentKindExp :: GIdent -> GKind -> Tree GExp_
   GIndefKindExp :: GKind -> Tree GExp_
   GIndexedTermExp :: GInt -> Tree GExp_
-  GIntegralExp :: GExp -> GExp -> GIdent -> GExp -> Tree GExp_
   GKindExp :: GKind -> Tree GExp_
   GNameExp :: GName -> Tree GExp_
   GNoIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
   GNoKindExp :: GKind -> Tree GExp_
   GOrExp :: GListExp -> Tree GExp_
-  GSeriesExp :: GExp -> GIdent -> GExp -> Tree GExp_
-  GSigmaExp :: GExp -> GExp -> GIdent -> GExp -> Tree GExp_
   GSomeIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
   GSomeKindExp :: GKind -> Tree GExp_
   GTermExp :: GTerm -> Tree GExp_
@@ -311,7 +308,6 @@ data Tree :: * -> * where
   GElemFormula :: GListTerm -> GTerm -> Tree GFormula_
   GEquationFormula :: GEquation -> Tree GFormula_
   GMacroFormula :: GMacro -> Tree GFormula_
-  Gmodulo_Formula :: GTerm -> GTerm -> GTerm -> Tree GFormula_
   GNounPrepFun :: GNoun -> GPrep -> Tree GFun_
   LexFun :: String -> Tree GFun_
   GNounPrepFun2 :: GNoun -> GPrep -> GPrep -> Tree GFun2_
@@ -488,7 +484,6 @@ data Tree :: * -> * where
   GVerbCProp :: GVerbC -> GExp -> GExp -> Tree GProp_
   GVerbProp :: GVerb -> GExp -> Tree GProp_
   GWeHaveProp :: GProp -> Tree GProp_
-  GsameParityProp :: GExp -> GExp -> Tree GProp_
   GAccor_ProperName :: Tree GProperName_
   GAckermann_ProperName :: Tree GProperName_
   GAdams_ProperName :: Tree GProperName_
@@ -878,9 +873,6 @@ data Tree :: * -> * where
   GOperTerm :: GOper -> GTerm -> Tree GTerm_
   GParenthTerm :: GTerm -> Tree GTerm_
   GTextbfTerm :: GTerm -> Tree GTerm_
-  Gintegral_Term :: GTerm -> GTerm -> GIdent -> GTerm -> Tree GTerm_
-  Gseries_Term :: GTerm -> GIdent -> GTerm -> Tree GTerm_
-  Gsigma_Term :: GTerm -> GTerm -> GIdent -> GTerm -> Tree GTerm_
   Gsum3dots_Term :: GTerm -> GTerm -> GTerm -> Tree GTerm_
   Gtimes_Term :: GTerm -> GTerm -> Tree GTerm_
   GStringTitle :: GString -> Tree GTitle_
@@ -907,7 +899,9 @@ data Tree :: * -> * where
   GSinceConclusion :: GProp -> GProp -> Tree GUnit_
   GSinceGoal :: GProp -> GProp -> Tree GUnit_
   GSubsectionUnit :: GTitle -> GLabel -> Tree GUnit_
+  GVerbPrepDefNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   GVerbPrepNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
+  GVerbPrepPluralNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   LexVerb :: String -> Tree GVerb_
   GVerbPrepVerb2 :: GVerb -> GPrep -> Tree GVerb2_
   LexVerb2 :: String -> Tree GVerb2_
@@ -1013,14 +1007,11 @@ instance Eq (Tree a) where
     (GIndefIdentKindExp x1 x2,GIndefIdentKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIndefKindExp x1,GIndefKindExp y1) -> and [ x1 == y1 ]
     (GIndexedTermExp x1,GIndexedTermExp y1) -> and [ x1 == y1 ]
-    (GIntegralExp x1 x2 x3 x4,GIntegralExp y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GKindExp x1,GKindExp y1) -> and [ x1 == y1 ]
     (GNameExp x1,GNameExp y1) -> and [ x1 == y1 ]
     (GNoIdentsKindExp x1 x2,GNoIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoKindExp x1,GNoKindExp y1) -> and [ x1 == y1 ]
     (GOrExp x1,GOrExp y1) -> and [ x1 == y1 ]
-    (GSeriesExp x1 x2 x3,GSeriesExp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
-    (GSigmaExp x1 x2 x3 x4,GSigmaExp y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GSomeIdentsKindExp x1 x2,GSomeIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSomeKindExp x1,GSomeKindExp y1) -> and [ x1 == y1 ]
     (GTermExp x1,GTermExp y1) -> and [ x1 == y1 ]
@@ -1039,7 +1030,6 @@ instance Eq (Tree a) where
     (GElemFormula x1 x2,GElemFormula y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEquationFormula x1,GEquationFormula y1) -> and [ x1 == y1 ]
     (GMacroFormula x1,GMacroFormula y1) -> and [ x1 == y1 ]
-    (Gmodulo_Formula x1 x2 x3,Gmodulo_Formula y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNounPrepFun x1 x2,GNounPrepFun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (LexFun x,LexFun y) -> x == y
     (GNounPrepFun2 x1 x2 x3,GNounPrepFun2 y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1216,7 +1206,6 @@ instance Eq (Tree a) where
     (GVerbCProp x1 x2 x3,GVerbCProp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbProp x1 x2,GVerbProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GWeHaveProp x1,GWeHaveProp y1) -> and [ x1 == y1 ]
-    (GsameParityProp x1 x2,GsameParityProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAccor_ProperName,GAccor_ProperName) -> and [ ]
     (GAckermann_ProperName,GAckermann_ProperName) -> and [ ]
     (GAdams_ProperName,GAdams_ProperName) -> and [ ]
@@ -1606,9 +1595,6 @@ instance Eq (Tree a) where
     (GOperTerm x1 x2,GOperTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GParenthTerm x1,GParenthTerm y1) -> and [ x1 == y1 ]
     (GTextbfTerm x1,GTextbfTerm y1) -> and [ x1 == y1 ]
-    (Gintegral_Term x1 x2 x3 x4,Gintegral_Term y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
-    (Gseries_Term x1 x2 x3,Gseries_Term y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
-    (Gsigma_Term x1 x2 x3 x4,Gsigma_Term y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (Gsum3dots_Term x1 x2 x3,Gsum3dots_Term y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (Gtimes_Term x1 x2,Gtimes_Term y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GStringTitle x1,GStringTitle y1) -> and [ x1 == y1 ]
@@ -1635,7 +1621,9 @@ instance Eq (Tree a) where
     (GSinceConclusion x1 x2,GSinceConclusion y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSinceGoal x1 x2,GSinceGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSubsectionUnit x1 x2,GSubsectionUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbPrepDefNounVerb x1 x2 x3,GVerbPrepDefNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbPrepNounVerb x1 x2 x3,GVerbPrepNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GVerbPrepPluralNounVerb x1 x2 x3,GVerbPrepPluralNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (LexVerb x,LexVerb y) -> x == y
     (GVerbPrepVerb2 x1 x2,GVerbPrepVerb2 y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (LexVerb2 x,LexVerb2 y) -> x == y
@@ -1969,14 +1957,11 @@ instance Gf GExp where
   gf (GIndefIdentKindExp x1 x2) = mkApp (mkCId "IndefIdentKindExp") [gf x1, gf x2]
   gf (GIndefKindExp x1) = mkApp (mkCId "IndefKindExp") [gf x1]
   gf (GIndexedTermExp x1) = mkApp (mkCId "IndexedTermExp") [gf x1]
-  gf (GIntegralExp x1 x2 x3 x4) = mkApp (mkCId "IntegralExp") [gf x1, gf x2, gf x3, gf x4]
   gf (GKindExp x1) = mkApp (mkCId "KindExp") [gf x1]
   gf (GNameExp x1) = mkApp (mkCId "NameExp") [gf x1]
   gf (GNoIdentsKindExp x1 x2) = mkApp (mkCId "NoIdentsKindExp") [gf x1, gf x2]
   gf (GNoKindExp x1) = mkApp (mkCId "NoKindExp") [gf x1]
   gf (GOrExp x1) = mkApp (mkCId "OrExp") [gf x1]
-  gf (GSeriesExp x1 x2 x3) = mkApp (mkCId "SeriesExp") [gf x1, gf x2, gf x3]
-  gf (GSigmaExp x1 x2 x3 x4) = mkApp (mkCId "SigmaExp") [gf x1, gf x2, gf x3, gf x4]
   gf (GSomeIdentsKindExp x1 x2) = mkApp (mkCId "SomeIdentsKindExp") [gf x1, gf x2]
   gf (GSomeKindExp x1) = mkApp (mkCId "SomeKindExp") [gf x1]
   gf (GTermExp x1) = mkApp (mkCId "TermExp") [gf x1]
@@ -2007,14 +1992,11 @@ instance Gf GExp where
       Just (i,[x1,x2]) | i == mkCId "IndefIdentKindExp" -> GIndefIdentKindExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "IndefKindExp" -> GIndefKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "IndexedTermExp" -> GIndexedTermExp (fg x1)
-      Just (i,[x1,x2,x3,x4]) | i == mkCId "IntegralExp" -> GIntegralExp (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1]) | i == mkCId "KindExp" -> GKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "NameExp" -> GNameExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "NoIdentsKindExp" -> GNoIdentsKindExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "NoKindExp" -> GNoKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "OrExp" -> GOrExp (fg x1)
-      Just (i,[x1,x2,x3]) | i == mkCId "SeriesExp" -> GSeriesExp (fg x1) (fg x2) (fg x3)
-      Just (i,[x1,x2,x3,x4]) | i == mkCId "SigmaExp" -> GSigmaExp (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2]) | i == mkCId "SomeIdentsKindExp" -> GSomeIdentsKindExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "SomeKindExp" -> GSomeKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "TermExp" -> GTermExp (fg x1)
@@ -2075,7 +2057,6 @@ instance Gf GFormula where
   gf (GElemFormula x1 x2) = mkApp (mkCId "ElemFormula") [gf x1, gf x2]
   gf (GEquationFormula x1) = mkApp (mkCId "EquationFormula") [gf x1]
   gf (GMacroFormula x1) = mkApp (mkCId "MacroFormula") [gf x1]
-  gf (Gmodulo_Formula x1 x2 x3) = mkApp (mkCId "modulo_Formula") [gf x1, gf x2, gf x3]
 
   fg t =
     case unApp t of
@@ -2086,7 +2067,6 @@ instance Gf GFormula where
       Just (i,[x1,x2]) | i == mkCId "ElemFormula" -> GElemFormula (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "EquationFormula" -> GEquationFormula (fg x1)
       Just (i,[x1]) | i == mkCId "MacroFormula" -> GMacroFormula (fg x1)
-      Just (i,[x1,x2,x3]) | i == mkCId "modulo_Formula" -> Gmodulo_Formula (fg x1) (fg x2) (fg x3)
 
 
       _ -> error ("no Formula " ++ show t)
@@ -2668,7 +2648,6 @@ instance Gf GProp where
   gf (GVerbCProp x1 x2 x3) = mkApp (mkCId "VerbCProp") [gf x1, gf x2, gf x3]
   gf (GVerbProp x1 x2) = mkApp (mkCId "VerbProp") [gf x1, gf x2]
   gf (GWeHaveProp x1) = mkApp (mkCId "WeHaveProp") [gf x1]
-  gf (GsameParityProp x1 x2) = mkApp (mkCId "sameParityProp") [gf x1, gf x2]
 
   fg t =
     case unApp t of
@@ -2728,7 +2707,6 @@ instance Gf GProp where
       Just (i,[x1,x2,x3]) | i == mkCId "VerbCProp" -> GVerbCProp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "VerbProp" -> GVerbProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "WeHaveProp" -> GWeHaveProp (fg x1)
-      Just (i,[x1,x2]) | i == mkCId "sameParityProp" -> GsameParityProp (fg x1) (fg x2)
 
 
       _ -> error ("no Prop " ++ show t)
@@ -3513,9 +3491,6 @@ instance Gf GTerm where
   gf (GOperTerm x1 x2) = mkApp (mkCId "OperTerm") [gf x1, gf x2]
   gf (GParenthTerm x1) = mkApp (mkCId "ParenthTerm") [gf x1]
   gf (GTextbfTerm x1) = mkApp (mkCId "TextbfTerm") [gf x1]
-  gf (Gintegral_Term x1 x2 x3 x4) = mkApp (mkCId "integral_Term") [gf x1, gf x2, gf x3, gf x4]
-  gf (Gseries_Term x1 x2 x3) = mkApp (mkCId "series_Term") [gf x1, gf x2, gf x3]
-  gf (Gsigma_Term x1 x2 x3 x4) = mkApp (mkCId "sigma_Term") [gf x1, gf x2, gf x3, gf x4]
   gf (Gsum3dots_Term x1 x2 x3) = mkApp (mkCId "sum3dots_Term") [gf x1, gf x2, gf x3]
   gf (Gtimes_Term x1 x2) = mkApp (mkCId "times_Term") [gf x1, gf x2]
 
@@ -3536,9 +3511,6 @@ instance Gf GTerm where
       Just (i,[x1,x2]) | i == mkCId "OperTerm" -> GOperTerm (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ParenthTerm" -> GParenthTerm (fg x1)
       Just (i,[x1]) | i == mkCId "TextbfTerm" -> GTextbfTerm (fg x1)
-      Just (i,[x1,x2,x3,x4]) | i == mkCId "integral_Term" -> Gintegral_Term (fg x1) (fg x2) (fg x3) (fg x4)
-      Just (i,[x1,x2,x3]) | i == mkCId "series_Term" -> Gseries_Term (fg x1) (fg x2) (fg x3)
-      Just (i,[x1,x2,x3,x4]) | i == mkCId "sigma_Term" -> Gsigma_Term (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2,x3]) | i == mkCId "sum3dots_Term" -> Gsum3dots_Term (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "times_Term" -> Gtimes_Term (fg x1) (fg x2)
 
@@ -3610,12 +3582,16 @@ instance Gf GUnit where
       _ -> error ("no Unit " ++ show t)
 
 instance Gf GVerb where
+  gf (GVerbPrepDefNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepDefNounVerb") [gf x1, gf x2, gf x3]
   gf (GVerbPrepNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepNounVerb") [gf x1, gf x2, gf x3]
+  gf (GVerbPrepPluralNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepPluralNounVerb") [gf x1, gf x2, gf x3]
   gf (LexVerb x) = mkApp (mkCId x) []
 
   fg t =
     case unApp t of
+      Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepDefNounVerb" -> GVerbPrepDefNounVerb (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepNounVerb" -> GVerbPrepNounVerb (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepPluralNounVerb" -> GVerbPrepPluralNounVerb (fg x1) (fg x2) (fg x3)
 
       Just (i,[]) -> LexVerb (showCId i)
       _ -> error ("no Verb " ++ show t)
@@ -3736,14 +3712,11 @@ instance Compos Tree where
     GIndefIdentKindExp x1 x2 -> r GIndefIdentKindExp `a` f x1 `a` f x2
     GIndefKindExp x1 -> r GIndefKindExp `a` f x1
     GIndexedTermExp x1 -> r GIndexedTermExp `a` f x1
-    GIntegralExp x1 x2 x3 x4 -> r GIntegralExp `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GKindExp x1 -> r GKindExp `a` f x1
     GNameExp x1 -> r GNameExp `a` f x1
     GNoIdentsKindExp x1 x2 -> r GNoIdentsKindExp `a` f x1 `a` f x2
     GNoKindExp x1 -> r GNoKindExp `a` f x1
     GOrExp x1 -> r GOrExp `a` f x1
-    GSeriesExp x1 x2 x3 -> r GSeriesExp `a` f x1 `a` f x2 `a` f x3
-    GSigmaExp x1 x2 x3 x4 -> r GSigmaExp `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GSomeIdentsKindExp x1 x2 -> r GSomeIdentsKindExp `a` f x1 `a` f x2
     GSomeKindExp x1 -> r GSomeKindExp `a` f x1
     GTermExp x1 -> r GTermExp `a` f x1
@@ -3760,7 +3733,6 @@ instance Compos Tree where
     GElemFormula x1 x2 -> r GElemFormula `a` f x1 `a` f x2
     GEquationFormula x1 -> r GEquationFormula `a` f x1
     GMacroFormula x1 -> r GMacroFormula `a` f x1
-    Gmodulo_Formula x1 x2 x3 -> r Gmodulo_Formula `a` f x1 `a` f x2 `a` f x3
     GNounPrepFun x1 x2 -> r GNounPrepFun `a` f x1 `a` f x2
     GNounPrepFun2 x1 x2 x3 -> r GNounPrepFun2 `a` f x1 `a` f x2 `a` f x3
     GNounPrepFunC x1 x2 -> r GNounPrepFunC `a` f x1 `a` f x2
@@ -3903,7 +3875,6 @@ instance Compos Tree where
     GVerbCProp x1 x2 x3 -> r GVerbCProp `a` f x1 `a` f x2 `a` f x3
     GVerbProp x1 x2 -> r GVerbProp `a` f x1 `a` f x2
     GWeHaveProp x1 -> r GWeHaveProp `a` f x1
-    GsameParityProp x1 x2 -> r GsameParityProp `a` f x1 `a` f x2
     GNoVarRewriteRule x1 x2 -> r GNoVarRewriteRule `a` f x1 `a` f x2
     GRewriteRule x1 x2 x3 -> r GRewriteRule `a` f x1 `a` f x2 `a` f x3
     GApp1MacroTerm x1 x2 -> r GApp1MacroTerm `a` f x1 `a` f x2
@@ -3921,9 +3892,6 @@ instance Compos Tree where
     GOperTerm x1 x2 -> r GOperTerm `a` f x1 `a` f x2
     GParenthTerm x1 -> r GParenthTerm `a` f x1
     GTextbfTerm x1 -> r GTextbfTerm `a` f x1
-    Gintegral_Term x1 x2 x3 x4 -> r Gintegral_Term `a` f x1 `a` f x2 `a` f x3 `a` f x4
-    Gseries_Term x1 x2 x3 -> r Gseries_Term `a` f x1 `a` f x2 `a` f x3
-    Gsigma_Term x1 x2 x3 x4 -> r Gsigma_Term `a` f x1 `a` f x2 `a` f x3 `a` f x4
     Gsum3dots_Term x1 x2 x3 -> r Gsum3dots_Term `a` f x1 `a` f x2 `a` f x3
     Gtimes_Term x1 x2 -> r Gtimes_Term `a` f x1 `a` f x2
     GStringTitle x1 -> r GStringTitle `a` f x1
@@ -3947,7 +3915,9 @@ instance Compos Tree where
     GSinceConclusion x1 x2 -> r GSinceConclusion `a` f x1 `a` f x2
     GSinceGoal x1 x2 -> r GSinceGoal `a` f x1 `a` f x2
     GSubsectionUnit x1 x2 -> r GSubsectionUnit `a` f x1 `a` f x2
+    GVerbPrepDefNounVerb x1 x2 x3 -> r GVerbPrepDefNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepNounVerb x1 x2 x3 -> r GVerbPrepNounVerb `a` f x1 `a` f x2 `a` f x3
+    GVerbPrepPluralNounVerb x1 x2 x3 -> r GVerbPrepPluralNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepVerb2 x1 x2 -> r GVerbPrepVerb2 `a` f x1 `a` f x2
     GVerbVerbC x1 -> r GVerbVerbC `a` f x1
     GListAdj x1 -> r GListAdj `a` foldr (a . a (r (:)) . f) (r []) x1

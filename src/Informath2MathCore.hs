@@ -231,23 +231,12 @@ sem env t = case t of
               (sem env (GTermExp x)) (sem env (GTermExp y))
     _ -> GAndProp (GListProp [sem env (GFormulaProp (GElemFormula (GListTerm [x]) y)) | x <- xs])
 
-{-        
-  GFormulaProp (GFModulo term1 term2 term3) ->
-    GAdjProp (GPred3Adj (LexPred3 "modulo_Pred3") (sem env (GTermExp term2)) (sem env (GTermExp term3)))
-      (sem env (GTermExp term1))
--}
-
 {-
   GTermExp (GTSum3dots m m1 n) ->
     let
       [sm, sm1, sn] = map (sem env) [m, m1, n]
       (var, nenv) = newVar env
     in sem nenv (GTermExp (iqTest var m m1 n)) 
-  GTermExp (GTSigma i m n f) ->
-    GSigmaExp i (sem env (GTermExp m)) (sem env (GTermExp n)) (sem env (GTermExp f))
-  GTermExp (GTFrac x y) -> sem env (GTermExp (GAppOperTerm (LexOper "div_Oper") x y))
-  GTermExp (GTNeg x) ->  sem env (GTermExp (GAppOperOneTerm (LexOper "neg_Oper") x))
-  GTermExp (GTEnumSet (GListTerm xs)) -> sem env (GEnumSetExp (gExps (map GTermExp xs)))
 -}
   Gtimes_Term x y -> GOper2Term (LexOper2 "times_Oper2") (sem env x) (sem env y)
   GParenthTerm term -> sem env term

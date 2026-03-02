@@ -11,7 +11,7 @@ import BuildConstantTable
 import PGF (showExpr, readExpr, showCId, mkApp, mkCId)
 
 import Data.Char
-import Data.List (intersperse, nub)
+import Data.List (intersperse, nub, partition, isInfixOf)
 import qualified Data.Map as M
 
 
@@ -19,9 +19,18 @@ jmt2dedukti :: BackConstantTable -> DropTable -> GJmt -> [Jmt]
 jmt2dedukti lb dt =
   map eliminateLocalDefinitions .
   map (restoreFirstArguments dt) .
+  filterNoUndefined .
   applyLookBack lb .
   jmt2jmt
 
+-- remove UNDEFINED trees (coming from the parser) if there are any good ones
+filterNoUndefined :: [Jmt] -> [Jmt]
+filterNoUndefined js = case partition hasUndefineds js of
+  (_, []) -> js
+  (_, njs) -> njs
+ where
+  hasUndefineds :: Dedukti.AbsDedukti.Tree a -> Bool
+  hasUndefineds t = any (\ (QIdent c) -> isInfixOf "_UNDEFINED" c || isInfixOf "UNRESOLVED_" c) (identsInTree t)
 
 -- this is where the GF identifier ambiguity is resolved
 applyLookBack ::  BackConstantTable -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
@@ -258,8 +267,6 @@ exp2dedukti exp = case exp of
 
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
-  GSigmaExp m n i f ->
-    EApp (EApp (EApp (EIdent (QIdent "sigma")) (exp2dedukti m)) (exp2dedukti n)) (EAbs (BVar (ident2ident i)) (exp2dedukti f)) ---- TODO: deprecate
   
   _ -> eUndefinedDebug exp ---- TODO
 
@@ -343,7 +350,7 @@ prop2deduktiIdent prop = case prop of
   _ -> QIdent (takeWhile isAlpha (show (gf prop))) ---- TODO
 
 eUndefined :: Exp
-eUndefined = EIdent (QIdent "UNDEFINED")
+eUndefined = EIdent (QIdent "_UNDEFINED")
 
 iUndefinedDebug :: Gf a => a -> QIdent
 iUndefinedDebug t =

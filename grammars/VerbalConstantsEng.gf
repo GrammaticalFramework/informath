@@ -109,7 +109,6 @@ lin degree_Fun = mkFun "degree" ;
 
 lin irrational_Adj = mkAdj "irrational" ;
 
-
 lin sin_Fun = mkFun "sine" ;
 lin cos_Fun = mkFun "cosine" ;
 lin tan_Fun = mkFun "tangent" ;
@@ -127,31 +126,5 @@ lin vector_plus_FunC = mkFunC "sum" ;
 lin everywhere_Adverb = mkAdv "everywhere" ;
 lin almost_everywhere_Adverb = mkAdv "almost everywhere" ;
 lin uniformly_Adverb = mkAdv "uniformly" ;
-
-
--- special constants
-
-lin SigmaExp m n i exp =
-mkNP the_Det (mkCN (mkCN sum_N)
-(SyntaxEng.mkAdv possess_Prep
-(mkNP all_Predet
-(mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
-(SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))))) ;
-
-lin SeriesExp m i exp =
-mkNP the_Det (mkCN (mkCN series_N)
-(SyntaxEng.mkAdv possess_Prep
-(mkNP all_Predet
-(mkNP thePl_Det (mkCN (mkCN (mkAP given_A2 exp) number_N)
-(SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m infinity_NP)))))))) ;
-
-lin IntegralExp m n i exp =
-mkNP the_Det (mkCN (mkCN integral_N)
-(SyntaxEng.mkAdv possess_Prep
-(mkNP exp (SyntaxEng.mkAdv where_Subj (mkS (mkCl (latexSymbNP (mkSymb i)) range_V3 m n)))))) ;
-
-lin sameParityProp x y =
-simpleProp (mkS (mkCl (mkNP and_Conj x y)
-(SyntaxEng.mkAdv possess_Prep (mkNP the_Det (mkCN (mkA "same") (mkN "parity")))))) ;
 
 }

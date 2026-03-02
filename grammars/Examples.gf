@@ -59,6 +59,8 @@ fun
   NounPrepNoun2 : Noun -> Prep -> Noun2 ;
   NounNounC : Noun -> NounC ;
 
+  VerbPrepDefNounVerb : Verb -> Prep -> Noun -> Verb ;
+  VerbPrepPluralNounVerb : Verb -> Prep -> Noun -> Verb ;
   VerbPrepNounVerb : Verb -> Prep -> Noun -> Verb ;
   VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
   VerbVerbC : Verb -> VerbC ;

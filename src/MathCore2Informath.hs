@@ -133,12 +133,6 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
       [app alt [] | alt <- ssyns c]
     GAnnotateKind c (GNounKind _) ->
       [app alt [] | alt <- ssyns c]
-    GSigmaExp m n i f ->
-      [Gsigma_Term tm tn i tf | tm <- terms m, tn <- terms n, tf <- terms f]
-    GSeriesExp m i f ->
-      [Gseries_Term tm i tf | tm <- terms m, tf <- terms f]
-    GIntegralExp m n i f ->
-      [Gintegral_Term tm tn i tf | tm <- terms m, tn <- terms n, tf <- terms f]
     GTermExp t -> [t]
     _ -> []
 
@@ -171,8 +165,10 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
     ("Adj3", [x, y, z]) -> GAdj3Prop (fg fun) x y z
     ("Noun1", [x]) -> GNoun1Prop (fg fun) x
     ("Noun2", [x, y]) -> GNoun2Prop (fg fun) x y
+    ("NounC", [x, y]) -> GNounCProp (fg fun) x y
     ("Verb", [x]) -> GVerbProp (fg fun) x
     ("Verb2", [x, y]) -> GVerb2Prop (fg fun) x y
+    ("VerbC", [x, y]) -> GVerbCProp (fg fun) x y
     _ -> error $ "NOT YET pred: " ++ PGF.showExpr [] fun ++ " : " ++ show cat ++ " " ++ show (length xs)
 
   sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
@@ -376,18 +372,12 @@ variations tree = case tree of
   GOrExp (GListExp [a, b]) ->
     tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
-  GSigmaExp (GTermExp m) (GTermExp n) i (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gsigma_Term m n i f)]
-  GSeriesExp (GTermExp m) i (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gseries_Term m i f)]
-  GIntegralExp (GTermExp m) (GTermExp n) i (GTermExp f) ->
-    tree : [GTermExp term | term <- variations (Gintegral_Term m n i f)]
-  
-  Gsigma_Term m n i f ->
+  GApp4MacroTerm (GStringMacro (GString "\\Summa")) m n (GIdentTerm i) f ->
     let m1s = case m of
                 GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]
 	        _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]  --- not to be included with GInt m 
     in tree : [Gsum3dots_Term (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
+
   GFormulaProp formula ->
     ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
 
@@ -400,9 +390,8 @@ hasDisplaySize :: Tree a -> Bool
 hasDisplaySize = not . null . includesThese where
   includesThese :: Tree a -> [Tree a]
   includesThese t = case t of
-    Gsigma_Term _ _ _ _ -> [t]
-    Gseries_Term _ _ _ -> [t]
-    Gintegral_Term _ _ _ _ -> [t]
+    GApp3MacroTerm _ _ _ _   -> [t]
+    GApp4MacroTerm _ _ _ _ _  -> [t]
     Gsum3dots_Term _ _ _ -> [t]
     _ -> composOpM includesThese t
 

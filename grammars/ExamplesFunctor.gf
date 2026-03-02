@@ -81,6 +81,8 @@ lin
   NounPrepNoun2 noun prep = {cn = noun ; prep = prep} ;
   NounNounC noun = noun ;
 
+  VerbPrepDefNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP the_Det noun)) ;
+  VerbPrepPluralNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP aPl_Det noun)) ;
   VerbPrepNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP a_Det noun)) ;
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
   VerbVerbC verb = verb ;

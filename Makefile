@@ -90,6 +90,7 @@ devtest:
 	make top100check
 	make typechecks
 	make sets
+	make sigma
 	make naproche
 	make interpret_naproche
 #	make natural_deduction

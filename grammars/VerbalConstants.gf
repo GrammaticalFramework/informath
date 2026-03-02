@@ -119,12 +119,4 @@ fun everywhere_Adverb : Adverb ;
 fun almost_everywhere_Adverb : Adverb ;
 fun uniformly_Adverb : Adverb ;
 
-
--- special constants
-fun SigmaExp : Exp -> Exp -> Ident -> Exp -> Exp ;
-fun SeriesExp : Exp -> Ident -> Exp -> Exp ;
-fun IntegralExp : Exp -> Exp -> Ident -> Exp -> Exp ;
-
-fun sameParityProp : Exp -> Exp -> Prop ;
-
 }

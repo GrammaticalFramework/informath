@@ -206,6 +206,7 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
     "MACRO" -> S.toList mainCats --- uncertain; any may work
     c -> case M.lookup c gfCatMap of
        Just ("Exp", _) -> ["Exp", "Kind"]
+       Just ("Kind", _) -> ["Exp", "Kind"]
        Just (val, _) -> [val]
        _ -> ["UNKNOWN-GF"] ---
        

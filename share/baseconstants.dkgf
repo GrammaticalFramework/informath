@@ -103,14 +103,15 @@ angleBetween : angle_between_Fun2
 dotProduct : dot_product_FunC | dot_product_Oper2
 vectorPlus : vector_plus_FunC | resultant_FunC | plus_Oper2
 sphenic : sphenic_Adj
-sigma : SigmaExp | sigma_Term
-series : SeriesExp | series_Term
-integral : IntegralExp | integral_Term
+sigma : NounBinder2 sum_Noun | '\\Summa'
+integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | '\\Integral'
+infinity : DefNounName infinity_Noun | \infinity
 ni : contain_Verb2 | ni_Compar
 disjoint : disjoint_AdjC | AdjPrepAdj2 disjoint_Adj from_Prep | disjoint_Compar
 empty : empty_Adj | \isempty
 inhabited : inhabited_Adj
-sameParity : sameParityProp
+sameParity : VerbVerbC (VerbPrepDefNounVerb have_Verb noPrep (AdjNounNoun same_Adj parity_Noun))
+
 
 #CONV agda forall all
 #CONV agda Type Set
@@ -134,6 +135,9 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
 #MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
 #MACRO \newcommand{\divides}[2]{#1 \mid #2}
+#MACRO \newcommadn{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+#MACRO \newcommadn{\infinity}{\infty}
+#MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
 
 
 

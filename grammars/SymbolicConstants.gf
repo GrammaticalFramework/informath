@@ -69,14 +69,9 @@ fun
 
 -- special syntax
 
-  times_Term : Term -> Term -> Term ; -- special syntax with no operator
+  times_Term : Term -> Term -> Term ; -- special syntax with no operator except numeric
 
-  modulo_Formula : Term -> Term -> Term -> Formula ;
-
-  sigma_Term : Term -> Term -> Ident -> Term -> Term ;
   sum3dots_Term : Term -> Term -> Term -> Term ;
-  series_Term : Term -> Ident -> Term -> Term ;
-  integral_Term : Term -> Term -> Ident -> Term -> Term ;
 
 
 }

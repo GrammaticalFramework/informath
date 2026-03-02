@@ -73,7 +73,6 @@ lin
   dot_product_Oper2 = mkOper2 "\\cdot" <1 : Prec> <1 : Prec> <2 : Prec> ;
 
 
-
 -- special syntax
 
   times_Term x y = case <x.isNumber, y.isNumber> of {
@@ -81,33 +80,10 @@ lin
      _ => tinfixl 2 "" x y
      } ;
 
-  modulo_Formula a b m =
-    constant (top a ++ "\\equiv" ++ top b ++ "\\pmod{" ++ top m ++ "}") ;
-
-  sigma_Term m n i t = {
-    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ top n ++ "}{" ++ usePrec 2 t ++ "}" ;
-    p = 1 ;
-    isNumber = False
-    } ;
-    
   sum3dots_Term a b c = {
     s = usePrec 1 a ++ "+" ++ usePrec 1 b ++ "+ \\cdots +" ++ usePrec 1 c ;
     p = 0 ;
     isNumber = False
     } ;
     
-  series_Term m i t = {
-    s = "\\sum_{" ++ i ++ "=" ++ top m ++ "}^{" ++ "\\infty" ++ "}{" ++ usePrec 2 t ++ "}" ;
-    p = 1 ;
-    isNumber = False
-    } ;
-
-  integral_Term a b x t = {
-    s = "\\int_{" ++ top a ++ "}^{" ++ top b ++ "}" ++ usePrec 2 t ++ "\\, d" ++ x ;
-    p = 1 ;
-    isNumber = False
-    } ;
-    
-
-
 }
