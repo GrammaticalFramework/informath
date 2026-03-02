@@ -8,7 +8,7 @@ import Dedukti.PrintDedukti
 import DeduktiOperations
 import CommonConcepts
 import Informath
-import BuildConstantTable (mainCats)
+import CommonConcepts (mainCats)
 
 import PGF
 import qualified Data.Map as M
@@ -49,7 +49,7 @@ convertArg callbacks arg = case arg of
 specialDedukti2Informath :: CallBacks -> Exp -> Maybe Expr
 specialDedukti2Informath callbacks exp = case lambdaFlatten exp of
   (EIdent (QIdent s), args) -> case lookupConstantFull s of
-    Just (cat, fun, argcats) | S.member (mkCId cat) mainCats ->
+    Just (cat, fun, argcats) | S.member cat mainCats ->
       return $ mkApp (mkCId fun) (map (convertArg callbacks) (zip argcats args))
     _ -> Nothing
   _ -> Nothing

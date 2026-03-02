@@ -292,6 +292,9 @@ checkConstantTable = constantTableErrors
 printConstantTable :: ConstantTable -> String
 printConstantTable = showConstantTable
 
+printConstantTableLong :: ConstantTable -> String
+printConstantTableLong = showConstantTableLong
+
 
 -- * Printing conversions
 

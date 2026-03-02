@@ -177,8 +177,8 @@ naproche:
 interpret_naproche:
 	echo "## parsing and regenerating a Naproche document going through Dedukti"
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
-	cd out ; pdflatex -batchmode inapzf.tex ; $(OPEN) inapzf.pdf
+	$(RUN) -to-latex-doc -variations -nbest=100 -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
+	cd out ; pdflatex inapzf.tex ; $(OPEN) inapzf.pdf
 
 baseconstants:
 	cat share/BaseConstants.dk >tmp/baseconstants.dk

@@ -12,6 +12,7 @@ import BuildConstantTable
 import SpecialConstants
 
 import Data.Char
+import qualified Data.Set as S
 
 -- clean-up of remaining annotated idents
 jmt2core :: Jmt -> GJmt
@@ -36,25 +37,24 @@ jmt2jmt jmt = case jmt of
         let vhypos = addVarsToHypos mexp hypos
             chypos = hypos2hypos vhypos
 	in case () of
-	  _ | elem c ["Label", "Proof", "Unit"] -> 
+	  _ | S.member c proofCats ->
             (maybe GAxiomJmt
 	        (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
               (ident2label ident)
               (GListHypo (hypos2hypos hypos))
               (exp2prop kind)
-          _ | elem c ["Fam", "Fam2", "Noun", "Dep", "Dep2", "DepC", "Kind"] ->
+          _ | S.member c kindCats ->
             (maybe (GAxiomKindJmt axiomLabel)
 	        (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
               (GListHypo chypos)
 	      (exp2kind (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-          _ | elem c ["Fun", "Fun2", "FunC", "Exp", "Name", "Unknown", "Binder", "Binder1", "Binder2"] ->
+          _ | S.member c expCats ->
             (maybe (GAxiomExpJmt axiomLabel)
 	        (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
               (GListHypo chypos)
               (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
               (exp2kind kind)
-          _ | elem c ["Adj", "Verb", "Noun1", "Adj2", "AdjC", "AdjE",
-	              "Verb2", "Noun2", "Adj3", "VerbC", "NounC", "Prop"] ->
+          _ | S.member c propCats -> 
             (maybe (GAxiomPropJmt axiomLabel)
 	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
               (GListHypo chypos)
@@ -106,7 +106,8 @@ funListExp ident exps = annotateExp ident $ case ident of
     (Just ("FunC", c), [x, y]) -> GFunCExp (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("Binder", c), [EAbs b y]) -> GBinderExp (fgTree c) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
-    (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y) 
+    (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y)
+    (Just (f, c), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
@@ -120,6 +121,7 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Dep",  c), [x]) -> GDepKind (fgTree c) (exp2exp x) 
     (Just ("Dep2", c), [x, y]) -> GDep2Kind (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("DepC", c), [x, y]) -> GDepCKind (fgTree c) (exp2exp x) (exp2exp y)
+    (Just (f, c), _) | S.member c expCats -> GExpKind (funListExp ident exps)
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))

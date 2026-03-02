@@ -1,7 +1,7 @@
 module ParseInformath where
 
 import Environment
-import BuildConstantTable (verbalCats)
+import CommonConcepts (verbalCats)
 import PGF
 import Data.Char(isAlpha, isAlphaNum)
 import Data.List(sortOn)
@@ -50,7 +50,7 @@ isSpurious env expr = case unApp expr of
  where
    reachable f = case functionType pgf f of
      Just ty -> case unType ty of
-       (_, c, _) | Set.member c verbalCats -> Set.member f (reachableFunctions env)
+       (_, c, _) | Set.member (showCId c) verbalCats -> Set.member f (reachableFunctions env)
        _ -> True
      _ -> True
    pgf = grammar env

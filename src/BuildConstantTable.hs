@@ -48,21 +48,6 @@ readGFTree s = case s of
 
 ------
 
-mainCats :: S.Set Cat
-mainCats = S.fromList [mkCId c | c <- words
-  "Exp Prop Kind Proof ProofExp Unit"
-  ]
-
-symbolicCats :: S.Set Cat
-symbolicCats = S.fromList [mkCId c | c <- words
-  "Formula Term Compar Const Oper Oper2 MACRO"  --- MACRO is not a cat in GF
-  ]
-
-verbalCats :: S.Set Cat
-verbalCats = S.fromList [mkCId c | c <- words
-  "Name Noun Noun1 Noun2 NounC Fam Fam2 Adj Adj2 Adj3 AdjC AdjE Fun Fun2 FunC Verb Verb2 VerbC Label Dep Dep2 DepC Binder Binder1 Binder2"
-  ]
-
 -- conversion from Dk to GF, with synonyms and category information
 type ConstantTable = M.Map QIdent ConstantTableEntry
 
@@ -183,7 +168,8 @@ mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
 
    (symbs, syns) = partition (isSymbolic . snd) [(f, funtype pgf f) | f <- funs]
    isSymbolic typ = case unType typ of
-     (_, cat, _) -> S.member cat symbolicCats
+     (_, cat, _) | showCId cat == "MACRO" -> True 
+     (_, cat, _) -> S.member (showCId cat) symbolicCats
 
 
 -- PGF: inferExpr :: PGF -> Expr -> Either TcError (Expr, Type)
@@ -200,28 +186,29 @@ type DkType = ([Dedukti.AbsDedukti.Hypo], Exp)
 
 mismatchingTypes :: MacroTable -> DkType -> Type -> Fun -> Maybe ((String, Int), ([String], Int))
 mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
+
   arityMismatch (dkhypos, typ) (gfhypos, cid, _) =
     let (dka, gfa) = (dkArity dkhypos typ, (gfCats cid, gfArity gfhypos cid)) in
     if not (compatible dka gfa)
     then Just (dka, gfa)
     else Nothing
-  compatible (dkcat, dar) (gfcats, gar) = dar == gar && elem dkcat gfcats 
+    
+  compatible (dkcat, dar) (gfcats, gar) = dar == gar && elem dkcat gfcats
+  
   gfArity gfhypos cid = case showCId cid of
-    s | elem s (words "Adj Verb Fun Fam Dep Noun1 Oper") -> 1
-    s | elem s (words "Adj2 Verb2 VerbC Noun2 NounC Fun2 Fam2 Dep2 DepC Compar Oper2 FunC AdjC AdjE Binder") -> 2
-    s | elem s (words "Adj3 Binder1") -> 3
-    s | elem s (words "Binder2") -> 4
-    s | elem s (words "MACRO") ->   --- '\\foo' -> \foo 
-      maybe 0 fst (M.lookup (tail (filter (/='\'') (showGFTree fun))) mt)
-    _ -> length gfhypos
+    "MACRO" -> maybe 0 fst (M.lookup (tail (filter (/='\'') (showGFTree fun))) mt)
+    c | S.member c mainCats -> length gfhypos
+    c -> case M.lookup c gfCatMap of
+      Just (_, args) -> length args
+      _ -> length gfhypos
+      
   gfCats cid = case showCId cid of
-    s | elem s (words "Adj Verb Noun1 NounC Adj2 Verb2 VerbC Noun2 Adj3 AdjC AdjE Compar Prop Formula") -> ["Prop"]
-    s | elem s (words "Noun Fam Fam2 Dep Dep2 DepC Kind") -> ["Kind"]
-    s | elem s (words "Name Fun Fun2 FunC Exp Binder Binder1 Binder2") -> ["Exp"]
-    s | elem s (words "Const Oper Oper2 Term") -> ["Exp", "Kind"]
-    s | elem s (words "Label ProofExp Proof") -> ["Proof"]
-    s | elem s (words "MACRO") -> ["Exp", "Kind", "Prop", "Proof"] --- uncertain; any may work
-    _ -> ["UNKNOWN-GF"]
+    "MACRO" -> S.toList mainCats --- uncertain; any may work
+    c -> case M.lookup c gfCatMap of
+       Just ("Exp", _) -> ["Exp", "Kind"]
+       Just (val, _) -> [val]
+       _ -> ["UNKNOWN-GF"] ---
+       
   dkArity dkhypos typ = (valCat typ, foldl (+) 0 (map hypoArity dkhypos))
   valCat typ = case fst (splitApp typ) of
     EIdent f | f == identProp -> "Prop"

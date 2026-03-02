@@ -6,13 +6,88 @@ module CommonConcepts where
 import Dedukti.AbsDedukti
 import Informath
 import qualified Data.Map as M
+import qualified Data.Set as S
 import Data.List (isSuffixOf)
 import Data.Char
 
 type CTree a = Informath.Tree a
 type DTree a = Dedukti.AbsDedukti.Tree a
 
--- referring to mathbase.dk
+-- Informath category symbols with arities
+
+type SCat = String
+
+-- all symbol-table enabled categories to value and argument cats
+gfCatMap :: M.Map SCat (SCat, [SCat])
+gfCatMap = M.union mainCatMap (M.union verbalCatMap symbolicCatMap)
+
+mainCats :: S.Set SCat
+mainCats = S.fromList ["Exp", "Kind", "Prop", "Proof", "ProofExp", "Unit", "Term", "Formula"]
+
+mainCatMap :: M.Map SCat (SCat, [SCat])
+mainCatMap = M.fromList [(c, (c, [])) | c <- S.toList mainCats]
+
+-- lexical categories to value and argument cats
+verbalCatMap :: M.Map SCat (SCat, [SCat])
+verbalCatMap = M.fromList [
+  ("Fam", ("Kind", ["Kind"])),
+  ("Fam2", ("Kind", ["Kind", "Kind"])),
+  ("Noun", ("Kind", [])),
+  ("Dep", ("Kind", ["Exp"])),
+  ("Dep2",("Kind", ["Exp", "Exp"])),
+  ("DepC", ("Kind", ["Exp", "Exp"])),
+  ("Adj", ("Prop", ["Exp"])),
+  ("Verb", ("Prop", ["Exp"])),
+  ("Noun1", ("Prop", ["Exp"])),
+  ("Adj2", ("Prop", ["Exp", "Exp"])),
+  ("AdjC", ("Prop", ["Exp", "Exp"])),
+  ("AdjE", ("Prop", ["Exp", "Exp"])),
+  ("Verb2", ("Prop", ["Exp", "Exp"])),
+  ("Noun2", ("Prop", ["Exp", "Exp"])),
+  ("Adj3", ("Prop", ["Exp", "Exp", "Exp"])),
+  ("VerbC", ("Prop", ["Exp", "Exp"])),
+  ("NounC", ("Prop", ["Exp", "Exp"])),
+  ("Fun", ("Exp", ["Exp"])),
+  ("Fun2", ("Exp", ["Exp", "Exp"])),
+  ("FunC", ("Exp", ["Exp", "Exp"])),
+  ("Name", ("Exp", [])),
+  ("Binder", ("Exp", ["Ident", "Exp"])),
+  ("Binder1", ("Exp", ["Kind", "Ident", "Exp"])),
+  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"])),
+  ("Label", ("ProofExp", []))
+  ]
+
+-- symbolic categories to verbal types (for type checking with Dedukti)
+symbolicCatMap :: M.Map SCat (SCat, [SCat])
+symbolicCatMap = M.fromList [
+  ("Formula", ("Prop", [])),
+  ("Term", ("Exp", [])),
+  ("Compar", ("Prop", ["Exp", "Exp"])),
+  ("Const", ("Exp", [])),
+  ("Oper", ("Exp", ["Exp"])),
+  ("Oper2", ("Exp", ["Exp", "Exp"]))
+  ]
+
+symbolicCats :: S.Set SCat
+symbolicCats = S.fromList (M.keys symbolicCatMap)
+
+verbalCats :: S.Set SCat
+verbalCats = S.fromList (M.keys verbalCatMap)
+
+kindCats :: S.Set SCat
+kindCats = S.fromList $ "Kind" : [c | (c, ("Kind", _)) <- M.assocs verbalCatMap]
+
+expCats :: S.Set SCat
+expCats = S.fromList $ "Exp" : [c | (c, ("Exp", _)) <- M.assocs verbalCatMap]
+
+propCats :: S.Set SCat
+propCats = S.fromList $ "Prop" : [c | (c, ("Prop", _)) <- M.assocs verbalCatMap]
+
+proofCats :: S.Set SCat 
+proofCats = S.fromList ["Label", "Proof", "ProofExp", "Unit"]
+
+
+-- referring to BaseConstants.dk
 
 identConj = QIdent "and"
 identDisj = QIdent "or"
