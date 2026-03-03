@@ -27,7 +27,7 @@ STLet.    Step ::= "let" Ident ":" Exp "." ;
 STDLet.   Step ::= "Let" Ident ":" Exp ":=" Exp "." ;
 SAssume.  Step ::= "assume" [Var] "." ;
 SHAssume. Step ::= "assume" Ident ":" Exp "." ;
-SHClaim.  Step ::= "claim" Ident ":" Exp "." ;
+SClaim.   Step ::= "claim" Ident ":" Exp "." ;
 SExact.   Step ::= "exact" Exp "." ;
 SApply.   Step ::= "apply" Exp "." ;
 SProve.   Step ::= "prove" Exp "." ;
@@ -52,7 +52,9 @@ EEnu.     Exp25 ::= "{" [Exp] "}" ;
 ESet.     Exp25 ::= "set" ;
 EApp.     Exp24 ::= Exp7 Exp8 ;
 
-EEq.      Exp20 ::= Exp21 "=" Exp21 ;
+EEq.      Exp22 ::= Exp23 "=" Exp23 ;
+ECEq.     Exp22 ::= Exp23 "c=" Exp23 ;
+ECIn.     Exp22 ::= Exp23 ":e" Exp23 ;
 
 ---E_Infix_exp_SNo_nat. Exp7 ::= Exp8 "^" Exp7 ;
 E_Prefix_not. Exp19 ::= "~" Exp19 ;
@@ -121,10 +123,10 @@ ICAdd. Infix ::= ":+:" ;
 IEq.  Infix ::= "=" ;
 ILEq. Infix ::= "<=" ;
 ILt.  Infix ::= "<" ;
-ICEq. Infix ::= "c=" ;
+ICEq. Infix ::= "c=" ; --
 INeq. Infix ::= "<>" ;
 IIff. Infix ::= "<->" ;
-IIn.  Infix ::= ":e" ;
+IIn.  Infix ::= ":e" ; --
 IInn. Infix ::= "/:e" ;
 IMul. Infix ::= "*" ;
 IAdd. Infix ::= "+" ;
