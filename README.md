@@ -159,19 +159,19 @@ The following datasets can be processed with `RunInformath <filename>` to genera
 
 Use `RunInformath -help` to see the actually available file types and extensions. You can also use `RunInformath` on standard input, for instance,
 ```
-$ echo "c : Proof (forall Num (n => if (even n) (not (odd n))))." | RunInformath
-C. If $n$ is even, then $n$ is not odd for all numbers $n$.
+$ echo "prop1 : Proof (forall Num (n => if (even n) (not (odd n))))." | RunInformath
+Prop1. If $n$ is even, then $n$ is not odd for all numbers $n$.
 
-$ echo "every number is even or odd." | RunInformath -formalize           
-noLabel : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
+$ echo "prop2. Every number is even or odd." | RunInformath -formalize           
+prop2 : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
 ```
 The option `-loop` allows you to translate between individual Dedukti and natural language judgements:
 ```
 $ RunInformath -loop
 > prop1 : Proof (forall Nat (n => if (even n) (not (odd n)))).
 Prop1. If $n$ is even, then $n$ is not odd for all natural numbers $n$.
-> ? Every number is even or odd.
-noLabel : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
+> ? prop2. Every number is even or odd.
+prop2 : Proof (forall Num (_h0 => or (even _h0) (odd _h0))) .
 > 
 ```
 Input prefixed with `?` is treated as natural language, all other input as Dedukti. 
@@ -226,6 +226,7 @@ The [grammars](./grammars) directory contains
 - [Terms](./grammars/Terms.gf), grammar of formal notations, with a single concrete syntax [TermsLatex](./grammars/TermsLatex.gf)
 - [UserExtensions](./grammars/UserExtensions.gf), user-definable extension modules, such as Naproche, NaturalDeduction, HoTT, Godement
 - [Utilities](./grammars/Utilities.gf), auxiliary functions and type synonyms used in other modules, also usable in user extensions
+- [Examples](./grammars/Examples.gf), grammar rules for building lexical items for symbol tables and parsing them from examples (see below under symbol tables)
 - [Informath](./grammars/Informath.gf), the top module that puts everything together
 
 In addition to the above grammars, which are used in the actual runtime, there are directories that can be used as libraries for implementing new constants:
@@ -464,24 +465,31 @@ Exp, arguments X, Y, x => Z (X and Y are bounds; e.g. sum, integral):
     "the <Noun> of Z where $ x $ ranges from X to Y"
 
 ProofExp: 
-    <Noun> .
-  | the <Noun> .
-  | <Noun> <Int> .
-  | <Noun> <Ident> .
-  | the <Noun> of <Noun> .
-  | <ProperName>'s <Noun> .
+    "<Noun> ."
+  | "the <Noun> ."
+  | "<Noun> <Int> ."
+  | "<Noun> <Ident> ."
+  | "the <Noun> of <Noun> ."
+  | "<ProperName>'s <Noun> ."
 ```
 So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`, `<ProperName>`, `<Ident>`, `<Int>`?  
 All but the last two are **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". 
 `<ProperName>`s are typically last names of mathematicians, such as "Fermat", "Hilbert"; there is a list of them in the grammar file [ProperNames.gf](grammars/ProperNames.gf).
 `<Ident>`s are identifiers such as "h".
-`<Int>`s are 
+`<Int>`s are non-negative integer expressions.
 
 Informath comes with a large lexicon (of 3000 entries in English, plus over 300 proper names), from which you often pick the ones that you need in your symbol table. The lexicon consists of individual words, but they can be combined with the following rules:
 ```
-<Adj>: <Adverb> <Adj>
-<Noun>: <Adj> <Noun> | <Noun> <Noun> | <ProperName> <Noun>
-<Verb>: <Verb> <Prep> a <Noun>
+<Adj>: 
+    <Adverb> <Adj>
+<Noun>: 
+    <Adj> <Noun> 
+  | <Noun> <Noun> 
+  | <ProperName> <Noun>
+<Verb>: 
+    <Verb> <Prep> a <Noun>
+  | <Verb> <Prep> <Noun>s
+  | <Verb> <Prep> the <Noun>
 ```
 Notice that these rules are inductive: they permit the formation of infinitely many multiword expressions. 
 For a (nonsensical) example,
@@ -512,6 +520,35 @@ even_Adj
 integer_Noun
 converge_Verb
 ```
+
+#### Binder expressions
+
+The complicated-looking expression forms such as
+```
+Exp, arguments X, Y, x => Z (X and Y are bounds; e.g. sum, integral): 
+    "the <Noun> of Z where $ x $ ranges from X to Y"
+```
+are meant for **binders**, which take **higher-order function applications** to linear terms.
+A typical example is
+```
+$\Summa {1}{\infinity}{n}{\frac{ 1}{2 ^ {n}}}$.
+```
+where the variable $n$ is bound in the summation term.
+The (usually avoided) verbal expression is
+
+- The sum of the quotient of $1$ and the square of $n$ where $n$ ranges from $1$ to the infinity.
+
+These expressions are generated from the Dedukti expression
+```
+sigma (nd 1) infinity (n => div 1 (square n))
+```
+via the symbol table entry
+```
+sigma : "the sum of Z where $ x $ ranges from X to Y" | '\\Summa'
+```
+The syntax of bindings definable in symbol tables is still an experimental feature, and not yet general enough for all common cases.
+
+
 
 ### Inspecting the Informath lexicon
 

@@ -103,8 +103,8 @@ angleBetween : angle_between_Fun2
 dotProduct : dot_product_FunC | dot_product_Oper2
 vectorPlus : vector_plus_FunC | resultant_FunC | plus_Oper2
 sphenic : sphenic_Adj
-sigma : NounBinder2 sum_Noun | '\\Summa'
-integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | '\\Integral'
+sigma : NounBinder2 sum_Noun | \\Summa
+integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | \\Integral
 infinity : DefNounName infinity_Noun | \infinity
 ni : contain_Verb2 | ni_Compar
 disjoint : disjoint_AdjC | AdjPrepAdj2 disjoint_Adj from_Prep | disjoint_Compar
