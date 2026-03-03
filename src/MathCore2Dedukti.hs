@@ -35,7 +35,7 @@ filterNoUndefined js = case partition hasUndefineds js of
 -- this is where the GF identifier ambiguity is resolved
 applyLookBack ::  BackConstantTable -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
 applyLookBack mb t = case t of
-  QIdent s -> maybe [t] id $ M.lookup (mkTree s) mb
+  QIdent s -> maybe [mark t] id $ M.lookup (mkTree s) mb
   _ -> Dedukti.AbsDedukti.composOpM (applyLookBack mb) t  
  where
   mkTree s = case readExpr s of
@@ -43,6 +43,9 @@ applyLookBack mb t = case t of
     _ -> mkApp (mkCId (unescape s)) []
   unescape s = case s of
     _ -> s
+  mark :: QIdent -> QIdent
+  mark t@(QIdent s) = if isVar s then t else QIdent ("_UNDEFINED" ++ s)
+  isVar s = length (words s) == 1 --- approximative matching of variable symbols 
 
 jmt2jmt :: GJmt -> Jmt
 jmt2jmt jment = case jment of

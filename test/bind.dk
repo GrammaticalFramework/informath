@@ -6,6 +6,8 @@ c : Proof (even (Summa 1 9 (n => times n n))).
 
 d : Proof (empty (PiB Nat (x => Real))).
 
+d2 : (A : Set) -> (B : Set) -> Proof (empty (PiB A (x => B))).
+
 e : Proof (Lt (Integral 0 1 (x => minus (square x) x)) 0).
 
 
