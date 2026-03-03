@@ -10,7 +10,7 @@ import System.Exit        ( exitFailure )
 import Control.Monad      ( when )
 import Data.Char (isSpace)
 
-import AbsMegalodon   ()
+import AbsMegalodon 
 import LexMegalodon   ( Token, mkPosToken )
 import ParMegalodon   ( pDoc, myLexer )
 import PrintMegalodon ( Print, printTree )
@@ -23,7 +23,7 @@ type Verbosity  = Int
 putStrV :: Verbosity -> String -> IO ()
 putStrV v s = when (v > 1) $ putStrLn s
 
-runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
+runFile :: Verbosity -> ParseFun Doc -> FilePath -> IO ()
 runFile v p f = putStrLn f >> readFile f >>= \f -> mapM_ (run v p) (zip [1..] (jments f))
 
 jments :: String -> [String]
@@ -36,7 +36,7 @@ split c cs = case break (==c) cs of
   (s,  []) -> [s]
   (s, c:s2) -> (s ++ [c]) : split c s2
 
-run :: (Print a, Show a) => Verbosity -> ParseFun a -> (Int, String) -> IO ()
+run :: Verbosity -> ParseFun Doc -> (Int, String) -> IO ()
 run v p (n, s) =
   case p ts of
     Left err -> do
@@ -51,10 +51,14 @@ run v p (n, s) =
   ts = myLexer s
   showPosToken ((l,c),t) = concat [ show l, ":", show c, "\t", show t ]
 
-showTree :: (Show a, Print a) => Int -> a -> IO ()
+showTree :: Int -> Doc -> IO ()
 showTree v tree = do
---  putStrLn $ "[Abstract Syntax]: " ++ show tree
-  putStrLn $ "[Linearized tree]: " ++ printTree tree
+  let ptree = printTree tree
+  let pttree = printTree (transDoc tree)
+  putStrLn ptree
+  if pttree /= ptree
+    then putStrLn ("TRANS: " ++ printTree pttree)
+    else return ()
 
 usage :: IO ()
 usage = do
@@ -74,4 +78,39 @@ main = do
     []         -> getContents >>= \s -> run 2 pDoc (0, s)
     "-s":fs    -> mapM_ (runFile 0 pDoc) fs
     fs         -> mapM_ (runFile 2 pDoc) fs
+
+transDoc :: Doc -> Doc
+transDoc = trans where
+  trans :: Tree a -> Tree a
+  trans t = case t of
+---    E_Infix_M x y -> apps (Ident "M") (trans x) (trans y)
+    E_Infix_neq x y -> apps (Ident "neq") (trans x) (trans y)
+    E_Infix_iff x y -> apps (Ident "iff") (trans x) (trans y)
+    E_Infix_div_SNo x y -> apps (Ident "div_SNo") (trans x) (trans y)
+    E_Infix_setprod x y -> apps (Ident "setprod") (trans x) (trans y)
+    E_Infix_eq x y -> apps (Ident "eq") (trans x) (trans y)
+    E_Infix_or x y -> apps (Ident "or") (trans x) (trans y)
+    E_Infix_setsum x y -> apps (Ident "setsum") (trans x) (trans y)
+    E_Infix_SNoLe x y -> apps (Ident "SNoLe") (trans x) (trans y)
+---    E_Infix_add_SNo x y -> apps (Ident "add_SNo") (trans x) (trans y)
+---    E_Infix_exp_SNo_nat x y -> apps (Ident "exp_SNo_nat") (trans x) (trans y)
+    E_Infix_binunion x y -> apps (Ident "binunion") (trans x) (trans y)
+    E_Infix_setexp x y -> apps (Ident "setexp") (trans x) (trans y)
+    E_Infix_mul_nat x y -> apps (Ident "mul_nat") (trans x) (trans y)
+    E_Infix_add_nat x y -> apps (Ident "add_nat") (trans x) (trans y)
+    E_Prefix_not x -> app (Ident "not") (trans x)
+    E_Infix_and x y -> apps (Ident "and") (trans x) (trans y)
+    E_Postfix_tag x -> app (Ident "tag") (trans x)
+    E_Infix_nIn x y -> apps (Ident "nIn") (trans x) (trans y)
+---    E_Infix_mul_SNo x y -> apps (Ident "mul_SNo") (trans x) (trans y)
+    E_Infix_exp_nat x y -> apps (Ident "exp_nat") (trans x) (trans y)
+    E_Infix_binintersect x y -> apps (Ident "binintersect") (trans x) (trans y)
+    E_Prefix_minus_SNo x -> app (Ident "minus_SNo") (trans x)
+    E_Infix_setminus x y -> apps (Ident "setminus") (trans x) (trans y)
+    E_Infix_SNoLt x y -> apps (Ident "SNoLt") (trans x) (trans y)
+
+    _ -> composOp trans t
+    
+apps ident x y = foldl EApp (EIdent ident) [x, y]
+app ident x = EApp (EIdent ident) x
 

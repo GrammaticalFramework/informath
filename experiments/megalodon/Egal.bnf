@@ -52,41 +52,8 @@ EEnu.     Exp8 ::= "{" [Exp] "}" ;
 ESet.     Exp8 ::= "set" ;
 EPrime.   Exp7 ::= Ident "'" ;
 EApp.     Exp7 ::= Exp7 Exp8 ;
-
----E_Infix_exp_SNo_nat. Exp7 ::= Exp8 "^" Exp7 ;
-E_Prefix_not. Exp19 ::= "~" Exp19 ;
-E_Infix_neq. Exp18 ::= Exp19 "<>" Exp19 ;
----E_Infix_mul_SNo. Exp11 ::= Exp12 "*" Exp11 ;
-E_BinderP_and. Exp3 ::= "exists" Bind "," Exp3 ;
-E_Postfix_tag. Exp5 ::= Exp5 "'" ;
-E_Infix_exp_nat. Exp7 ::= Exp8 "^" Exp7 ;
----E_Infix_add_SNo. Exp13 ::= Exp14 "+" Exp13 ;
-E_BinderP_Pi. Exp3 ::= "Pi_" Bind "," Exp3 ;
-E_Infix_mul_nat. Exp11 ::= Exp12 "*" Exp11 ;
-E_Infix_binintersect. Exp6 ::= Exp6 ":/\\:" Exp7 ;
-E_Infix_iff. Exp22 ::= Exp23 "<->" Exp23 ;
----E_Infix_M. Exp11 ::= Exp12 "*" Exp11 ;
-E_Binder_famunion. Exp3 ::= "\\/_" Bind "," Exp3 ;
-E_Infix_add_nat. Exp13 ::= Exp14 "+" Exp13 ;
-E_Infix_binunion. Exp8 ::= Exp8 ":\\/:" Exp9 ;
-E_Infix_SNoLt. Exp17 ::= Exp18 "<" Exp18 ;
-E_Infix_setsum. Exp16 ::= Exp16 ":+:" Exp17 ;
-E_Infix_setprod. Exp15 ::= Exp15 ":*:" Exp16 ;
-E_Infix_setminus. Exp9 ::= Exp10 ":\\:" Exp10 ;
-E_Infix_SNoLe. Exp17 ::= Exp18 "<=" Exp18 ;
-E_Infix_or. Exp21 ::= Exp21 "\\/" Exp22 ;
-E_Prefix_minus_SNo. Exp12 ::= "-" Exp12 ;
----E_BinderP_ex. Exp3 ::= "exists" Bind "," Exp3 ;
-E_Infix_eq. Exp18 ::= Exp19 "=" Exp19 ;
-E_Infix_setexp. Exp14 ::= Exp14 ":^:" Exp15 ;
-E_BinderP_Sigma. Exp3 ::= "Sigma_" Bind "," Exp3 ;
-E_Infix_div_SNo. Exp10 ::= Exp11 ":/:" Exp11 ;
-E_Infix_and. Exp20 ::= Exp20 "/\\" Exp21 ;
-E_Infix_nIn. Exp18 ::= Exp19 "/:e" Exp19 ;
-
-
----EPrefix.  Exp6 ::= Prefix Exp6 ; --- follow prec given in file
----EInfix.   Exp5 ::= Exp5 Infix Exp6 ; --- infix left
+EPrefix.  Exp6 ::= Prefix Exp6 ; --- follow prec given in file
+EInfix.   Exp5 ::= Exp5 Infix Exp6 ; --- infix left
 EForall.  Exp3 ::= "forall" Bind "," Exp3 ;
 ENForall. Exp3 ::= "~forall" Bind "," Exp3 ;
 EExists.  Exp3 ::= "exists" Bind "," Exp3 ;
@@ -95,8 +62,7 @@ EOrs.     Exp3 ::= "\\/_" Bind "," Exp3 ;
 EArrow.   Exp3 ::= Exp4 "->" Exp3 ;
 EFun.     Exp2 ::= "fun" Bind "=>" Exp3 ;
 
-coercions Exp 23 ;
----coercions Exp 8 ;
+coercions Exp 8 ;
 
 separator Exp "," ;
 
