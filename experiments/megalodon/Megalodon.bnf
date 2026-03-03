@@ -44,14 +44,15 @@ SStar.    Step ::= "*" Step ;
 
 terminator nonempty Step "." ;
 
-EIdent.   Exp8 ::= Ident ;
-EInt.     Exp8 ::= Integer ;
-EQuest.   Exp8 ::= "??" ;
-ECompr.   Exp8 ::= "{" Exp "|" Exp "}" ;
-EEnu.     Exp8 ::= "{" [Exp] "}" ;
-ESet.     Exp8 ::= "set" ;
-EPrime.   Exp7 ::= Ident "'" ;
-EApp.     Exp7 ::= Exp7 Exp8 ;
+EIdent.   Exp25 ::= Ident ;
+EInt.     Exp25 ::= Integer ;
+EQuest.   Exp25 ::= "??" ;
+ECompr.   Exp25 ::= "{" Exp "|" Exp "}" ;
+EEnu.     Exp25 ::= "{" [Exp] "}" ;
+ESet.     Exp25 ::= "set" ;
+EApp.     Exp24 ::= Exp7 Exp8 ;
+
+EEq.      Exp20 ::= Exp21 "=" Exp21 ;
 
 ---E_Infix_exp_SNo_nat. Exp7 ::= Exp8 "^" Exp7 ;
 E_Prefix_not. Exp19 ::= "~" Exp19 ;
@@ -95,7 +96,7 @@ EOrs.     Exp3 ::= "\\/_" Bind "," Exp3 ;
 EArrow.   Exp3 ::= Exp4 "->" Exp3 ;
 EFun.     Exp2 ::= "fun" Bind "=>" Exp3 ;
 
-coercions Exp 23 ;
+coercions Exp 25 ;
 ---coercions Exp 8 ;
 
 separator Exp "," ;

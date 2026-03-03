@@ -1,6 +1,7 @@
 -- File modified the BNF Converter (bnfc 2.9.6.1).
 
 -- | Program to test parser line by line
+-- start with 'ln -s ../../src/typetheory/Dedukti', then 'make'
 
 module Main where
 
@@ -15,6 +16,8 @@ import LexMegalodon   ( Token, mkPosToken )
 import ParMegalodon   ( pDoc, myLexer )
 import PrintMegalodon ( Print, printTree )
 import SkelMegalodon  ()
+
+import Megalodon2Dedukti
 
 type Err        = Either String
 type ParseFun a = [Token] -> Err a
@@ -54,11 +57,13 @@ run v p (n, s) =
 showTree :: Int -> Doc -> IO ()
 showTree v tree = do
   let ptree = printTree tree
-  let pttree = printTree (transDoc tree)
+  let ttree = transDoc tree
+  let pttree = printTree ttree
   putStrLn ptree
   if pttree /= ptree
     then putStrLn ("TRANS: " ++ printTree pttree)
     else return ()
+  putStrLn ("DEDUKTI: " ++ megalodon2dedukti ttree)  
 
 usage :: IO ()
 usage = do
