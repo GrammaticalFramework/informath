@@ -1,5 +1,7 @@
 ## Informath old news (see also Git history)
 
+22 February 2026: a very first attempt at a binary release, starting with MacOS. No need to install Haskell or GF. See below on "Using ready-made binaries".
+
 19 February 2026: symbol tables are not generalized to contain full GF trees whose types are lexical categories. Such trees can also be parsed from quoted strings. In order to mark the boundaries between functions (which are no more single tokens), vertical bars `|` are now needed in symbol tables.See last chapter, "Symbol tables", for details.
 
 19 February 2026: fixed a logical flaw in synonym treatment. Synonyms were generated from primary GF functions instead of the original Dedukti identifiers. But this is reliable only if the primary GF functions are unique - which cannot be guaranteed.

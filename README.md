@@ -8,7 +8,7 @@
 
 #### LATEST NEWS
 
-22 February 2026: a very first attempt at a binary release, starting with MacOS. No need to install Haskell or GF. See below on "Using ready-made binaries".
+4 March 2026: Binary release, entitled [Informath-0.2](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2).
 
 [Older news](./doc/old-news.md)
 
@@ -79,16 +79,18 @@ Also the scope of language structures is at the moment theorem statements and de
 
 ### From ready-made binaries
 
-*For this method, you don't need GF or Haskell. It is soon available for ARM-MacOS and Intel-Linux.*
+*For this method, you don't need GF or Haskell. It is available for MacOS-ARM and Linux-x86.*
 
 The quickest way to use Informath is to
 
-- go to the [release page](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.1)
-- download and uncompress the binary `RunInformath` for you OS architecture and put it into some place on your path of executables; rename it to `RunInformath` to remove the OS-specific suffix
-- clone this Git repository (recommended) or download the source `.tgz` package from the release page and unpack it
-- download and uncompress the OS-independent grammar binaries `InformathEng.pgf` and `InformathFull.pgf`, and move it to the `share/` directory of thie Git repository. Only `InformathEng.pgf` is needed if you don't aim to use other languages.
+- go to the [release page](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2)
+- download and uncompress the binary `RunInformath` for you OS architecture and put it into some place on your path of executables; make sure its name is `RunInformath`.
+- clone [this Git repository](./) (recommended) or download the source `.tgz` package from the release page and unpack it
+- download and unpack the OS-independent grammar package `Informath-grammars.tgz`, and move the two .pgf files to the `share/` directory of this Git repository. Only `InformathEng.pgf` is needed if you don't aim to use other languages.
 - point the environment variable `INFORMATH_ROOT` to the directory named `informath`, which is the root of this Git repository and the unpacked source package
-
+```
+export INFORMATH_ROOT=<path_to_informath>
+```
 After that, you can do
 ```
 $ echo "c : Proof (Eq (plus 2 2) 4)." | RunInformath -variations
@@ -209,8 +211,8 @@ The [share](./share/) directory contains
 
 - file [BaseConstants.dk](./share/baseconstants.dk) of logical and numeric operations assumed in most of the data examples, and correspoonding files for Agda, Rocq, and Lean
 - file [baseconstants.dkgf](./share/baseconstants.dkgf), a symbol table for converting Dedukti constants in BaseConstants.dk to GF abstract syntax functions
-- binary file `InformathEng.pgf`, the runtime grammar with only English
-- binary file `InformathFull.pgf`, the runtime grammar with all available languages; this is much larger and somewhat slower to use than the English-only version (you can also build a smaller one with `make multi_grammar` for just the languages you want; edit the Makefile entry to select the languages)
+- binary file `InformathEng.pgf`, the runtime grammar with only English, when generated or copied 
+- binary file `InformathFull.pgf`, the runtime grammar with all available languages, when generated or copied; this is much larger and somewhat slower to use than the English-only version (you can also build a smaller one with `make multi_grammar` for just the languages you want; edit the Makefile entry to select the languages)
 
 The [test](./test/) directory contains
 - some test data as `.dk`, `.tex`, and `.txt` files (see above)
