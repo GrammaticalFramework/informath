@@ -64,20 +64,21 @@ exp2exp exp = case exp of
 
   EForall bind exp -> foldr D.EFun (exp2exp exp) (bind2hypos bind)
   ENForall bind exp -> wrap "not" [foldr D.EFun (exp2exp exp) (bind2hypos bind)]
-  EExists bind exp -> foldr dkExists (exp2exp exp) (bind2binds bind)
-  ENExists bind exp -> wrap "not" [foldr dkExists (exp2exp exp) (bind2binds bind)]
-  EOrs bind exp -> foldr dkOrs (exp2exp exp) (bind2binds bind) --- \/_ ; find out meaning
+  EExists bind exp -> foldr (binder "exists") (exp2exp exp) (bind2binds bind)
+  ENExists bind exp -> wrap "not" [foldr (binder "exists") (exp2exp exp) (bind2binds bind)]
+  EOrs bind exp -> foldr (binder "Ors") (exp2exp exp) (bind2binds bind) --- \/_ ; find out meaning
   EArrow a b -> D.EFun (D.HExp (exp2exp a)) (exp2exp b)
   EFun bind exp -> foldr D.EAbs (exp2exp exp) (bind2binds bind)
 
----  E_BinderP_Pi bind exp -> foldr dkPi_ (exp2exp exp) (bind2binds bind)
----  E_BinderP_Sigma bind exp -> foldr dkSigma_ (exp2exp exp) (bind2binds bind)
+  E_BinderP_Pi bind exp -> foldr (binder "Pi_") (exp2exp exp) (bind2binds bind)
+  E_BinderP_Sigma bind exp -> foldr (binder "Sigma_") (exp2exp exp) (bind2binds bind)
   
   _ -> D.EIdent (D.QIdent "TODO_Exp")
 
 bind2hypos :: Bind -> [D.Hypo]
 bind2hypos bind = case bind of
   BTyping vars exp -> [D.HVarExp (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
+  BCIn vars exp -> [D.HVarExp (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
   _ -> [D.HExp (D.EIdent (D.QIdent "TODO_BindHypo"))]
   
 bind2binds :: Bind -> [D.Bind]
@@ -94,9 +95,10 @@ var2ident var = case var of
 ident2ident :: Ident -> D.QIdent
 ident2ident (Ident s) = D.QIdent s
 
-dkExists :: D.Bind -> D.Exp -> D.Exp
-dkExists bind exp = wrap "exists" [D.EAbs bind exp]  --- domain included in bind?
+binder :: String -> D.Bind -> D.Exp -> D.Exp
+binder b bind exp = wrap b [D.EAbs bind exp]  --- domain included in bind?
 
+-- EOrs bind exp -> foldr dkOrs (exp2exp exp) (bind2binds bind)
 dkOrs :: D.Bind -> D.Exp -> D.Exp
 dkOrs bind exp = wrap "ors" [D.EAbs bind exp]  --- domain included in bind?
 

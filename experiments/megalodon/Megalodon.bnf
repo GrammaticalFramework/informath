@@ -105,7 +105,7 @@ separator Exp "," ;
 
 BTyping.  Bind ::= [Var] ":" Exp3 ;
 BIdents.  Bind ::= [Var] ;
-BInfix.   Bind ::= [Var] ":e" Exp3 ;
+BCIn.     Bind ::= [Var] ":e" Exp3 ;
 _.        Bind ::= "(" Bind ")" ;
 
 VIdent.   Var ::= Ident ;
