@@ -19,11 +19,11 @@ jmt2jmt jmt = case jmt of
   JAxiom ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JTheorem ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JDefinition ident typ exp ->
-    D.JDef (ident2ident ident) (D.MTExp (exp2exp typ)) (D.MEExp (exp2exp exp))
+    D.JDef (ident2ident ident) (D.MTExp (exp2exp typ)) D.MENone ---- (D.MEExp (exp2exp exp))
   JParameter ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JHypothesis ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JStep step -> D.JDef (D.QIdent "step") D.MTNone (D.MEExp (step2exp step))
-  _ -> D.JDef (D.QIdent "TODO_Jmt") D.MTNone D.MENone
+  _ -> D.JStatic (D.QIdent "jmt") (D.EIdent (D.QIdent "TODO_Jmt"))
 
 -- deep embedding of steps
 step2exp :: Step -> D.Exp
@@ -51,6 +51,7 @@ step2exp step = case step of
 
 exp2exp :: Exp -> D.Exp
 exp2exp exp = case exp of
+  EIdent (Ident "prop") -> D.EIdent (D.QIdent "Prop")
   EIdent ident -> D.EIdent (ident2ident ident)
   EInt int -> D.EIdent (D.QIdent (show int)) --- should be exploded
   ESet -> D.EIdent (D.QIdent "set")
@@ -62,7 +63,8 @@ exp2exp exp = case exp of
   ECEq x y -> wrap "CEq" [exp2exp x, exp2exp y]
   ECIn x y -> wrap "CIn" [exp2exp x, exp2exp y]
 
-  EForall bind exp -> foldr D.EFun (exp2exp exp) (bind2hypos bind)
+---  EForall bind exp -> foldr D.EFun (exp2exp exp) (bind2hypos bind)
+  EForall bind exp -> foldr (binder "forall") (exp2exp exp) (bind2binds bind)
   ENForall bind exp -> wrap "not" [foldr D.EFun (exp2exp exp) (bind2hypos bind)]
   EExists bind exp -> foldr (binder "exists") (exp2exp exp) (bind2binds bind)
   ENExists bind exp -> wrap "not" [foldr (binder "exists") (exp2exp exp) (bind2binds bind)]
@@ -86,6 +88,13 @@ bind2binds bind = case bind of
   BTyping vars exp -> [D.BTyped (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
   BIdents vars -> [D.BVar (var2ident var) | var <- vars]
   _ -> [D.BVar (D.QIdent "TODO_BindBind")]
+
+bind2vartype :: D.Bind -> (D.QIdent, D.Exp)
+bind2vartype bind = case bind of
+  D.BTyped ident exp -> (ident, exp)
+  D.BVar ident -> (ident, mSetExp)
+
+mSetExp = D.EIdent (D.QIdent "set") -- the domain of sets in Megalodon
   
 var2ident :: Var -> D.QIdent
 var2ident var = case var of
@@ -96,11 +105,8 @@ ident2ident :: Ident -> D.QIdent
 ident2ident (Ident s) = D.QIdent s
 
 binder :: String -> D.Bind -> D.Exp -> D.Exp
-binder b bind exp = wrap b [D.EAbs bind exp]  --- domain included in bind?
-
--- EOrs bind exp -> foldr dkOrs (exp2exp exp) (bind2binds bind)
-dkOrs :: D.Bind -> D.Exp -> D.Exp
-dkOrs bind exp = wrap "ors" [D.EAbs bind exp]  --- domain included in bind?
+binder b bind exp = wrap b [dom, D.EAbs (D.BVar var) exp]
+  where (var, dom) = bind2vartype bind
 
 wrap s xs = foldl D.EApp (D.EIdent (D.QIdent s)) xs
 uni s = wrap s []

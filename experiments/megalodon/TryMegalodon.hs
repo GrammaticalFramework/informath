@@ -66,7 +66,7 @@ showTree v tree = do
   if pttree /= ptree
     then putStrLn ("TRANS: " ++ printTree pttree)
     else return ()
-  putStrLn ("DEDUKTI: " ++ megalodon2dedukti ttree)  
+  putStrLn (megalodon2dedukti ttree ++ "  (; DEDUKTI ;)")  
 
 usage :: IO ()
 usage = do
