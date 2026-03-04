@@ -19,7 +19,7 @@ jmt2jmt jmt = case jmt of
   JAxiom ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JTheorem ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JDefinition ident typ exp ->
-    D.JDef (ident2ident ident) (D.MTExp (exp2exp typ)) D.MENone ---- (D.MEExp (exp2exp exp))
+    D.JDef (ident2ident ident) (D.MTExp (exp2exp typ)) (D.MEExp (exp2exp exp))
   JParameter ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JHypothesis ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JStep step -> D.JDef (D.QIdent "step") D.MTNone (D.MEExp (step2exp step))
