@@ -1,5 +1,10 @@
 RUN  := RunInformath
 OPEN := open  # pdf viewer command
+
+# for binary_packages
+ARCH := macos-arm
+VERSION := 0.2
+
 GF_FILES := $(wildcard grammars/*.gf)
 
 lang=Eng
@@ -215,4 +220,12 @@ cartesian:
 
 bind:
 	RunInformath -add-symboltables=test/bind.dkgf -variations test/bind.dk
+
+
+binary_packages:
+	cp -p `which RunInformath` tmp/
+	cp -p share/InformathEng.pgf share/InformathFull.pgf tmp/
+	cd tmp ; strip RunInformath ; tar cvfz RunInformath-$(VERSION)-$(ARCH).tgz RunInformath ; tar cvfz Informath-grammars-$(VERSION).tgz InformathEng.pgf InformathFull.pgf
+	ls -l tmp/*.tgz
+
 
