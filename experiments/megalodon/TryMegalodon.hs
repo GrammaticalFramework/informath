@@ -1,3 +1,6 @@
+{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
+
 -- File modified the BNF Converter (bnfc 2.9.6.1).
 
 -- | Program to test parser line by line

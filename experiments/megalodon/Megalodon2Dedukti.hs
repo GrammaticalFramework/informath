@@ -1,3 +1,6 @@
+{-# LANGUAGE GADTs, KindSignatures, DataKinds #-}
+{-# LANGUAGE LambdaCase #-}
+
 module Megalodon2Dedukti where
 
 import qualified Dedukti.AbsDedukti as D
@@ -17,6 +20,8 @@ jmt2jmt jmt = case jmt of
   JTheorem ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JDefinition ident typ exp ->
     D.JDef (ident2ident ident) (D.MTExp (exp2exp typ)) (D.MEExp (exp2exp exp))
+  JParameter ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
+  JHypothesis ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JStep step -> D.JDef (D.QIdent "step") D.MTNone (D.MEExp (step2exp step))
   _ -> D.JDef (D.QIdent "TODO_Jmt") D.MTNone D.MENone
 
@@ -33,23 +38,41 @@ step2exp step = case step of
   SProve exp -> wrap "Prove" [exp2exp exp]
   SWitness exp -> wrap "Witness" [exp2exp exp]
   SRewrite exp -> wrap "Rewrite" [exp2exp exp]
+  SARewrite exp -> wrap "ARewrite" [exp2exp exp]
+  SAssume vars -> wrap "Assume" [D.EIdent (var2ident var) | var <- vars] --- variable #args
+  SSet ident exp -> wrap "SSet" [D.EIdent (ident2ident ident), exp2exp exp]
+  STSet ident typ exp -> wrap "STSet" [D.EIdent (ident2ident ident), exp2exp typ, exp2exp exp]
+  SIdent ident -> wrap "SIdent" [D.EIdent (ident2ident ident)]
+  SQed -> wrap "SQed" []
+  SPlus step0 -> wrap "SPlus" [step2exp step0]
+  SMinus step0 -> wrap "SMinus" [step2exp step0]
+  SStar step0 -> wrap "SStar" [step2exp step0]
   _ -> D.EIdent (D.QIdent "TODO_Step")
 
 exp2exp :: Exp -> D.Exp
 exp2exp exp = case exp of
   EIdent ident -> D.EIdent (ident2ident ident)
-  EInt int -> D.EIdent (D.QIdent (show int)) ---
+  EInt int -> D.EIdent (D.QIdent (show int)) --- should be exploded
   ESet -> D.EIdent (D.QIdent "set")
-
+  EQuest -> D.EIdent (D.QIdent "{|?|}")
+  ECompr a b -> wrap "Compr" [exp2exp a, exp2exp b]
+  EEnum exps -> wrap "Enum" [exp2exp e | e <- exps] --- variable #args
+  EApp fun arg -> D.EApp (exp2exp fun) (exp2exp arg)
   EEq x y -> wrap "Eq" [exp2exp x, exp2exp y]
   ECEq x y -> wrap "CEq" [exp2exp x, exp2exp y]
   ECIn x y -> wrap "CIn" [exp2exp x, exp2exp y]
 
-  EApp fun arg -> D.EApp (exp2exp fun) (exp2exp arg)
   EForall bind exp -> foldr D.EFun (exp2exp exp) (bind2hypos bind)
   ENForall bind exp -> wrap "not" [foldr D.EFun (exp2exp exp) (bind2hypos bind)]
+  EExists bind exp -> foldr dkExists (exp2exp exp) (bind2binds bind)
+  ENExists bind exp -> wrap "not" [foldr dkExists (exp2exp exp) (bind2binds bind)]
+  EOrs bind exp -> foldr dkOrs (exp2exp exp) (bind2binds bind) --- \/_ ; find out meaning
   EArrow a b -> D.EFun (D.HExp (exp2exp a)) (exp2exp b)
   EFun bind exp -> foldr D.EAbs (exp2exp exp) (bind2binds bind)
+
+---  E_BinderP_Pi bind exp -> foldr dkPi_ (exp2exp exp) (bind2binds bind)
+---  E_BinderP_Sigma bind exp -> foldr dkSigma_ (exp2exp exp) (bind2binds bind)
+  
   _ -> D.EIdent (D.QIdent "TODO_Exp")
 
 bind2hypos :: Bind -> [D.Hypo]
@@ -70,6 +93,12 @@ var2ident var = case var of
 
 ident2ident :: Ident -> D.QIdent
 ident2ident (Ident s) = D.QIdent s
+
+dkExists :: D.Bind -> D.Exp -> D.Exp
+dkExists bind exp = wrap "exists" [D.EAbs bind exp]  --- domain included in bind?
+
+dkOrs :: D.Bind -> D.Exp -> D.Exp
+dkOrs bind exp = wrap "ors" [D.EAbs bind exp]  --- domain included in bind?
 
 wrap s xs = foldl D.EApp (D.EIdent (D.QIdent s)) xs
 uni s = wrap s []
