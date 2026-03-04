@@ -34,11 +34,6 @@ parseJmt env cat s =
     ParseIncomplete -> 
          (Nothing, "# FAILURE INCOMPLETE")
 
-parseExample :: Env -> String -> [Expr]
-parseExample env = maybe [] id . fst . parseJmt ienv (maybe undefined id (readType "Example"))
-  where
-   ienv = env{flags = "-include-unreachable" : flags env}
-
 ---------------
 
 -- spurious tree: containing lexical functions not mapped to/from Dedukti

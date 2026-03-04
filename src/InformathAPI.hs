@@ -14,7 +14,7 @@ import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
-import ParseInformath (parseJmt, unindexGFTree, parseExample)
+import ParseInformath (parseJmt, unindexGFTree)
 import Lexing
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
@@ -85,6 +85,7 @@ readEnv args = do
     toLang = mkLanguage gr (argValue "-to-lang" english args),
     toFormalism = argValue "-to-formalism" "NONE" args,
     fromLang = fro,
+    symbolTableLang = sym,
     nbestNLG = argValueMaybeInt "-nbest" args,
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro
@@ -531,7 +532,7 @@ showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map sho
 
 -- | To parse an example to a tree
 parseFunExample :: Env -> String -> [String]
-parseFunExample env s = map (showExpr []) (parseExample env s)
+parseFunExample env s = map (showExpr []) (parseExample (grammar env) (symbolTableLang env) s)
 
 -- | lexical functions reachable from the current symbol table
 reachableGFFunctions :: BackConstantTable -> S.Set CId

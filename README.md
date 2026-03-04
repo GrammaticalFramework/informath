@@ -79,7 +79,7 @@ Also the scope of language structures is at the moment theorem statements and de
 
 ### From ready-made binaries
 
-*For this method, you don't need GF or Haskell. It should work for ARM-MacOS and hopefully soon for Intel-Linux.*
+*For this method, you don't need GF or Haskell. It is soon available for ARM-MacOS and Intel-Linux.*
 
 The quickest way to use Informath is to
 
@@ -99,6 +99,7 @@ $ make demo
 ```
 for many more examples. 
 If you are not on a Mac, you will have to change the variable OPEN in the Makefile to point to the command you use for opening .pdf files.
+You should also make sure that the LaTeX packages `amsfonts`, `amssymb`, and `amsmath` are available for your LaTeX processing.
 
 The former uses only English, but if you want to see something more in another language (Fre, Ger, Swe), also do e.g.
 ```
@@ -458,11 +459,11 @@ Exp, arity 2:
     "the <Noun> <Prep> X <Prep> Y"
 
 Exp, higher order argument x => X (Ident x bound in Exp X): 
-    "the <Noun> X of $ x $"
+    "the <Noun> X of $x$"
 Exp, arguments A, x => X (A is a Kind that x ranges over): 
-    "the <Noun> of X where $ x $ is an A"
+    "the <Noun> of X where $x$ is an A"
 Exp, arguments X, Y, x => Z (X and Y are bounds; e.g. sum, integral): 
-    "the <Noun> of Z where $ x $ ranges from X to Y"
+    "the <Noun> of Z where $x$ ranges from X to Y"
 
 ProofExp: 
     "<Noun> ."
@@ -472,6 +473,9 @@ ProofExp:
   | "the <Noun> of <Noun> ."
   | "<ProperName>'s <Noun> ."
 ```
+The variable names `X`, `Y`, `Z`, `A`, `B`, `x` used in the examples are special constants included in the grammar for parsing examples.
+Therefore, you must use some of them and no other symbols, whereas the category symbols `<Adj>`, `<Noun>`, etc range over all words included in the Informath grammar.
+
 So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`, `<ProperName>`, `<Ident>`, `<Int>`?  
 All but the last two are **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". 
 `<ProperName>`s are typically last names of mathematicians, such as "Fermat", "Hilbert"; there is a list of them in the grammar file [ProperNames.gf](grammars/ProperNames.gf).
@@ -502,12 +506,11 @@ You can test a candidate symbol table entry with the `-parse-example` flag:
 ```
 $ echo "X is disjoint from Y" | RunInformath -parse-example
 
-Adj2Example (AdjPrepAdj2 disjoint_Adj fromPrep) X_Argument Y_Argument
+AdjPrepAdj2 disjoint_Adj fromPrep
 ```
 If a result is shown, the entry is possible to use. 
 You can also paste the result to your symbol table instead of using a string; this can make later processing a little bit faster.
 More importantly, if the command gives many alternatives, this is a reliable way to choose the desired one of them.
-The part to be pasted is then the first argument of the applicative expression, in this case, `AdjPrepAdj2 disjoint_Adj fromPrep`.
 (The `baseconstants.dkgf` symbol table uses explicit GF abstract syntax expressions in order to be fast and unambiguous.)
 
 The words used internally in Informath are **abstract syntax functions** that follow a uniform naming convention:
@@ -526,7 +529,7 @@ converge_Verb
 The complicated-looking expression forms such as
 ```
 Exp, arguments X, Y, x => Z (X and Y are bounds; e.g. sum, integral): 
-    "the <Noun> of Z where $ x $ ranges from X to Y"
+    "the <Noun> of Z where $x$ ranges from X to Y"
 ```
 are meant for **binders**, which take **higher-order function applications** to linear terms.
 A typical example is

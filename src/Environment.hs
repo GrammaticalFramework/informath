@@ -36,6 +36,7 @@ data Env = Env {
   langs :: [Language],
   toLang :: Language,
   fromLang :: Language,
+  symbolTableLang :: Language,
   toFormalism :: String,
   nbestNLG :: Maybe Int,
   scoreWeights :: [Int],
