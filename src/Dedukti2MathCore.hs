@@ -279,6 +279,9 @@ exp2proof exp = case specialDedukti2Informath callBacks exp of
         GAppProof (exp2proofExp fun) (GListProof (map exp2proof args))
     EAbs _ _ -> case splitAbs exp of
       (binds, body) -> GAbsProof (GListHypo (map bind2coreHypo binds)) (exp2proof body)
+    _ -> GAppProof (GLabelProofExp
+           (ident2label (QIdent ("{|ERROR_exp2proof" ++ printTree exp ++ "|}")))) (GListProof []) 
+----    _ -> error ("not yet exp2proof: " ++ printTree exp)
 
 exp2proofExp :: Exp -> GProofExp
 exp2proofExp exp = case exp of
@@ -288,6 +291,7 @@ exp2proofExp exp = case exp of
       GAppProofExp (exp2proofExp fun) (gExps (map exp2exp args))
   EAbs _ _ -> case splitAbs exp of
     (binds, body) -> GAbsProofExp (GListHypo (map bind2coreHypo binds)) (exp2proofExp body)
+  _ -> error ("not yet exp2proofExp: " ++ printTree exp)
 
 patt2exp :: Patt -> GExp
 patt2exp = exp2exp . patt2dexp where
