@@ -71,7 +71,7 @@ demo:
 	echo "## converting some simple arithmetic statements to Lean"
 	$(RUN) -to-formalism=lean test/exx.dk
 	echo "# converting some set theory statements to LaTeX"
-	$(RUN) -to-latex-file -variations test/sets.dk >out/sets.tex
+	$(RUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
 	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
@@ -128,19 +128,19 @@ top100:
 
 top100check:
 	echo "## type-checking the theorems in Dedukti"
-	cat share/baseconstants.dk test/top100.dk >out/texx.dk
+	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 top100single:
 	echo "## generating only the best-ranked verbalizations of 100 theorems"
 	$(RUN) -to-latex-doc -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
-	cat share/baseconstants.dk test/top100.dk >out/texx.dk
+	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 sets:
 	echo "# checking some set theory statements and generating LaTeX"
-	cat share/baseconstants.dk test/sets.dk >out/sexx.dk
+	cat share/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
 	$(RUN) -variations -to-latex-doc -to-lang=$(lang) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
@@ -189,18 +189,18 @@ interpret_naproche:
 baseconstants:
 	cat share/BaseConstants.dk >tmp/baseconstants.dk
 
-	$(RUN) -to-latex-file -variations tmp/baseconstants.dk >out/baseconstants.tex
+	$(RUN) -to-latex-doc -variations tmp/baseconstants.dk >out/baseconstants.tex
 	cd out ; pdflatex baseconstants.tex ; $(OPEN) baseconstants.pdf
 
 parallel:
-	tail -150 share/baseconstants.dk >tmp/parallel.dk
+	tail -150 share/BaseConstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	cat test/top100.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data -variations -no-ranking tmp/parallel.dk >tmp/parallel-informath.jsonl
 
 parallel-def:
-	tail -150 share/baseconstants.dk >tmp/parallel.dk
+	tail -150 share/BaseConstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl

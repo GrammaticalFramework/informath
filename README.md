@@ -112,6 +112,12 @@ To see all options available in `RunInformath`, do
 $ RunInformath -help
 ```
 
+#### Notes added after release
+
+- If you are on a Mac, you may be blocked by a message saying that you cannot run software from untrusted source.
+There is a solution for this in security setting, described in [Mac support](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
+- 
+
 ### Compiling from source
 
 If you cannot use a ready-made binary, do
@@ -653,4 +659,4 @@ The following fine-grained categories are available for symbolic renderings:
   Oper        Term -> Term             \sqrt{Y}
   Oper2       Term -> Term -> Term     X + Y
 ```
-The grammar contains some antries from each category. However, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories.
+The grammar contains some antries from each category. In addition to this, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories. However, these macro definitions do not yet cover precedences and associativity, whereas GF grammar entries do. We are working on a way to enable setting them for new operators without extending the grammar.
