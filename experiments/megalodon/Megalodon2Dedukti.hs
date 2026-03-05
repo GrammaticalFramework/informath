@@ -80,12 +80,14 @@ exp2exp exp = case exp of
 bind2hypos :: Bind -> [D.Hypo]
 bind2hypos bind = case bind of
   BTyping vars exp -> [D.HVarExp (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
+  BIdents vars -> [D.HVarExp (var2ident var) mSetExp | var <- vars]
   BCIn vars exp -> [D.HVarExp (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
   _ -> [D.HExp (D.EIdent (D.QIdent "TODO_BindHypo"))]
   
 bind2binds :: Bind -> [D.Bind]
 bind2binds bind = case bind of
   BTyping vars exp -> [D.BTyped (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
+  BCIn vars exp -> [D.BTyped (var2ident var) dexp | var <- vars, let dexp = exp2exp exp] --- :e ?
   BIdents vars -> [D.BVar (var2ident var) | var <- vars]
   _ -> [D.BVar (D.QIdent "TODO_BindBind")]
 
