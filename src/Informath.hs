@@ -449,6 +449,7 @@ data Tree :: * -> * where
   GCoreOrProp :: GProp -> GProp -> Tree GProp_
   GDisplayFormulaProp :: GFormula -> Tree GProp_
   GEitherOrProp :: GProp -> GProp -> Tree GProp_
+  GExistKindProp :: GKind -> Tree GProp_
   GExistNoProp :: GListArgKind -> GProp -> Tree GProp_
   GExistProp :: GListArgKind -> GProp -> Tree GProp_
   GFalseProp :: Tree GProp_
@@ -1171,6 +1172,7 @@ instance Eq (Tree a) where
     (GCoreOrProp x1 x2,GCoreOrProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GDisplayFormulaProp x1,GDisplayFormulaProp y1) -> and [ x1 == y1 ]
     (GEitherOrProp x1 x2,GEitherOrProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GExistKindProp x1,GExistKindProp y1) -> and [ x1 == y1 ]
     (GExistNoProp x1 x2,GExistNoProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GExistProp x1 x2,GExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFalseProp,GFalseProp) -> and [ ]
@@ -2613,6 +2615,7 @@ instance Gf GProp where
   gf (GCoreOrProp x1 x2) = mkApp (mkCId "CoreOrProp") [gf x1, gf x2]
   gf (GDisplayFormulaProp x1) = mkApp (mkCId "DisplayFormulaProp") [gf x1]
   gf (GEitherOrProp x1 x2) = mkApp (mkCId "EitherOrProp") [gf x1, gf x2]
+  gf (GExistKindProp x1) = mkApp (mkCId "ExistKindProp") [gf x1]
   gf (GExistNoProp x1 x2) = mkApp (mkCId "ExistNoProp") [gf x1, gf x2]
   gf (GExistProp x1 x2) = mkApp (mkCId "ExistProp") [gf x1, gf x2]
   gf GFalseProp = mkApp (mkCId "FalseProp") []
@@ -2672,6 +2675,7 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "CoreOrProp" -> GCoreOrProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "DisplayFormulaProp" -> GDisplayFormulaProp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "EitherOrProp" -> GEitherOrProp (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "ExistKindProp" -> GExistKindProp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "ExistNoProp" -> GExistNoProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "ExistProp" -> GExistProp (fg x1) (fg x2)
       Just (i,[]) | i == mkCId "FalseProp" -> GFalseProp 
@@ -3841,6 +3845,7 @@ instance Compos Tree where
     GCoreOrProp x1 x2 -> r GCoreOrProp `a` f x1 `a` f x2
     GDisplayFormulaProp x1 -> r GDisplayFormulaProp `a` f x1
     GEitherOrProp x1 x2 -> r GEitherOrProp `a` f x1 `a` f x2
+    GExistKindProp x1 -> r GExistKindProp `a` f x1
     GExistNoProp x1 x2 -> r GExistNoProp `a` f x1 `a` f x2
     GExistProp x1 x2 -> r GExistProp `a` f x1 `a` f x2
     GFormulaImpliesProp x1 x2 -> r GFormulaImpliesProp `a` f x1 `a` f x2

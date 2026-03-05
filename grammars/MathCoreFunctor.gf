@@ -87,6 +87,7 @@ lin
   IdentProp f = simpleProp (latexS (mkSymb f)) ;
   FalseProp = simpleProp (mkS (mkCl we_NP have_V2 (mkNP a_Det contradiction_N))) ;
   AppProp f exps = simpleProp (mkS (mkCl (latexNP (mkSymb f)) hold_V2 exps.np)) ;
+  ExistKindProp kind = simpleProp (mkS (mkCl (mkNP a_Det (useKind kind)))) ;
 
   IdentKind ident = {
     cn = mkCN element_N ;

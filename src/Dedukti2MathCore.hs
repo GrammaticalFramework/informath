@@ -127,9 +127,9 @@ funListKind ident exps = annotateKind ident $ case ident of
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))
 
 
-funListProp :: QIdent -> [GExp] -> GProp
+funListProp :: QIdent -> [Exp] -> GProp
 funListProp ident exps = annotateProp ident $ case ident of
-  QIdent s -> case (lookupConstant s, exps) of
+  QIdent s -> case (lookupConstant s, map exp2exp exps) of
     (Just ("Adj", c), [x]) -> GAdjProp (fgTree c) x
     (Just ("Adj2", c), [x, y]) -> GAdj2Prop (fgTree c) x y
     (Just ("AdjC", c), [x, y]) -> GAdjCProp (fgTree c) x y
@@ -141,9 +141,10 @@ funListProp ident exps = annotateProp ident $ case ident of
     (Just ("Noun1", c), [x]) -> GNoun1Prop (fgTree c) x
     (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
     (Just ("NounC", c), [x, y]) -> GNounCProp (fgTree c) x y
+    (Just (f, c), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
-      _:_ -> GAppProp (GStrIdent (GString s)) (gExps exps) ---- TODO: this causes "Gt holds for ..." etc
+      _:_ -> GAppProp (GStrIdent (GString s)) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
 
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of
@@ -193,7 +194,8 @@ rule2rule rule = case rule of
 
 exp2kind :: Exp -> GKind
 exp2kind exp = case specialDedukti2Informath callBacks exp of
- Just expr -> fg expr
+ Just (expr, "Kind") -> fg expr
+ Just (expr, "Exp") -> GExpKind (fg expr)
  _ -> case exp of
     EApp (EIdent f) x | f == identElem -> GElemKind (exp2kind x)
     EApp _ _ -> case splitApp exp of
@@ -210,13 +212,14 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
 
 exp2prop :: Exp -> GProp
 exp2prop exp = case specialDedukti2Informath callBacks exp of
-  Just expr -> fg expr
+  Just (expr, "Prop") -> fg expr
+  Just (expr, "Kind") -> GExistKindProp (fg expr)
   _ -> case exp of
     EIdent ident -> GIdentProp (ident2ident ident)
     EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of
-        EIdent ident -> funListProp ident (map exp2exp args)
+        EIdent ident -> funListProp ident args
     EFun _ _ -> case splitType exp of
       (hypos, exp) ->
         GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
@@ -241,7 +244,8 @@ findExpIdent exp = case exp of
 
 exp2exp :: Exp -> GExp
 exp2exp exp = case specialDedukti2Informath callBacks exp of
-  Just expr -> fg expr
+  Just (expr, "Exp") -> fg expr
+  Just (expr, "Kind") -> GKindExp (fg expr)
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
       Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
@@ -271,7 +275,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
 
 exp2proof :: Exp -> GProof
 exp2proof exp = case specialDedukti2Informath callBacks exp of
-  Just expr -> fg expr
+  Just (expr, "Proof") -> fg expr
   _ -> case exp of
     EIdent ident -> GAppProof (GLabelProofExp (ident2label ident)) (GListProof []) 
     EApp _ _ -> case splitApp exp of

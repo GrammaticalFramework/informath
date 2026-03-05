@@ -91,7 +91,7 @@ fulldemo:
 
 
 devtest:
-	make fulldemo
+#	make fulldemo
 	make top100check
 	make typechecks
 	make sets

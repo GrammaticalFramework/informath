@@ -34,7 +34,6 @@ fun
   CoreAbsExp : Ident -> Exp -> Exp ;
   TermExp : Term -> Exp ; 
   KindExp : Kind -> Exp ;  -- the set of As
-  ExpKind : Exp -> Kind ;  -- element of X
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;
 
@@ -48,11 +47,13 @@ fun
   CoreExistProp : Kind -> Ident -> Prop -> Prop ; 
   IdentProp : Ident -> Prop ;
   AppProp : Ident -> Exps -> Prop ;
+  ExistKindProp : Kind -> Prop ;
 
 --  IdentKind : Ident -> Kind ; 
   SuchThatKind : Kind -> Ident -> Prop -> Kind ;
 --  AppKind : Ident -> Exps -> Kind ;
   FunKind : [ArgKind] -> Kind -> Kind ;
+  ExpKind : Exp -> Kind ;  -- element of X
 
   KindArgKind : Kind -> ArgKind ;
   IdentArgKind : Kind -> Ident -> ArgKind ;
