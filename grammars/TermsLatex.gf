@@ -62,24 +62,24 @@ lin
     constant (ident) ** {isNumber = False} ; --- False impossible to know
 
   App1MacroFormula ident term =
-    constant (ident ++ curly (top term)) ;
+    constant (ident ++ curly (mtop term)) ;
   App1MacroTerm ident term =
-    constant (ident ++ curly (top term)) ** {isNumber = False} ; --- False impossible to know
+    constant (ident ++ curly (mtop term)) ** {isNumber = False} ; --- False impossible to know
 
   App2MacroFormula ident x y =
-    constant (ident ++ curly (top x) ++ curly (top y)) ;
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y)) ;
   App2MacroTerm ident x y =
-    constant (ident ++ curly (top x) ++ curly (top y)) ** {isNumber = False} ; --- isNumber and precedence impossible to know
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y)) ** {isNumber = False} ; --- isNumber and precedence impossible to know
 
   App3MacroFormula ident x y z =
-    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ;
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z)) ;
   App3MacroTerm ident x y z =
-    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z)) ** {isNumber = False} ; --- False impossible to know
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z)) ** {isNumber = False} ; --- False impossible to know
 
   App4MacroFormula ident x y z u =
-    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z) ++ curly (top u)) ;
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mtop u)) ;
   App4MacroTerm ident x y z u =
-    constant (ident ++ curly (top x) ++ curly (top y) ++ curly (top z) ++ curly (top u)) ** {isNumber = False} ; --- False impossible to know
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mtop u)) ** {isNumber = False} ; --- False impossible to know
 
   StringMacro s = s.s ;
   
@@ -166,5 +166,9 @@ oper
     = \op, p, ep1, ep2 -> mkOper2 (op ++ "{") "} {" "}" p ep1 ep2  ; 
 
   curly : Str -> Str = \s -> "{" ++ s ++ "}" ;
+
+-- to prevent ambiguities from the use of macros
+  mtop : TermPrec -> Str = usePrec highest ;
+  mconstant : Str -> TermPrec = mkPrec 3 ;
   
 }

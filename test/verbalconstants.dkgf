@@ -29,17 +29,17 @@ Cardinal : "cardinal"
 Eq : "X is equal to Y" | "X and Y are equal" | \Eq
 Lt : Lt_Adj2 | \Lt
 Gt : Gt_Adj2 | \Gt
-Neq : "X is distinct from Y" | "X and Y are distinct" | \Neq
+Neq : "X is distinct from Y" | "X and Y are distinct" | Neq_Compar
 Leq : Leq_Adj2 | \Leq
 Geq : Geq_Adj2 | \Geq
 positive : "X is positive"
 negative : "X is negative"
-plus : "the sum of X and Y" | \Plus
-minus : "the difference of X and Y" | \Minus
-times : "the product of X and Y" | \Times
-div : "the quotient of X and Y" | \Div
-pow : "the power of X to Y" | \Pow
-neg : "the negation of X" | \Neg
+plus : "the sum of X and Y" | plus_Oper2
+minus : "the difference of X and Y" | minus_Oper2
+times : "the product of X and Y" | times_Oper2
+div : "the quotient of X and Y" | div_Oper2
+pow : "the power of X to Y" | pow_Oper2
+neg : "the negation of X" | neg_Oper
 log : "the logarithm of X in Y" | \Logarithm
 sqrt : "the square root of X" | \Sqrt
 succ : "the successor of X"
@@ -100,8 +100,8 @@ arccos : "the arccosine of X" | \Arccos
 arctan : "the arctangent of X" | \Arctan
 orthogonal : "X is orthogonal to Y" | "X is perpendicular to Y" | "X and Y are orthogonal" | "X and Y are perpendicular" | \Orthogonal
 angleBetween : "the angle between X and Y"
-dotProduct : "the dot product of X and Y" | "the scalar product of X and Y" | \Dotproduct
-vectorPlus : "the sum of X and Y" | "the resultant of X and Y" | \Plus
+dotProduct : "the dot product of X and Y" | "the scalar product of X and Y" | dot_product_Oper2
+vectorPlus : "the sum of X and Y" | "the resultant of X and Y" | plus_Oper2
 sphenic : "X is sphenic"
 infinity : "the infinity" | \Infinity
 sigma : NounBinder2 sum_Noun | \Summa
@@ -147,7 +147,7 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommand{\Combinations}[2]{C^{ #1 }_{ #2 }}
 #MACRO \newcommand{\Difference}[2]{#1 \setminus #2}
 #MACRO \newcommand{\Div}[2]{\frac{ #1 } { #2 }}
-#MACRO \newcommand{\Dot_product}[2]{#1 \cdot #2}
+#MACRO \newcommand{\Dotproduct}[2]{#1 \cdot #2}
 #MACRO \newcommand{\Function}[2]{#1 \rightarrow #2}
 #MACRO \newcommand{\Intersection}[2]{#1 \cap #2}
 #MACRO \newcommand{\Legendresymbol}[2]{\left(\frac{ #1 }{ #2 }\right)}

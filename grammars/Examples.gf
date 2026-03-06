@@ -70,7 +70,7 @@ fun
   ProperNameNounNoun : ProperName -> Noun -> Noun ; -- ProperName in nominative: Hilbert space
 
   NounLabel : Noun -> Label ;                          -- extensionality axiom
-  DefNounLabel : Noun -> Label ;                       -- the pidgeonhole principle
+  DefNounLabel : Noun -> Label ;                       -- the pigeonhole principle
   NounIntLabel : Noun -> Int -> Label ;                -- theorem 5
   NounIdentLabel : Noun -> Ident -> Label ;            -- hypothesis h
   NounOfNounLabel : Noun -> Noun -> Label ;            -- the axiom of choice

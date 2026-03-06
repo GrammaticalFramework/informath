@@ -8,7 +8,6 @@ import Data.List(sortOn)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-main_pgf = "grammars/Informath.pgf"
 max_number = 199 -- number of trees considered with checkVariables
 max_number_taken = 3 -- number of trees considered for semantics
 
