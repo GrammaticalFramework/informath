@@ -23,7 +23,9 @@ jmt2jmt jmt = case jmt of
   JParameter ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JHypothesis ident exp -> D.JStatic (ident2ident ident) (exp2exp exp)
   JStep step -> D.JDef (D.QIdent "step") D.MTNone (D.MEExp (step2exp step))
-  _ -> D.JStatic (D.QIdent "jmt") (D.EIdent (D.QIdent "TODO_Jmt"))
+  JFirstStep step -> D.JDef (D.QIdent "firststep") D.MTNone (D.MEExp (step2exp step))
+  JNextJmt jmt -> jmt2jmt jmt ---
+  _ -> D.JStatic (D.QIdent "jmt") (D.EIdent (D.QIdent ("TODO_Jmt: " ++ show jmt)))
 
 -- deep embedding of steps
 step2exp :: Step -> D.Exp
@@ -89,7 +91,6 @@ bind2binds bind = case bind of
   BTyping vars exp -> [D.BTyped (var2ident var) dexp | var <- vars, let dexp = exp2exp exp]
   BCIn vars exp -> [D.BTyped (var2ident var) dexp | var <- vars, let dexp = exp2exp exp] --- :e ?
   BIdents vars -> [D.BVar (var2ident var) | var <- vars]
-  _ -> [D.BVar (D.QIdent "TODO_BindBind")]
 
 bind2vartype :: D.Bind -> (D.QIdent, D.Exp)
 bind2vartype bind = case bind of
