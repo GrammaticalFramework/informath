@@ -3,8 +3,9 @@
 
 -----------------------------------------------------------------
 -- Lightweight type checker and metavariable resolver for Dedukti
--- based on GF TC module by AR from 2005/10/02 20:50:19
--- inspired by Thierry Coquand's type checking algorithm
+-- based on GF TC module from 2005/10/02 20:50:19
+-- modified from Thierry Coquand's type checking algorithm
+-- to return conatraints instead of False
 -----------------------------------------------------------------
 
 module Main where
@@ -14,6 +15,7 @@ import Dedukti.PrintDedukti
 
 import Dedukti.ParDedukti
 import Dedukti.LexDedukti
+import Dedukti.PrintDedukti
 import qualified Dedukti.ErrM as DE
 
 ---- import DeduktiOperations
@@ -28,7 +30,10 @@ main = do
   mo <- readDeduktiModule xx
   case checkModule mo of
     Left s -> putStrLn s
-    Right (th, cs) -> mapM_ print cs
+    Right (th, cs) -> mapM_ putStrLn [printConstraints c | c@(_:_, _) <- cs]
+
+printConstraints (msg, cs) = unwords (msg : [prVal v ++ " <> " ++ prVal w ++ " ; " | (v, w) <- cs])
+
 
 type Err a = Either String a
 
@@ -44,6 +49,13 @@ data Val =
   | VClos Env Exp
     deriving (Eq, Show)
 
+
+prVal v = case v of
+  VApp f a -> "(" ++ prVal f ++ prVal a ++ ")"
+  VClos [] exp -> printTree exp
+  VClos env exp -> printTree exp ++ "{" ++ show env ++ "}"
+  _ -> "(" ++ show v ++ ")"
+  
 
 type Binds = [(QIdent, Val)]
 type Constraints = [(Val, Val)]
@@ -125,18 +137,19 @@ eqVal :: TCEnv -> Val -> Val -> Err [(Val, Val)]
 eqVal tcenv u1 u2 = do
   w1 <- whnf tcenv u1
   w2 <- whnf tcenv u2
-  let v = VGen (nextval tcenv)
   case (w1, w2) of
     (VApp f1 a1, VApp f2 a2) -> do
       cs1 <- eqVal tcenv f1 f2
       cs2 <- eqVal tcenv a1 a2
       return (cs1 ++ cs2)
     (VClos env1 (EAbs bind1 e1), VClos env2 (EAbs bind2 e2)) -> do
+      let v = VGen (nextval tcenv)
       let x1 = bind2var bind1
       let x2 = bind2var bind2
       let tcenv' = updateNextval tcenv
       eqVal tcenv' (VClos ((x1, v):env1) e1) (VClos ((x2, v):env2) e2)
     (VClos env1 (EFun h1 e1), VClos env2 (EFun h2 e2)) -> do
+      let v = VGen (nextval tcenv)
       let x1 = hypo2var h1
       let a1 = hypo2type h1
       let x2 = hypo2var h2
@@ -153,22 +166,23 @@ checkType tcenv e = checkExp tcenv e VType
 
 checkExp :: TCEnv -> Exp -> Val -> Err (Exp, [(Val, Val)])
 checkExp tcenv e ty = do
-  typ <- whnf tcenv ty
   case e of
   
 --    Meta m -> return $ (AMeta m typ,[])
 
-    EAbs bi t -> case typ of
-      VClos env (EFun h b) -> do
-        let x = bind2var bi
-        let y = hypo2var h
-        let a = hypo2type h
-        let v = VGen (nextval tcenv)
-        let a' = VClos env a
-        let tcenv' = updateEnv x v a' (updateNextval tcenv)
-        (t', cs) <- checkExp tcenv' t (VClos ((y, v):env) b)
-        return (EAbs (BTyped x a) t', cs)
-      _ -> bad ("function type expected for" ++ show e ++ " found " ++ show typ)
+    EAbs bi t -> do
+      typ <- whnf tcenv ty
+      case typ of
+        VClos env (EFun h b) -> do
+          let x = bind2var bi
+          let y = hypo2var h
+          let a = hypo2type h
+          let v = VGen (nextval tcenv)
+          let a' = VClos env a
+          let tcenv' = updateEnv x v a' (updateNextval tcenv)
+          (t', cs) <- checkExp tcenv' t (VClos ((y, v):env) b)
+          return (EAbs (BVar x) t', cs)
+        _ -> bad ("function type expected for" ++ show e ++ " found " ++ show typ)
 
 {-
     Let (x, (mb_typ, e1)) e2 -> do
@@ -183,26 +197,28 @@ checkExp tcenv e ty = do
       return (ALet (x,(val,e1)) e2, cs1++cs2)
 -}
 
-    EFun h b -> case typ of
-      VType -> do
-        let x = hypo2var h
-        let a = hypo2type h
-        let v = VGen (nextval tcenv)
-        (a', csa) <- checkType tcenv a
-        let tcenv' = updateEnv x v (VClos (environment tcenv) a) (updateNextval tcenv)
-        (b', csb) <- checkType tcenv' b
-        return (EFun (HVarExp x a') b', csa ++ csb)
+    EFun h b -> do
+      typ <- whnf tcenv ty
+      case typ of
+        VType -> do
+          let x = hypo2var h
+          let a = hypo2type h
+          let v = VGen (nextval tcenv)
+          (a', csa) <- checkType tcenv a
+          let tcenv' = updateEnv x v (VClos (environment tcenv) a) (updateNextval tcenv)
+          (b', csb) <- checkType tcenv' b
+          return (EFun (HVarExp x a') b', csa ++ csb)
+        _ -> bad ("Type expected")
     _ -> do
      (e', w, cs1) <- inferExp tcenv e
-     cs2 <- eqVal tcenv w typ
+     cs2 <- eqVal tcenv w ty
      return (e', cs1 ++ cs2)
 
 inferExp :: TCEnv -> Exp -> Err (Exp, Val, [(Val,Val)])
 inferExp tcenv e = case e of
    EIdent c -> do
      ty <- lookupIdentType tcenv c
-     ty' <- whnf tcenv ty
-     return (e, ty', [])
+     return (e, ty, [])
    EApp f t -> do
     (f', w, csf) <- inferExp tcenv f
     typ <- whnf tcenv w
@@ -211,7 +227,7 @@ inferExp tcenv e = case e of
         let x = hypo2var h
         let a = hypo2type h
         (a', csa) <- checkExp tcenv t (VClos env a)
-        b' <- whnf tcenv $ VClos ((x, VClos (environment tcenv) t) : env) b
+        let b' = VClos ((x, VClos (environment tcenv) t) : env) b
         return $ (EApp f' a', b', csf ++ csa)
       _ -> bad ("EFun expected for " ++ show f ++ " found " ++ show typ)
    _ -> bad ("cannot infer type of " ++ show e)
@@ -237,14 +253,15 @@ checkJmt tcenv jmt = case jmt of
   _ -> return ((QIdent "NONE", (VGen 0, VGen 0)), []) --- no checking of rules
 
 
-checkModule :: Module -> Err (Theory, [(Val, Val)])
+checkModule :: Module -> Err (Theory, [(String, [(Val, Val)])])
 checkModule (MJmts jmts) = checkJmts emptyTheory jmts where
   checkJmts th jmts = case jmts of
     jmt : js -> do
       ((c, tyval), cs) <- checkJmt emptyTCEnv{theory = th} jmt
+      let msg = if null cs then "" else (printTree jmt)
       let th' = M.insert c tyval th
       (th'', css) <- checkJmts th' js
-      return (th'', cs ++ css)
+      return (th'', (msg, cs) : css)
     _ -> return (th, [])
 
 
