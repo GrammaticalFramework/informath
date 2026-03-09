@@ -25,9 +25,9 @@ ex. if$ a , b $ and $ c $ are odd integers such that $ a + b + c = 0 $ , then $ 
 
 ex. if$ x , y $ and $ z $ are three real numbers such that $ x ^ { 2 } + y ^ { 2 } + z ^ { 2 } < x y + x z + y z $ , then $ x + y + z > 0 $ .
 
-ex. if$ n $ is an odd integer , then $ 3 n + 7 $ is an even integer .
+ex. if $ n $ is an odd integer , then $ 3 n + 7 $ is an even integer .
 
-ex. if$ n $ is an even integer , then $ - 5 n - 3 $ is an odd integer .
+ex. if $ n $ is an even integer , then $ - 5 n - 3 $ is an odd integer .
 
 ex. if$ n $ is an odd integer , then $ 4 n ^ { 3 } + 2 n - 1 $ is odd .
 

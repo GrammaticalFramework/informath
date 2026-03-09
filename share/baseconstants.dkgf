@@ -2,8 +2,8 @@ Set : set_Noun
 Type : type_Noun
 Prop : proposition_Noun
 
-#Elem : ElemKind
-#Proof : ProofProp
+Elem : ElemKind
+Proof : ProofProp
 
 false : FalseProp
 and : CoreAndProp

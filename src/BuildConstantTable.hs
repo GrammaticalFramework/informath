@@ -303,24 +303,12 @@ guessGFCat ident@(QIdent c) typ =
   in case lookupConstant c of
     Just (cat, _) -> cat
     _ -> case splitApp val of
-      (EIdent f, _) | f == identProp -> case arity of
-        0 -> "Name" --- not really
-        1 -> "Adj"
-        2 -> "Adj2"
-        3 -> "Adj3"
-        _ -> "AdjC"
-      (EIdent f, _) | elem f [identSet, identType] -> case arity of
-        0 -> "Noun"
-        1 -> "Fam"  --- could be Dep
-        _ -> "Fam2"
-      (EIdent f, _) | f == identElem -> case arity of
-        0 -> "Name"
-        1 -> "Fun"
-        2 -> "Fun2"
-        _ -> "FunC"
-      (EIdent f, _) | f == identProof -> "Label"
-      _ -> "Label"  --- default, assuming proof labels are often not linearized 
-
+      (EIdent (QIdent f), _) -> case takeWhile (/='#') f of
+        k | QIdent k == identProp -> "Prop"
+        k | elem (QIdent k) [identSet, identType] -> "Kind"
+        k | QIdent k == identElem -> "Exp"
+        k | QIdent k == identProof -> "Label"
+        _ -> "Label" 
 
 macroCommands :: MacroTable -> [String]
 macroCommands t = [concat ["\\newcommand{", c, "}", arity n, "{", d, "}"] | (c, (n, d)) <- M.assocs t]
