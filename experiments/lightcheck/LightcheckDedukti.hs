@@ -51,7 +51,7 @@ data Val =
 
 
 prVal v = case v of
-  VApp f a -> "(" ++ prVal f ++ prVal a ++ ")"
+  VApp f a -> "(" ++ prVal f ++ " " ++ prVal a ++ ")"
   VClos [] exp -> printTree exp
   VClos env exp -> printTree exp ++ "{" ++ show env ++ "}"
   _ -> "(" ++ show v ++ ")"
@@ -168,20 +168,17 @@ checkExp :: TCEnv -> Exp -> Val -> Err (Exp, [(Val, Val)])
 checkExp tcenv e ty = do
   case e of
   
---    Meta m -> return $ (AMeta m typ,[])
-
-    EAbs bi t -> do
+    EAbs x_ n -> do
       typ <- whnf tcenv ty
       case typ of
-        VClos env (EFun h b) -> do
-          let x = bind2var bi
-          let y = hypo2var h
-          let a = hypo2type h
+        VClos env (EFun ya b) -> do
+          let x = bind2var x_
+          let y = hypo2var ya
+          let a = hypo2type ya
           let v = VGen (nextval tcenv)
-          let a' = VClos env a
-          let tcenv' = updateEnv x v a' (updateNextval tcenv)
-          (t', cs) <- checkExp tcenv' t (VClos ((y, v):env) b)
-          return (EAbs (BVar x) t', cs)
+          let tcenv' = updateEnv x v (VClos env a) (updateNextval tcenv)
+          (n', cs) <- checkExp tcenv' n (VClos ((y, v) : env) b)
+          return (EAbs (BVar x) n', cs)
         _ -> bad ("function type expected for" ++ show e ++ " found " ++ show typ)
 
 {-
@@ -197,12 +194,12 @@ checkExp tcenv e ty = do
       return (ALet (x,(val,e1)) e2, cs1++cs2)
 -}
 
-    EFun h b -> do
+    EFun xa b -> do
       typ <- whnf tcenv ty
       case typ of
         VType -> do
-          let x = hypo2var h
-          let a = hypo2type h
+          let x = hypo2var xa
+          let a = hypo2type xa
           let v = VGen (nextval tcenv)
           (a', csa) <- checkType tcenv a
           let tcenv' = updateEnv x v (VClos (environment tcenv) a) (updateNextval tcenv)
@@ -219,17 +216,17 @@ inferExp tcenv e = case e of
    EIdent c -> do
      ty <- lookupIdentType tcenv c
      return (e, ty, [])
-   EApp f t -> do
-    (f', w, csf) <- inferExp tcenv f
+   EApp e1 e2 -> do
+    (f', w, csf) <- inferExp tcenv e1
     typ <- whnf tcenv w
     case typ of
-      VClos env (EFun h b) -> do
-        let x = hypo2var h
-        let a = hypo2type h
-        (a', csa) <- checkExp tcenv t (VClos env a)
-        let b' = VClos ((x, VClos (environment tcenv) t) : env) b
+      VClos env (EFun xa b) -> do
+        let x = hypo2var xa
+        let a = hypo2type xa
+        (a', csa) <- checkExp tcenv e2 (VClos env a)
+        b' <- whnf tcenv $ VClos ((x, VClos (environment tcenv) e2) : env) b
         return $ (EApp f' a', b', csf ++ csa)
-      _ -> bad ("EFun expected for " ++ show f ++ " found " ++ show typ)
+      _ -> bad ("EFun expected for " ++ show e1 ++ " found " ++ show typ)
    _ -> bad ("cannot infer type of " ++ show e)
 
 
