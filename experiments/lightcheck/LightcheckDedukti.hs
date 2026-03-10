@@ -32,13 +32,17 @@ main = do
     Left s -> putStrLn s
     Right (th, cs) -> mapM_ putStrLn [printConstraints c | c@(_:_, _) <- cs]
 
-printConstraints (msg, cs) = unwords (msg : [prVal v ++ " <> " ++ prVal w ++ " ; " | (v, w) <- cs])
+
 
 
 type Err a = Either String a
 
 bad = Left
 ok = Right
+
+errIn m e = case e of
+  Left s -> Left (m ++ s)
+  _ -> e
 
 -- values used in TC type checking
 
@@ -57,8 +61,13 @@ prVal v = case v of
   _ -> "(" ++ show v ++ ")"
   
 
+type Constraint = (Val, Val)
+
+printConstraints (msg, cs) = unwords (msg : ":" : [prVal v ++ " <> " ++ prVal w ++ " ; " | (v, w) <- cs])
+
+
 type Binds = [(QIdent, Val)]
-type Constraints = [(Val, Val)]
+type Constraints = [Constraint]
 type MetaSubst = [(Int, Val)]
 
 type Theory = M.Map QIdent (Val, Val) -- type, value
@@ -82,7 +91,7 @@ lookupIdentValue tcenv c = do
     Just v -> return v
     _ -> case M.lookup c (theory tcenv) of
       Just (_, v) -> return v
-      _ -> return (VClos [] (EIdent c)) ---- bad ("unknown value of identifier: " ++ show c)
+      _ -> bad ("unknown value of identifier: " ++ show c ++ " in " ++ show (environment tcenv))
 
 data TCEnv = TCEnv {
   nextval :: Int,
@@ -134,7 +143,7 @@ eval tcenv e = case e of
 
 -- invariant: constraints are in whnf
 eqVal :: TCEnv -> Val -> Val -> Err [(Val, Val)]
-eqVal tcenv u1 u2 = do
+eqVal tcenv u1 u2 = errIn ("eqVal: " ++ prVal u1 ++ " -- " ++ prVal u2) $ do
   w1 <- whnf tcenv u1
   w2 <- whnf tcenv u2
   case (w1, w2) of
@@ -148,18 +157,25 @@ eqVal tcenv u1 u2 = do
       let x2 = bind2var bind2
       let tcenv' = updateNextval tcenv
       eqVal tcenv' (VClos ((x1, v):env1) e1) (VClos ((x2, v):env2) e2)
-    (VClos env1 (EFun h1 e1), VClos env2 (EFun h2 e2)) -> do
+    (VClos env1 (EFun h1 b1), VClos env2 (EFun h2 b2)) -> do
       let v = VGen (nextval tcenv)
       let x1 = hypo2var h1
       let a1 = hypo2type h1
       let x2 = hypo2var h2
       let a2 = hypo2type h2
-      cs1 <- eqVal tcenv (VClos env1 a1) (VClos env2  a2)
+      cs1 <- eqVal tcenv (VClos env1 a1) (VClos env2 a2)
       let tcenv' = updateNextval tcenv
-      cs2 <- eqVal tcenv' (VClos ((x1, v):env1) e1) (VClos ((x2, v):env2) e2)
+      cs2 <- eqVal tcenv' (VClos ((x1, v):env1) b1) (VClos ((x2, v):env2) b2)
       return (cs1 ++ cs2)
     _ -> return [(w1, w2) | w1 /= w2]
 
+{- bug:
+./LightcheckDedukti ../../share/BaseConstants.dk
+
+def divisible : Elem Int -> Elem Int -> Prop := n => m => exists Int (k => Eq n (times k m)) .:
+  eqVal: Elem A{[(QIdent "m",VGen 1),(QIdent "n",VGen 0)]} -- Elem Num{[(QIdent "k",VGen 2),(QIdent "m",VGen 1),(QIdent "n",VGen 0)]}
+  unknown value of identifier: QIdent "A" in [(QIdent "k",VGen 2),(QIdent "m",VGen 1),(QIdent "n",VGen 0)] :
+-}
 
 checkType :: TCEnv -> Exp -> Err (Exp, [(Val, Val)])
 checkType tcenv e = checkExp tcenv e VType
@@ -202,7 +218,7 @@ checkExp tcenv e ty = do
           let a = hypo2type xa
           let v = VGen (nextval tcenv)
           (a', csa) <- checkType tcenv a
-          let tcenv' = updateEnv x v (VClos (environment tcenv) a) (updateNextval tcenv)
+          let tcenv' = updateEnv x v (VClos (environment tcenv) a') (updateNextval tcenv)
           (b', csb) <- checkType tcenv' b
           return (EFun (HVarExp x a') b', csa ++ csb)
         _ -> bad ("Type expected")
@@ -224,9 +240,9 @@ inferExp tcenv e = case e of
         let x = hypo2var xa
         let a = hypo2type xa
         (a', csa) <- checkExp tcenv e2 (VClos env a)
-        b' <- whnf tcenv $ VClos ((x, VClos (environment tcenv) e2) : env) b
+        let b' = VClos ((x, VClos (environment tcenv) e2) : env) b
         return $ (EApp f' a', b', csf ++ csa)
-      _ -> bad ("EFun expected for " ++ show e1 ++ " found " ++ show typ)
+      _ -> bad ("function type expected for " ++ printTree e1 ++ " found " ++ prVal typ)
    _ -> bad ("cannot infer type of " ++ show e)
 
 
@@ -253,12 +269,16 @@ checkJmt tcenv jmt = case jmt of
 checkModule :: Module -> Err (Theory, [(String, [(Val, Val)])])
 checkModule (MJmts jmts) = checkJmts emptyTheory jmts where
   checkJmts th jmts = case jmts of
-    jmt : js -> do
-      ((c, tyval), cs) <- checkJmt emptyTCEnv{theory = th} jmt
-      let msg = if null cs then "" else (printTree jmt)
-      let th' = M.insert c tyval th
-      (th'', css) <- checkJmts th' js
-      return (th'', (msg, cs) : css)
+    jmt : js -> case checkJmt emptyTCEnv{theory = th} jmt of
+       Right ((c, tyval), cs) -> do 
+         let msg = if null cs then "" else (printTree jmt)
+         let th' = M.insert c tyval th
+         (th'', css) <- checkJmts th' js
+         return (th'', (msg, cs) : css)
+       Left s -> do
+         let msg = printTree jmt ++ ": " ++ s
+         (th'', css) <- checkJmts th js
+         return (th'', (msg, []) : css)
     _ -> return (th, [])
 
 
