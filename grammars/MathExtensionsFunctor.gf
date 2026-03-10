@@ -24,8 +24,11 @@ lin
   FormulaImpliesProp a b = simpleProp (mkS (mkCl (latexNP (mkSymb a.s)) imply_V2 (latexNP (mkSymb b.s)))) ;
 
   IdentsArgKind kind idents = {cn = mkCN kind.cn idents.np ; adv = kind.adv ; isPl = idents.isPl} ;
+
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
+  AdjKindHypo idents adj kind = Grammar.ImpP3 idents.np (mkVP (mkCN adj (useKind kind))) ; 
+
   AbsExp idents exp =
     mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
 
@@ -99,9 +102,6 @@ lin
       (thenText hypos (
         mkS (mkCl we_NP (mkVP (mkVP (mkVP define_V2 exp)
           <lin Adv (mkUtt (mkVP adj)) : Adv>) (Syntax.mkAdv if_Subj prop.s))))) ; 
-
-  AdjKind adj kind = kind ** {cn = mkCN adj kind.cn} ;
-  KindProp exp kind = simpleProp (mkS (mkCl exp (useKind kind))) ;
 
   AllKindExp kind = mkNP all_Predet (mkNP aPl_Det (useKind kind)) ;
   AllIdentsKindExp idents kind = mkNP all_Predet (mkNP aPl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)) ;

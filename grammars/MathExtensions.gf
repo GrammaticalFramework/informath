@@ -13,9 +13,14 @@ fun
 
 -- to introduce lists of idents
   IdentsArgKind : Kind -> [Ident] -> ArgKind ;
+    
   VarsHypo : [Ident] -> Kind -> Hypo ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
+  AdjKindHypo : [Ident] -> Adj -> Kind -> Hypo ;
+  
   AbsExp : [Ident] -> Exp -> Exp ;
+
+
 
 -- to remove parentheses around complex propositions and introduce lists
   AndProp : [Prop] -> Prop ;
@@ -72,9 +77,6 @@ fun
 
   DefinedAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;
   WeDefineAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;
-
-  AdjKind : Adj -> Kind -> Kind ;
-  KindProp : Exp -> Kind -> Prop ;
 
   AllKindExp : Kind -> Exp ;
   AllIdentsKindExp : [Ident] -> Kind -> Exp ;

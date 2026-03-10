@@ -324,6 +324,7 @@ data Tree :: * -> * where
   GthenHence :: Tree GHence_
   GthusHence :: Tree GHence_
   GweConcludeHence :: Tree GHence_
+  GAdjKindHypo :: GListIdent -> GAdj -> GKind -> Tree GHypo_
   GBareVarHypo :: GIdent -> Tree GHypo_
   GBareVarsHypo :: GListIdent -> Tree GHypo_
   GIndexedLetFormulaHypo :: GInt -> Tree GHypo_
@@ -348,7 +349,6 @@ data Tree :: * -> * where
   GThmJmt :: GLabel -> GListHypo -> GProp -> GProof -> Tree GJmt_
   GUnitJmt :: GUnit -> Tree GJmt_
   GWeDefineAdjJmt :: GLabel -> GListHypo -> GExp -> GAdj -> GProp -> Tree GJmt_
-  GAdjKind :: GAdj -> GKind -> Tree GKind_
   GAnnotateKind :: GIdent -> GKind -> Tree GKind_
   GDep2Kind :: GDep2 -> GExp -> GExp -> Tree GKind_
   GDepCKind :: GDepC -> GExp -> GExp -> Tree GKind_
@@ -460,7 +460,6 @@ data Tree :: * -> * where
   GIffIffProp :: GProp -> GProp -> Tree GProp_
   GIffProp :: GProp -> GProp -> Tree GProp_
   GIndexedFormulaProp :: GInt -> Tree GProp_
-  GKindProp :: GExp -> GKind -> Tree GProp_
   GNoArticleExistProp :: GArgKind -> GProp -> Tree GProp_
   GNoCommaAllProp :: GListArgKind -> GProp -> Tree GProp_
   GNoCommaExistProp :: GListArgKind -> GProp -> Tree GProp_
@@ -1047,6 +1046,7 @@ instance Eq (Tree a) where
     (GthenHence,GthenHence) -> and [ ]
     (GthusHence,GthusHence) -> and [ ]
     (GweConcludeHence,GweConcludeHence) -> and [ ]
+    (GAdjKindHypo x1 x2 x3,GAdjKindHypo y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GBareVarHypo x1,GBareVarHypo y1) -> and [ x1 == y1 ]
     (GBareVarsHypo x1,GBareVarsHypo y1) -> and [ x1 == y1 ]
     (GIndexedLetFormulaHypo x1,GIndexedLetFormulaHypo y1) -> and [ x1 == y1 ]
@@ -1071,7 +1071,6 @@ instance Eq (Tree a) where
     (GThmJmt x1 x2 x3 x4,GThmJmt y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GUnitJmt x1,GUnitJmt y1) -> and [ x1 == y1 ]
     (GWeDefineAdjJmt x1 x2 x3 x4 x5,GWeDefineAdjJmt y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
-    (GAdjKind x1 x2,GAdjKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAnnotateKind x1 x2,GAnnotateKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GDep2Kind x1 x2 x3,GDep2Kind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GDepCKind x1 x2 x3,GDepCKind y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1183,7 +1182,6 @@ instance Eq (Tree a) where
     (GIffIffProp x1 x2,GIffIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIffProp x1 x2,GIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIndexedFormulaProp x1,GIndexedFormulaProp y1) -> and [ x1 == y1 ]
-    (GKindProp x1 x2,GKindProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoArticleExistProp x1 x2,GNoArticleExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaAllProp x1 x2,GNoCommaAllProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaExistProp x1 x2,GNoCommaExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -2143,6 +2141,7 @@ instance Gf GHence where
       _ -> error ("no Hence " ++ show t)
 
 instance Gf GHypo where
+  gf (GAdjKindHypo x1 x2 x3) = mkApp (mkCId "AdjKindHypo") [gf x1, gf x2, gf x3]
   gf (GBareVarHypo x1) = mkApp (mkCId "BareVarHypo") [gf x1]
   gf (GBareVarsHypo x1) = mkApp (mkCId "BareVarsHypo") [gf x1]
   gf (GIndexedLetFormulaHypo x1) = mkApp (mkCId "IndexedLetFormulaHypo") [gf x1]
@@ -2156,6 +2155,7 @@ instance Gf GHypo where
 
   fg t =
     case unApp t of
+      Just (i,[x1,x2,x3]) | i == mkCId "AdjKindHypo" -> GAdjKindHypo (fg x1) (fg x2) (fg x3)
       Just (i,[x1]) | i == mkCId "BareVarHypo" -> GBareVarHypo (fg x1)
       Just (i,[x1]) | i == mkCId "BareVarsHypo" -> GBareVarsHypo (fg x1)
       Just (i,[x1]) | i == mkCId "IndexedLetFormulaHypo" -> GIndexedLetFormulaHypo (fg x1)
@@ -2215,7 +2215,6 @@ instance Gf GJmt where
       _ -> error ("no Jmt " ++ show t)
 
 instance Gf GKind where
-  gf (GAdjKind x1 x2) = mkApp (mkCId "AdjKind") [gf x1, gf x2]
   gf (GAnnotateKind x1 x2) = mkApp (mkCId "AnnotateKind") [gf x1, gf x2]
   gf (GDep2Kind x1 x2 x3) = mkApp (mkCId "Dep2Kind") [gf x1, gf x2, gf x3]
   gf (GDepCKind x1 x2 x3) = mkApp (mkCId "DepCKind") [gf x1, gf x2, gf x3]
@@ -2230,7 +2229,6 @@ instance Gf GKind where
 
   fg t =
     case unApp t of
-      Just (i,[x1,x2]) | i == mkCId "AdjKind" -> GAdjKind (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AnnotateKind" -> GAnnotateKind (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Dep2Kind" -> GDep2Kind (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "DepCKind" -> GDepCKind (fg x1) (fg x2) (fg x3)
@@ -2626,7 +2624,6 @@ instance Gf GProp where
   gf (GIffIffProp x1 x2) = mkApp (mkCId "IffIffProp") [gf x1, gf x2]
   gf (GIffProp x1 x2) = mkApp (mkCId "IffProp") [gf x1, gf x2]
   gf (GIndexedFormulaProp x1) = mkApp (mkCId "IndexedFormulaProp") [gf x1]
-  gf (GKindProp x1 x2) = mkApp (mkCId "KindProp") [gf x1, gf x2]
   gf (GNoArticleExistProp x1 x2) = mkApp (mkCId "NoArticleExistProp") [gf x1, gf x2]
   gf (GNoCommaAllProp x1 x2) = mkApp (mkCId "NoCommaAllProp") [gf x1, gf x2]
   gf (GNoCommaExistProp x1 x2) = mkApp (mkCId "NoCommaExistProp") [gf x1, gf x2]
@@ -2686,7 +2683,6 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "IffIffProp" -> GIffIffProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "IffProp" -> GIffProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "IndexedFormulaProp" -> GIndexedFormulaProp (fg x1)
-      Just (i,[x1,x2]) | i == mkCId "KindProp" -> GKindProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoArticleExistProp" -> GNoArticleExistProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaAllProp" -> GNoCommaAllProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaExistProp" -> GNoCommaExistProp (fg x1) (fg x2)
@@ -3742,6 +3738,7 @@ instance Compos Tree where
     GNounPrepFunC x1 x2 -> r GNounPrepFunC `a` f x1 `a` f x2
     GDerivativeFunction x1 -> r GDerivativeFunction `a` f x1
     GIdentFunction x1 -> r GIdentFunction `a` f x1
+    GAdjKindHypo x1 x2 x3 -> r GAdjKindHypo `a` f x1 `a` f x2 `a` f x3
     GBareVarHypo x1 -> r GBareVarHypo `a` f x1
     GBareVarsHypo x1 -> r GBareVarsHypo `a` f x1
     GIndexedLetFormulaHypo x1 -> r GIndexedLetFormulaHypo `a` f x1
@@ -3766,7 +3763,6 @@ instance Compos Tree where
     GThmJmt x1 x2 x3 x4 -> r GThmJmt `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GUnitJmt x1 -> r GUnitJmt `a` f x1
     GWeDefineAdjJmt x1 x2 x3 x4 x5 -> r GWeDefineAdjJmt `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
-    GAdjKind x1 x2 -> r GAdjKind `a` f x1 `a` f x2
     GAnnotateKind x1 x2 -> r GAnnotateKind `a` f x1 `a` f x2
     GDep2Kind x1 x2 x3 -> r GDep2Kind `a` f x1 `a` f x2 `a` f x3
     GDepCKind x1 x2 x3 -> r GDepCKind `a` f x1 `a` f x2 `a` f x3
@@ -3855,7 +3851,6 @@ instance Compos Tree where
     GIffIffProp x1 x2 -> r GIffIffProp `a` f x1 `a` f x2
     GIffProp x1 x2 -> r GIffProp `a` f x1 `a` f x2
     GIndexedFormulaProp x1 -> r GIndexedFormulaProp `a` f x1
-    GKindProp x1 x2 -> r GKindProp `a` f x1 `a` f x2
     GNoArticleExistProp x1 x2 -> r GNoArticleExistProp `a` f x1 `a` f x2
     GNoCommaAllProp x1 x2 -> r GNoCommaAllProp `a` f x1 `a` f x2
     GNoCommaExistProp x1 x2 -> r GNoCommaExistProp `a` f x1 `a` f x2

@@ -98,10 +98,9 @@ sem env t = case t of
       Just xs -> sem env (GAllProp (GListArgKind [GIdentsArgKind (GSetKind set) (GListIdent xs)]) prop)
       _ ->  GIfProp (sem env cond) (sem env prop)
 -}      
-  GIfProp cond@(GKindProp exp kind) prop -> case getJustVars env exp of
-    Just xs -> sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent xs)]) prop)
-    _ -> GIfProp (sem env cond) (sem env prop)
-    
+
+----  GListHypo [hypos] -> GListHypo (concatMap (semHypo env) hypos)
+
   GIfProp cond prop -> case getAndProps cond of
     Just props -> sem env (foldr (\a b -> GIfProp a b) prop props)
     _ -> GIfProp (sem env cond) (sem env prop)
@@ -125,22 +124,8 @@ sem env t = case t of
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) (GCoreNotProp prop))
     _ -> t ----TODO some cases: error ("sem not yet: " ++ showExpr [] (gf t))
 
-  GAllProp argkinds prop -> case argkinds of
-    GListArgKind [GIdentsArgKind (GAdjKind adj kind) vars@(GListIdent xs)] ->
-      GAllProp
-        (GListArgKind [GIdentsArgKind kind vars])
-        (GIfProp
-	  (sem env (mkAndProp [GAdjProp adj (GTermExp (GIdentTerm x)) | x <- xs]))
-	  (sem env prop))
-    akinds -> GAllProp (sem env akinds) (sem env prop)
+  GAllProp argkinds prop -> GAllProp (sem env argkinds) (sem env prop)
     
-  GKindProp exp (GAdjKind adj kind_) ->
-    sem env (GAdjProp adj exp) --- ignoring kind, if not in hypothesis position
-
-  GAdjKind adj kind ->
-    let (var, nenv) = newVar env
-    in GSuchThatKind (sem nenv kind) var (sem nenv (GAdjProp adj (GTermExp (GIdentTerm var))))
-
   ---- TODO: generalize agremment and in situ resolution to all predication functions
   GAdjProp adj (GAllIdentsKindExp (GListIdent [x]) kind) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
@@ -279,6 +264,13 @@ iqTest i mterm m1term nterm = case findTerm mterm m1term nterm of
      _ -> Nothing
 -}
 
+semHypo :: SEnv -> GHypo -> [GHypo]
+semHypo env hypo = case hypo of
+  GAdjKindHypo xs@(GListIdent xx) adj kind ->
+    map (sem env) (GVarsHypo xs kind : [GPropHypo (GAdjProp adj (GTermExp (GIdentTerm x))) | x <- xx])
+  _ -> [sem env hypo]
+
+
 chainedEquations :: GEquation -> [(GCompar, GTerm, GTerm)]
 chainedEquations equation = case equation of
   GChainEquation eqsign term equ ->
@@ -293,11 +285,6 @@ ifs2hypos hs prop = case prop of
   GIfProp p q -> 
 -}
 
-
-hypoVars :: GHypo -> [GIdent]
-hypoVars hypo = case hypo of
-  GVarsHypo (GListIdent idents) _ -> idents
-  _ -> []
 
 -- identify exp lists that are just variable lists, possibly bindings
 getJustVars :: SEnv -> GExp -> Maybe [GIdent]

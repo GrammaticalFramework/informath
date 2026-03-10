@@ -231,9 +231,9 @@ aggregate t = case t of
 
  where
    aggregateHypos hypos = case hypos of
-     GVarsHypo (GListIdent [x]) kind :
+     GVarsHypo xs@(GListIdent [x]) kind :
        GPropHypo (GAdjProp adj exp@(GTermExp (GIdentTerm y))) : hs | x == y ->
-         GPropHypo (GKindProp exp (GAdjKind adj kind)) : aggregateHypos hs
+         GAdjKindHypo xs adj kind : aggregateHypos hs
      GPropHypo a : GPropHypo b : hs ->
        GPropHypo (aggregate (GAndProp (GListProp [a, b]))) : aggregateHypos hs
      h : hs -> aggregate h : aggregateHypos hs
