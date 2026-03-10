@@ -1,0 +1,25 @@
+Eqq : (A : Set) -> Elem A -> Elem A -> Prop.
+
+
+refl : (A : Set) -> (a : Elem A) -> Proof (Eqq A a a).
+
+refl2 : (B : Set) -> (a : Elem B) -> Proof (Eqq B a a).
+
+(;
+def tc : (A : Type) -> (x : A) -> A := A => x => x.
+def tc2 : (A : Type) -> (x : A) -> A -> A := A => x => y => y.
+;)
+
+p0 : (A : Set) -> Proof (forall A (n => Eqq A n n)).
+pm : Proof (forall Nat (n => Eqq Nat n n)).
+
+
+Cart : (A : Set) -> (B : Set) -> Set.
+iCart : (A : Set) -> (B : Set) -> Elem A -> Elem B -> Elem (Cart A B).
+
+def origo : Elem (Cart Real Real) := iCart Real Real 0 0.
+
+prop20 : n : Elem Nat -> Proof (even n) -> Proof (odd (vectorPlus n (nd 1))) .
+prop21 : n : Elem Nat -> Proof (even n) -> Proof (odd (plus n (nd 1))) .
+
+

@@ -81,6 +81,13 @@ semArgkind argkind = case argkind of
   _ -> error ("semArgKind failure")
 
 
+semHypo :: GHypo -> [GHypo]
+semHypo hypo = case hypo of
+  GAdjKindHypo xs@(GListIdent xx) adj kind ->
+    GVarsHypo xs kind : [GPropHypo (GAdjProp adj (GTermExp (GIdentTerm x))) | x <- xx]
+  _ -> [hypo]
+
+
 sem :: SEnv -> Tree a -> Tree a
 sem env t = case t of
 {- ----
@@ -99,7 +106,7 @@ sem env t = case t of
       _ ->  GIfProp (sem env cond) (sem env prop)
 -}      
 
-----  GListHypo [hypos] -> GListHypo (concatMap (semHypo env) hypos)
+  GListHypo hypos -> GListHypo (concatMap (semHypo . sem env) hypos)
 
   GIfProp cond prop -> case getAndProps cond of
     Just props -> sem env (foldr (\a b -> GIfProp a b) prop props)
@@ -263,12 +270,6 @@ iqTest i mterm m1term nterm = case findTerm mterm m1term nterm of
        _ | x1 /= x2 && y1 == y2 -> return (x1, x2, \x -> GAppOperTerm f1 x y1)
      _ -> Nothing
 -}
-
-semHypo :: SEnv -> GHypo -> [GHypo]
-semHypo env hypo = case hypo of
-  GAdjKindHypo xs@(GListIdent xx) adj kind ->
-    map (sem env) (GVarsHypo xs kind : [GPropHypo (GAdjProp adj (GTermExp (GIdentTerm x))) | x <- xx])
-  _ -> [sem env hypo]
 
 
 chainedEquations :: GEquation -> [(GCompar, GTerm, GTerm)]

@@ -345,16 +345,12 @@ variations tree = case tree of
 	  ]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
-----  GVarsHypo fs@(GListIdent [f]) (GFam2Kind fam@(LexFam "function_Fam") (GSetKind a) (GSetKind b)) ->
-----    [tree, GVarsHypo fs (GFam2Kind fam (GTermKind (GSetTerm a)) (GTermKind (GSetTerm b)))]
   GAllProp (GListArgKind [argkind]) prop ->
     tree : [GPostQuantProp prop exp | exp <- allExpVariations argkind]
   GExistProp (GListArgKind [argkind]) prop ->
     tree : [GPostQuantProp prop exp | exp <- existExpVariations argkind]
   GCoreNotProp (GExistProp argkinds prop) ->
     tree : [GExistNoProp argkinds prop]
-----  GAndProp (GListProp [GFormulaProp (GFEquation (GEBinary lt a b)), GFormulaProp (GFEquation (GEBinary eq b' c))]) | b == b' ->
-----    tree : [GFormulaProp (GFEquation (GEChain lt a (GEBinary eq b c)))] ---- TODO: generalize to longer chains
   GIfProp a@(GFormulaProp fa) b@(GFormulaProp fb) ->
     tree : [GOnlyIfProp a b, GFormulaImpliesProp fa fb]
   GIfProp a b ->
@@ -374,8 +370,9 @@ variations tree = case tree of
 
   GApp4MacroTerm (GStringMacro (GString "\\Summa")) m n (GIdentTerm i) f ->
     let m1s = case m of
-                GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]
-	        _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]  --- not to be included with GInt m 
+         GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]
+	 _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]
+		     --- not to be included with GInt m 
     in tree : [Gsum3dots_Term (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
 
   GFormulaProp formula ->

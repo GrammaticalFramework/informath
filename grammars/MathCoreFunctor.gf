@@ -65,8 +65,8 @@ lin
   BareLetLocal ident exp = {name = latexNP (mkSymb ident) ; value = exp} ; 
 
   AppExp exp exps = mkNP exp (Syntax.mkAdv applied_to_Prep exps.np) ;
-  CoreAbsExp ident exp =
-    mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 (latexNP (mkSymb ident)) exp))) ;
+---  CoreAbsExp ident exp =
+---    mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 (latexNP (mkSymb ident)) exp))) ;
   KindExp kind = mkNP the_Det (mkCN set_N (Syntax.mkAdv possess_Prep (mkNP aPl_Det (useKind kind)))) ;
   ExpKind exp = {cn = mkCN element_N ; adv = Syntax.mkAdv possess_Prep exp} ;
   TermExp term = latexNP (mkSymb term.s) ;

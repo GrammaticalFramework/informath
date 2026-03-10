@@ -1,0 +1,84 @@
+fun BareVarHypo : Ident -> Hypo ;
+
+fun BareVarsHypo : ListIdent -> Hypo ;
+fun BareIdentsArgKind : ListIdent -> ArgKind ;
+
+fun IdentArgKind : Kind -> Ident -> ArgKind ;
+fun VarHypo : Ident -> Kind -> Hypo ;
+
+fun IdentsArgKind : Kind -> ListIdent -> ArgKind ;
+fun VarsHypo : ListIdent -> Kind -> Hypo ;
+
+fun KindArgKind : Kind -> ArgKind ;
+
+fun PropHypo : Prop -> Hypo ;
+fun SupposePropHypo : Prop -> Hypo ;
+
+fun AdjKindHypo : ListIdent -> Adj -> Kind -> Hypo ;
+
+fun LocalHypo : Local -> Hypo ;
+fun BareLetLocal : Ident -> Exp -> Local ;
+fun LetLocal : Ident -> Kind -> Exp -> Local ;
+
+fun LetFormulaHypo : Formula -> Hypo ;
+
+fun DeclarationArgKind : Declaration -> ArgKind ;
+fun LetDeclarationHypo : Declaration -> Hypo ;
+
+fun ElemDeclaration : ListTerm -> Term -> Declaration ;
+fun FunctionDeclaration : Ident -> Term -> Term -> Declaration ;
+ 
+fun IndexedDeclarationArgKind : Int -> ArgKind ;
+fun IndexedLetFormulaHypo : Int -> Hypo ;
+
+
+lincat Hypo = Utt ;
+lincat ArgKind = {cn : CN ; adv : Adv ; isPl : Bool} ;
+
+lincat Local = {name, value : NP}
+lincat Declaration = {s : Str ; isPl : Bool
+
+
+AllProp : ListArgKind -> Prop -> Prop ;
+ExistNoProp : ListArgKind -> Prop -> Prop ;
+ExistProp : ListArgKind -> Prop -> Prop ;
+FunKind : ListArgKind -> Kind -> Kind ;
+NoCommaAllProp : ListArgKind -> Prop -> Prop ;
+NoCommaExistProp : ListArgKind -> Prop -> Prop ;
+
+AbsProof : ListHypo -> Proof -> Proof ;
+AbsProofExp : ListHypo -> ProofExp -> ProofExp ;
+AxiomExpJmt : Label -> ListHypo -> Exp -> Kind -> Jmt ;
+AxiomJmt : Label -> ListHypo -> Prop -> Jmt ;
+AxiomKindJmt : Label -> ListHypo -> Kind -> Jmt ;
+AxiomPropJmt : Label -> ListHypo -> Prop -> Jmt ;
+DefExpJmt : Label -> ListHypo -> Exp -> Kind -> Exp -> Jmt ;
+DefKindJmt : Label -> ListHypo -> Kind -> Kind -> Jmt ;
+DefPropJmt : Label -> ListHypo -> Prop -> Prop -> Jmt ;
+DefinedAdjJmt : Label -> ListHypo -> Exp -> Adj -> Prop -> Jmt ;
+HyposAssumption : ListHypo -> Unit ;
+ThmJmt : Label -> ListHypo -> Prop -> Proof -> Jmt ;
+WeDefineAdjJmt : Label -> ListHypo -> Exp -> Adj -> Prop -> Jmt ;
+
+NoArticleExistProp : ArgKind -> Prop -> Prop ;
+
+
+BVar.   Bind ::= QIdent ;
+
+HExp.   Hypo ::= Exp5 ;
+
+BTyped.     Bind ::=     QIdent ":" Exp5 ;
+HVarExp.    Hypo ::=     QIdent ":" Exp5 ;
+HParVarExp. Hypo ::= "(" QIdent ":" Exp ")" ;
+
+BLet.                Bind ::= "(" QIdent ":" Exp5 ":=" Exp5 ")" ;
+internal HLetTyped.  Hypo ::= "(" QIdent ":" Exp  ":=" Exp ")" ;
+internal HLetExp.    Hypo ::= "(" QIdent          ":=" Exp ")" ;
+
+PBVar.   Pattbind ::= QIdent ;
+PBTyped. Pattbind ::= QIdent ":" Exp ;
+
+
+
+
+

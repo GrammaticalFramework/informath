@@ -273,7 +273,6 @@ data Tree :: * -> * where
   GBinderExp :: GBinder -> GIdent -> GExp -> Tree GExp_
   GBothAndExp :: GExp -> GExp -> Tree GExp_
   GCoercionExp :: GCoercion -> GExp -> Tree GExp_
-  GCoreAbsExp :: GIdent -> GExp -> Tree GExp_
   GEitherOrExp :: GExp -> GExp -> Tree GExp_
   GEnumSetExp :: GExps -> Tree GExp_
   GEveryIdentKindExp :: GIdent -> GKind -> Tree GExp_
@@ -995,7 +994,6 @@ instance Eq (Tree a) where
     (GBinderExp x1 x2 x3,GBinderExp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GBothAndExp x1 x2,GBothAndExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCoercionExp x1 x2,GCoercionExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GCoreAbsExp x1 x2,GCoreAbsExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEitherOrExp x1 x2,GEitherOrExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEnumSetExp x1,GEnumSetExp y1) -> and [ x1 == y1 ]
     (GEveryIdentKindExp x1 x2,GEveryIdentKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1945,7 +1943,6 @@ instance Gf GExp where
   gf (GBinderExp x1 x2 x3) = mkApp (mkCId "BinderExp") [gf x1, gf x2, gf x3]
   gf (GBothAndExp x1 x2) = mkApp (mkCId "BothAndExp") [gf x1, gf x2]
   gf (GCoercionExp x1 x2) = mkApp (mkCId "CoercionExp") [gf x1, gf x2]
-  gf (GCoreAbsExp x1 x2) = mkApp (mkCId "CoreAbsExp") [gf x1, gf x2]
   gf (GEitherOrExp x1 x2) = mkApp (mkCId "EitherOrExp") [gf x1, gf x2]
   gf (GEnumSetExp x1) = mkApp (mkCId "EnumSetExp") [gf x1]
   gf (GEveryIdentKindExp x1 x2) = mkApp (mkCId "EveryIdentKindExp") [gf x1, gf x2]
@@ -1980,7 +1977,6 @@ instance Gf GExp where
       Just (i,[x1,x2,x3]) | i == mkCId "BinderExp" -> GBinderExp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "BothAndExp" -> GBothAndExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "CoercionExp" -> GCoercionExp (fg x1) (fg x2)
-      Just (i,[x1,x2]) | i == mkCId "CoreAbsExp" -> GCoreAbsExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "EitherOrExp" -> GEitherOrExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "EnumSetExp" -> GEnumSetExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "EveryIdentKindExp" -> GEveryIdentKindExp (fg x1) (fg x2)
@@ -3700,7 +3696,6 @@ instance Compos Tree where
     GBinderExp x1 x2 x3 -> r GBinderExp `a` f x1 `a` f x2 `a` f x3
     GBothAndExp x1 x2 -> r GBothAndExp `a` f x1 `a` f x2
     GCoercionExp x1 x2 -> r GCoercionExp `a` f x1 `a` f x2
-    GCoreAbsExp x1 x2 -> r GCoreAbsExp `a` f x1 `a` f x2
     GEitherOrExp x1 x2 -> r GEitherOrExp `a` f x1 `a` f x2
     GEnumSetExp x1 -> r GEnumSetExp `a` f x1
     GEveryIdentKindExp x1 x2 -> r GEveryIdentKindExp `a` f x1 `a` f x2

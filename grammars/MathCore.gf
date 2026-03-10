@@ -31,7 +31,7 @@ fun
   BareLetLocal : Ident -> Exp -> Local ;
 
   AppExp : Exp -> Exps -> Exp ;
-  CoreAbsExp : Ident -> Exp -> Exp ;
+---  CoreAbsExp : Ident -> Exp -> Exp ;
   TermExp : Term -> Exp ; 
   KindExp : Kind -> Exp ;  -- the set of As
   TypedExp : Exp -> Kind -> Exp ;
