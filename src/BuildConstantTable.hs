@@ -187,7 +187,7 @@ inferFunType pgf fun = case inferExpr pgf fun of
   Right (_, typ) -> typ
   _ -> case showGFTree fun of
      '\'':'\\':_ -> mkType [] (mkCId "MACRO") []
-     _ -> error ("cannot infer type of " ++ showGFTree fun)
+     _ -> error ("when building symbol table entry: cannot infer type of " ++ showGFTree fun)
 
 
 type DkType = ([Dedukti.AbsDedukti.Hypo], Exp)
