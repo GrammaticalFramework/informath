@@ -37,10 +37,10 @@ transJmt t = case t of
     C.JAxiom (transIdent qident) (transExpProp exp)
   JDef qident (MTExp typ) (MEExp exp) ->
     let (hypos, vtyp) = splitType typ
-    in C.JDef (transIdent qident) (transHypos (Just exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
+    in C.JDef (transIdent qident) (transHypos (MEExp exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
   JThm qident (MTExp typ) (MEExp exp) ->
     let (hypos, vtyp) = splitType typ
-    in C.JThm (transIdent qident) (transHypos (Just exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
+    in C.JThm (transIdent qident) (transHypos (MEExp exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
   JDef qident (MTExp typ) MENone ->
     transJmt (JStatic qident typ)
   JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)
@@ -93,7 +93,7 @@ transBind t = case t of
   BVar var -> transIdent var
   BTyped var exp -> transIdent var
 
-transHypos :: Maybe Exp -> [Hypo] -> [C.Hypo]
+transHypos :: MExp -> [Hypo] -> [C.Hypo]
 transHypos mexp hypos = compress (map transHypo vhypos)
   where
     vhypos = addVarsToHypos mexp hypos

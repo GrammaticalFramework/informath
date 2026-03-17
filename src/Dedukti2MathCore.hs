@@ -28,38 +28,36 @@ jmt2jmt :: Jmt -> GJmt
 jmt2jmt jmt = case jmt of
   JDef ident MTNone (MEExp exp) ->
     GDefUntypedExpJmt (LexLabel "definitionLabel") (ident2exp ident) (exp2exp exp)
-  JDef ident (MTExp typ) meexp ->
-    let mexp = case meexp of
-          MEExp exp -> Just exp
-          _ -> Nothing
-    in case (splitType typ, guessGFCat ident typ) of
-      ((hypos, kind), c) -> 
-        let vhypos = addVarsToHypos mexp hypos
-            chypos = hypos2hypos vhypos
-	in case () of
-	  _ | S.member c proofCats ->
-            (maybe GAxiomJmt
-	        (\exp x y z -> GThmJmt x y z (exp2proof exp)) mexp)
-              (ident2label ident)
-              (GListHypo (hypos2hypos hypos))
-              (exp2prop kind)
-          _ | S.member c kindCats ->
-            (maybe (GAxiomKindJmt axiomLabel)
-	        (\exp x y -> GDefKindJmt definitionLabel x y (exp2kind exp)) mexp)
-              (GListHypo chypos)
-	      (exp2kind (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-          _ | S.member c expCats ->
-            (maybe (GAxiomExpJmt axiomLabel)
-	        (\exp x y z -> GDefExpJmt definitionLabel x y z (exp2exp (stripAbs hypos exp))) mexp)
-              (GListHypo chypos)
-              (exp2exp (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-              (exp2kind kind)
-          _ | S.member c propCats -> 
-            (maybe (GAxiomPropJmt axiomLabel)
-	        (\exp x y -> GDefPropJmt definitionLabel x y (exp2prop exp)) mexp)
-              (GListHypo chypos)
-	      (exp2prop (foldl EApp (EIdent ident) (map EIdent (concatMap hypo2vars vhypos))))
-          _ -> error ("cannot convert category " ++ c)
+  JDef ident@(QIdent sident) (MTExp typ) meexp ->
+    let (hypos, kind) = splitType typ
+	cat = guessGFCat ident typ
+	vhypos = addVarsToHypos meexp hypos
+        chypos = hypos2hypos vhypos
+	ghypos = GListHypo chypos
+	hvars  = (concatMap hypo2vars vhypos)
+	shvars = case lookupConstantFull sident of
+	  Just (_, _, _, d) -> drop d hvars 
+	  _ -> hvars
+	definiendum = foldl EApp (EIdent ident) (map EIdent shvars)
+    in case cat of
+	  _ | S.member cat proofCats -> case meexp of
+	    MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
+	    _ ->         GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
+	    
+          _ | S.member cat expCats -> case meexp of
+	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
+	                                (exp2exp (stripAbs hypos exp))
+	    _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
+
+          _ | S.member cat kindCats -> case meexp of
+	    MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
+	    _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum)
+
+          _ | S.member cat propCats -> case meexp of
+	    MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
+	    _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
+
+          _ -> error ("cannot convert category " ++ cat)
 
   JStatic ident typ ->
     jmt2jmt (JDef ident (MTExp typ) MENone)

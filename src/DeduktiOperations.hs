@@ -223,21 +223,21 @@ splitType exp = case exp of
   _ -> ([], exp)
 
 -- make hypo-bound vars consistent with defining abstraction, adding vars if not given
-addVarsToHypos :: Maybe Exp -> [Hypo] -> [Hypo]
+addVarsToHypos :: MExp -> [Hypo] -> [Hypo]
 addVarsToHypos mexp = adds vars where
   adds :: [QIdent] -> [Hypo] -> [Hypo]
   adds vs hypos = case mexp of
-    Just _ -> case hypos of
+    MEExp _ -> case hypos of
       HExp exp : hh -> HVarExp (head vs) exp : adds (tail vs) hh
       HVarExp _ exp  : hh ->  HVarExp (head vs) exp : adds (tail vs) hh
       HParVarExp _ exp : hh ->  HParVarExp (head vs) exp : adds (tail vs) hh
       _ -> []
-    Nothing -> case hypos of
+    MENone -> case hypos of
       HExp exp : hh -> HVarExp (head vs) exp : adds (tail vs) hh
       h  : hh ->  h : adds vs hh
       _ -> []
   vars = case mexp of
-    Just exp -> absIdents exp ++ newvars
+    MEExp exp -> absIdents exp ++ newvars
     _ -> newvars
   newvars = [QIdent s |
              s <- ["x", "y", "z", "u", "v", "w"] ++ ["X"  ++ show i | i <- [1..11]]]

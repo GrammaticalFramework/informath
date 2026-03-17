@@ -278,12 +278,12 @@ annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
     _ -> composOp (annot bounds) t
 
   annotId c = case M.lookup c table of
-    Just entry -> annotIdent c (primary entry)
+    Just entry -> annotIdent c (maybe 0 id (M.lookup c drops)) (primary entry)
     _ -> c
 
-annotIdent :: QIdent -> (Fun, Type) -> QIdent
-annotIdent (QIdent s) (f, t) =
-  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t)
+annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent
+annotIdent (QIdent s) d (f, t) =
+  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [show d]
     where
       dk c = showCId c
       dkp f = showGFTree f

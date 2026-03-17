@@ -147,9 +147,9 @@ expTyped x t = EApp (EApp (EIdent (QIdent "typed")) x) t
 expNegated x = EApp (EIdent (QIdent "neg")) x
 
 -- lookup after annotation from dynamically loaded file
-lookupConstantFull :: String -> Maybe (String, String, [String])
+lookupConstantFull :: String -> Maybe (String, String, [String], Int)  -- last arg: drop
 lookupConstantFull f = case splitConstant f of
-  Right (_ : cat : fun : args) -> return (cat, fun, args)
+  Right (_ : cat : fun : args) -> return (cat, fun, init args, read (last args))
   _ -> Nothing
   
 -- lookup just fun and cat

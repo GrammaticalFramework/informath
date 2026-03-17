@@ -49,7 +49,7 @@ convertArg callbacks arg = case arg of
 specialDedukti2Informath :: CallBacks -> Exp -> Maybe (Expr, SCat)
 specialDedukti2Informath callbacks exp = case lambdaFlatten exp of
   (EIdent (QIdent s), args) -> case lookupConstantFull s of
-    Just (cat, fun, argcats) | S.member cat mainCats ->
+    Just (cat, fun, argcats, _) | S.member cat mainCats ->
       return (mkApp (mkCId fun) (map (convertArg callbacks) (zip argcats args)), cat)
     _ -> Nothing
   _ -> Nothing
