@@ -11,6 +11,7 @@ import CommonConcepts
 import ConstantData
 
 import Data.Char
+import Data.List
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -79,48 +80,8 @@ alphaConvert convs = alpha [] where
     EFun h exp -> EFun (alpha bs h) (alpha (hypo2vars h ++ bs) exp)
     _ -> composOp (alpha bs) t
 
----- will be obsolete in -next
-applyConstantData :: ConstantData -> Tree a -> Tree a
-applyConstantData cd = appConst []
- where
-   appConst :: [QIdent] -> Tree a -> Tree a
-   appConst bs t = case t of
-    QIdent _ | elem t bs -> t
-    c@(QIdent _) -> fst $ lookid c
-    BVar _ -> t
-    BTyped x exp -> BTyped x (appConst bs exp)
-    HVarExp x exp -> HVarExp x (appConst bs exp)
-    HParVarExp x exp -> HParVarExp x (appConst bs exp)
-    EAbs b exp -> EAbs (appConst bs b) (appConst (bind2var b : bs) exp)
-    EFun h exp -> EFun (appConst bs h) (appConst (hypo2vars h ++ bs) exp)
-    EApp _ _ -> case splitApp t of
-      (EIdent c, xs) | elem c bs -> foldl EApp (EIdent c) (map (appConst bs) xs)
-      (EIdent c, xs) -> case lookid c of
-        (ident, com) -> foldl EApp (EIdent ident) (map (appConst bs) (applyCombination com xs))
-      (f, xs) -> foldl EApp (appConst bs f) (map (appConst bs) xs)
-    _ -> composOp (appConst bs) t
-
-   lookid :: QIdent -> (QIdent, Combination)
-   lookid f@(QIdent c) = case M.lookup c cd of
-     Just (BASE cat fun) -> (gfAnnotate cat fun f, ComALL)
-     Just (ALIAS _ dkid com) -> (applyConstantData cd (QIdent dkid), com)
-     Just (NEW _ cat fun com) -> (gfAnnotate cat fun f, com)
-     Just (CONV other) -> (QIdent other, ComALL)
-     _ -> (f, ComALL)
-
-   gfAnnotate :: GFCat -> GFFun -> QIdent -> QIdent
-   gfAnnotate cat fun ident@(QIdent c) = QIdent (c ++ "&" ++ cat ++ "&" ++ fun)
-
--- for a coercion application, only leave its last argument
-ignoreCoercions :: [QIdent] -> Tree a -> Tree a
-ignoreCoercions cs t = case t of
-  EApp _ _ -> case splitApp t of
-    (EIdent f, xs@(_:_)) | elem f cs -> ignoreCoercions cs (last xs)
-    (f, xs) -> foldl EApp (ignoreCoercions cs f) (map (ignoreCoercions cs) xs)
-  _ -> composOp (ignoreCoercions cs) t
-
 -- typically, ignore explicit type arguments to form a polymorphic expression
-ignoreFirstArguments ::M.Map QIdent Int -> Tree a -> Tree a
+ignoreFirstArguments :: M.Map QIdent Int -> Tree a -> Tree a
 ignoreFirstArguments cns t = case t of
   EApp _ _ -> case splitApp t of
     (EIdent f, xs@(_:_)) -> case M.lookup f cns of
@@ -129,7 +90,7 @@ ignoreFirstArguments cns t = case t of
     (f, xs) -> foldl EApp (ignoreFirstArguments cns f) (map (ignoreFirstArguments cns) xs)
   _ -> composOp (ignoreFirstArguments cns) t
 
-restoreFirstArguments ::M.Map QIdent Int -> Tree a -> Tree a
+restoreFirstArguments :: M.Map QIdent Int -> Tree a -> Tree a
 restoreFirstArguments cns t = case t of
   EApp _ _ -> case splitApp t of
     (EIdent f, xs@(_:_)) -> case M.lookup f cns of
@@ -161,17 +122,6 @@ introduceLocalDefinitions tr = case tr of
      EAbs (BLet x t d) tyy -> EFun (HLetTyped x t d) (inlocal tyy)
      EFun h tyy -> EFun h (inlocal tyy)
      _ -> ty
-
---- no longer needed
-completelyEliminateLocalDefinitions :: Tree a -> Tree a
-completelyEliminateLocalDefinitions = elim [] where
-  elim :: [(QIdent, Exp)] -> Tree a -> Tree a
-  elim defs t = case t of
-    EIdent x -> maybe t id (lookup x defs)
-    EFun (HLetExp x d) e -> elim ((x, elim defs d):defs) e
-    EFun (HLetTyped x _ d) e -> elim defs (EFun (HLetExp x d) e)
-    _ -> composOp (elim defs) t
-
 
 peano2int :: Tree a -> Tree a
 peano2int t = case t of
@@ -368,4 +318,51 @@ stripQualifiers t = case t of
 
 deduktiTokens :: String -> [String]
 deduktiTokens = map prToken . myLexer
+
+-------------------------------------
+----- profiles, generalizing DROP ---
+
+data Profile =
+    NoProfile
+  | PermProfile [Int]  -- first arg is #1
+  deriving Show
+
+readProfile :: String -> Profile
+readProfile s = case split ',' s of
+  ss | all (all isDigit) ss -> PermProfile (map read ss)
+  _ -> error $ "not a valid profile: " ++ s
+
+-- from Dk to GF
+appProfile :: Profile -> Exp -> Exp
+appProfile prof exp = case prof of
+  NoProfile -> exp
+  PermProfile ints -> case splitApp exp of
+    (fun, args) -> foldl EApp fun [args !! (i-1) | i <- ints]
+
+-- from GF to Dk
+unappProfile :: Profile -> Exp -> Exp
+unappProfile prof exp = case prof of
+  NoProfile -> exp
+  PermProfile ints -> case splitApp exp of
+    (fun, args) -> foldl EApp fun [look i | i <- [1 .. maximum ints]]
+      where
+        look i = case lookup i (zip ints [0..]) of
+	  Just j -> args !! j
+	  _ -> metaExp
+
+-- from DROP k to PermProfile [k+1 .. n]
+dropProfile :: Int -> Exp -> Profile
+dropProfile k ty = case splitType (flattenType ty) of
+  (hypos, _) -> PermProfile [k+1 .. length hypos + 1]
+
+
+flattenType :: Exp -> Exp
+flattenType typ = case splitType typ of
+  (hypos, val) -> foldr EFun val (concatMap flatHypo hypos)
+ where
+   flatHypo hypo = case hypo2type hypo of
+     Just htyp -> case splitType htyp of
+       (hypos, val) -> hypos ++ [HExp val] ---- add var
+     _ -> [hypo]
+     
 

@@ -59,12 +59,9 @@ jmt2jmt jmt = case jmt of
 
           _ -> error ("cannot convert category " ++ cat)
 
-  JStatic ident typ ->
-    jmt2jmt (JDef ident (MTExp typ) MENone)
-  JInj ident mtyp mexp ->
-    jmt2jmt (JDef ident mtyp mexp)
-  JThm ident mtyp mexp ->
-    jmt2jmt (JDef ident mtyp mexp) 
+  JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
+  JInj ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp)
+  JThm ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp) 
   JRules rules -> GRewriteJmt (GListRule (map rule2rule rules))  
   _ -> error ("not yet: " ++ printTree jmt)
 

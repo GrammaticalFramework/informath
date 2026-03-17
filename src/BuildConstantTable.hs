@@ -228,9 +228,6 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
 
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
-
- ---- TODO: check more than arity: return Maybe ((Cat, Int), (Cat, Int))
-
 constantTableErrors :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
 constantTableErrors dk pgf dt mt table bset = 
   let funs = deduktiFunctions dk
