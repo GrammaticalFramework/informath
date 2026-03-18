@@ -202,7 +202,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
     EFun _ _ -> case splitType exp of
       (hypos, body) ->
          GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind body)
-    _ -> error $ "exp2kind not defined for " ++ show exp
+    _ -> GExpKind (exp2exp exp)
 
 
 exp2prop :: Exp -> GProp

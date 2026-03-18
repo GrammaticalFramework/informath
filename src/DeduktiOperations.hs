@@ -325,12 +325,16 @@ deduktiTokens = map prToken . myLexer
 data Profile =
     NoProfile
   | PermProfile [Int]  -- first arg is #1
-  deriving Show
 
 readProfile :: String -> Profile
 readProfile s = case split ',' s of
   ss | all (all isDigit) ss -> PermProfile (map read ss)
   _ -> error $ "not a valid profile: " ++ s
+
+showProfile :: Profile -> String
+showProfile prof = case prof of
+  NoProfile -> ""
+  PermProfile ints -> show ints
 
 -- from Dk to GF
 appProfile :: Profile -> Exp -> Exp
@@ -362,7 +366,15 @@ flattenType typ = case splitType typ of
  where
    flatHypo hypo = case hypo2type hypo of
      Just htyp -> case splitType htyp of
+       ([], val) -> [hypo]
        (hypos, val) -> hypos ++ [HExp val] ---- add var
      _ -> [hypo]
+     
+flattenExp :: Exp -> Exp
+flattenExp exp = case splitApp exp of
+  (fun, args) -> foldl EApp fun (concatMap flatAbs args)
+ where
+   flatAbs arg = case splitAbs arg of
+     (binds, val) -> map (EIdent . bind2ident) binds ++ [val]
      
 
