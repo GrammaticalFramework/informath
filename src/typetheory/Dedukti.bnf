@@ -24,27 +24,27 @@ MTExp.  MTyp ::= ":" Exp ;
 MENone. MExp ::= ;
 MEExp.  MExp ::= ":=" Exp ;
 
-EIdent.  Exp9 ::= QIdent ;
-EApp.    Exp5 ::= Exp5 Exp6 ;
-EAbs.    Exp2 ::= Bind "=>" Exp2 ;
+EIdent.  Exp3 ::= QIdent ;
+EApp.    Exp2 ::= Exp2 Exp3 ;
+EAbs.    Exp1 ::= Bind "=>" Exp1 ;
 EFun.    Exp1 ::= Hypo "->" Exp1 ;
 
-coercions Exp 9 ;
+coercions Exp 3 ;
 
 BVar.   Bind ::= QIdent ;
-BTyped. Bind ::= QIdent ":" Exp5 ;
-BLet.   Bind ::= "(" QIdent ":" Exp5 ":=" Exp5 ")" ;
+BTyped. Bind ::= QIdent ":" Exp2 ;
+BLet.   Bind ::= "(" QIdent ":" Exp2 ":=" Exp2 ")" ;
 
 PBVar.   Pattbind ::= QIdent ;
 PBTyped. Pattbind ::= QIdent ":" Exp ;
 
-HExp.    Hypo ::= Exp5 ;
-HVarExp. Hypo ::= QIdent ":" Exp5 ;
-HParVarExp. Hypo ::= "(" QIdent ":" Exp ")" ;
+HExp.    Hypo ::= Exp2 ;
+HVarExp. Hypo ::= QIdent ":" Exp2 ;
+HParVarExp. Hypo ::= "(" QIdent ":" Exp2 ")" ;
 
 -- extension of Dedukti: local definitions
-internal HLetExp.    Hypo ::= "(" QIdent ":=" Exp ")" ;
-internal HLetTyped.  Hypo ::= "(" QIdent ":" Exp ":=" Exp ")" ;
+internal HLetExp.    Hypo ::= "(" QIdent ":=" Exp2 ")" ;
+internal HLetTyped.  Hypo ::= "(" QIdent ":" Exp2 ":=" Exp2 ")" ;
 
 -- separator nonempty QIdent "," ;
 

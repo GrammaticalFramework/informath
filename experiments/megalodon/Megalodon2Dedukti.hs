@@ -25,7 +25,7 @@ jmt2jmt jmt = case jmt of
   JStep step -> D.JDef (D.QIdent "step") D.MTNone (D.MEExp (step2exp step))
   JFirstStep step -> D.JDef (D.QIdent "firststep") D.MTNone (D.MEExp (step2exp step))
   JNextJmt jmt -> jmt2jmt jmt ---
-  _ -> D.JStatic (D.QIdent "jmt") (D.EIdent (D.QIdent ("TODO_Jmt: " ++ show jmt)))
+  _ -> D.JStatic (D.QIdent "jmt") (D.EIdent (D.QIdent ("{| TODO_Jmt: " ++ show jmt ++ "|}")))
 
 -- deep embedding of steps
 step2exp :: Step -> D.Exp
