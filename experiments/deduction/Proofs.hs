@@ -1,4 +1,5 @@
-module Proofs where
+module Main where
+---- module Proofs where
 
 import Dedukti.AbsDedukti hiding (Tree)
 import Dedukti.PrintDedukti hiding (prt)
@@ -77,9 +78,9 @@ linesDemo ex = unlines $ intersperse "\n\n" [
 
 expDemo dkmap exp = unlines $ intersperse "\n\n" [
     "\\subsection*{From term to lines and back}"
-    , "Original proof term"
-    , mathdisplay (printTree exp)
-    , "Original proof term"
+    , "Original proof exp"
+    , verbatim (printTree exp)
+    , "Converted proof term"
     , mathdisplay (prt term)
     , "Generated deduction tree"
     , prst (term2tree term)
@@ -87,7 +88,7 @@ expDemo dkmap exp = unlines $ intersperse "\n\n" [
     , prls linesterm
     , "Deduction tree generated from the linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
     , prst (lines2steptree linesterm)
-    , "Proof term generated from the linear proof"
+----    , "Proof term generated from the linear proof"
 ----    , mathdisplay (prt (lines2term linesterm))
     , "\\clearpage"
     ]
@@ -124,14 +125,16 @@ mkStep li fo ru di = Step li fo ru di
 
 data Line = Line {
   line :: Int,        -- line number
-  context :: [Var], -- labels of open hypotheses
+  context :: [Var],   -- labels of open hypotheses
   premisses :: [Int], -- line numbers of premisses
   step :: Step        -- the main content of this line
   }
   deriving (Show, Eq)
 
-mkLine li co fo ru prs di = Line li co prs (mkStep 0 fo ru di)
+mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
+
+noIdent = QIdent "" ---- 
 
 -- rose trees (in general)
 
@@ -164,17 +167,20 @@ lines2steptree = maptree step . lines2linetree
 type Function = [Exp] -> Exp
 
 mkFunction :: Exp -> Function
-mkFunction exp = \es -> subst (zip vars exp) body
+mkFunction exp = \es -> subst (zip vars es) [] body
  where
-  (binds, body) = splitAbs exp
-  vars = map  bind2ident binds
+  (hypos, body) = splitType exp
+  vars = concatMap hypo2vars hypos
 
-----  subst :: [(QIdent, Exp)] -> Tree a -> Tree a
-  subst gamma e = case e of
-    EIdent x -> case lookup x gamma of
+  subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
+  subst gamma bs e = case e of
+    EIdent x | notElem x bs -> case lookup x gamma of
       Just v -> v
       _ -> e
-    _ -> composOp (subst gamma) e
+    EApp f a -> EApp (subst gamma bs f) (subst gamma bs a)
+    EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
+    EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
+    _ -> e
 
 
 dkFunctionMap :: Module -> M.Map QIdent Function
@@ -188,7 +194,7 @@ exp2term dmap exp = case exp of
       _ -> Dk exp ---- error ("cannot apply " ++ printTree c
     _ -> Dk exp ---- error ("cannot build application from " ++ printTree exp)
   EAbs _ _ -> case splitAbs exp of
-    (xs, body) -> Abs (bind2ident xs) (exp2term dmap body)
+    (xs, body) -> Abs (map bind2ident xs) (exp2term dmap body)
   EIdent x -> Hyp x exp ---- TODO infer type of x
   _ -> Dk exp ----
 
@@ -221,10 +227,10 @@ conclusion term = case term of
 
 term2tree :: Term -> Tree Step
 term2tree term = case term of
-  App rule ps ts c -> Tree (mkStep 0 (c ps) rule (concatMap bindings ts)) (map term2tree ts)
+  App rule ps ts c -> Tree (mkStep noIdent (c ps) rule (concatMap bindings ts)) (map term2tree ts)
   Abs xs t -> term2tree t
-  Hyp x a -> Tree (mkStep x a "hypo" []) []
-  Ass x a -> Tree (mkStep x a "ass" []) []
+  Hyp x a -> Tree (mkStep x a (QIdent "hypo") []) []
+  Ass x a -> Tree (mkStep x a (QIdent "ass") []) []
 
 bindings :: Term -> [Var]
 bindings t = case t of
@@ -237,14 +243,14 @@ term2lines =
     ps 1 []             
       where
  -- generate lines starting with this line number and context
- ps :: Int -> [Int] -> Term -> [Line]
+ ps :: Int -> [Var] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
    Ass int formula ->
-     [mkHypoLine ln formula "ass" int]
+     [mkHypoLine ln formula (QIdent "ass") int]
 
    Hyp int formula ->
-     [mkHypoLine ln formula "hypo" int] -- line int with hyponumber ??
+     [mkHypoLine ln formula (QIdent "hypo") int] -- line int with hyponumber ??
      
    App label fs pts conn ->              
      let
@@ -255,7 +261,7 @@ term2lines =
      
    Abs xs t -> ps ln (cont ++ xs) t
 
- psfold :: [Int] -> ([Term], Int) -> [[Line]]
+ psfold :: [Var] -> ([Term], Int) -> [[Line]]
  psfold cont (pts, n) = case pts of
    p : pp -> case
      ps n cont p of
@@ -267,21 +273,22 @@ term2lines =
  nextline ln p = if null p then ln else lastline p + 1
 
  -- compress lines by dropping repetitions of hypotheses and renumbering lines
- compress :: Int -> [(Int, Int)] -> [(Int, Int)] -> [Line] -> [Line]
+ compress :: Int -> [(Int, Int)] -> [(Var, Var)] -> [Line] -> [Line]
  compress gaps relines rehypos ls = case ls of
-   ln : rest | elem (rule (step ln)) ["hypo", "ass"] ->
+   ln : rest | elem (rule (step ln)) [QIdent "hypo", QIdent "ass"] ->
      case (hyponumber (step ln)) of
        h -> case lookup h rehypos of
          Just k ->  -- old hypothesis: add gap and re-point line number to first occurrence
-	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest
+	   compress (gaps + 1) relines rehypos rest ---- TODO ((line ln, k) : relines) rehypos rest
          _ ->       -- new hypothesis: update its line number and hypo number to new line number 
 	   let nln = line ln - gaps
 	   in ln{
 	         line = nln,
-		 step = (step ln){hyponumber=nln},
-		 context = nln : tail (context ln)
+---- TODO		 step = (step ln){hyponumber=nln},
+---- TODO	 context = nln : tail (context ln)
+		 context = h : context ln
 		 } :
-	      compress gaps ((line ln, nln):relines) ((h, nln) : rehypos) rest
+	      compress gaps ((line ln, nln):relines) rehypos rest ---- TODO ((h, nln) : rehypos) rest
    ln : rest ->
            renumberLine (line ln - gaps) relines rehypos ln :
            compress gaps ((line ln, line ln -gaps):relines) rehypos rest
@@ -324,21 +331,21 @@ prls lns = unlines $
 prl :: Line -> [String]
 prl ln = [
 ---  concat (replicate (length (context ln)) "\\mid"),
-  concat (intersperse "," (map show (context ln))),
+  concat (intersperse "," (map printTree (context ln))),
   show (line ln) ++ ".",
   prf (formula (step ln)),
-  rule (step ln),
+  printTree (rule (step ln)),
   concat (intersperse ", " (map show (premisses ln))),
   let dis = discharged (step ln)
-    in if null dis then "" else "[" ++ concat (intersperse ", " (map show dis)) ++ "]"
+    in if null dis then "" else "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
   ]
   
 prs :: Step -> [String]
 prs st = [
-  show (hyponumber st) ++ ".",
+  printTree (hyponumber st) ++ ".",
   prf (formula st),
-  rule st,
-  concat (map ((","++) . show) (discharged st))
+  printTree (rule st),
+  concat (map ((","++) . printTree) (discharged st))
   ]
 
 prlt :: Tree Line -> String
@@ -357,17 +364,19 @@ prst = mathdisplay . pr where
 ---- TODO: pretty-printing on multiple lines
 prt :: Term -> String
 prt term = case term of
-  App label ps ts c -> label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
+  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
   Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
   Hyp x a -> prvar x
   Ass x a -> prcons x
   Dk e -> parenth ("Dk " ++ printTree e)
  where
   parenth s = "(" ++ s ++ ")"
-  prvar i = "h_" ++ show i
-  prcons i = "c_" ++ show i
+  prvar i = "h_" ++ printTree i
+  prcons i = "c_" ++ printTree i
 
 mathdisplay s = "\\[" ++ s ++ "\\]"
+
+verbatim s = "\\begin{verbatim}\n" ++ s ++ "\n\\end{verbatim}"
 
 prLatexFile string = unlines [
   "\\documentstyle[proof]{article}",
@@ -411,5 +420,35 @@ splitAbs exp = case exp of
   EAbs bind body -> case splitAbs body of
     ([], _) -> ([bind], body)
     (binds, rest) -> (bind:binds, rest)
+  _ -> ([], exp)
+
+hypo2vars :: Hypo -> [QIdent]
+hypo2vars hypo = maybe [] typevars (hypo2type hypo) ++ hypo2topvars hypo where
+  typevars :: Exp -> [QIdent]
+  typevars ty = case ty of
+    EFun h body -> hypo2topvars h ++ typevars body
+    _ -> []
+
+hypo2type :: Hypo -> Maybe Exp
+hypo2type hypo = case hypo of
+  HVarExp v e -> Just e
+  HParVarExp v e -> Just e
+  HLetExp v _ -> Nothing
+  HLetTyped v e _ -> Just e
+  HExp e -> Just e
+
+hypo2topvars :: Hypo -> [QIdent]
+hypo2topvars hypo = case hypo of
+  HVarExp v _ -> [v]
+  HParVarExp v _ -> [v]
+  HLetExp v _ -> [v]
+  HLetTyped v _ _ -> [v]
+  HExp v -> []
+
+splitType :: Exp -> ([Hypo], Exp)
+splitType exp = case exp of
+  EFun hypo body -> case splitType body of
+    ([], _) -> ([hypo], body)
+    (hypos, rest) -> (hypo:hypos, rest)
   _ -> ([], exp)
 
