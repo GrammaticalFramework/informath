@@ -1,9 +1,18 @@
 (; some theorems of logic ;)
 
+(; A & B -> B & A ;)
+thm nd0 : (A : Prop) -> (B : Prop) -> Proof (if (and A B) (and B A)) :=
+  A => B => ifI (and A B) (and B A)
+    (h => (andI B A
+      (andEr A B (hypo (and A B) h))
+      (andEl A B (hypo (and A B) h)))).
+
 (; A -> B -> A ;)
 thm nd1 : (A : Prop) -> (B : Prop) -> Proof (if A (if B A)) :=
   A => B => ifI A (if B A) (h => ifI B A (k => hypo A h)).
 
+
+(; arithmetic ;)
 
 thm prop1 : Proof (odd 1) := oddSucc 0 even0.
 

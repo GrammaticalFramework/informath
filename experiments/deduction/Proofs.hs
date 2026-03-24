@@ -93,7 +93,7 @@ expDemo dkmap exp = unlines $ intersperse "\n\n" [
     , "\\clearpage"
     ]
   where
-    term = exp2term dkmap exp
+    term = exp2term dkmap (snd (splitAbs exp))
     linesterm = term2lines term
 
 testEq x y = if x==y then " OK" else " TODO"
@@ -170,7 +170,7 @@ mkFunction :: Exp -> Function
 mkFunction exp = \es -> subst (zip vars es) [] body
  where
   (hypos, body) = splitType exp
-  vars = concatMap hypo2vars hypos
+  vars = map hypo2var hypos
 
   subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
   subst gamma bs e = case e of
@@ -444,6 +444,14 @@ hypo2topvars hypo = case hypo of
   HLetExp v _ -> [v]
   HLetTyped v _ _ -> [v]
   HExp v -> []
+
+hypo2var :: Hypo -> QIdent
+hypo2var hypo = case hypo of
+  HVarExp v _ -> v
+  HParVarExp v _ -> v
+  HLetExp v _ -> v
+  HLetTyped v _ _ -> v
+  HExp v -> QIdent "_"
 
 splitType :: Exp -> ([Hypo], Exp)
 splitType exp = case exp of
