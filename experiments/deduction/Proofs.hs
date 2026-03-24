@@ -40,6 +40,7 @@ main = do
   base:exx:_ <- getArgs -- filenames
   mo <- readDeduktiModule [base]
   let dkmap = dkFunctionMap mo
+  mapM_ putStrLn (printFunctionMap dkmap)
   MJmts ps <- readDeduktiModule [exx]
   putStrLn $ prLatexFile $ unlines $ intersperse "\n\n" [
     expDemo dkmap e | JThm _ _ (MEExp e) <- ps]
@@ -93,7 +94,8 @@ expDemo dkmap exp = unlines $ intersperse "\n\n" [
     , "\\clearpage"
     ]
   where
-    term = exp2term dkmap (snd (splitAbs exp))
+----    term = exp2term dkmap (snd (splitAbs exp))
+    term = exp2term dkmap exp
     linesterm = term2lines term
 
 testEq x y = if x==y then " OK" else " TODO"
@@ -185,6 +187,11 @@ mkFunction exp = \es -> subst (zip vars es) [] body
 
 dkFunctionMap :: Module -> M.Map QIdent Function
 dkFunctionMap mo = M.map mkFunction (identTypes mo)
+
+printFunctionMap fm = [
+  "% " ++ printTree c ++ " : " ++ printTree (f [EIdent (QIdent ("#" ++ show i)) | i <- [1..]])
+    | (c, f) <- M.toList fm
+  ]
 
 exp2term ::  M.Map QIdent Function -> Exp -> Term
 exp2term dmap exp = case exp of
@@ -364,7 +371,8 @@ prst = mathdisplay . pr where
 ---- TODO: pretty-printing on multiple lines
 prt :: Term -> String
 prt term = case term of
-  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
+  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prt ts)))
+----  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
   Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
   Hyp x a -> prvar x
   Ass x a -> prcons x

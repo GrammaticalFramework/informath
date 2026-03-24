@@ -1,5 +1,17 @@
 (; some theorems of logic ;)
 
+(; A -> A v A ;)
+thm nd00 : (A : Prop) -> (B : Prop) -> Proof (if A (or A B)) :=
+  A => B => ifI A (or A B)
+    (h => (orIl A B (hypo A h))).
+
+(;
+or : (A : Prop) -> (B : Prop) -> Prop.
+if : (A : Prop) -> (B : Prop) -> Prop.
+orIl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (or A B).
+ifI  : (A : Prop) -> (B : Prop) -> (b : ((x : Proof A) -> Proof B)) -> Proof (if A B).
+;)
+
 (; A & B -> B & A ;)
 thm nd0 : (A : Prop) -> (B : Prop) -> Proof (if (and A B) (and B A)) :=
   A => B => ifI (and A B) (and B A)
