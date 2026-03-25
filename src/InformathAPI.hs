@@ -168,8 +168,8 @@ processLatex env = map (processLatexLine env) . filter parsable . map uncomment 
 
 data GenResult = GenResult {
   originalDedukti  :: Jmt,
-  annotatedDedukti :: Jmt,
-  coreGF           :: GFTree,
+  annotatedDedukti :: [Jmt],
+  coreGF           :: [GFTree],
   nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])],
   backToDedukti    :: [Jmt]  --- | for debugging NLG and semantics
   }
@@ -201,9 +201,9 @@ processJmt env djmt =
   then dummyGenResult (applyDeduktiConversions env djmt)
   else
     let
-      jmt = annotateDedukti env (applyDeduktiConversions env djmt)
-      core = dedukti2core jmt
-      exts = core2ext env core
+      jmts = annotateDedukti env (applyDeduktiConversions env djmt)
+      core = map dedukti2core jmts
+      exts = concatMap (core2ext env) core
       nlgs = setnub $ map gf $ exts
       vars = if elem "-variations" (flags env) then id else (take 1) 
       best = maybe vars take (nbestNLG env)
@@ -211,15 +211,15 @@ processJmt env djmt =
       nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
     in GenResult {
       originalDedukti = djmt,
-      annotatedDedukti = jmt,
-      coreGF = gf core,
+      annotatedDedukti = jmts,
+      coreGF = map gf core,
       nlgResults = nlgranks,
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
 
 -- | When just converting form Dk to another formalism, no GF is needed.
 dummyGenResult :: Jmt -> GenResult
-dummyGenResult jmt = GenResult jmt jmt undefined [] []
+dummyGenResult jmt = GenResult jmt [jmt] undefined [] []
 
 
 -- | Processing a single line of LaTeX.
@@ -279,7 +279,7 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
 -- * Phases of the conversion pipeline
 
 -- | Annotate Dedukti with GF information.
-annotateDedukti :: Env -> Jmt -> Jmt
+annotateDedukti :: Env -> Jmt -> [Jmt]
 annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
 
 -- | From annotated Dedukti to MathCore.
@@ -321,8 +321,8 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
 showJsonGenResult :: Env -> GenResult -> String
 showJsonGenResult env result = encodeJSON $ mkJSONObject [
     mkJSONField "originalDedukti" (stringJSON (printDeduktiEnv env (originalDedukti result))),
-    mkJSONField "annotatedDedukti" (stringJSON (printDeduktiEnv env (annotatedDedukti result))),
-    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
+----    mkJSONField "annotatedDedukti" (stringJSON (printDeduktiEnv env (annotatedDedukti result))),
+----    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
     mkJSONField "nlgResults" (mkJSONObject [
       mkJSONListField (showCId lang) (map (stringJSON . printRank) ranks) | (lang, ranks) <- nlgResults result]),
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]

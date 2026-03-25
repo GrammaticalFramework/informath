@@ -257,26 +257,27 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate idents with cats and funs, just the primary ; used only internally
-annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> DkTree a
+annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> [DkTree a]
 annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
 
   -- don't annotate bound variables: they override constants
-  annot :: forall a. [QIdent] -> DkTree a -> DkTree a
+  annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
   annot bounds t = case t of
     QIdent _ | notElem t bounds -> annotId t
-    EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
-    EFun h exp -> EFun (annot bounds h) (annot (hypo2topvars h ++ bounds) exp)    
-    BVar _ -> t
-    BTyped v ty -> BTyped v (annot bounds ty)
-    HVarExp v ty -> HVarExp v (annot bounds ty)
-    HParVarExp v ty -> HParVarExp v (annot bounds ty)
-    HLetExp v ty -> HLetExp v (annot bounds ty)
-    HLetTyped v ty exp -> HLetTyped v (annot bounds ty) (annot bounds exp)
-    _ -> composOp (annot bounds) t
+    EAbs b exp -> [EAbs b2 exp2 | b2 <- annot bounds b, exp2 <- annot (bind2ident b : bounds) exp]
+    EFun h exp -> [EFun h2 exp2 | h2 <- annot bounds h, exp2 <- annot (hypo2topvars h ++ bounds) exp]    
+    BVar _ -> [t]
+    BTyped v ty -> [BTyped v ty2 | ty2 <- annot bounds ty]
+    HVarExp v ty -> [HVarExp v ty2 | ty2 <- annot bounds ty]
+    HParVarExp v ty -> [HParVarExp v ty2 | ty2 <- annot bounds ty]
+    HLetExp v ty -> [HLetExp v ty2 | ty2 <- annot bounds ty]
+    HLetTyped v ty exp -> [HLetTyped v ty2 exp2 | ty2 <- annot bounds ty, exp2 <- annot bounds exp]
+    _ -> composOpM (annot bounds) t
 
   annotId c = case M.lookup c table of
-    Just entry -> annotIdent c (maybe 0 id (M.lookup c drops)) (primary entry)
-    _ -> c
+    Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) f |
+                                    f <- primary entry : synonyms entry]
+    _ -> [c]
 
 annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent
 annotIdent (QIdent s) d (f, t) =

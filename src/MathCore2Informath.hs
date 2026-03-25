@@ -62,7 +62,7 @@ uncoerce t = case t of
 -- works on lookup with Dedukti QIdent, which annotates applicative trees
 
 synonymize :: forall a. Env -> Tree a -> [Tree a]
-synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ concatMap verbs st where
+synonymize env t = symbs t {- ++ verbs t -} where --- let st = (t:symbs t) in st ++ concatMap verbs st where
 
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
   ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
@@ -135,7 +135,7 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
       [app alt [] | alt <- ssyns c]
     GTermExp t -> [t]
     _ -> []
-
+{-
   verbs :: forall a. Tree a -> [Tree a]
   verbs t = case t of
     GAnnotateProp c (GAdjProp _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
@@ -170,7 +170,7 @@ synonymize env t = symbs t ++ verbs t where --- let st = (t:symbs t) in st ++ co
     ("Verb2", [x, y]) -> GVerb2Prop (fg fun) x y
     ("VerbC", [x, y]) -> GVerbCProp (fg fun) x y
     _ -> error $ "NOT YET pred: " ++ PGF.showExpr [] fun ++ " : " ++ show cat ++ " " ++ show (length xs)
-
+-}
   sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
   sympred (fun, cat) xs = case (PGF.showType [] cat, xs) of
     ("Compar", [x, y]) -> GFormulaProp (GEquationFormula (GBinaryEquation (fg fun) x y))
