@@ -168,11 +168,14 @@ lines2steptree = maptree step . lines2linetree
 -- map from arguments to value type
 type Function = [Exp] -> Exp
 
-mkFunction :: Exp -> Function
-mkFunction exp = \es -> subst (zip vars es) [] body
+mkFunction :: QIdent -> Exp -> Function
+mkFunction c exp = \es -> val es
  where
   (hypos, body) = splitType exp
   vars = map hypo2var hypos
+  val es = case body of
+    EIdent (QIdent "Prop") -> foldl EApp (EIdent c) (take (length hypos) es)
+    _ -> subst (zip vars es) [] body
 
   subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
   subst gamma bs e = case e of
@@ -186,7 +189,7 @@ mkFunction exp = \es -> subst (zip vars es) [] body
 
 
 dkFunctionMap :: Module -> M.Map QIdent Function
-dkFunctionMap mo = M.map mkFunction (identTypes mo)
+dkFunctionMap mo = M.mapWithKey mkFunction (identTypes mo)
 
 printFunctionMap fm = [
   "% " ++ printTree c ++ " : " ++ printTree (f [EIdent (QIdent ("#" ++ show i)) | i <- [1..]])
@@ -198,8 +201,10 @@ exp2term dmap exp = case exp of
   EApp _ _ -> case splitApp exp of
     (EIdent c, args) -> case M.lookup c dmap of
       Just f -> app c (map (exp2term dmap) args) f
-      _ -> Dk exp ---- error ("cannot apply " ++ printTree c
-    _ -> Dk exp ---- error ("cannot build application from " ++ printTree exp)
+      _ -> -- Dk exp ----
+        error ("cannot apply " ++ printTree c)
+    _ -> -- Dk exp ----
+        error ("cannot build application from " ++ printTree exp)
   EAbs _ _ -> case splitAbs exp of
     (xs, body) -> Abs (map bind2ident xs) (exp2term dmap body)
   EIdent x -> Hyp x exp ---- TODO infer type of x
@@ -379,8 +384,8 @@ prt term = case term of
   Dk e -> parenth ("Dk " ++ printTree e)
  where
   parenth s = "(" ++ s ++ ")"
-  prvar i = "h_" ++ printTree i
-  prcons i = "c_" ++ printTree i
+  prvar x = printTree x
+  prcons i = printTree i
 
 mathdisplay s = "\\[" ++ s ++ "\\]"
 
