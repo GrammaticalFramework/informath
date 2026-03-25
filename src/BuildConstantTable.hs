@@ -213,8 +213,10 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
   gfCats cid = case showCId cid of
     "MACRO" -> S.toList mainCats --- uncertain; any may work
     c -> case M.lookup c gfCatMap of
-       Just ("Exp", _) -> ["Exp", "Kind"]
-       Just ("Kind", _) -> ["Exp", "Kind"]
+       Just ("Exp", _) -> ["Exp", "Kind", "ProofExp", "Proof"]
+       Just ("Kind", _) -> ["Exp", "Kind", "Prop"]
+       Just ("Proof", _) -> ["Exp", "Kind", "ProofExp", "Proof"]
+       Just ("Prop", _) -> ["Exp", "Kind", "Prop"]
        Just (val, _) -> [val]
        _ -> ["UNKNOWN-GF"] ---
        
@@ -224,7 +226,7 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
     EIdent f | elem f [identSet, identType] -> "Kind"
     EIdent f | f == identElem -> "Exp"
     EIdent f | f == identProof -> "Proof"
-    _ -> "UNKNOWN-DK" ---- default, but not accurate
+    _ -> "Prop" --- UNKNOWN-DK" --- default, but not accurate
 
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     

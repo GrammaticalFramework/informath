@@ -321,8 +321,8 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
 showJsonGenResult :: Env -> GenResult -> String
 showJsonGenResult env result = encodeJSON $ mkJSONObject [
     mkJSONField "originalDedukti" (stringJSON (printDeduktiEnv env (originalDedukti result))),
-----    mkJSONField "annotatedDedukti" (stringJSON (printDeduktiEnv env (annotatedDedukti result))),
-----    mkJSONField "coreGF" (stringJSON (showExpr [] (coreGF result))),
+    mkJSONListField "annotatedDedukti" (map (stringJSON . printDeduktiEnv env) (annotatedDedukti result)),
+    mkJSONListField "coreGF" (map (stringJSON . showExpr []) (coreGF result)),
     mkJSONField "nlgResults" (mkJSONObject [
       mkJSONListField (showCId lang) (map (stringJSON . printRank) ranks) | (lang, ranks) <- nlgResults result]),
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]
