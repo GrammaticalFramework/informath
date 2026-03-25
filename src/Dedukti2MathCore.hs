@@ -210,7 +210,7 @@ exp2prop exp = case specialDedukti2Informath callBacks exp of
   Just (expr, "Prop") -> fg expr
   Just (expr, "Kind") -> GExistKindProp (fg expr)
   _ -> case exp of
-    EIdent ident -> GIdentProp (ident2ident ident)
+    EIdent ident -> funListProp ident [] ---- GIdentProp (ident2ident ident)
     EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of

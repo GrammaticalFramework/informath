@@ -134,6 +134,7 @@ unit2exp unit = case unit of
 
 prop2dedukti :: GProp -> Exp
 prop2dedukti prop = case prop of
+  GExistKindProp k -> kind2dedukti k
   GProofProp p -> EApp (EIdent (QIdent "Proof")) (prop2dedukti p)
   GFalseProp -> propFalse
   GIdentProp ident -> EIdent (ident2ident ident)

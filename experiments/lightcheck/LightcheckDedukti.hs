@@ -15,7 +15,6 @@ import Dedukti.PrintDedukti
 
 import Dedukti.ParDedukti
 import Dedukti.LexDedukti
-import Dedukti.PrintDedukti
 import qualified Dedukti.ErrM as DE
 
 ---- import DeduktiOperations
