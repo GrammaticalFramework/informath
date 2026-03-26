@@ -87,8 +87,8 @@ expDemo dkmap exp = unlines $ intersperse "\n\n" [
     , prst (term2tree term)
     , "Generated linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
     , prls linesterm
-    , "Deduction tree generated from the linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
-    , prst (lines2steptree linesterm)
+----    , "Deduction tree generated from the linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
+----    , prst (lines2steptree linesterm)
 ----    , "Proof term generated from the linear proof"
 ----    , mathdisplay (prt (lines2term linesterm))
     , "\\clearpage"
@@ -107,7 +107,7 @@ testEq x y = if x==y then " OK" else " TODO"
 
 -- logical formulas
 
-type Formula = Exp
+type Formula = (Exp, Exp) --- Exp
 type Var = QIdent
 type Label = QIdent
 
@@ -165,17 +165,18 @@ lines2steptree = maptree step . lines2linetree
 -- read Dk module to a proof function map
 -----------------------------------------
 
--- map from arguments to value type
-type Function = [Exp] -> Exp
+-- map from arguments to value and type
+type Function = [Exp] -> (Exp, Exp)
 
 mkFunction :: QIdent -> Exp -> Function
 mkFunction c exp = \es -> val es
  where
   (hypos, body) = splitType exp
   vars = map hypo2var hypos
-  val es = case body of
-    EIdent (QIdent "Prop") -> foldl EApp (EIdent c) (take (length hypos) es)
-    _ -> subst (zip vars es) [] body
+  val es =
+---  case body of
+----    EIdent (QIdent "Prop") -> foldl EApp (EIdent c) (take (length hypos) es)  
+    (foldl EApp (EIdent c) (take (length hypos) es), subst (zip vars es) [] body)
 
   subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
   subst gamma bs e = case e of
@@ -191,9 +192,12 @@ mkFunction c exp = \es -> val es
 dkFunctionMap :: Module -> M.Map QIdent Function
 dkFunctionMap mo = M.mapWithKey mkFunction (identTypes mo)
 
+printFunctionMap :: M.Map QIdent Function -> [String]
 printFunctionMap fm = [
-  "% " ++ printTree c ++ " : " ++ printTree (f [EIdent (QIdent ("#" ++ show i)) | i <- [1..]])
-    | (c, f) <- M.toList fm
+  "% " ++ printTree c ++ " : " ++
+    printTree v ++ " : " ++ printTree t
+    | (c, f) <- M.toList fm,
+      let (v, t) = f [EIdent (QIdent ("#" ++ show i)) | i <- [1..]]
   ]
 
 exp2term ::  M.Map QIdent Function -> Exp -> Term
@@ -207,8 +211,22 @@ exp2term dmap exp = case exp of
         error ("cannot build application from " ++ printTree exp)
   EAbs _ _ -> case splitAbs exp of
     (xs, body) -> Abs (map bind2ident xs) (exp2term dmap body)
-  EIdent x -> Hyp x exp ---- TODO infer type of x
+  EIdent x -> Hyp x (EIdent x, exp) ---- TODO infer type of x
   _ -> Dk exp ----
+
+
+-----------------------
+-- filtering display
+-----------------------
+
+isProofFormula :: Formula -> Bool
+isProofFormula f = case f of
+  (_, EApp (EIdent (QIdent "Proof")) _) -> True
+  _ -> False
+
+prf :: Formula -> String
+prf (exp, typ) = -- printTree exp ++ " : " ++
+                 printTree typ
 
 
 
@@ -225,21 +243,22 @@ data Term =
 -- the last argument of App tells how to combine the argument formulas for display
 
 ---- idea: subformulas of conclusions could be derived from subderivations 
-app :: Label -> [Term] -> ([Formula] -> Formula) -> Term
+app :: Label -> [Term] -> Function -> Term
 app label terms conn = App label (map conclusion terms) terms conn
 
 conclusion :: Term -> Formula
 conclusion term = case term of
-  App _ _ ts c -> c (map conclusion ts)
+  App _ _ ts c -> c (map (fst . conclusion) ts)
   Abs _ t -> conclusion t
-  Hyp _ f -> f
-  Ass _ f -> f
+  Hyp x f -> f
+  Ass c f -> f
 
 -- conversions
 
 term2tree :: Term -> Tree Step
 term2tree term = case term of
-  App rule ps ts c -> Tree (mkStep noIdent (c ps) rule (concatMap bindings ts)) (map term2tree ts)
+  App rule ps ts c -> Tree (mkStep noIdent (c (map fst ps)) rule (concatMap bindings ts))
+                           (filter (isProofFormula . formula . root) (map term2tree ts))
   Abs xs t -> term2tree t
   Hyp x a -> Tree (mkStep x a (QIdent "hypo") []) []
   Ass x a -> Tree (mkStep x a (QIdent "ass") []) []
@@ -248,6 +267,7 @@ bindings :: Term -> [Var]
 bindings t = case t of
     Abs xs _ -> xs
     _ -> []
+
 
 term2lines :: Term -> [Line]
 term2lines =
@@ -258,18 +278,21 @@ term2lines =
  ps :: Int -> [Var] -> Term -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
-   Ass int formula ->
-     [mkHypoLine ln formula (QIdent "ass") int]
+   Ass var formula ->
+     [] ---- mkHypoLine ln formula (QIdent "ass") var]
 
-   Hyp int formula ->
-     [mkHypoLine ln formula (QIdent "hypo") int] -- line int with hyponumber ??
+   Hyp var formula ->
+     [] ---- mkHypoLine ln formula (QIdent "hypo") var]
      
    App label fs pts conn ->              
      let
          pss = psfold cont (pts, ln)
 	 ln3 = nextline ln (concat pss)
+	 concl = conn (map fst fs)
      in concat pss ++
-          [mkLine ln3 cont (conn fs) label (nub (map lastline pss)) (concatMap bindings pts)]
+         if isProofFormula concl
+          then [mkLine ln3 cont concl label (nub (map lastline pss)) (concatMap bindings pts)]
+	  else []
      
    Abs xs t -> ps ln (cont ++ xs) t
 
@@ -285,22 +308,22 @@ term2lines =
  nextline ln p = if null p then ln else lastline p + 1
 
  -- compress lines by dropping repetitions of hypotheses and renumbering lines
- compress :: Int -> [(Int, Int)] -> [(Var, Var)] -> [Line] -> [Line]
+ compress :: Int -> [(Int, Int)] -> [(Var, (Var, Int))] -> [Line] -> [Line]
  compress gaps relines rehypos ls = case ls of
    ln : rest | elem (rule (step ln)) [QIdent "hypo", QIdent "ass"] ->
      case (hyponumber (step ln)) of
        h -> case lookup h rehypos of
-         Just k ->  -- old hypothesis: add gap and re-point line number to first occurrence
-	   compress (gaps + 1) relines rehypos rest ---- TODO ((line ln, k) : relines) rehypos rest
+         Just (x, k) ->  -- old hypothesis: add gap and re-point line number to first occurrence
+	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest
          _ ->       -- new hypothesis: update its line number and hypo number to new line number 
 	   let nln = line ln - gaps
+	       vnln = QIdent (printTree h ++ show nln) ---- h TODO
 	   in ln{
 	         line = nln,
----- TODO		 step = (step ln){hyponumber=nln},
----- TODO	 context = nln : tail (context ln)
-		 context = h : context ln
+		 step = (step ln){hyponumber=vnln},
+                 context = vnln : tail (context ln)
 		 } :
-	      compress gaps ((line ln, nln):relines) rehypos rest ---- TODO ((h, nln) : rehypos) rest
+	      compress gaps ((line ln, nln):relines) ((h, (vnln, nln)) : rehypos) rest
    ln : rest ->
            renumberLine (line ln - gaps) relines rehypos ln :
            compress gaps ((line ln, line ln -gaps):relines) rehypos rest
@@ -309,9 +332,9 @@ term2lines =
  -- change the line number and all references to other line numbers
  renumberLine num relines rehypos ln = ln {
     premisses = [maybe p id (lookup p relines) | p <- premisses ln],
-    context = [maybe p id (lookup p rehypos) | p <- context ln],
+    context = [maybe p fst (lookup p rehypos) | p <- context ln],
     line = num,
-    step = (step ln){discharged = [maybe p id (lookup p rehypos) | p <- discharged (step ln)]}
+    step = (step ln){discharged = [maybe p fst (lookup p rehypos) | p <- discharged (step ln)]}
     }
 {-
 lines2term :: [Line] -> Term
@@ -329,9 +352,6 @@ tree2term (Tree s ts) = case (rule s, discharged s) of
 ----------------------------
 -- printing
 -----------------------------
-
-prf :: Formula -> String
-prf = printTree
 
 prls :: [Line] -> String
 prls lns = unlines $
