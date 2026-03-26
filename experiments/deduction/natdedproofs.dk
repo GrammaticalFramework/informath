@@ -47,6 +47,14 @@ thm nd4 : (A : Prop) -> (B : Prop) -> Proof (if (or A B) (or B A)) :=
       (e => (orIl B A (hypo B e)))).
 
 
+(;
+thm nd5 : (A : Set) -> (B : (x : Elem A -> Prop)) -> Proof (forall A (x => if (B x) (B x))) :=
+  A => B =>
+  forallI A (x => if (B x) (B x)) (x =>
+    ifI (B x) (B x) (h =>
+      hypo (B x) h)).
+;)
+
 (; arithmetic ;)
 
 thm prop1 : Proof (odd 1) := oddSucc 0 even0.

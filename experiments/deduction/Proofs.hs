@@ -205,8 +205,8 @@ exp2term dmap exp = case exp of
   EApp _ _ -> case splitApp exp of
     (EIdent c, args) -> case M.lookup c dmap of
       Just f -> app c (map (exp2term dmap) args) f
-      _ -> -- Dk exp ----
-        error ("cannot apply " ++ printTree c)
+      _ -> Dk exp ----
+        --error ("cannot apply " ++ printTree c)
     _ -> -- Dk exp ----
         error ("cannot build application from " ++ printTree exp)
   EAbs _ _ -> case splitAbs exp of
@@ -219,15 +219,21 @@ exp2term dmap exp = case exp of
 -- filtering display
 -----------------------
 
+formulaConstructor :: Formula -> QIdent
+formulaConstructor f = case f of
+  (_, EApp (EIdent c) _) -> c
+  (_, EIdent c) -> c
+  _ -> QIdent "?" ---
+
 isProofFormula :: Formula -> Bool
-isProofFormula f = case f of
-  (_, EApp (EIdent (QIdent "Proof")) _) -> True
-  _ -> False
+isProofFormula f = elem (formulaConstructor f) [QIdent "Proof"] --- , QIdent "Elem"]
 
 prf :: Formula -> String
-prf (exp, typ) = -- printTree exp ++ " : " ++
-                 printTree typ
-
+prf f@(exp, typ) =
+  -- (if formulaConstructor f == QIdent "Elem"
+  -- then (printTree exp ++ " : ")
+  -- else "") ++
+  printTree typ
 
 
 -----------------------
