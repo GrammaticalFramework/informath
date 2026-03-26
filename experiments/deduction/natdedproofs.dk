@@ -23,6 +23,20 @@ thm nd0 : (A : Prop) -> (B : Prop) -> Proof (if (and A B) (and B A)) :=
 thm nd1 : (A : Prop) -> (B : Prop) -> Proof (if A (if B A)) :=
   A => B => ifI A (if B A) (h => ifI B A (k => hypo A h)).
 
+
+thm nd3 : (A : Prop) -> (B : Prop) -> Proof (if (and A B) (and (not (not A)) (not (not B)))) :=
+  A => B =>
+  ifI (and A B) (and (not (not A)) (not (not B)))
+    (h => andI (not (not A)) (not (not B))
+      (notI (not A) 
+        (d => notE A
+	  (andEl A B (hypo (and A B) h))
+	  (hypo (not A) d)))
+      (notI (not B) 
+        (e => notE B
+	  (andEr A B (hypo (and A B) h))
+	  (hypo (not B) e)))).
+
 (; A v B -> B v A ;)
 thm nd4 : (A : Prop) -> (B : Prop) -> Proof (if (or A B) (or B A)) :=
   A => B =>

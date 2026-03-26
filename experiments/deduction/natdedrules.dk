@@ -42,6 +42,10 @@ ifI : (A : Prop) -> (B : Prop) -> (b : ((x : Proof A) -> Proof B)) -> Proof (if 
 def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
 [c, a] ifE _ _ (ifI _ _ c) a --> c a.
 
+def notI : (A : Prop) -> (b : ((x : Proof A) -> Proof false)) -> Proof (not A) := A => b => ifI A false b.
+def notE : (A : Prop) -> Proof A -> Proof (not A) -> Proof false := A => a => b => ifE A false b a.
+
+
 forallI : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
   (b : ((x : Elem A) -> Proof (B x))) -> Proof (forall A (x => B x)).
 
