@@ -226,13 +226,13 @@ formulaConstructor f = case f of
   _ -> QIdent "?" ---
 
 isProofFormula :: Formula -> Bool
-isProofFormula f = elem (formulaConstructor f) [QIdent "Proof"] --- , QIdent "Elem"]
+isProofFormula f = elem (formulaConstructor f) [QIdent "Proof", QIdent "Elem"]
 
 prf :: Formula -> String
 prf f@(exp, typ) =
-  -- (if formulaConstructor f == QIdent "Elem"
-  -- then (printTree exp ++ " : ")
-  -- else "") ++
+  (if formulaConstructor f == QIdent "Elem"
+   then (printTree exp ++ " : ")
+   else "") ++
   printTree typ
 
 
@@ -258,6 +258,7 @@ conclusion term = case term of
   Abs _ t -> conclusion t
   Hyp x f -> f
   Ass c f -> f
+  Dk exp  -> (exp, exp) ---- TODO
 
 -- conversions
 
@@ -268,6 +269,7 @@ term2tree term = case term of
   Abs xs t -> term2tree t
   Hyp x a -> Tree (mkStep x a (QIdent "hypo") []) []
   Ass x a -> Tree (mkStep x a (QIdent "ass") []) []
+  Dk exp -> Tree  (mkStep (QIdent "?") (exp, exp) (QIdent "Dk") []) [] ---- TODO
 
 bindings :: Term -> [Var]
 bindings t = case t of
@@ -301,6 +303,8 @@ term2lines =
 	  else []
      
    Abs xs t -> ps ln (cont ++ xs) t
+
+   Dk _ -> [] ---- TODO
 
  psfold :: [Var] -> ([Term], Int) -> [[Line]]
  psfold cont (pts, n) = case pts of
