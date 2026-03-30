@@ -62,7 +62,7 @@ uncoerce t = case t of
 -- works on lookup with Dedukti QIdent, which annotates applicative trees
 
 synonymize :: forall a. Env -> Tree a -> [Tree a]
-synonymize env t = symbs t {- ++ verbs t -} where --- let st = (t:symbs t) in st ++ concatMap verbs st where
+synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap verbs st where
 
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
   ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
@@ -135,42 +135,7 @@ synonymize env t = symbs t {- ++ verbs t -} where --- let st = (t:symbs t) in st
       [app alt [] | alt <- ssyns c]
     GTermExp t -> [t]
     _ -> []
-{-
-  verbs :: forall a. Tree a -> [Tree a]
-  verbs t = case t of
-    GAnnotateProp c (GAdjProp _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
-    GAnnotateProp c (GAdj2Prop _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GAdjCProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GAdjEProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GAdj3Prop _ x y z) ->  [pred alt [sx, sy, sz] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y, sz <- tverbs z]
-    GAnnotateProp c (GNoun1Prop _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
-    GAnnotateProp c (GNoun2Prop _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GNounCProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GVerbProp _ x) ->  [pred alt [sx] | alt <- vsyns c, sx <- tverbs x]
-    GAnnotateProp c (GVerb2Prop _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GAnnotateProp c (GVerbCProp _ x y) ->  [pred alt [sx, sy] | alt <- vsyns c, sx <- tverbs x, sy <- tverbs y]
-    GFunExp _ _ ->  map GTermExp (terms t)  ---- TODO: also Noun, Fam
-    GFun2Exp _ _ _ ->  map GTermExp (terms t) ---- TODO: also verbal synonyms
-    GFunCExp _ _ _ ->  map GTermExp (terms t)
-    _ -> composOpM verbs t
-   where
-     tverbs x = x : verbs x ++ map GTermExp (terms x)
-
-  ---- TODO: define this once and for all in a shared place (also needed in Dedukti2MathCore)
-  pred (fun, cat) xs = case (PGF.showType [] cat, xs) of
-    ("Adj", [x]) -> GAdjProp (fg fun) x
-    ("Adj2", [x, y]) -> GAdj2Prop (fg fun) x y
-    ("AdjC", [x, y]) -> GAdjCProp (fg fun) x y
-    ("AdjE", [x, y]) -> GAdjEProp (fg fun) x y
-    ("Adj3", [x, y, z]) -> GAdj3Prop (fg fun) x y z
-    ("Noun1", [x]) -> GNoun1Prop (fg fun) x
-    ("Noun2", [x, y]) -> GNoun2Prop (fg fun) x y
-    ("NounC", [x, y]) -> GNounCProp (fg fun) x y
-    ("Verb", [x]) -> GVerbProp (fg fun) x
-    ("Verb2", [x, y]) -> GVerb2Prop (fg fun) x y
-    ("VerbC", [x, y]) -> GVerbCProp (fg fun) x y
-    _ -> error $ "NOT YET pred: " ++ PGF.showExpr [] fun ++ " : " ++ show cat ++ " " ++ show (length xs)
--}
+    
   sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
   sympred (fun, cat) xs = case (PGF.showType [] cat, xs) of
     ("Compar", [x, y]) -> GFormulaProp (GEquationFormula (GBinaryEquation (fg fun) x y))
@@ -376,9 +341,11 @@ variations tree = case tree of
     in tree : [Gsum3dots_Term (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
 
   GFormulaProp formula ->
-    ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
+    tree : [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
+    -- ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
 
-  GOper2Term (LexOper2 "times_Oper2") x y -> [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
+  GOper2Term (LexOper2 "times_Oper2") x y ->
+    tree : [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
 
   _ -> composOpM variations tree
 
