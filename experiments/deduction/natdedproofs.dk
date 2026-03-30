@@ -59,11 +59,31 @@ thm nd5 : (A : Set) -> (B : (x : Elem A -> Prop)) -> Proof (forall A (x => if (B
 
 thm prop1 : Proof (odd 1) := oddSucc 0 even0.
 
-thm prop3 : Proof (forall Nat (n => (or (even n) (odd n)))) :=
+(; Counting and Numbers, from Pure Mathesis to Base Conversion Algorithms, by Jan von Plato 2019 ;)
+
+thm thm1a : Proof (forall Nat (n => (or (even n) (odd n)))) :=
   NatInd (x => or (even x) (odd x))
          (orIl (even 0) (odd 0) even0)
 	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
 	                (hypo (or (even x) (odd x)) y)
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
 	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (hypo (odd x) h)))).
+			
+thm thm1 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
+  n => NatE n (x => or (even x) (odd x))
+         (orIl (even 0) (odd 0) even0)
+	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
+	                (hypo (or (even x) (odd x)) y)
+	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (hypo (even x) h)))
+	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (hypo (odd x) h)))).
+
+thm lemma4 : (n : Elem Nat) -> Proof (if (odd (Succ n)) (even n)) :=
+  n =>
+  ifI (odd (Succ n)) (even n)
+    (h => 
+      orE (even n) (odd n) (even n) (thm1 n)
+      (d => hypo (even n) d)
+      (e => falseE (even n) (neverEvenOdd (Succ n)
+        (evenSucc n (hypo (odd n) e)) (hypo (odd (Succ n)) h)))).
+    
 

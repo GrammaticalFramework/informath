@@ -110,3 +110,13 @@ even0 : Proof (even 0).
 evenSucc : (n : Elem Nat) -> Proof (odd n) -> Proof (even (Succ n)).
 oddSucc : (n : Elem Nat) -> Proof (even n) -> Proof (odd (Succ n)).
 
+neverEvenOdd : (n : Elem Nat) -> Proof (even n) -> Proof (odd n) -> Proof false.
+
+def MT : (A : Prop) -> (B : Prop) -> Proof (or A B) -> Proof (not A) -> Proof B :=
+  A => B => c => k =>
+    orE A B B
+      c
+      (d => falseE B (notE A (hypo A d) k))
+      (e => hypo B e).
+
+
