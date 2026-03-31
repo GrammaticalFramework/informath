@@ -8,8 +8,8 @@ import Data.List(sortOn)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-max_number = 199 -- number of trees considered with checkVariables
-max_number_taken = 3 -- number of trees considered for semantics
+max_number = 1999 -- number of trees considered with checkVariables
+max_number_taken = 19 -- number of trees considered for semantics
 
 -- these are the functions to be exported to other modules
 
@@ -27,7 +27,7 @@ parseJmt env cat s =
          in
 	 if not (null trees)
             then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
-            else (Just [], "# FAILURE VARCHECK")
+            else (Just [], "# FAILURE SPURIOUS OR VARCHECK")
     ParseFailed pos -> 
          (Nothing, "# FAILURE AT " ++ show pos)
     ParseIncomplete -> 
