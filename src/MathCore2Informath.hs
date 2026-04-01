@@ -67,9 +67,6 @@ synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap ver
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
   ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
 
-  vsyns :: GIdent -> [(PGF.Tree, PGF.Type)]
-  vsyns c = maybe [] (\e -> primary e : synonyms e) (M.lookup (qId c) (constantTable env))
-
   qId :: GIdent -> QIdent
   qId (GStrIdent (GString s)) = QIdent s
 
@@ -97,11 +94,14 @@ synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap ver
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
     GAnnotateProp c (GVerbCProp _ x y) ->
       [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
+
+    GAnnotateProp c (GAppProp _ exps) ->
+      [sympred alt xs | alt <- ssyns c, xs <- sequence (map terms (exps2list exps))]
  
-    GNameExp _     -> map GTermExp (terms t)
-    GFunExp _ _    -> map GTermExp (terms t)
-    GFun2Exp _ _ _ -> map GTermExp (terms t)
-    GFunCExp _ _ _ -> map GTermExp (terms t)
+    GAnnotateExp c (GNameExp _)     -> map GTermExp (terms t)
+    GAnnotateExp c (GFunExp _ _)    -> map GTermExp (terms t)
+    GAnnotateExp c (GFun2Exp _ _ _) -> map GTermExp (terms t)
+    GAnnotateExp c (GFunCExp _ _ _) -> map GTermExp (terms t)
 ----    GNounKind _    -> map (GExpKind . GTermExp) (terms t)
 ----    GFamKind _ _   -> map GTermKind (terms t)
 ----    GFam2Kind _ _ _ -> map GTermKind (terms t)
