@@ -1,4 +1,5 @@
 concrete UserExtensionsEng of UserExtensions =
+  CategoriesEng,
   NaprocheEng,
   NaprocheWordsEng,
   HottWordsEng,

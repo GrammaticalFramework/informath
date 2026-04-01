@@ -1,4 +1,5 @@
 abstract UserExtensions =
+  Categories,
   Naproche,
   NaprocheWords,
   HottWords,
