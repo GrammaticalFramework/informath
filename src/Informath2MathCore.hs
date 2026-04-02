@@ -209,6 +209,8 @@ sem env t = case t of
   GNotVerbProp adj exp -> GCoreNotProp (sem env (GVerbProp adj exp))
   GNotVerb2Prop adj x y -> GCoreNotProp (sem env (GVerb2Prop adj x y))
 
+  GPluralKindExp kind -> GKindExp kind
+
   GKindArgKind kind -> 
     let (var, nenv) = newVar env
     in GIdentsArgKind (sem nenv kind) (GListIdent [var])

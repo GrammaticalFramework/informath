@@ -198,6 +198,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
         EIdent ident -> funListKind ident args
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
       Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
+      Just _ -> funListKind ident []
       _ -> ident2kind ident ---- TODO funListKind ident []
     EFun _ _ -> case splitType exp of
       (hypos, body) ->
@@ -244,8 +245,9 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
       Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
-      _ -> ident2exp ident ---- TODO funListExp ident []
-  
+      Just _ -> funListExp ident []
+      _ -> ident2exp ident
+
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of
    {-

@@ -103,6 +103,8 @@ lin
         mkS (mkCl we_NP (mkVP (mkVP (mkVP define_V2 exp)
           <lin Adv (mkUtt (mkVP adj)) : Adv>) (Syntax.mkAdv if_Subj prop.s))))) ; 
 
+  PluralKindExp kind = mkNP thePl_Det (useKind kind) ;
+
   AllKindExp kind = mkNP all_Predet (mkNP aPl_Det (useKind kind)) ;
   AllIdentsKindExp idents kind = mkNP all_Predet (mkNP aPl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)) ;
 

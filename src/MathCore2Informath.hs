@@ -97,7 +97,7 @@ synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap ver
 
     GAnnotateProp c (GAppProp _ exps) ->
       [sympred alt xs | alt <- ssyns c, xs <- sequence (map terms (exps2list exps))]
- 
+
     GAnnotateExp c (GNameExp _)     -> map GTermExp (terms t)
     GAnnotateExp c (GFunExp _ _)    -> map GTermExp (terms t)
     GAnnotateExp c (GFun2Exp _ _ _) -> map GTermExp (terms t)
@@ -132,6 +132,8 @@ synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap ver
     GAnnotateExp c (GNameExp _) ->
       [app alt [] | alt <- ssyns c]
     GAnnotateKind c (GNounKind _) ->
+      [app alt [] | alt <- ssyns c]
+    GAnnotateExp c (GKindExp e) ->
       [app alt [] | alt <- ssyns c]
     GTermExp t -> [t]
     _ -> []
@@ -346,6 +348,8 @@ variations tree = case tree of
 
   GOper2Term (LexOper2 "times_Oper2") x y ->
     tree : [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
+
+  GKindExp kind -> tree : [GPluralKindExp k | k <- variations kind]
 
   _ -> composOpM variations tree
 

@@ -289,6 +289,7 @@ data Tree :: * -> * where
   GNoIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
   GNoKindExp :: GKind -> Tree GExp_
   GOrExp :: GListExp -> Tree GExp_
+  GPluralKindExp :: GKind -> Tree GExp_
   GSomeIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
   GSomeKindExp :: GKind -> Tree GExp_
   GTermExp :: GTerm -> Tree GExp_
@@ -1010,6 +1011,7 @@ instance Eq (Tree a) where
     (GNoIdentsKindExp x1 x2,GNoIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoKindExp x1,GNoKindExp y1) -> and [ x1 == y1 ]
     (GOrExp x1,GOrExp y1) -> and [ x1 == y1 ]
+    (GPluralKindExp x1,GPluralKindExp y1) -> and [ x1 == y1 ]
     (GSomeIdentsKindExp x1 x2,GSomeIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSomeKindExp x1,GSomeKindExp y1) -> and [ x1 == y1 ]
     (GTermExp x1,GTermExp y1) -> and [ x1 == y1 ]
@@ -1959,6 +1961,7 @@ instance Gf GExp where
   gf (GNoIdentsKindExp x1 x2) = mkApp (mkCId "NoIdentsKindExp") [gf x1, gf x2]
   gf (GNoKindExp x1) = mkApp (mkCId "NoKindExp") [gf x1]
   gf (GOrExp x1) = mkApp (mkCId "OrExp") [gf x1]
+  gf (GPluralKindExp x1) = mkApp (mkCId "PluralKindExp") [gf x1]
   gf (GSomeIdentsKindExp x1 x2) = mkApp (mkCId "SomeIdentsKindExp") [gf x1, gf x2]
   gf (GSomeKindExp x1) = mkApp (mkCId "SomeKindExp") [gf x1]
   gf (GTermExp x1) = mkApp (mkCId "TermExp") [gf x1]
@@ -1993,6 +1996,7 @@ instance Gf GExp where
       Just (i,[x1,x2]) | i == mkCId "NoIdentsKindExp" -> GNoIdentsKindExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "NoKindExp" -> GNoKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "OrExp" -> GOrExp (fg x1)
+      Just (i,[x1]) | i == mkCId "PluralKindExp" -> GPluralKindExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "SomeIdentsKindExp" -> GSomeIdentsKindExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "SomeKindExp" -> GSomeKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "TermExp" -> GTermExp (fg x1)
@@ -3712,6 +3716,7 @@ instance Compos Tree where
     GNoIdentsKindExp x1 x2 -> r GNoIdentsKindExp `a` f x1 `a` f x2
     GNoKindExp x1 -> r GNoKindExp `a` f x1
     GOrExp x1 -> r GOrExp `a` f x1
+    GPluralKindExp x1 -> r GPluralKindExp `a` f x1
     GSomeIdentsKindExp x1 x2 -> r GSomeIdentsKindExp `a` f x1 `a` f x2
     GSomeKindExp x1 -> r GSomeKindExp `a` f x1
     GTermExp x1 -> r GTermExp `a` f x1

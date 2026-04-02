@@ -78,6 +78,8 @@ fun
   DefinedAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;
   WeDefineAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;
 
+  PluralKindExp : Kind -> Exp ; -- the rationals
+
   AllKindExp : Kind -> Exp ;
   AllIdentsKindExp : [Ident] -> Kind -> Exp ;
   EveryKindExp : Kind -> Exp ;

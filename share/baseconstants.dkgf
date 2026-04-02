@@ -21,10 +21,10 @@ bool : boolean_Noun
 List : list_Fam
 Dig : digit_Noun
 Nat : natural_Noun | \Natural
-Int : integer_Noun | integer_Const
-Rat : rational_Noun | rational_Const
-Real : real_Noun | real_Const
-Complex : complex_Noun | complex_Const
+Int : integer_Noun | \Integer
+Rat : rational_Noun | \Rational
+Real : real_Noun | \Real
+Complex : complex_Noun | \Complex
 Cardinal : cardinal_Noun
 Eq : Eq_Adj2 | Eq_AdjE | Eq_Compar
 Lt : Lt_Adj2 | Lt_Compar
@@ -134,6 +134,10 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommadn{\infinity}{\infty}
 #MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
 #MACRO \newcommand{\Natural}{\mathbb{N}}
+#MACRO \newcommand{\Integer}{\mathbb{Z}}
+#MACRO \newcommand{\Rational}{\mathbb{Q}}
+#MACRO \newcommand{\Real}{\mathbb{R}}
+#MACRO \newcommand{\Complex}{\mathbb{C}}
 
 
 
