@@ -349,7 +349,7 @@ variations tree = case tree of
   GOper2Term (LexOper2 "times_Oper2") x y ->
     tree : [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
 
-  GKindExp kind -> tree : [GPluralKindExp k | k <- variations kind]
+  GKindExp kind -> tree : [GPluralKindExp k | k <- kind : variations kind]
 
   _ -> composOpM variations tree
 
