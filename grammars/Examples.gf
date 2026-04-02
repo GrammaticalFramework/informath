@@ -1,4 +1,4 @@
-abstract Examples = Categories, MathCore ** {
+abstract Examples = Categories ** {
 
 -- extensions of lexicon definable in symbol tables and parsable from examples
 

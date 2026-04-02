@@ -102,7 +102,7 @@ funListExp ident exps = annotateExp ident $ case ident of
     (Just ("Binder", c), [EAbs b y]) -> GBinderExp (fgTree c) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y)
-    (Just (f, c), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
+    (Just (c, _), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
@@ -116,7 +116,7 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Dep",  c), [x]) -> GDepKind (fgTree c) (exp2exp x) 
     (Just ("Dep2", c), [x, y]) -> GDep2Kind (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("DepC", c), [x, y]) -> GDepCKind (fgTree c) (exp2exp x) (exp2exp y)
-    (Just (f, c), _) | S.member c expCats -> GExpKind (funListExp ident exps)
+    (Just (c, _), _) | S.member c expCats -> GExpKind (funListExp ident exps)
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))
@@ -136,7 +136,7 @@ funListProp ident exps = annotateProp ident $ case ident of
     (Just ("Noun1", c), [x]) -> GNoun1Prop (fgTree c) x
     (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
     (Just ("NounC", c), [x, y]) -> GNounCProp (fgTree c) x y
-    (Just (f, c), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
+    (Just (c, _), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
       _:_ -> GAppProp (GStrIdent (GString s)) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
@@ -198,7 +198,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
         EIdent ident -> funListKind ident args
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
       Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
-      _ -> ident2kind ident
+      _ -> ident2kind ident ---- TODO funListKind ident []
     EFun _ _ -> case splitType exp of
       (hypos, body) ->
          GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind body)
@@ -244,7 +244,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
       Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
-      _ -> ident2exp ident
+      _ -> ident2exp ident ---- TODO funListExp ident []
   
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of

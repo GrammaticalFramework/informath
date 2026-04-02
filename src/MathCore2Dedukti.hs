@@ -271,6 +271,8 @@ exp2dedukti exp = case exp of
 
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
   GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
+
+  GKindExp kind -> kind2dedukti kind
   
   _ -> eUndefinedDebug exp ---- TODO
 

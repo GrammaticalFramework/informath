@@ -1,5 +1,5 @@
 i -retain InformathEng.gf
-dg -only=Informath,MathCore,MathExtensions,SymbolicConstants,VerbalConstants,Categories,Identifiers,Terms,UserExtensions,WikidataWords,ProperNames
+dg -only=Informath,MathCore,MathExtensions,SymbolicConstants,VerbalConstants,Categories,Identifiers,Terms,UserExtensions,WikidataWords,ProperNames,Examples
 ! dot -Tpng _gfdepgraph.dot >absdeps.png
-dg -only=Informath*,MathCore*,MathExtensions*,SymbolicConstants*,VerbalConstants*,Categories*,Identifiers*,Terms*,UserExtensions*,Utilities*,WikidataWords*,ProperNames*
+dg -only=Informath*,MathCore*,MathExtensions*,SymbolicConstants*,VerbalConstants*,Categories*,Identifiers*,Terms*,UserExtensions*,Utilities*,WikidataWords*,ProperNames*,Examples*
 ! dot -Tpng _gfdepgraph.dot >engdeps.png
