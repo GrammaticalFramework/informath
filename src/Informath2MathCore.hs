@@ -235,7 +235,6 @@ sem env t = case t of
   Gtimes_Term x y -> GOper2Term (LexOper2 "times_Oper2") (sem env x) (sem env y)
   GParenthTerm term -> sem env term
 
-
 -- Naproche extensions
   GSupposePropHypo prop -> sem env (GPropHypo prop)
   GIffIffProp a b -> sem env (GIffProp a b)

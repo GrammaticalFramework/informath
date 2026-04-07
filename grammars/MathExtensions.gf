@@ -20,7 +20,9 @@ fun
   
   AbsExp : [Ident] -> Exp -> Exp ;
 
+-- comprehension with verbal condition
 
+  ComprehensionTextTerm : Term -> Ident -> Prop -> Term ;
 
 -- to remove parentheses around complex propositions and introduce lists
   AndProp : [Prop] -> Prop ;

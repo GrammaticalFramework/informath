@@ -226,13 +226,12 @@ argkind2dedukti argkind = case argkind of
 kind2dedukti :: GKind -> Exp
 kind2dedukti kind = case kind of
   GElemKind k -> EApp (EIdent (QIdent "Elem")) (kind2dedukti k)
-  {- ----
+
   GSuchThatKind kind ident prop ->
-    propSigma
-      (kind2dedukti kind)
-      (EAbs (BVar (ident2ident ident))
-            (prop2dedukti prop))
-	    -}
+    foldl EApp (EIdent (QIdent "suchthat")) [ 
+      (kind2dedukti kind),
+      (EAbs (BVar (ident2ident ident)) (prop2dedukti prop))]
+
   GFamKind fam exp ->
     EApp (EIdent (QIdent (showGF fam))) (kind2dedukti exp)
   GFam2Kind fam exp1 exp2 ->
@@ -289,7 +288,16 @@ term2dedukti term = case term of
   GMacroTerm macro -> foldl EApp (EIdent (macro2ident macro)) []
   GApp1MacroTerm macro term -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [term])
   GApp2MacroTerm macro x y -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y])
-  GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z]) 
+  GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z])
+  GComprehensionTerm kterm x pterm ->
+    foldl EApp (EIdent (QIdent "suchthat")) [ 
+      (term2dedukti kterm),
+      (EAbs (BVar (ident2ident x)) (formula2dedukti pterm))]
+  GComprehensionTextTerm kterm x prop ->
+    foldl EApp (EIdent (QIdent "suchthat")) [ 
+      (term2dedukti kterm),
+      (EAbs (BVar (ident2ident x)) (prop2dedukti prop))]
+
   _ -> eUndefinedDebug term ---- TODO
 
 {-

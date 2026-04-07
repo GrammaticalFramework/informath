@@ -863,7 +863,8 @@ data Tree :: * -> * where
   GApp3MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> Tree GTerm_
   GApp4MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> GTerm -> Tree GTerm_
   GAppFunctionTerm :: GFunction -> GListTerm -> Tree GTerm_
-  GComprehensionTerm :: GTerm -> GTerm -> GFormula -> Tree GTerm_
+  GComprehensionTerm :: GTerm -> GIdent -> GFormula -> Tree GTerm_
+  GComprehensionTextTerm :: GTerm -> GIdent -> GProp -> Tree GTerm_
   GConstTerm :: GConst -> Tree GTerm_
   GEnumSetTerm :: GListTerm -> Tree GTerm_
   GIdentTerm :: GIdent -> Tree GTerm_
@@ -1586,6 +1587,7 @@ instance Eq (Tree a) where
     (GApp4MacroTerm x1 x2 x3 x4 x5,GApp4MacroTerm y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GAppFunctionTerm x1 x2,GAppFunctionTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GComprehensionTerm x1 x2 x3,GComprehensionTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GComprehensionTextTerm x1 x2 x3,GComprehensionTextTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GConstTerm x1,GConstTerm y1) -> and [ x1 == y1 ]
     (GEnumSetTerm x1,GEnumSetTerm y1) -> and [ x1 == y1 ]
     (GIdentTerm x1,GIdentTerm y1) -> and [ x1 == y1 ]
@@ -3482,6 +3484,7 @@ instance Gf GTerm where
   gf (GApp4MacroTerm x1 x2 x3 x4 x5) = mkApp (mkCId "App4MacroTerm") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GAppFunctionTerm x1 x2) = mkApp (mkCId "AppFunctionTerm") [gf x1, gf x2]
   gf (GComprehensionTerm x1 x2 x3) = mkApp (mkCId "ComprehensionTerm") [gf x1, gf x2, gf x3]
+  gf (GComprehensionTextTerm x1 x2 x3) = mkApp (mkCId "ComprehensionTextTerm") [gf x1, gf x2, gf x3]
   gf (GConstTerm x1) = mkApp (mkCId "ConstTerm") [gf x1]
   gf (GEnumSetTerm x1) = mkApp (mkCId "EnumSetTerm") [gf x1]
   gf (GIdentTerm x1) = mkApp (mkCId "IdentTerm") [gf x1]
@@ -3502,6 +3505,7 @@ instance Gf GTerm where
       Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "App4MacroTerm" -> GApp4MacroTerm (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2]) | i == mkCId "AppFunctionTerm" -> GAppFunctionTerm (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "ComprehensionTerm" -> GComprehensionTerm (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "ComprehensionTextTerm" -> GComprehensionTextTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1]) | i == mkCId "ConstTerm" -> GConstTerm (fg x1)
       Just (i,[x1]) | i == mkCId "EnumSetTerm" -> GEnumSetTerm (fg x1)
       Just (i,[x1]) | i == mkCId "IdentTerm" -> GIdentTerm (fg x1)
@@ -3883,6 +3887,7 @@ instance Compos Tree where
     GApp4MacroTerm x1 x2 x3 x4 x5 -> r GApp4MacroTerm `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GAppFunctionTerm x1 x2 -> r GAppFunctionTerm `a` f x1 `a` f x2
     GComprehensionTerm x1 x2 x3 -> r GComprehensionTerm `a` f x1 `a` f x2 `a` f x3
+    GComprehensionTextTerm x1 x2 x3 -> r GComprehensionTextTerm `a` f x1 `a` f x2 `a` f x3
     GConstTerm x1 -> r GConstTerm `a` f x1
     GEnumSetTerm x1 -> r GEnumSetTerm `a` f x1
     GIdentTerm x1 -> r GIdentTerm `a` f x1

@@ -131,13 +131,21 @@ synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap ver
       [app alt [sx, sy, GIdentTerm i, sz] | alt <- ssyns c, sx <- terms x, sy <- terms y, sz <- terms z]
     GAnnotateExp c (GNameExp _) ->
       [app alt [] | alt <- ssyns c]
-    GAnnotateKind c (GNounKind _) ->
-      [app alt [] | alt <- ssyns c]
     GAnnotateExp c (GKindExp e) ->
       [app alt [] | alt <- ssyns c]
     GTermExp t -> [t]
     _ -> []
-    
+
+  ---- TODO: not yet reachable
+  kindterms :: GKind -> [GTerm]
+  kindterms t = case t of
+    GAnnotateKind c (GNounKind _) ->
+      [app alt [] | alt <- ssyns c]
+    GSuchThatKind kind ident prop -> 
+----      [GComprehensionTerm kterm ident pterm | kterm <- kindterms kind, pterm <- symbs prop] ++
+      [GComprehensionTextTerm kterm ident prop | kterm <- kindterms kind]
+    _ -> []
+
   sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
   sympred (fun, cat) xs = case (PGF.showType [] cat, xs) of
     ("Compar", [x, y]) -> GFormulaProp (GEquationFormula (GBinaryEquation (fg fun) x y))

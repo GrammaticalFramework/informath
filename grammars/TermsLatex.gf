@@ -30,9 +30,9 @@ lin
 
   EnumSetTerm ts = constant ("\\{" ++ ts.s ++ "\\}") ** {isNumber = False} ;
   
-  ComprehensionTerm a b f =
-    tconstant ("\\{" ++ top a ++ "\\in" ++ top b ++
-                ":" ++ top f ++ "\\}") ;
+  ComprehensionTerm a x f =
+    tconstant ("\\{" ++ x ++ "\\in" ++ top a ++
+                "\\mid" ++ top f ++ "\\}") ;
 
   BaseTerm x = {s = top x ; isPl = False} ;
   ConsTerm x xs = {s = top x ++ "," ++ xs.s ; isPl = True} ;

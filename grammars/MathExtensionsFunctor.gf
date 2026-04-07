@@ -32,6 +32,9 @@ lin
   AbsExp idents exp =
     mkNP the_Det (mkCN function_N (mkRS (mkRCl which_RP map_V3 idents.np exp))) ;
 
+  ComprehensionTextTerm a x f =
+    tconstant ("\\{" ++ x ++ "\\in" ++ top a ++
+                "\\mid" ++ "\\text{" ++ (mkUtt (topProp f)).s ++ "}" ++ "\\}") ;
 
   AndProp props = simpleProp (mkS and_Conj props) ;
   OrProp props = simpleProp (mkS or_Conj props) ;

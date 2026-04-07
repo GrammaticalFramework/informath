@@ -30,7 +30,7 @@ fun
   AppFunctionTerm : Function -> [Term] -> Term ;
 
   EnumSetTerm : [Term] -> Term ;
-  ComprehensionTerm : Term -> Term -> Formula -> Term ;
+  ComprehensionTerm : Term -> Ident -> Formula -> Term ;
   
   IdentFunction : Ident -> Function ;
   DerivativeFunction : Function -> Function ;
