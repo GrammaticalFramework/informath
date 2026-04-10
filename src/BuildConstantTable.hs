@@ -260,7 +260,8 @@ type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate idents with cats and funs, just the primary ; used only internally
 annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> [DkTree a]
-annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
+annotateDkIdents table drops = ----NEXT checkSymbolics .
+                               annot [] . ignoreFirstArguments drops where
 
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
@@ -278,8 +279,24 @@ annotateDkIdents table drops = annot [] . ignoreFirstArguments drops where
 
   annotId c = case M.lookup c table of
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) f |
-                                    f <- primary entry : synonyms entry]
+                       f <- primary entry : synonyms entry] ----NEXT  ++ symbolics entry]
     _ -> [c]
+
+  checkSymbolics :: [DkTree a] -> [DkTree a]
+  checkSymbolics ts = [t | t <- ts, null (badSymbolics t)]
+
+  -- bad symbolics are subtrees with symbolic root and at least one verbal subtree
+  badSymbolics :: DkTree a -> [DkTree a]
+  badSymbolics t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent (QIdent c), ts) -> case lookupConstant c of
+        Just (cat, _) | S.member cat symbolicCats ->
+          [t | not (null
+	    [k | QIdent k <- identsInTree t,
+	         Just (kat, _) <- [lookupConstant k], S.member kat verbalCats])]
+        _  -> concatMap badSymbolics ts
+      (f, ts) -> badSymbolics t ++ concatMap badSymbolics ts
+    _ -> composOpM badSymbolics t
 
 annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent
 annotIdent (QIdent s) d (f, t) =

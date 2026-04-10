@@ -103,6 +103,7 @@ funListExp ident exps = annotateExp ident $ case ident of
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y)
     (Just (c, _), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
+----NEXT    (Just (c, _), _) | S.member c symbolicCats -> GTermExp (funListTerm ident exps)
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
@@ -117,6 +118,7 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Dep2", c), [x, y]) -> GDep2Kind (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("DepC", c), [x, y]) -> GDepCKind (fgTree c) (exp2exp x) (exp2exp y)
     (Just (c, _), _) | S.member c expCats -> GExpKind (funListExp ident exps)
+----NEXT    (Just (c, _), _) | S.member c symbolicCats -> GTermKind (GTermExp (funListTerm ident exps))
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))

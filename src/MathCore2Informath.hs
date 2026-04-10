@@ -62,7 +62,8 @@ uncoerce t = case t of
 -- works on lookup with Dedukti QIdent, which annotates applicative trees
 
 synonymize :: forall a. Env -> Tree a -> [Tree a]
-synonymize env t = symbs t where --- let st = (t:symbs t) in st ++ concatMap verbs st where
+synonymize env t = ---- [t] where ----
+                    symbs t where
 
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
   ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
