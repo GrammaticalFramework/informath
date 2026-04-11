@@ -62,16 +62,19 @@ type ConstantTable = M.Map QIdent ConstantTableEntry
 -- conversion from Dk to other formalisms
 type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 
+-- conversions in Dk that drop a number of initial arguments
+type DropTable = M.Map QIdent Int
+
 -- definitions of macros to be converted to \newcommand in LaTeX
 type MacroTable = M.Map String (Int, String)
 
 data ConstantTableEntry = ConstantTableEntry {
-  primary   ::  (Fun, (Type, Profile)),
-  symbolics :: [(Fun, (Type, Profile))],
-  synonyms  :: [(Fun, (Type, Profile))]
+  primary   ::  (Fun, Type),
+  symbolics :: [(Fun, Type)],
+  synonyms  :: [(Fun, Type)]
   }
 
-allGFFuns :: ConstantTable -> QIdent -> [(Fun, (Type, Profile))]
+allGFFuns :: ConstantTable -> QIdent -> [(Fun, Type)]
 allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
@@ -96,51 +99,50 @@ showConstantTableLong = concat . map prEntry . M.toList where
         "symbolics: " ++ unwords (map prTyping (symbolics entry)),
         "synonyms: " ++ unwords (map prTyping (synonyms entry))
       ]
-  prTyping (fun, (typ, prof)) = showGFTree fun ++ " : " ++ showType [] typ ++ " " ++ showProfile prof ++ " ;"
+  prTyping (fun, typ) = showGFTree fun ++ " : " ++ showType [] typ ++ " ;"
 
 
-type BackConstantTable = M.Map Fun [(QIdent, Profile)] -- maps GF idents to original "Dk" idents
+type BackConstantTable = M.Map Fun [QIdent] -- maps GF idents to original "Dk" idents
 
 type BuiltinSet = S.Set QIdent -- built-in constants not expected in ConstantTable
 
 buildBackConstantTable :: ConstantTable -> BackConstantTable
 buildBackConstantTable table = M.fromListWith (++) [
-  (fun, [(qid, prof)]) | 
+  (fun, [qid]) | 
     (qid, entry) <- M.toList table,
-    (fun, (_, prof)) <- primary entry : symbolics entry ++ synonyms entry
+    fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
   ]
 
 ---- TODO: make this accessible from RunInformath
 printBackTable ::  BackConstantTable -> String
 printBackTable = unlines . map prEntry . M.toList where
-  prEntry :: (Fun, [(QIdent, Profile)]) -> String
-  prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g ++ showProfile prof | (QIdent g, prof) <- qids]
+  prEntry :: (Fun, [QIdent]) -> String
+  prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
 
 buildConstantTable :: PGF -> Language -> [String] ->
-    (ConstantTable, ConversionTable, MacroTable, BuiltinSet)
+  (ConstantTable, ConversionTable, DropTable, MacroTable, BuiltinSet)
 buildConstantTable pgf lang ls =
-    (constantTable, conversionTable, macroTable, builtinSet)
+    (constantTable, conversionTable, dropTable, macroTable, builtinSet)
   where
     entrylines = filter (not . null) (map words ls)
     constantlines = filter isConstantEntry entrylines
     conversionlines = filter isConversion entrylines
+    droplines = filter isDrop entrylines
     macrolines = filter isMacro entrylines
     builtinlines = filter isBuiltin entrylines
     constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map funprof gfids)) |
-                         qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
+        (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
+                     qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
+    dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
     macroTable = M.fromList [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)]
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
-
-    funprof s = case break (=='[') s of
-      (c, [])  -> (parseGFTree pgf lang c, NoProfile)
-      (c, _:p) -> (parseGFTree pgf lang c, readProfile (init p)) -- fun, profile is fun [...]
-     
+    
     isConstantEntry line = head (head line) /= '#'
     isConversion line = head line == "#CONV"
+    isDrop line = head line == "#DROP"
     isMacro line = head line == "#MACRO"
     isBuiltin line = head line == "#BUILTIN"
 
@@ -160,10 +162,11 @@ splitNewcommand s = case break (=='{') s of
   _ -> error ("expected valid newcommand, found: " ++ s)
 
 
-mkConstantTableEntry :: PGF -> [(Fun, Profile)] -> ConstantTableEntry
+
+mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
-mkConstantTableEntry pgf ((fun, prof) : funs) = ConstantTableEntry {
-  primary = (fun, (funtype pgf fun, prof)),
+mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
+  primary = (fun, funtype pgf fun),
   symbolics = [(f, typ) | (f, typ) <- symbs],
   synonyms = [(f, typ) | (f, typ) <- syns]
   }
@@ -171,7 +174,7 @@ mkConstantTableEntry pgf ((fun, prof) : funs) = ConstantTableEntry {
  
    funtype fun = inferFunType pgf
 
-   (symbs, syns) = partition (isSymbolic . fst . snd) [(f, (funtype pgf f, p)) | (f, p) <- funs]
+   (symbs, syns) = partition (isSymbolic . snd) [(f, funtype pgf f) | f <- funs]
    isSymbolic typ = case unType typ of
      (_, cat, _) | showCId cat == "MACRO" -> True 
      (_, cat, _) -> S.member (showCId cat) symbolicCats
@@ -210,8 +213,10 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
   gfCats cid = case showCId cid of
     "MACRO" -> S.toList mainCats --- uncertain; any may work
     c -> case M.lookup c gfCatMap of
-       Just ("Exp", _) -> ["Exp", "Kind"]
-       Just ("Kind", _) -> ["Exp", "Kind"]
+       Just ("Exp", _) -> ["Exp", "Kind", "ProofExp", "Proof"]
+       Just ("Kind", _) -> ["Exp", "Kind", "Prop"]
+       Just ("Proof", _) -> ["Exp", "Kind", "ProofExp", "Proof"]
+       Just ("Prop", _) -> ["Exp", "Kind", "Prop"]
        Just (val, _) -> [val]
        _ -> ["UNKNOWN-GF"] ---
        
@@ -221,18 +226,19 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
     EIdent f | elem f [identSet, identType] -> "Kind"
     EIdent f | f == identElem -> "Exp"
     EIdent f | f == identProof -> "Proof"
-    _ -> "UNKNOWN-DK" ---- default, but not accurate
+    _ -> "Prop" --- UNKNOWN-DK" --- default, but not accurate
 
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
-constantTableErrors :: Module -> PGF -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
-constantTableErrors dk pgf mt table bset = 
+constantTableErrors :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
+constantTableErrors dk pgf dt mt table bset = 
   let funs = deduktiFunctions dk
       missing = [fun | (fun, _) <- funs, M.notMember fun table, S.notMember fun bset]
       mismatches = [((dkfun, gffun), (e, f)) |
                       (dkfun, (hypos, valtype)) <- funs,
-		      let dktyp = (hypos, valtype),
-		      (gffun, (gftyp, prof)) <- allGFFuns table dkfun,    ----- TODO: deal with prof
+		      let drops = maybe 0 id (M.lookup dkfun dt),
+		      let dktyp = (drop drops hypos, valtype),
+		      (gffun, gftyp) <- allGFFuns table dkfun,
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
@@ -253,30 +259,49 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate idents with cats and funs, just the primary ; used only internally
-annotateDkIdents :: ConstantTable -> DkTree a -> DkTree a
-annotateDkIdents table = annot [] where
+annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> [DkTree a]
+annotateDkIdents table drops = ----NEXT
+                               checkSymbolics .
+                               annot [] . ignoreFirstArguments drops where
 
   -- don't annotate bound variables: they override constants
-  annot :: forall a. [QIdent] -> DkTree a -> DkTree a
+  annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
   annot bounds t = case t of
     QIdent _ | notElem t bounds -> annotId t
-    EAbs b exp -> EAbs (annot bounds b) (annot (bind2ident b : bounds) exp)
-    EFun h exp -> EFun (annot bounds h) (annot (hypo2topvars h ++ bounds) exp)    
-    BVar _ -> t
-    BTyped v ty -> BTyped v (annot bounds ty)
-    HVarExp v ty -> HVarExp v (annot bounds ty)
-    HParVarExp v ty -> HParVarExp v (annot bounds ty)
-    HLetExp v ty -> HLetExp v (annot bounds ty)
-    HLetTyped v ty exp -> HLetTyped v (annot bounds ty) (annot bounds exp)
-    _ -> composOp (annot bounds) t
+    EAbs b exp -> [EAbs b2 exp2 | b2 <- annot bounds b, exp2 <- annot (bind2ident b : bounds) exp]
+    EFun h exp -> [EFun h2 exp2 | h2 <- annot bounds h, exp2 <- annot (hypo2topvars h ++ bounds) exp]    
+    BVar _ -> [t]
+    BTyped v ty -> [BTyped v ty2 | ty2 <- annot bounds ty]
+    HVarExp v ty -> [HVarExp v ty2 | ty2 <- annot bounds ty]
+    HParVarExp v ty -> [HParVarExp v ty2 | ty2 <- annot bounds ty]
+    HLetExp v ty -> [HLetExp v ty2 | ty2 <- annot bounds ty]
+    HLetTyped v ty exp -> [HLetTyped v ty2 exp2 | ty2 <- annot bounds ty, exp2 <- annot bounds exp]
+    _ -> composOpM (annot bounds) t
 
   annotId c = case M.lookup c table of
-    Just entry -> annotIdent c (primary entry)
-    _ -> c
+    Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) f |
+                       f <- primary entry : synonyms entry ++ symbolics entry]  ----NEXT
+    _ -> [c]
 
-annotIdent :: QIdent -> (Fun, (Type, Profile)) -> QIdent
-annotIdent (QIdent s) (f, (t, p)) =
-  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [showProfile p]
+  checkSymbolics :: [DkTree a] -> [DkTree a]
+  checkSymbolics ts = [t | t <- ts, null (badSymbolics t)]
+
+  -- bad symbolics are subtrees with symbolic root and at least one verbal subtree
+  badSymbolics :: DkTree a -> [DkTree a]
+  badSymbolics t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent (QIdent c), ts) -> case lookupConstant c of
+        Just (cat, _) | S.member cat symbolicCats ->
+          [t | not (null
+	    [k | QIdent k <- identsInTree t,
+	         Just (kat, _) <- [lookupConstant k], S.member kat verbalCats])]
+        _  -> concatMap badSymbolics ts
+      (f, ts) -> badSymbolics t ++ concatMap badSymbolics ts
+    _ -> composOpM badSymbolics t
+
+annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent
+annotIdent (QIdent s) d (f, t) =
+  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [show d]
     where
       dk c = showCId c
       dkp f = showGFTree f
@@ -307,4 +332,3 @@ macroCommands :: MacroTable -> [String]
 macroCommands t = [concat ["\\newcommand{", c, "}", arity n, "{", d, "}"] | (c, (n, d)) <- M.assocs t]
   where
     arity n = if n==0 then "" else "[" ++ show n ++ "]"
-
