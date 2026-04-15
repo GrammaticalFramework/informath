@@ -62,6 +62,17 @@ jmt2jmt jmt = case jmt of
 	                                (exp2exp (stripAbs hypos exp))
 	    _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
 
+          _ | cat == "Compar" -> case meexp of
+	    MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
+	    _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
+	    
+          _ | S.member cat symbolicCats -> case meexp of
+	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
+	                                (exp2exp (stripAbs hypos exp))
+					
+	    _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
+
+
           _ -> error ("cannot convert category " ++ cat)
 
   JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
@@ -316,22 +327,22 @@ exp2term exp = case specialDedukti2Informath callBacks exp of
       Just _ -> funListTerm ident []
       _ -> GIdentTerm (ident2ident ident)
 
+    EApp (EAbs bind body) arg -> --- in case this appears: body[arg/x]
+      GBetaRedexTerm (bind2coreIdent bind) (exp2term body) (exp2term arg)
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of
         EIdent ident@(QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GNumberTerm (GInt (read s))
 	  _ -> funListTerm ident args
         EIdent ident@(QIdent f) -> funListTerm ident args
-{-
-        _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+	_ -> error ("not yet exp2term on application: " ++ printTree exp)
 	
-    EAbs _ _ -> case splitAbs exp of
-      (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
-    EFun _ _ -> 
-      case splitType exp of
-        (hypos, valexp) ->
-          GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
--}
+    EAbs bind body -> GAbsTerm (bind2coreIdent bind) (exp2term body)
+
+    EFun h b -> case hypo2type h of
+      Just a -> GFunTypeTerm (exp2term a) (exp2term b)
+      _ -> error ("not argument type from exp2term: " ++ printTree exp)
+	  
     _ -> error ("not yet exp2term: " ++ printTree exp)
 
 exp2terms :: Exp -> [GTerm]

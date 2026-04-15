@@ -29,6 +29,10 @@ fun
 
   AppFunctionTerm : Function -> [Term] -> Term ;
 
+  AbsTerm : Ident -> Term -> Term ;  -- lambda, needed for completeness
+  BetaRedexTerm : Ident -> Term -> Term -> Term ;
+  FunTypeTerm : Term -> Term -> Term ;
+
   EnumSetTerm : [Term] -> Term ;
   ComprehensionTerm : Term -> Ident -> Formula -> Term ;
   

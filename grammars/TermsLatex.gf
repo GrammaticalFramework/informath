@@ -28,6 +28,11 @@ lin
 
   AppFunctionTerm f xs = constant (f ++ parenth xs.s) ** {isNumber = False} ;
 
+  AbsTerm x b = {s = "\\lambda" ++ x ++ "." ++ top b ; p = 0 ; isNumber = False} ;
+  BetaRedexTerm x b a = constant (mtop b ++ "[" ++ top a ++ "/" ++ x ++ "]") ** {isNumber = False} ;
+  FunTypeTerm a b = tinfixr 0 "\\rightarrow" a b ;
+ 
+
   EnumSetTerm ts = constant ("\\{" ++ ts.s ++ "\\}") ** {isNumber = False} ;
   
   ComprehensionTerm a x f =
@@ -87,6 +92,8 @@ oper
 
   tinfixl : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->
     infixl p op x y ** {isNumber = False} ;
+  tinfixr : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->
+    infixr p op x y ** {isNumber = False} ;
   tprefix : Prec -> Str -> TermPrecNum -> TermPrecNum = \p, op, x ->
     prefix p op x ** {isNumber = False} ;
 ---  tinfix : Prec -> Str -> (_,_ : TermPrecNum) -> TermPrecNum = \p, op, x, y ->

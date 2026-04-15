@@ -431,7 +431,7 @@ printFinalParseResult env (t, ut, ct, jmts) = encodeJSON $ mkJSONObject [
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
   if isFlag "-to-latex-doc" env
-  then toLatexDoc (macroCommands (macroTable env)) (intersperse "" ss)
+  then toLatexDoc (macroCommands (macroTable env)) (intersperse "" (nub ss))
   else ss
 
 -- | To print Dedukti under environment options, given in flags. 

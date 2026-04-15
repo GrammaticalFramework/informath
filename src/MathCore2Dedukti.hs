@@ -297,6 +297,10 @@ term2dedukti term = case term of
     foldl EApp (EIdent (QIdent "suchthat")) [ 
       (term2dedukti kterm),
       (EAbs (BVar (ident2ident x)) (prop2dedukti prop))]
+  GAbsTerm ident body -> EAbs (BVar (ident2ident ident)) (term2dedukti body)
+  GBetaRedexTerm ident body arg ->
+    EApp (EAbs (BVar (ident2ident ident)) (term2dedukti body)) (term2dedukti arg)
+  GFunTypeTerm arg val -> EFun (HExp (term2dedukti arg)) (term2dedukti val)
 
   _ -> eUndefinedDebug term ---- TODO
 

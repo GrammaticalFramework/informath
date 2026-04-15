@@ -93,14 +93,15 @@ fulldemo:
 
 
 devtest:
-#	make fulldemo
+	make multidemo
+	make baseconstants
 	make top100check
 	make typechecks
 	make sets
 	make sigma
 	make naproche
 	make interpret_naproche
-#	make natural_deduction
+	make natural_deduction
 	make symboltest
 
 
@@ -189,9 +190,7 @@ interpret_naproche:
 	cd out ; pdflatex inapzf.tex ; $(OPEN) inapzf.pdf
 
 baseconstants:
-	cat share/BaseConstants.dk >tmp/baseconstants.dk
-
-	$(RUN) -to-latex-doc -variations tmp/baseconstants.dk >out/baseconstants.tex
+	$(RUN) -to-latex-doc -variations share/baseconstants.dk >out/baseconstants.tex
 	cd out ; pdflatex baseconstants.tex ; $(OPEN) baseconstants.pdf
 
 parallel:

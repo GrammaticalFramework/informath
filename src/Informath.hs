@@ -858,15 +858,18 @@ data Tree :: * -> * where
   GŁukasiewicz_ProperName :: Tree GProperName_
   GNoVarRewriteRule :: GExp -> GExp -> Tree GRule_
   GRewriteRule :: GListIdent -> GExp -> GExp -> Tree GRule_
+  GAbsTerm :: GIdent -> GTerm -> Tree GTerm_
   GApp1MacroTerm :: GMacro -> GTerm -> Tree GTerm_
   GApp2MacroTerm :: GMacro -> GTerm -> GTerm -> Tree GTerm_
   GApp3MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> Tree GTerm_
   GApp4MacroTerm :: GMacro -> GTerm -> GTerm -> GTerm -> GTerm -> Tree GTerm_
   GAppFunctionTerm :: GFunction -> GListTerm -> Tree GTerm_
+  GBetaRedexTerm :: GIdent -> GTerm -> GTerm -> Tree GTerm_
   GComprehensionTerm :: GTerm -> GIdent -> GFormula -> Tree GTerm_
   GComprehensionTextTerm :: GTerm -> GIdent -> GProp -> Tree GTerm_
   GConstTerm :: GConst -> Tree GTerm_
   GEnumSetTerm :: GListTerm -> Tree GTerm_
+  GFunTypeTerm :: GTerm -> GTerm -> Tree GTerm_
   GIdentTerm :: GIdent -> Tree GTerm_
   GMacroTerm :: GMacro -> Tree GTerm_
   GNumberTerm :: GInt -> Tree GTerm_
@@ -1581,15 +1584,18 @@ instance Eq (Tree a) where
     (GŁukasiewicz_ProperName,GŁukasiewicz_ProperName) -> and [ ]
     (GNoVarRewriteRule x1 x2,GNoVarRewriteRule y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GRewriteRule x1 x2 x3,GRewriteRule y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAbsTerm x1 x2,GAbsTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GApp1MacroTerm x1 x2,GApp1MacroTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GApp2MacroTerm x1 x2 x3,GApp2MacroTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GApp3MacroTerm x1 x2 x3 x4,GApp3MacroTerm y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GApp4MacroTerm x1 x2 x3 x4 x5,GApp4MacroTerm y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GAppFunctionTerm x1 x2,GAppFunctionTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GBetaRedexTerm x1 x2 x3,GBetaRedexTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GComprehensionTerm x1 x2 x3,GComprehensionTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GComprehensionTextTerm x1 x2 x3,GComprehensionTextTerm y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GConstTerm x1,GConstTerm y1) -> and [ x1 == y1 ]
     (GEnumSetTerm x1,GEnumSetTerm y1) -> and [ x1 == y1 ]
+    (GFunTypeTerm x1 x2,GFunTypeTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIdentTerm x1,GIdentTerm y1) -> and [ x1 == y1 ]
     (GMacroTerm x1,GMacroTerm y1) -> and [ x1 == y1 ]
     (GNumberTerm x1,GNumberTerm y1) -> and [ x1 == y1 ]
@@ -3478,15 +3484,18 @@ instance Gf GRule where
       _ -> error ("no Rule " ++ show t)
 
 instance Gf GTerm where
+  gf (GAbsTerm x1 x2) = mkApp (mkCId "AbsTerm") [gf x1, gf x2]
   gf (GApp1MacroTerm x1 x2) = mkApp (mkCId "App1MacroTerm") [gf x1, gf x2]
   gf (GApp2MacroTerm x1 x2 x3) = mkApp (mkCId "App2MacroTerm") [gf x1, gf x2, gf x3]
   gf (GApp3MacroTerm x1 x2 x3 x4) = mkApp (mkCId "App3MacroTerm") [gf x1, gf x2, gf x3, gf x4]
   gf (GApp4MacroTerm x1 x2 x3 x4 x5) = mkApp (mkCId "App4MacroTerm") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GAppFunctionTerm x1 x2) = mkApp (mkCId "AppFunctionTerm") [gf x1, gf x2]
+  gf (GBetaRedexTerm x1 x2 x3) = mkApp (mkCId "BetaRedexTerm") [gf x1, gf x2, gf x3]
   gf (GComprehensionTerm x1 x2 x3) = mkApp (mkCId "ComprehensionTerm") [gf x1, gf x2, gf x3]
   gf (GComprehensionTextTerm x1 x2 x3) = mkApp (mkCId "ComprehensionTextTerm") [gf x1, gf x2, gf x3]
   gf (GConstTerm x1) = mkApp (mkCId "ConstTerm") [gf x1]
   gf (GEnumSetTerm x1) = mkApp (mkCId "EnumSetTerm") [gf x1]
+  gf (GFunTypeTerm x1 x2) = mkApp (mkCId "FunTypeTerm") [gf x1, gf x2]
   gf (GIdentTerm x1) = mkApp (mkCId "IdentTerm") [gf x1]
   gf (GMacroTerm x1) = mkApp (mkCId "MacroTerm") [gf x1]
   gf (GNumberTerm x1) = mkApp (mkCId "NumberTerm") [gf x1]
@@ -3499,15 +3508,18 @@ instance Gf GTerm where
 
   fg t =
     case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "AbsTerm" -> GAbsTerm (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "App1MacroTerm" -> GApp1MacroTerm (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "App2MacroTerm" -> GApp2MacroTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3,x4]) | i == mkCId "App3MacroTerm" -> GApp3MacroTerm (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "App4MacroTerm" -> GApp4MacroTerm (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2]) | i == mkCId "AppFunctionTerm" -> GAppFunctionTerm (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "BetaRedexTerm" -> GBetaRedexTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "ComprehensionTerm" -> GComprehensionTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "ComprehensionTextTerm" -> GComprehensionTextTerm (fg x1) (fg x2) (fg x3)
       Just (i,[x1]) | i == mkCId "ConstTerm" -> GConstTerm (fg x1)
       Just (i,[x1]) | i == mkCId "EnumSetTerm" -> GEnumSetTerm (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "FunTypeTerm" -> GFunTypeTerm (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "IdentTerm" -> GIdentTerm (fg x1)
       Just (i,[x1]) | i == mkCId "MacroTerm" -> GMacroTerm (fg x1)
       Just (i,[x1]) | i == mkCId "NumberTerm" -> GNumberTerm (fg x1)
@@ -3881,15 +3893,18 @@ instance Compos Tree where
     GWeHaveProp x1 -> r GWeHaveProp `a` f x1
     GNoVarRewriteRule x1 x2 -> r GNoVarRewriteRule `a` f x1 `a` f x2
     GRewriteRule x1 x2 x3 -> r GRewriteRule `a` f x1 `a` f x2 `a` f x3
+    GAbsTerm x1 x2 -> r GAbsTerm `a` f x1 `a` f x2
     GApp1MacroTerm x1 x2 -> r GApp1MacroTerm `a` f x1 `a` f x2
     GApp2MacroTerm x1 x2 x3 -> r GApp2MacroTerm `a` f x1 `a` f x2 `a` f x3
     GApp3MacroTerm x1 x2 x3 x4 -> r GApp3MacroTerm `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GApp4MacroTerm x1 x2 x3 x4 x5 -> r GApp4MacroTerm `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GAppFunctionTerm x1 x2 -> r GAppFunctionTerm `a` f x1 `a` f x2
+    GBetaRedexTerm x1 x2 x3 -> r GBetaRedexTerm `a` f x1 `a` f x2 `a` f x3
     GComprehensionTerm x1 x2 x3 -> r GComprehensionTerm `a` f x1 `a` f x2 `a` f x3
     GComprehensionTextTerm x1 x2 x3 -> r GComprehensionTextTerm `a` f x1 `a` f x2 `a` f x3
     GConstTerm x1 -> r GConstTerm `a` f x1
     GEnumSetTerm x1 -> r GEnumSetTerm `a` f x1
+    GFunTypeTerm x1 x2 -> r GFunTypeTerm `a` f x1 `a` f x2
     GIdentTerm x1 -> r GIdentTerm `a` f x1
     GMacroTerm x1 -> r GMacroTerm `a` f x1
     GNumberTerm x1 -> r GNumberTerm `a` f x1
