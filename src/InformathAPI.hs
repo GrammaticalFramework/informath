@@ -280,7 +280,10 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
 
 -- | Annotate Dedukti with GF information.
 annotateDedukti :: Env -> Jmt -> [Jmt]
-annotateDedukti env t = annotateDkIdents (constantTable env) (dropTable env) t
+annotateDedukti env t = annotateDkIdents msyns msymbs (constantTable env) (dropTable env) t
+  where
+    msyns = argValueMaybeInt "-synonyms" (flags env)
+    msymbs = argValueMaybeInt "-symbolics" (flags env)
 
 -- | From annotated Dedukti to MathCore.
 dedukti2core :: Jmt -> GJmt

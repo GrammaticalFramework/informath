@@ -176,7 +176,6 @@ mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
 
    (symbs, syns) = partition (isSymbolic . snd) [(f, funtype pgf f) | f <- funs]
    isSymbolic typ = case unType typ of
-     (_, cat, _) | showCId cat == "MACRO" -> True 
      (_, cat, _) -> S.member (showCId cat) symbolicCats
 
 
@@ -258,9 +257,10 @@ deduktiFunctions (MJmts jmts) = concatMap getFun jmts where
     
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
--- annotate idents with cats and funs, just the primary ; used only internally
-annotateDkIdents :: ConstantTable -> DropTable -> DkTree a -> [DkTree a]
-annotateDkIdents table drops = ----NEXT checkSymbolics .
+-- annotate Dk idents with cats and funs ; used only internally
+annotateDkIdents :: Maybe Int -> Maybe Int -> ConstantTable -> DropTable -> DkTree a -> [DkTree a]
+annotateDkIdents msyns msymbs table drops =
+                               checkSymbolics .
                                annot [] . ignoreFirstArguments drops where
 
   -- don't annotate bound variables: they override constants
@@ -277,25 +277,59 @@ annotateDkIdents table drops = ----NEXT checkSymbolics .
     HLetTyped v ty exp -> [HLetTyped v ty2 exp2 | ty2 <- annot bounds ty, exp2 <- annot bounds exp]
     _ -> composOpM (annot bounds) t
 
+  tkSyns = maybe id take msyns
+  tkSymbs = maybe id take msymbs
+
   annotId c = case M.lookup c table of
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) f |
-                       f <- primary entry : synonyms entry] ----NEXT  ++ symbolics entry]
+                       f <- tkSyns  (primary entry : synonyms entry) ++
+		            tkSymbs (symbolics entry)]
     _ -> [c]
 
   checkSymbolics :: [DkTree a] -> [DkTree a]
-  checkSymbolics ts = [t | t <- ts, null (badSymbolics t)]
+  checkSymbolics ts = [t | t <- ts, not (badSymb t)] ---- null (badSymbolics t)]
 
   -- bad symbolics are subtrees with symbolic root and at least one verbal subtree
+  badSymb :: DkTree a -> Bool
+  badSymb t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent (QIdent c), ts) -> case lookupConstant c of
+        Just (cat, _) | S.member cat symbolicCats ->
+          not (null
+	     [u | u <- ts, not (null [k | QIdent k <- identsInTree u,
+	         Just (kat, _) <- [lookupConstant k],
+		 S.member kat verbalCats])])
+        _  -> any badSymb ts
+      (f, ts) -> any badSymb (f : ts)
+    EAbs b exp -> badSymb b || badSymb exp
+    EFun h exp -> badSymb h || badSymb exp
+    BTyped v ty -> badSymb ty
+    HVarExp v ty -> badSymb ty
+    HParVarExp v ty -> badSymb ty
+    HLetExp v ty -> badSymb ty
+    HLetTyped v ty exp -> badSymb ty || badSymb exp
+    JDef _ mt me -> badSymb mt || badSymb me
+    JStatic _ ty -> badSymb ty
+    JThm _ mt me -> badSymb mt || badSymb me
+    JInj _ mt me -> badSymb mt || badSymb me
+    JRules rules -> any badSymb rules
+    RRule pattbinds patt exp -> any badSymb pattbinds || badSymb patt || badSymb exp
+    MTExp exp -> badSymb exp
+    MEExp exp -> badSymb exp
+    ---- TODO patt
+    _ -> False
+
+
   badSymbolics :: DkTree a -> [DkTree a]
   badSymbolics t = case t of
     EApp _ _ -> case splitApp t of
       (EIdent (QIdent c), ts) -> case lookupConstant c of
         Just (cat, _) | S.member cat symbolicCats ->
-          [t | not (null
-	    [k | QIdent k <- identsInTree t,
-	         Just (kat, _) <- [lookupConstant k], S.member kat verbalCats])]
+          [u | u <- ts, not (null [k | QIdent k <- identsInTree u,
+	         Just (kat, _) <- [lookupConstant k],
+		 S.member kat verbalCats])]
         _  -> concatMap badSymbolics ts
-      (f, ts) -> badSymbolics t ++ concatMap badSymbolics ts
+      (f, ts) -> concatMap badSymbolics (f : ts)
     _ -> composOpM badSymbolics t
 
 annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent

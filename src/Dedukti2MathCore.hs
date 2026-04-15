@@ -57,6 +57,11 @@ jmt2jmt jmt = case jmt of
 	    MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
 	    _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
 
+          _ | cat == "MACRO" -> case meexp of
+	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
+	                                (exp2exp (stripAbs hypos exp))
+	    _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
+
           _ -> error ("cannot convert category " ++ cat)
 
   JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
@@ -103,10 +108,28 @@ funListExp ident exps = annotateExp ident $ case ident of
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y)
     (Just (c, _), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
-----NEXT    (Just (c, _), _) | S.member c symbolicCats -> GTermExp (funListTerm ident exps)
+    (Just (c, _), _) | S.member c symbolicCats -> GTermExp (funListTerm ident exps)
     _ -> case exps of
       [] -> ident2exp ident
       _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
+
+funListTerm :: QIdent -> [Exp] -> GTerm
+funListTerm ident exps = case ident of
+  QIdent s -> case (lookupConstant s, concatMap exp2terms exps) of
+    (Just ("Const", c), []) -> GConstTerm (fgTree c)
+    (Just ("Oper", c), [x]) -> GOperTerm (fgTree c) x
+    (Just ("Oper2", c), [x, y]) -> GOper2Term (fgTree c) x y
+    (Just ("MACRO", c), []) -> GMacroTerm (macroIdent c)
+    (Just ("MACRO", c), [x]) -> GApp1MacroTerm (macroIdent c) x
+    (Just ("MACRO", c), [x, y]) -> GApp2MacroTerm (macroIdent c) x y
+    (Just ("MACRO", c), [x, y, z]) -> GApp3MacroTerm (macroIdent c) x y z
+    (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroTerm (macroIdent c) x y z u
+    _ -> case exps of
+      [] -> GIdentTerm (ident2ident ident)
+      _:_ -> GAppFunctionTerm (GIdentFunction (ident2ident ident)) (GListTerm (map exp2term exps))
+
+macroIdent fun = GStringMacro (GString (init (drop 2 fun)))  -- '\\foo' -> \foo
+
 
 funListKind :: QIdent -> [Exp] -> GKind
 funListKind ident exps = annotateKind ident $ case ident of
@@ -118,7 +141,7 @@ funListKind ident exps = annotateKind ident $ case ident of
     (Just ("Dep2", c), [x, y]) -> GDep2Kind (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("DepC", c), [x, y]) -> GDepCKind (fgTree c) (exp2exp x) (exp2exp y)
     (Just (c, _), _) | S.member c expCats -> GExpKind (funListExp ident exps)
-----NEXT    (Just (c, _), _) | S.member c symbolicCats -> GTermKind (GTermExp (funListTerm ident exps))
+    (Just (c, _), _) | S.member c symbolicCats -> GExpKind (GTermExp (funListTerm ident exps))
     _ -> case exps of
       [] -> ident2kind ident
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))
@@ -139,10 +162,22 @@ funListProp ident exps = annotateProp ident $ case ident of
     (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
     (Just ("NounC", c), [x, y]) -> GNounCProp (fgTree c) x y
     (Just (c, _), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
+    (Just (c, _), _) | S.member c symbolicCats -> GFormulaProp (funListFormula ident exps)
     _ -> case exps of
       [] -> GIdentProp (GStrIdent (GString s))
       _:_ -> GAppProp (GStrIdent (GString s)) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
-
+      
+funListFormula :: QIdent -> [Exp] -> GFormula
+funListFormula ident exps = case ident of
+  QIdent s -> case (lookupConstant s, map exp2term exps) of
+    (Just ("Compar", c), [x, y]) -> GEquationFormula (GBinaryEquation (fgTree c) x y)
+    (Just ("MACRO", c), []) -> GMacroFormula (macroIdent c)
+    (Just ("MACRO", c), [x]) -> GApp1MacroFormula (macroIdent c) x
+    (Just ("MACRO", c), [x, y]) -> GApp2MacroFormula (macroIdent c) x y
+    (Just ("MACRO", c), [x, y, z]) -> GApp3MacroFormula (macroIdent c) x y z
+    (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroFormula (macroIdent c) x y z u
+    _ -> GMacroFormula (GStringMacro (GString ("NOTcYET++c")))
+    
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of
   GVarsHypo (GListIdent idents) kind_ -> idents
@@ -201,7 +236,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
       Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
       Just _ -> funListKind ident []
-      _ -> ident2kind ident ---- TODO funListKind ident []
+      _ -> ident2kind ident
     EFun _ _ -> case splitType exp of
       (hypos, body) ->
          GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind body)
@@ -232,7 +267,8 @@ callBacks = CallBacks {
   callExp  = gf . exp2exp,
   callKind = gf . exp2kind,
   callProp = gf . exp2prop,
-  callProof = gf . exp2proof
+  callProof = gf . exp2proof,
+  callTerm = gf . exp2term
   }
 
 findExpIdent :: Exp -> GIdent
@@ -270,6 +306,58 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
         (hypos, valexp) ->
           GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
     _ -> error ("not yet exp2exp: " ++ printTree exp)
+
+exp2term :: Exp -> GTerm
+exp2term exp = case specialDedukti2Informath callBacks exp of
+  Just (expr, "Term") -> fg expr
+  _ -> case exp of
+    EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
+      Just ("Const", c) -> GConstTerm (fgTree c)
+      Just _ -> funListTerm ident []
+      _ -> GIdentTerm (ident2ident ident)
+
+    EApp _ _ -> case splitApp exp of
+      (fun, args) -> case fun of
+        EIdent ident@(QIdent n) | elem n digitFuns -> case getNumber fun args of
+          Just s -> GNumberTerm (GInt (read s))
+	  _ -> funListTerm ident args
+        EIdent ident@(QIdent f) -> funListTerm ident args
+{-
+        _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+	
+    EAbs _ _ -> case splitAbs exp of
+      (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
+    EFun _ _ -> 
+      case splitType exp of
+        (hypos, valexp) ->
+          GKindExp (GFunKind (GListArgKind (map hypo2coreArgKind hypos)) (exp2kind valexp))
+-}
+    _ -> error ("not yet exp2term: " ++ printTree exp)
+
+exp2terms :: Exp -> [GTerm]
+exp2terms exp = case exp of
+  EAbs _ _ -> case splitAbs exp of
+    (binds, body) -> [GIdentTerm (bind2coreIdent b) | b <- binds] ++ [exp2term body]
+  _ -> [exp2term exp]
+
+
+{- NEXT
+exp2formula :: Exp -> GProp
+exp2formula exp = case specialDedukti2Informath callBacks exp of
+  Just (expr, "Prop") -> fg expr
+  Just (expr, "Kind") -> GExistKindProp (fg expr)
+  _ -> case exp of
+    EIdent ident -> funListProp ident [] ---- GIdentProp (ident2ident ident)
+    EApp (EIdent f) x | f == identProof -> GProofProp (exp2prop x)
+    EApp _ _ -> case splitApp exp of
+     (fun, args) -> case fun of
+        EIdent ident -> funListProp ident args
+    EFun _ _ -> case splitType exp of
+      (hypos, exp) ->
+        GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
+    EAbs _ _ -> case splitAbs exp of
+      (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
+-}
 
 
 exp2proof :: Exp -> GProof

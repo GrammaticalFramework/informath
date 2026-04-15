@@ -8,6 +8,8 @@ VERSION := 0.2
 GF_FILES := $(wildcard grammars/*.gf)
 
 lang=Eng
+synonyms=1
+symbolics=1
 
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
 
@@ -74,7 +76,7 @@ demo:
 	$(RUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
 	echo "consider pdflatex out/sets.tex"
 	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100.tex
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symbolics=$(symbolics) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 
 multidemo:
@@ -123,7 +125,7 @@ typechecks:
 
 top100:
 	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) test/top100.dk >out/top100$(lang).tex
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100check:
@@ -142,7 +144,7 @@ sets:
 	echo "# checking some set theory statements and generating LaTeX"
 	cat share/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
-	$(RUN) -variations -to-latex-doc -to-lang=$(lang) test/sets.dk >out/sets.tex
+	$(RUN) -variations -to-latex-doc -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
 sigma:
@@ -177,13 +179,13 @@ mathextensions_examples:
 
 naproche:
 	echo "## parsing and regenerating a Naproche document without going through Dedukti"
-	$(RUN) -translate -to-latex-doc -variations -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
+	$(RUN) -translate -to-latex-doc -variations -synonyms=$(synonyms)  -symbolics=$(symbolics) -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
 	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
 
 interpret_naproche:
 	echo "## parsing and regenerating a Naproche document going through Dedukti"
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
-	$(RUN) -to-latex-doc -variations -nbest=100 -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
+	$(RUN) -to-latex-doc -variations -synonyms=$(synonyms)  -symbolics=$(symbolics) -nbest=100 -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
 	cd out ; pdflatex inapzf.tex ; $(OPEN) inapzf.pdf
 
 baseconstants:

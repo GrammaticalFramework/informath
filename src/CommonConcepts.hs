@@ -69,7 +69,7 @@ symbolicCatMap = M.fromList [
   ]
 
 symbolicCats :: S.Set SCat
-symbolicCats = S.fromList (M.keys symbolicCatMap)
+symbolicCats = S.fromList ("MACRO" : M.keys symbolicCatMap)
 
 verbalCats :: S.Set SCat
 verbalCats = S.fromList (M.keys verbalCatMap)

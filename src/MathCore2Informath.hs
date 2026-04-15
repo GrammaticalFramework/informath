@@ -26,13 +26,15 @@ nlg env tree = case () of
    t = unparenth tree
    ut = uncoerce t
    ft = flatten ut
+----
    sts = map deAnnotate (synonymize env ft)
+---- NEXT   sts = map deAnnotate [ft]
    afts = map aggregate sts
    iafts = map insitu afts
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
    ncviafts = map negated cviafts  -- better do this at this late stage
-   vncviafts = concatMap variations ncviafts
+   vncviafts = if isFlag "-less-variants" env then [] else concatMap variations ncviafts
 
 deAnnotate :: Tree a -> Tree a
 deAnnotate tree = case tree of

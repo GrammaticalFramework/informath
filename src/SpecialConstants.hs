@@ -33,7 +33,8 @@ data CallBacks =  CallBacks {
   callExp  :: Exp -> Expr,
   callKind  :: Exp -> Expr,
   callProp  :: Exp -> Expr,
-  callProof :: Exp -> Expr
+  callProof :: Exp -> Expr,
+  callTerm :: Exp -> Expr
   }
 
 convertArg ::  CallBacks -> (String, Either Bind Exp) -> Expr
@@ -44,6 +45,7 @@ convertArg callbacks arg = case arg of
   ("Prop", Right exp) -> callProp callbacks exp
   ("Proof", Right exp) -> callProof callbacks exp
   ("Ident", Right exp) -> callIdent callbacks exp
+  ("Term", Right exp) -> callTerm callbacks exp
   (_, Right exp) -> callExp callbacks exp ---- ??
 
 specialDedukti2Informath :: CallBacks -> Exp -> Maybe (Expr, SCat)
