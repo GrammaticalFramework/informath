@@ -8,6 +8,8 @@
 
 #### LATEST NEWS
 
+15 April 2026: Generalized production of synonyms, regulated by new flags `-synonyms=<int>` and `-symbolics=<int>`. Value 1 is reasonable for both of them: it means that just one verbal and one symbolic synonym is taken from the symbol table. Otherwise, the number of variations can now grow *very* large. Even without the `-variations` flag, this can make generation slow. In many demos accessible by `Makefile`, these flag values are used, but they can be overridden.
+
 4 March 2026: Binary release, entitled [Informath-0.2](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2).
 
 [Older news](./doc/old-news.md)
@@ -19,6 +21,8 @@
 This README: using Informath with ready-made binaries and grammars.
 
 [Informath Under the Hood](./doc/informath-under-the-hood.md). Recommended if you want to change the GF grammar and not just the symbol table.
+
+[Informalization of Advanced Mathematics: A Case Study with Homotopy Type Theory](https://types2026.cse.chalmers.se/abstracts/17.pdf). Forthcoming presentation by May Ohlsson and Aarne Ranta in Types 2026.
 
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
 
