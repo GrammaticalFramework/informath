@@ -62,22 +62,22 @@ lin
     constant (ident) ** {isNumber = False} ; --- False impossible to know
 
   App1MacroFormula ident term =
-    constant (ident ++ curly (mtop term)) ;
+    constant (ident ++ curly (mftop term)) ;
   App1MacroTerm ident term =
     constant (ident ++ curly (mtop term)) ** {isNumber = False} ; --- False impossible to know
 
   App2MacroFormula ident x y =
-    mconstant (ident ++ curly (mtop x) ++ curly (mtop y)) ;
+    mconstant (ident ++ curly (mftop x) ++ curly (mftop y)) ;
   App2MacroTerm ident x y =
     mconstant (ident ++ curly (mtop x) ++ curly (mtop y)) ** {isNumber = False} ; --- isNumber and precedence impossible to know
 
   App3MacroFormula ident x y z =
-    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z)) ;
+    mconstant (ident ++ curly (mftop x) ++ curly (mftop y) ++ curly (mftop z)) ;
   App3MacroTerm ident x y z =
     mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z)) ** {isNumber = False} ; --- False impossible to know
 
   App4MacroFormula ident x y z u =
-    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mtop u)) ;
+    mconstant (ident ++ curly (mftop x) ++ curly (mftop y) ++ curly (mftop z) ++ curly (mftop u)) ;
   App4MacroTerm ident x y z u =
     mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mtop u)) ** {isNumber = False} ; --- False impossible to know
 
@@ -169,6 +169,7 @@ oper
 
 -- to prevent ambiguities from the use of macros
   mtop : TermPrec -> Str = usePrec highest ;
+  mftop : TermPrec -> Str = top ;
   mconstant : Str -> TermPrec = mkPrec 3 ;
   
 }
