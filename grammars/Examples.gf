@@ -50,6 +50,7 @@ fun
   NounPrepFunC : Noun -> Prep -> FunC ;
 
   AdverbAdjAdj : Adverb -> Adj -> Adj ;
+  AdjPrepNounAdj : Adj -> Prep -> Noun -> Adj ;
   AdjPrepAdj2 : Adj -> Prep -> Adj2 ;
   AdjAdjC : Adj -> AdjC ;
   AdjAdjE : Adj -> AdjE ;

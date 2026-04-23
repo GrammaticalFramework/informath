@@ -193,6 +193,7 @@ data GFloat_
 data Tree :: * -> * where
   GAdj2Adj :: GAdj2 -> GExp -> Tree GAdj_
   GAdj3Adj :: GAdj3 -> GExp -> GExp -> Tree GAdj_
+  GAdjPrepNounAdj :: GAdj -> GPrep -> GNoun -> Tree GAdj_
   GAdverbAdjAdj :: GAdverb -> GAdj -> Tree GAdj_
   GAndAdj :: GListAdj -> Tree GAdj_
   GBothAndAdj :: GAdj -> GAdj -> Tree GAdj_
@@ -919,6 +920,7 @@ instance Eq (Tree a) where
   i == j = case (i,j) of
     (GAdj2Adj x1 x2,GAdj2Adj y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAdj3Adj x1 x2 x3,GAdj3Adj y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAdjPrepNounAdj x1 x2 x3,GAdjPrepNounAdj y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdverbAdjAdj x1 x2,GAdverbAdjAdj y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAndAdj x1,GAndAdj y1) -> and [ x1 == y1 ]
     (GBothAndAdj x1 x2,GBothAndAdj y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1645,6 +1647,7 @@ instance Eq (Tree a) where
 instance Gf GAdj where
   gf (GAdj2Adj x1 x2) = mkApp (mkCId "Adj2Adj") [gf x1, gf x2]
   gf (GAdj3Adj x1 x2 x3) = mkApp (mkCId "Adj3Adj") [gf x1, gf x2, gf x3]
+  gf (GAdjPrepNounAdj x1 x2 x3) = mkApp (mkCId "AdjPrepNounAdj") [gf x1, gf x2, gf x3]
   gf (GAdverbAdjAdj x1 x2) = mkApp (mkCId "AdverbAdjAdj") [gf x1, gf x2]
   gf (GAndAdj x1) = mkApp (mkCId "AndAdj") [gf x1]
   gf (GBothAndAdj x1 x2) = mkApp (mkCId "BothAndAdj") [gf x1, gf x2]
@@ -1656,6 +1659,7 @@ instance Gf GAdj where
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "Adj2Adj" -> GAdj2Adj (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Adj3Adj" -> GAdj3Adj (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "AdjPrepNounAdj" -> GAdjPrepNounAdj (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "AdverbAdjAdj" -> GAdverbAdjAdj (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "AndAdj" -> GAndAdj (fg x1)
       Just (i,[x1,x2]) | i == mkCId "BothAndAdj" -> GBothAndAdj (fg x1) (fg x2)
@@ -3655,6 +3659,7 @@ instance Compos Tree where
   compos r a f t = case t of
     GAdj2Adj x1 x2 -> r GAdj2Adj `a` f x1 `a` f x2
     GAdj3Adj x1 x2 x3 -> r GAdj3Adj `a` f x1 `a` f x2 `a` f x3
+    GAdjPrepNounAdj x1 x2 x3 -> r GAdjPrepNounAdj `a` f x1 `a` f x2 `a` f x3
     GAdverbAdjAdj x1 x2 -> r GAdverbAdjAdj `a` f x1 `a` f x2
     GAndAdj x1 -> r GAndAdj `a` f x1
     GBothAndAdj x1 x2 -> r GBothAndAdj `a` f x1 `a` f x2
