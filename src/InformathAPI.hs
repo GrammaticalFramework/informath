@@ -62,7 +62,7 @@ readEnv args = do
   gr <- readGFGrammar (argValue "-grammar" (root ++ "/" ++ grammarFile args) args)
   let symboltables =
         if flagHasValue "-add-symboltables" args
-	then constantTableFile : argValues "-add-symboltables" "" args
+	then (root ++ "/" ++ constantTableFile) : argValues "-add-symboltables" "" args
 	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   let sym = mkLanguage gr (argValue "-symboltable-lang" english args)

@@ -83,6 +83,7 @@ alphaConvert convs = alpha [] where
 -- typically, ignore explicit type arguments to form a polymorphic expression
 ignoreFirstArguments :: M.Map QIdent Int -> Tree a -> Tree a
 ignoreFirstArguments cns t = case t of
+  ---- TODO: add pattern app
   EApp _ _ -> case splitApp t of
     (EIdent f, xs@(_:_)) -> case M.lookup f cns of
       Just n -> foldl EApp (EIdent f) (map (ignoreFirstArguments cns) (drop n xs))
