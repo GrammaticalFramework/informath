@@ -34,6 +34,7 @@ fun
 ---  CoreAbsExp : Ident -> Exp -> Exp ;
   TermExp : Term -> Exp ; 
   KindExp : Kind -> Exp ;  -- the set of As
+  PropExp : Prop -> Exp ; -- the proposition that X
   TypedExp : Exp -> Kind -> Exp ;
   EnumSetExp : Exps -> Exp ;
 

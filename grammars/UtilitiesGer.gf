@@ -57,7 +57,8 @@ oper
   hold_V2 = mkV2 I.halten_V for_Prep ;
   arbitrary_A = mkA "beliebig" ;
   set_N = mkN "Menge" ;
-
+  proposition_N = mkN "Satz" "Sätze" masculine ;
+  
   iff_Subj : Subj = mkSubj "genau dann, wenn" ;
   commaConj : Conj = M.mkConj "" "," plural ;
 

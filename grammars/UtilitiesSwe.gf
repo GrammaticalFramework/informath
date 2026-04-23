@@ -54,7 +54,8 @@ oper
   hold_V2 = mkV2 I.hålla_V for_Prep ;
   arbitrary_A = mkA "godtycklig" ;
   set_N = mkN "mängd" "mängder" ;
-
+  proposition_N = mkN "påstående" ;
+  
   iff_Subj : Subj = mkSubj "om och endast om" ;
   commaConj : Conj = M.mkConj "," ;
 

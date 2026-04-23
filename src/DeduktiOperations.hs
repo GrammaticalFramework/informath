@@ -89,6 +89,11 @@ ignoreFirstArguments cns t = case t of
       Just n -> foldl EApp (EIdent f) (map (ignoreFirstArguments cns) (drop n xs))
       _ -> foldl EApp (EIdent f) (map (ignoreFirstArguments cns) xs)
     (f, xs) -> foldl EApp (ignoreFirstArguments cns f) (map (ignoreFirstArguments cns) xs)
+  PApp _ _ -> case splitPatt t of
+    (PVar f, xs@(_:_)) -> case M.lookup f cns of
+      Just n -> foldl PApp (PVar f) (map (ignoreFirstArguments cns) (drop n xs))
+      _ -> foldl PApp (PVar f) (map (ignoreFirstArguments cns) xs)
+    (f, xs) -> foldl PApp (ignoreFirstArguments cns f) (map (ignoreFirstArguments cns) xs)
   _ -> composOp (ignoreFirstArguments cns) t
 
 restoreFirstArguments :: M.Map QIdent Int -> Tree a -> Tree a

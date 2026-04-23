@@ -57,7 +57,8 @@ oper
   arbitrary_A = mkA "arbitraire" ;
   set_N = mkN "ensemble" masculine ;
   combinaison_N = mkN "combinaison" feminine ;
-
+  proposition_N = mkN "proposition" ;
+  
   iff_Subj : Subj = Mk.mkSubj "si et seulement si" ;
   commaConj : Conj = Mk.mkConj "," ;
 

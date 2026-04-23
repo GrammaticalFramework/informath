@@ -119,6 +119,7 @@ funListExp ident exps = annotateExp ident $ case ident of
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder2", c), [x, z, EAbs b y]) -> GBinder2Exp (fgTree c) (exp2exp x) (exp2exp z) (bind2coreIdent b) (exp2exp y)
     (Just (c, _), _) | S.member c kindCats -> GKindExp (funListKind ident exps)
+    (Just (c, _), _) | S.member c propCats -> GPropExp (funListProp ident exps)
     (Just (c, _), _) | S.member c symbolicCats -> GTermExp (funListTerm ident exps)
     _ -> case exps of
       [] -> ident2exp ident
@@ -187,7 +188,7 @@ funListFormula ident exps = case ident of
     (Just ("MACRO", c), [x, y]) -> GApp2MacroFormula (macroIdent c) x y
     (Just ("MACRO", c), [x, y, z]) -> GApp3MacroFormula (macroIdent c) x y z
     (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroFormula (macroIdent c) x y z u
-    _ -> GMacroFormula (GStringMacro (GString ("NOTcYET++c")))
+    _ -> GMacroFormula (GStringMacro (GString ("NOTYET"++s)))
     
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of
@@ -291,6 +292,7 @@ exp2exp :: Exp -> GExp
 exp2exp exp = case specialDedukti2Informath callBacks exp of
   Just (expr, "Exp") -> fg expr
   Just (expr, "Kind") -> GKindExp (fg expr)
+  Just (expr, "Prop") -> GPropExp (fg expr)
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
       Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
