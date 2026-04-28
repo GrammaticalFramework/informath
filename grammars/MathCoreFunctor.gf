@@ -38,7 +38,9 @@ lin
   AxiomKindJmt label hypos kind =
     labelText label
       (thenText hypos 
-        (mkS (mkCl (mkNP aPl_Det (useKind kind)) (mkNP a_Det basic_type_CN)))) ;
+        (mkS (mkCl (mkNP thePl_Det (useKind kind)) (mkNP a_Det basic_type_CN)))) ;
+	---  (mkS (mkCl (mkNP the_Det (mkCN type_CN (Syntax.mkAdv possess_Prep (mkNP aPl_Det (useKind kind))))) (mkNP a_Det basic_type_CN)))) ;
+
   AxiomExpJmt label hypos exp kind =
     labelText label
       (thenText hypos (mkS (mkCl exp (useKind kind)))) ;

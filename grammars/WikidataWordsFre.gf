@@ -552,6 +552,7 @@ lin uniform_Adj = mkAdj ( PositA uniforme_A ) ;
 lin unitary_Adj = mkAdj ( PositA unitaire_A ) ;
 lin univalent_Adj = mkAdj ( PositA univalent_A ) ;
 lin universal_Adj = mkAdj ( PositA universel_A ) ;
+lin universe_Noun = mkNoun "univers" ;
 lin untouchable_Adj = mkAdj ( PositA intouchable_A ) ;
 lin unusual_Adj = mkAdj ( PositA inhabituel_A ) ;
 lin value_Noun = mkNoun ( UseN valeur_N ) ;

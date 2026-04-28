@@ -516,6 +516,7 @@ lin reader_Noun = mkNoun "reader" ;
 lin reading_Noun = mkNoun "reading" ;
 lin reality_Noun = mkNoun "reality" ;
 lin recall_Noun = mkNoun "recall" ;
+lin reflexivity_Noun = mkNoun "reflexivity" ;
 lin remark_Noun = mkNoun "remark" ;
 lin replacement_Noun = mkNoun "replacement" ;
 lin representative_Noun = mkNoun "representative" ;

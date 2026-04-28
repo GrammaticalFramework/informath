@@ -514,6 +514,7 @@ fun reader_Noun : Noun ;
 fun reading_Noun : Noun ;
 fun reality_Noun : Noun ;
 fun recall_Noun : Noun ;
+fun reflexivity_Noun : Noun ;
 fun remark_Noun : Noun ;
 fun replacement_Noun : Noun ;
 fun representative_Noun : Noun ;

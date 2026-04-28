@@ -1,3 +1,5 @@
 concrete UserExtensionsSwe of UserExtensions =
-  NaprocheSwe ;
+  NaprocheSwe,
+  HottWordsSwe
+  ;
 
