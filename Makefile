@@ -62,7 +62,7 @@ demo:
 	$(RUN) -to-lang=Eng test/exx.dk
 	echo "## parsing generated English with conversions back to Dedukti"
 	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
-	$(RUN) -from-lang=Eng out/exx.txt
+	$(RUN) -from-lang=Eng out/exx.txt | grep -v UN
 	echo "## parsing examples from Chartrand et al. with conversions to Dedukti"
 	$(RUN) -from-lang=Eng test/gflean-data.txt | grep -v UN
 	cat share/BaseConstants.dk test/exx.dk >out/bexx.dk

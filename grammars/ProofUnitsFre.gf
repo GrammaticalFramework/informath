@@ -45,7 +45,7 @@ lin
     ccText (strText "comme") (commaText (propInText prop))
       (prefixText "il suffit de montrer que" (propText goal)) ;
   InductionGoal =
-    strText "par recurrence :" ;
+    strText "par récurrence :" ;
   CasesGoal =
     strText "par cas :" ;
   CaseGoal A h =
@@ -53,7 +53,7 @@ lin
 
   noHence = P.mkAdv "" ;
   henceHence = P.mkAdv "donc" ;
-  altogetherHence = P.mkAdv "em somme" ;
+  altogetherHence = P.mkAdv "en somme" ;
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "en particulier" ;
   weConcludeHence = P.mkAdv "nous concluons que" ;
