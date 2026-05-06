@@ -135,9 +135,9 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
 #MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
 #MACRO \newcommand{\divides}[2]{#1 \mid #2}
-#MACRO \newcommadn{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
-#MACRO \newcommadn{\infinity}{\infty}
-#MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+#MACRO \newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+#MACRO \newcommand{\infinity}{\infty}
+#MACRO \newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
 #MACRO \newcommand{\Natural}{\mathbb{N}}
 
 
