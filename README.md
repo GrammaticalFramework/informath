@@ -8,6 +8,8 @@
 
 #### LATEST NEWS
 
+6 May 2026: New binary release, entitled [Informath-0.3](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.3).
+
 15 April 2026: Generalized production of synonyms, regulated by new flags `-synonyms=<int>` and `-symbolics=<int>`. Value 1 is reasonable for both of them: it means that just one verbal and one symbolic synonym is taken from the symbol table. Otherwise, the number of variations can now grow *very* large. Even without the `-variations` flag, this can make generation slow. In many demos accessible by `Makefile`, these flag values are used, but they can be overridden.
 
 4 March 2026: Binary release, entitled [Informath-0.2](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2).

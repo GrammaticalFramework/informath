@@ -3,7 +3,7 @@ OPEN := open  # pdf viewer command
 
 # for binary_packages
 ARCH := macos-arm
-VERSION := 0.2
+VERSION := 0.3
 
 GF_FILES := $(wildcard grammars/*.gf)
 
