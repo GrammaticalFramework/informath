@@ -1,0 +1,95 @@
+#MACRO \newcommand{\universe}[0]{U}
+U : "the universe" | \universe
+#MACRO \newcommand{\element}[1]{#1}
+El  : "element of X" 
+
+#MACRO \newcommand{\sigmatype}[2]{\Sigma_{x:#1} #2(x)}
+Sigma : "the sigma type of X and Y" | \sigmatype
+
+#MACRO \newcommand{\product}[2]{#1 \times #2}
+prod : "the product of X and Y" | \product 
+
+#MACRO \newcommand{\eq}[2]{#1 = #2}
+#DROP Id 1
+Id : "the identity between X and Y" | \eq 
+
+#DROP concat 4
+#MACRO \newcommand{\concat}[2]{#1 \cdot #2}
+concat : "concatenation." | "the concatenation of X and Y" | \concat 
+
+#DROP inv 3
+#MACRO \newcommand{\inv}[1]{\text{inv}(#1)}
+inv : "the inverse of X" | \inv 
+
+#DROP comp_fun 3 
+#MACRO \newcommand{\compfun}[2]{#1 \circ #2}
+comp_fun : "composition." | "the composition of X and Y" | \compfun
+
+#DROP 1 SigmaMap 
+#MACRO \newcommand{\sigmamap}[2]{\Sigma_{#2} #1}
+SigmaMap : "the sigma type of X and Y" | \sigmamap 
+
+#DROP ap 5
+#MACRO \newcommand{\ap}[1]{\text{ap}_{#1}}
+ap : "path action." | "the action on X" | \ap
+
+#DROP id_fun 1
+#MACRO \newcommand{\idfun}[1]{\text{id}_{#1}}
+id_fun : "the identity function on X" | \idfun
+
+#DROP htpy 2
+#MACRO \newcommand{\homotopy}[2]{#1 \sim #2}
+htpy        : "X is homotopic to Y" | "the homotopy between X and Y" | \homotopy
+
+#DROP htpy_nondep 2
+htpy_nondep : "X is homotopic to Y" | "X and Y are homotopic" | "homotopy between X and Y" | \homotopy 
+
+#MACRO \newcommand{\map}[2]{#1 \rightarrow #2}
+Map        : "map from X to Y"  
+MapNondep  : "map from X to Y"  
+
+#DROP refl_htpy 2
+#MACRO \newcommand{\reflhtpy}[1]{\text{refl-htpy}_{#1}}
+refl_htpy   : "reflexivity." | "the reflexive homotopy of X" | \reflhtpy 
+
+#DROP inv_htpy 4
+#MACRO \newcommand{\invhtpy}[1]{#1^{-1}}
+inv_htpy    : "inverse." | "the inverse homotopy of X" | \invhtpy
+
+#DROP concat_htpy 5
+#MACRO \newcommand{\conhtpy}[2]{#1 \cdot #2}
+concat_htpy : "concatenation." |  "the concatenation of X and Y" | \conhtpy
+
+#DROP htpy_left_whisk 5
+htpy_left_whisk  : "left whiskering." | "the left whiskering of X by Y"
+#DROP htpy_right_whisk 5
+htpy_right_whisk : "right whiskering." | "the right whiskering of X by Y"
+
+#DROP Sec_U 2
+#MACRO \newcommand{\sect}[1]{\text{sec} (#1)}
+Sec_U  : "section of X" | \sect
+#DROP Retr_U 2
+#MACRO \newcommand{\retr}[1]{\text{retr} (#1)}
+Retr_U : "retraction of X" | \retr
+
+#DROP is_equiv 2
+is_equiv : "equivalence." 
+
+equiv    : "equivalence from X to Y"
+
+#DROP map_equiv 2
+map_equiv            : "the underlying map of X"
+
+#DROP is_equiv_map_equiv 2
+is_equiv_map_equiv   : "the proof that the map of X is an equivalence"
+
+#DROP is_equiv_has_inverse 2
+is_equiv_has_inverse : "the proof that X is an equivalence from an inverse"
+
+#DROP Eq_Sigma 2
+#MACRO \newcommand{\sigmaeq}[2]{\text{eq}_{\Sigma} (#1, #2)}
+Eq_Sigma           : "the component equality between X and Y" | \sigmaeq
+
+#DROP pair_eq_Sigma 5
+pair_eq_Sigma      : "dependent pair equivalence."
+

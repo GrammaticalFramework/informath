@@ -153,6 +153,11 @@ sigma:
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
+hott_demo:
+	echo "# generating Homotopy Type Theory statements"
+	$(RUN) -variations -nbest=10 -to-latex-doc -symboltables=test/hott_demo.dkgf test/hott_demo.dk >out/hott_demo.tex
+	cd out ; pdflatex hott_demo.tex ; $(OPEN) hott_demo.pdf
+
 symboltest:
 	echo "# testing an example-based symbol table"
 	dk check test/symboltest.dk

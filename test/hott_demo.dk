@@ -1,0 +1,58 @@
+(; Helper functions ;)
+
+U  : Type.
+El : U -> Type.
+Sigma : (A : U) -> (B : (El A -> U)) -> U.
+Id : (A : U) -> El A -> El A -> U.
+concat : (A : U) -> (a : El A) -> (b : El A) -> (c : El A) -> El (Id A a b) -> El (Id A b c) -> El (Id A a c).
+prod : U -> U -> Type. 
+id_fun : (A : U) -> El A -> El A.
+ap : (A : U) -> (B : U)  -> (a : El A) -> (b : El A) -> El (Id A a b) -> (f : (El A -> El B)) -> El (Id B (f a) (f b)).
+Map : (A : U) -> (B : (El A -> U)) -> Type.
+MapNondep : U -> U -> Type.
+comp_fun : (A : U) -> (B : U) -> (C : U) -> (MapNondep B C) -> (MapNondep A B) -> (MapNondep A C).
+
+
+
+
+(; Chapter 9 ;)
+
+
+
+htpy : (A : U) -> (B : (El A -> U)) -> Map A B -> Map A B -> Type.
+
+htpy_nondep : (A : U) -> (B : U) -> MapNondep A B -> MapNondep A B -> Type.
+
+refl_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> htpy A B f f.
+
+inv_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> htpy A B f g -> htpy A B g f.
+
+
+concat_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> (h : Map A B) -> htpy A B f g -> htpy A B g h -> htpy A B f h.
+
+(;
+
+Tests for informalizations. Not definitinos and currently does not type check 
+
+left_unit_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> (H : htpy A B f g) -> htpy A B (concat_htpy A B f f g (refl_htpy A B f) H) H.
+right_unit_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> (H : htpy A B f g) -> htpy A B (concat_htpy A B f g g H (refl_htpy A B g)) H.
+left_inv_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> (H : htpy A B f g) -> htpy A B (concat_htpy A B g f f (inv_htpy A B f g H) (refl_htpy A B f)) (refl_htpy A B f).
+right_inv_htpy : (A : U) -> (B : (El A -> U)) -> (f : Map A B) -> (g : Map A B) -> (H : htpy A B f g) -> htpy A B (concat_htpy A B f g f H (inv_htpy A B f g H)) (refl_htpy A B g).
+;)
+
+htpy_left_whisk : (A : U) -> (B : U) -> (C : U) -> (h : MapNondep B C) -> (f : MapNondep A B) -> (g : MapNondep A B) -> htpy_nondep A B f g -> htpy_nondep A C (comp_fun A B C h f) (comp_fun A B C h g).
+
+htpy_right_whisk : (A : U) -> (B : U) -> (C : U) -> (g : MapNondep B C) -> (h : MapNondep B C) -> htpy_nondep B C g h -> (f : MapNondep A B) -> htpy_nondep A C (comp_fun A B C g f) (comp_fun A B C h f).
+
+(;
+I could not make these type check and look good in the book format for now.
+sec : (A : U) -> (B : U) -> (f : MapNondep A B) -> (g : MapNondep B A) -> htpy_nondep A B (SigmaMap A A (comp_fun A B A g f)) (id_fun B).
+retr : (A : U) -> (B : U) -> (f : MapNondep A B) -> (h : MapNondep B A) -> htpy_nondep A A (SigmaMap A B (comp_fun A B A f h)) (id_fun A).
+;)
+
+Sec_U  : (A : U) -> (B : U) -> (f : MapNondep A B) -> U.
+Retr_U : (A : U) -> (B : U) -> (f : MapNondep A B) -> U.
+is_equiv : (A : U) -> (B : U) -> (f : MapNondep A B) -> prod (Sec_U A B f) (Retr_U A B f).
+
+Eq_Sigma : (A : U) -> (B : (El A -> U)) -> (s : El (Sigma A B)) -> (t : El (Sigma A B)) -> Type. 
+pair_eq_Sigma : (A : U) -> (B : (El A -> U)) -> (s : El (Sigma A B)) -> (t : El (Sigma A B)) -> El (Id (Sigma A B) s t) -> Eq_Sigma A B s t. 
