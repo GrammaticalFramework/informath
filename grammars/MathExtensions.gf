@@ -5,6 +5,8 @@ abstract MathExtensions =
 
 cat
   [Adj] {2} ;
+  Pred ;
+----  [Pred] {2} ;
 
 fun
   FormulaProp : Formula -> Prop ;
@@ -103,5 +105,14 @@ fun
   AdjCCollProp : AdjC -> [Exp] -> Prop ;
   AdjECollProp : AdjE -> [Exp] -> Prop ;
   FunCCollExp : FunC -> [Exp] -> Exp ;
+
+-- predicates as a general category
+{- ----
+  PredProp : Pred -> Exp -> Prop ;
+  AdjPred : Adj -> Pred ;
+  VerbPred : Verb -> Pred ;
+  Noun1Pred : Noun1 -> Pred ;
+  KindPredKind : Kind -> Pred -> Kind ;
+-}
 
 }

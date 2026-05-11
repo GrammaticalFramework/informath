@@ -181,6 +181,8 @@ type GVerbC = Tree GVerbC_
 data GVerbC_
 type GCoercion = Tree GCoercion_
 data GCoercion_
+type GPred = Tree GPred_
+data GPred_
 type GTerms = Tree GTerms_
 data GTerms_
 type GString = Tree GString_
@@ -3645,6 +3647,14 @@ instance Gf GVerbC where
 instance Show GCoercion
 
 instance Gf GCoercion where
+  gf _ = undefined
+  fg _ = undefined
+
+
+
+instance Show GPred
+
+instance Gf GPred where
   gf _ = undefined
   fg _ = undefined
 

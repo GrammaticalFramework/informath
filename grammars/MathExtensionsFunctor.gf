@@ -15,6 +15,7 @@ in {
 
 lincat
   [Adj] = Syntax.ListAP ;
+  Pred = VP ;
 
 lin
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
@@ -132,5 +133,13 @@ lin
   AdjCCollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
   AdjECollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
   FunCCollExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep (mkNP and_Conj exps))) ;
-  
+
+{- ----
+  PredProp pred exp = simpleProp (mkS (mkCl exp pred)) ;
+  AdjPred adj = mkVP adj ;
+  VerbPred verb = verb ;
+  Noun1Pred noun = mkVP noun ;
+  KindPredKind kind pred = {cn = mkCN kind.cn (mkRS (mkRCl which_RP pred)) ; adv = kind.adv} ;
+-}
+
 }
