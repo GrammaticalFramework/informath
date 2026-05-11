@@ -1,0 +1,33 @@
+elem : element_Noun2 | element_Compar
+F : NounPrepDep2 map_Noun from_Prep to_Prep | \F
+app : \app
+id : NounPrepFun identity_Noun of_Prep | \id
+isInj : injective_Adj
+isSurj : surjective_Adj
+isBij : bijective_Adj
+
+comp : NounPrepFun2 composition_Noun of_Prep with_Prep | \comp
+inverseImage : \invImage
+inverse : \inv
+isInverse : NounPrepNoun2 inverse_Noun of_Prep
+
+#DROP elem 1
+#DROP idCompNeutral 2
+#DROP app 2
+#DROP isMap 2
+#DROP isInj 2
+#DROP isSurj 2
+#DROP isBij 2
+#DROP comp 3
+#DROP idIsBij 1
+#DROP idIsMap 1
+#DROP inverse 2
+#DROP inverseImage 2
+#DROP isInverse 2
+
+#MACRO \newcommand{\F}[2]{\mathcal{F}(#1, #2)}
+#MACRO \newcommand{\app}[2]{#1 (#2)}
+#MACRO \newcommand{\id}[1]{id_{#1}}
+#MACRO \newcommand{\comp}[2]{#1 \circ #2}
+#MACRO \newcommand{\invImage}[3]{#2^{-1}(#1)}
+#MACRO \newcommand{\inv}[2]{#1^{-1}}

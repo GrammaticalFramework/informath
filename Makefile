@@ -148,6 +148,19 @@ sets:
 	$(RUN) -variations -to-latex-doc -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
+maps:
+	echo "# checking some maps theory statements and generating LaTeX"
+	cat share/BaseConstants.dk test/maps.dk >out/mapsx.dk
+	dk check out/mapsx.dk
+	$(RUN) -to-latex-doc -to-lang=$(lang) -add-symboltables=test/maps.dkgf test/maps.dk >out/maps.tex
+	cd out ; pdflatex maps.tex ; $(OPEN) maps.pdf
+
+topo:
+	echo "# checking some topology statements and generating LaTeX"
+	dk check test/topo.dk
+	$(RUN) -to-latex-doc -to-lang=$(lang) -add-symboltables=test/topo.dkgf test/topo.dk >out/topo.tex
+	cd out ; pdflatex topo.tex ; $(OPEN) topo.pdf
+
 sigma:
 	echo "# generating some expressions with sums and integrals"
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex

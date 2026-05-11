@@ -161,6 +161,10 @@ The following datasets can be processed with `RunInformath <filename>` to genera
 
 - [test/sets.dk](./test/sets.dk) contains set algebra statements from a [Wikipedia article](https://en.wikipedia.org/wiki/Algebra_of_sets). Try `make sets` to directly display a LaTeX document. Use `make lang=Fre sets` to generate French (and similarly for Ger, Swe).
 
+- [test/maps.dk](./test/maps.dk) contains statements about functions, mostly from a [Wikipedia article](https://en.wikipedia.org/wiki/Function_(mathematics)#General_properties). Try `make maps` to directly display a LaTeX document.
+
+- [test/topo.dk](./test/topo.dk) contains topology statements, with an axiomatic definition of a topological space through its open, from the Wikipedia articles of [topological space](https://en.wikipedia.org/wiki/Topological_space#Definition_via_open_sets) and [Hausdorff space](https://en.wikipedia.org/wiki/Hausdorff_space#Definitions). Try `make topo` to directly display a LaTeX document.
+
 - [test/sigma.dk](./test/sigma.dk) contains some examples of variable-binding constructs (sums, integrals). Try `make sigma` to directly display a LaTeX document.
 
 - [test/top100.dk](./test/top100.dk) contains a selection of [Wiedijk's "100 theorems"](https://www.cs.ru.nl/~freek/100/). Try `make top100` to directly display a LaTeX document. Use `make lang=Fre top100` to generate French (and similarly for Ger, Swe).

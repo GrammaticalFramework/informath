@@ -1,0 +1,42 @@
+in : element_Noun2 | element_Compar
+elem : element_Noun2 | element_Compar
+#DROP elem 1
+
+Family : NounPrepDep family_Noun of_Prep
+family : \family
+familyUnion : \famCup
+elemFamily : \elemFam
+#DROP familyUnion 1
+#DROP elemFamily 2
+
+F : \F
+
+closedUnderFiniteInter : AdjPrepNounAdj closed_Adj under_Prep (AdjNounNoun finite_Adj intersection_Noun)
+
+closedUnderUnion : AdjPrepNounAdj closed_Adj under_Prep (AdjNounNoun arbitrary_Adj union_Noun)
+
+topoPair : \toposet
+isTopo : NounNoun1 topology_Noun
+topologicalSet : NounNoun1 (AdjNounNoun topological_Adj space_Noun)
+open : open_Adj
+close : close_Adj
+
+Hausdorff : NounNoun1 (ProperNameNounNoun Hausdorff_ProperName space_Noun)
+isNeighborhood : NounPrepNoun2 neighborhood_Noun of_Prep
+
+#DROP closedUnderFiniteInter 1
+#DROP closedUnderUnion 1
+#DROP isTopo 1
+#DROP open 3
+#DROP close 3
+#DROP Hausdorff 2
+#DROP family 1
+#DROP isNeighborhood 3
+
+
+#MACRO \newcommand{\eqq}[2]{#1 = #2}
+#MACRO \newcommand{\famCup}[2]{\bigcup_{i \in #1} #2_{i}}
+#MACRO \newcommand{\F}[2]{\mathcal{F}(#1, #2)}
+#MACRO \newcommand{\toposet}[2]{(#1,\mathcal{#2})}
+#MACRO \newcommand{\family}[3]{(#3_{#2})_{#2 \in #1}}
+#MACRO \newcommand{\elemFam}[2]{#1_#2}

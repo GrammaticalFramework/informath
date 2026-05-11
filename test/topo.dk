@@ -1,0 +1,87 @@
+Set : Type.
+def Prop : Type := Set.
+
+def Elem : Set -> Type.
+
+Proof : Prop -> Type.
+
+(; logical operators, hard-coded in MathCore ;)
+false : Prop.
+and : (A : Prop) -> (B : Prop) -> Prop.
+or : (A : Prop) -> (B : Prop) -> Prop.
+if : Prop -> Prop -> Prop.
+def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
+def not : Prop -> Prop := A => if A false.
+forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
+exists : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
+
+union : Set -> Set -> Set.
+intersection : Set -> Set -> Set.
+difference : Set -> Set -> Set.
+powerset : Set -> Set.
+
+emptyset : Set.
+universeset : Set.
+
+subset : Set -> Set -> Prop.
+subseteq : Set -> Set -> Prop.
+equalset : Set -> Set -> Prop.
+
+Equ : (A : Set) -> Elem A -> Elem A -> Prop.
+in : Set -> Set -> Prop.
+elem : (X : Set) -> Elem X -> Elem (powerset X) -> Prop.
+
+F : Set -> Set -> Set.
+
+def Family : (X : Set) -> (I : Set) -> Set.
+[X, I] Elem (Family X I) --> Elem (F I (powerset X)).
+family : (X : Set) -> (I : Set) -> (U : ((i : Elem I) -> Elem (powerset X))) -> Elem (Family X I).
+elemFamily : (X : Set) -> (I : Set) -> (U : Elem (Family X I)) -> (i : Elem I) -> Set.
+
+familyUnion : (X : Set) -> (I : Set) -> (U : Elem (Family X I)) -> Set.
+
+[X : Set] Elem (powerset X) --> Set
+[X, Y : Set] Elem (F X Y) --> (Elem X -> Elem Y).
+
+def closedUnderFiniteInter : Set -> Set -> Prop :=
+  X => T => forall (powerset X) (A => forall (powerset X) (B => if (and (in A T) (in B T)) (in (intersection A B) T))).
+
+def closedUnderUnion : (X : Set) -> (T : Set) -> Prop :=
+  X => T => forall (powerset universeset)
+    (I => forall (Family X I)
+      (U => if (forall I (i => in (elemFamily X I U i) T)) (in (familyUnion X I U) T))).
+
+def isTopo : (X : Set) -> (T : Set) -> Prop :=
+  X => T => and
+    (and (in emptyset T) (in X T))
+    (and (closedUnderFiniteInter X T) (closedUnderUnion X T)).
+
+topoPair : (X : Set) -> (T : Set) -> Set.
+def topologicalSet : Set -> Prop.
+[X, T : Set] topologicalSet (topoPair X T) --> isTopo X T.
+
+def open : (X : Set) -> (T : Set) -> Proof (topologicalSet (topoPair X T)) -> Set -> Prop := 
+  X => T => p => U => in U T.
+
+def close : (X : Set) -> (T : Set) -> Proof (topologicalSet (topoPair X T)) -> Set -> Prop :=
+  X => T => p => F => open X T p (difference X F).
+
+def Hausdorff : (X : Set) -> (T : Set) -> Proof (topologicalSet (topoPair X T)) -> Prop :=
+  X => T => p => (forall X (x =>
+    forall X (y =>
+      if (not (Equ X x y))
+      (exists (powerset X) 
+        (U_x => exists (powerset X) 
+          (U_y => and 
+            (and 
+              (and (in U_x T) (in U_y T))
+              (and (elem X x U_x) (elem X y U_y))
+            )
+            (equalset (intersection U_x U_y) emptyset))
+        ))
+  ))).
+
+def isNeighborhood : (X : Set) -> (T : Set) -> Proof (topologicalSet (topoPair X T)) ->
+  Elem (powerset X) -> Elem X -> Prop := X => T => p => N => x =>
+    exists (powerset X) (U => and (in U T)
+      (and (elem X x U) (subset U N))).

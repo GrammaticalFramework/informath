@@ -1,0 +1,56 @@
+def F : (X : Set) -> (Y : Set) -> Set.
+
+def app : (X : Set) -> (Y : Set) -> (f : Elem (F X Y)) -> (x : Elem X) -> Elem Y.
+isMap : (X : Set) -> (Y : Set) -> (f : Elem (F X Y)) -> Proof (forall X (
+    x => and 
+      (exists Y (y => Equ Y (app X Y f x) y))
+      (forall Y (y => forall Y (y' => if (and (Equ Y (app X Y f x) y) (Equ Y (app X Y f x) y')) (Equ Y y y'))))
+    )).
+
+id : (X : Set) -> Elem (F X X).
+
+def isInj : (X : Set) -> (Y : Set) ->  (f : Elem (F X Y)) -> Prop :=
+  X => Y => f => forall X (x => forall X (x' =>
+    if (Equ Y (app X Y f x) (app X Y f x')) (Equ X x x')
+  )).
+
+def isSurj : (X : Set) -> (Y : Set) ->  (f : Elem (F X Y)) -> Prop :=
+  X => Y => f =>
+    forall Y (y => exists X (x => Equ Y (app X Y f x) y)).
+
+def isBij : (X : Set) -> (Y : Set) ->  (f : Elem (F X Y)) -> Prop :=
+  X => Y => f => and (isInj X Y f) (isSurj X Y f).
+
+idIsBij : (X : Set) -> Proof (isBij X X (id X)).
+
+comp : (X : Set) -> (Y : Set) -> (Z : Set) -> (g : Elem (F Y Z)) -> (f : Elem (F X Y)) -> Elem (F X Z).
+
+idCompNeutral : (X : Set) -> (Y : Set) ->
+  Proof (forall (F X Y) (f => 
+    and
+      (Equ (F X Y) f (comp X X Y f (id X)))
+      (Equ (F X Y) f (comp X Y Y (id Y) f))
+  )).
+
+compAssoc : (X : Set) -> (Y : Set) -> (Z : Set) -> (T : Set) ->
+  (f : Elem (F X Y)) -> (g : Elem (F Y Z)) -> (h : Elem (F Z T)) ->
+    Proof (Equ (F X T) (comp X Y T (comp Y Z T h g) f) (comp X Z T h (comp X Y Z g f))).
+
+def isInverse : (X : Set) -> (Y : Set) -> (g : Elem (F Y X)) ->
+  (f : Elem (F X Y)) -> Prop := X => Y => g => f => and
+      (Equ (F X X) (comp X Y X g f) (id X))
+      (Equ (F Y Y) (comp Y X Y f g) (id Y)).
+
+inverseProp : (X : Set) -> (Y : Set) -> (f : Elem (F X Y)) ->
+  Proof (iff
+    (isBij X Y f)
+    (exists (F Y X) (g => isInverse X Y g f))
+    ).
+
+inverse : (X : Set) -> (Y : Set) -> (f : Elem (F X Y)) -> Proof (isBij X Y f) -> Elem (F Y X).
+
+invInverse : (X : Set) -> (Y : Set) -> (f : Elem (F X Y)) -> (p : Proof (isBij X Y f)) -> Proof (isInverse X Y (inverse X Y f p) f).
+
+[X : Set, x : Elem X] app X X (id X) x --> x
+[X : Set, Y : Set, Z : Set, f : Elem (F X Y), g : Elem (F Y Z), x : Elem X]
+  app X Z (comp X Y Z g f) x --> app Y Z g (app X Y f x).
