@@ -106,7 +106,7 @@ data Line = Line {
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
-noIdent = QIdent "NOIDENT!!!" ---- 
+noIdent = QIdent "" ---- 
 
 -- rose trees (in general)
 
@@ -170,7 +170,7 @@ typeAnnotate mo cont typ exp = case exp of
 
 subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
 subst gamma bs e = case e of
-  EIdent x | notElem x bs -> case lookup x gamma of
+  EIdent x {- | notElem x bs -} -> case lookup x gamma of
     Just v -> v
     _ -> e
   EApp f a -> EApp (subst gamma bs f) (subst gamma bs a)
