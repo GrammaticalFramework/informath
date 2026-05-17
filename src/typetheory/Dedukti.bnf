@@ -42,9 +42,10 @@ HExp.    Hypo ::= Exp2 ;
 HVarExp. Hypo ::= QIdent ":" Exp2 ;
 HParVarExp. Hypo ::= "(" QIdent ":" Exp2 ")" ;
 
--- extension of Dedukti: local definitions
+-- extension of Dedukti: local definitions and type annotation
 internal HLetExp.    Hypo ::= "(" QIdent ":=" Exp2 ")" ;
 internal HLetTyped.  Hypo ::= "(" QIdent ":" Exp2 ":=" Exp2 ")" ;
+internal ETyped. Exp3 ::= "<" Exp ":" Exp ">" ; 
 
 -- separator nonempty QIdent "," ;
 
