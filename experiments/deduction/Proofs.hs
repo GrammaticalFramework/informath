@@ -7,9 +7,11 @@ import Dedukti.ParDedukti
 import Dedukti.LexDedukti
 import qualified Dedukti.ErrM as DE
 
----import DeduktiOperations
+import DeduktiOperations
 
 import Data.List (intersperse, nub, nubBy, sortOn)
+import qualified Data.Map as M
+import System.Environment (getArgs)
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."
@@ -31,20 +33,14 @@ import Data.List (intersperse, nub, nubBy, sortOn)
 -- first a demo; do runghc Deduction.hs >pr.tex ; pdflatex pr.tex
 --
 
-
-import qualified Data.Map as M
-
-import System.Environment (getArgs)
-
 main = do
-  base:exx:_ <- getArgs -- filenames
+  base:exx:drop:_ <- getArgs -- filenames
   mo <- readDeduktiModule [base]
-  let dkmap = dkFunctionMap mo
-  mapM_ putStrLn (printFunctionMap dkmap)
+  let dkmap = identTypes mo
   MJmts ps <- readDeduktiModule [exx]
+  dropmap <- readDropMap drop
   putStrLn $ prLatexFile $ unlines $ intersperse "\n\n" [
-    expDemo dkmap e | JThm _ _ (MEExp e) <- ps]
-
+    expDemo dkmap dropmap t e | JThm _ (MTExp t) (MEExp e) <- ps]
 
 readDeduktiModule :: [FilePath] -> IO Module
 readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . unlines
@@ -55,47 +51,27 @@ parseDeduktiModule s = case pModule (myLexer s) of
   DE.Bad e -> error ("parse error: " ++ e)
   DE.Ok mo -> mo
 
+readDropMap :: FilePath -> IO (M.Map QIdent Int)
+readDropMap file = readFile file >>= return . M.fromList . map mkEntry . map words . lines
+  where
+    mkEntry (x:i:_) = (QIdent x, read i)
 
-mainz = do
-  putStrLn $ prLatexFile $ unlines $ intersperse "\n\n" [
-    ]
-{-
-linesDemo ex = unlines $ intersperse "\n\n" [
-    "\\subsection*{From lines to term and back}"
-    , "Original linear proof"
-    , prls ex
-    , "Generated deduction tree"
-    , prst (lines2steptree ex)
-    , "Proof term generated from the tree" ++ testEq 1 0
-    , mathdisplay (prt termex)
-    , "Deduction tree generated from the proof term" ++ testEq (lines2steptree ex) (term2tree termex)
-    , prst (term2tree termex)
-    , "Linear proof generated from the proof term" ++ testEq ex (term2lines termex)
-    , prls (term2lines termex)
-    , "\\clearpage"
-    ]
-   where termex = lines2term ex
--}
-
-expDemo dkmap exp = unlines $ intersperse "\n\n" [
+expDemo dkmap dropmap typ exp = unlines $ intersperse "\n\n" [
     "\\subsection*{From term to lines and back}"
+    , "Original proved theorem"
+    , verbatim (printTree typ)
     , "Original proof exp"
     , verbatim (printTree exp)
-    , "Converted proof term"
-    , mathdisplay (prt term)
+    , "Annotated proof term"
+    , verbatim (printTree term)
     , "Generated deduction tree"
     , prst (term2tree term)
     , "Generated linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
     , prls linesterm
-----    , "Deduction tree generated from the linear proof" ++ testEq (term2tree term) (lines2steptree linesterm)
-----    , prst (lines2steptree linesterm)
-----    , "Proof term generated from the linear proof"
-----    , mathdisplay (prt (lines2term linesterm))
     , "\\clearpage"
     ]
   where
-----    term = exp2term dkmap (snd (splitAbs exp))
-    term = exp2term dkmap exp
+    term = ignoreFirstArguments dropmap (typeAnnotate dkmap [] typ exp)
     linesterm = term2lines term
 
 testEq x y = if x==y then " OK" else " TODO"
@@ -105,19 +81,13 @@ testEq x y = if x==y then " OK" else " TODO"
 -- data types and constructors
 -------------------------------
 
--- logical formulas
-
-type Formula = (Exp, Exp) --- Exp
-type Var = QIdent
-type Label = QIdent
-
 -- proof steps (lines on trees)
 
 data Step = Step {
-  hyponumber :: Var,  -- relevant only for hypotheses
-  formula :: Formula,   -- formula assumed or concluded
-  rule :: Label,     -- the rule that is used
-  discharged :: [Var] -- hypolabels of discharged formulas
+  hypovar :: QIdent,      -- relevant only for hypotheses
+  formula :: Exp,         -- formula assumed or concluded
+  rule    :: QIdent,      -- the rule that is used
+  discharged :: [QIdent]  -- hypolabels of discharged formulas
   }
   deriving (Show, Eq)
   
@@ -126,17 +96,17 @@ mkStep li fo ru di = Step li fo ru di
 -- proof lines in Jaskowski-style notation
 
 data Line = Line {
-  line :: Int,        -- line number
-  context :: [Var],   -- labels of open hypotheses
-  premisses :: [Int], -- line numbers of premisses
-  step :: Step        -- the main content of this line
+  line      :: Int,      -- line number
+  context   :: [QIdent], -- labels of open hypotheses
+  premisses :: [Int],    -- line numbers of premisses
+  step :: Step           -- the main content of the line
   }
   deriving (Show, Eq)
 
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
-noIdent = QIdent "" ---- 
+noIdent = QIdent "NOIDENT!!!" ---- 
 
 -- rose trees (in general)
 
@@ -162,151 +132,95 @@ lines2steptree :: [Line] -> Tree Step
 lines2steptree = maptree step . lines2linetree
 
 -----------------------------------------
--- read Dk module to a proof function map
+-- type annotation
 -----------------------------------------
 
--- map from arguments to value and type
-type Function = [Exp] -> (Exp, Exp)
-
-mkFunction :: QIdent -> Exp -> Function
-mkFunction c exp = \es -> val es
- where
-  (hypos, body) = splitType exp
-  vars = map hypo2var hypos
-  val es =
----  case body of
-----    EIdent (QIdent "Prop") -> foldl EApp (EIdent c) (take (length hypos) es)  
-    (foldl EApp (EIdent c) (take (length hypos) es), subst (zip vars es) [] body)
-
-  subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
-  subst gamma bs e = case e of
-    EIdent x | notElem x bs -> case lookup x gamma of
-      Just v -> v
-      _ -> e
-    EApp f a -> EApp (subst gamma bs f) (subst gamma bs a)
-    EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
-    EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
-    _ -> e
-
-
-dkFunctionMap :: Module -> M.Map QIdent Function
-dkFunctionMap mo = M.mapWithKey mkFunction (identTypes mo)
-
-printFunctionMap :: M.Map QIdent Function -> [String]
-printFunctionMap fm = [
-  "% " ++ printTree c ++ " : " ++
-    printTree v ++ " : " ++ printTree t
-    | (c, f) <- M.toList fm,
-      let (v, t) = f [EIdent (QIdent ("#" ++ show i)) | i <- [1..]]
-  ]
-
-exp2term ::  M.Map QIdent Function -> Exp -> Term
-exp2term dmap exp = case exp of
+typeAnnotate :: M.Map QIdent Exp -> [(QIdent, Exp)] -> Exp -> Exp -> Exp
+typeAnnotate mo cont typ exp = case exp of
   EApp _ _ -> case splitApp exp of
-    (EIdent c, args) -> case M.lookup c dmap of
-      Just f -> app c (map (exp2term dmap) args) f
-      _ -> Dk exp ----
-        --error ("cannot apply " ++ printTree c)
-    _ -> -- Dk exp ----
-        error ("cannot build application from " ++ printTree exp)
-  EAbs _ _ -> case splitAbs exp of
-    (xs, body) -> Abs (map bind2ident xs) (exp2term dmap body)
-  EIdent x -> Hyp x (EIdent x, exp) ---- TODO infer type of x
-  _ -> Dk exp ----
+    (EIdent fun, args) ->
+      let
+        (hs, body) = splitType (look fun)
+        vars = concatMap hypo2vars (addVarsToHypos MENone hs)
+	apptyp = subst (zip vars args) (map fst cont) body
+        newargs = [typeAnnotate mo cont ty arg | (h, arg) <- zip hs args, Just ty <- [hypo2type h]]
+      in ETyped (foldl EApp (EIdent fun) newargs) apptyp
+  EIdent fun -> ETyped exp (look fun)
+  EAbs bind body -> 
+    let
+      bodytyp = case typ of
+        EFun _ val -> val
+	_ -> error ("incorrect type of abstraction " ++ printTree exp)
+      vartyp = case bind of
+        BTyped v ty -> ty
+        BVar v -> case typ of
+          EFun h _ -> case hypo2type h of
+	    Just ty -> ty
+	    _ -> error ("no type of bound var in " ++ printTree exp)
+    in EAbs (BTyped (bind2var bind) vartyp)
+            (typeAnnotate mo ((bind2var bind, vartyp): cont) bodytyp body)
+
+ where
+   look fun = case lookup fun cont of
+     Just ty -> ty
+     _ -> case M.lookup fun mo of
+        Just ty -> ty
+        _ -> typ
+
+
+subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
+subst gamma bs e = case e of
+  EIdent x | notElem x bs -> case lookup x gamma of
+    Just v -> v
+    _ -> e
+  EApp f a -> EApp (subst gamma bs f) (subst gamma bs a)
+  EAbs (BTyped x ty) a -> EAbs (BTyped x (subst gamma bs ty)) (subst gamma (x : bs) a)
+  EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
+  EFun (HVarExp x ty) a -> EFun (HVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
+  EFun (HParVarExp x ty) a -> EFun (HParVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
+  EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
+  _ -> e
 
 
 -----------------------
--- filtering display
------------------------
-
-formulaConstructor :: Formula -> QIdent
-formulaConstructor f = case f of
-  (_, EApp (EIdent c) _) -> c
-  (_, EIdent c) -> c
-  _ -> QIdent "?" ---
-
-isProofFormula :: Formula -> Bool
-isProofFormula f = elem (formulaConstructor f) [QIdent "Proof", QIdent "Elem"]
-
-prf :: Formula -> String
-prf f@(exp, typ) =
-  (if formulaConstructor f == QIdent "Elem"
-   then (printTree exp ++ " : ")
-   else "") ++
-  printTree typ
-
-
------------------------
--- proof terms
+-- proof trees
 ----------------------
 
-data Term =
-    App Label [Formula] [Term] Function
-  | Abs [Var] Term
-  | Hyp Var Formula
-  | Ass Var Formula
-  | Dk Exp --- 
--- the last argument of App tells how to combine the argument formulas for display
-
----- idea: subformulas of conclusions could be derived from subderivations 
-app :: Label -> [Term] -> Function -> Term
-app label terms conn = App label (map conclusion terms) terms conn
-
-conclusion :: Term -> Formula
-conclusion term = case term of
-  App _ _ ts c -> c (map (fst . conclusion) ts)
-  Abs _ t -> conclusion t
-  Hyp x f -> f
-  Ass c f -> f
-  Dk exp  -> (exp, exp) ---- TODO
-
--- conversions
-
-term2tree :: Term -> Tree Step
-term2tree term = case term of
-  App rule ps ts c -> Tree (mkStep noIdent (c (map fst ps)) rule (concatMap bindings ts))
-                           (filter (isProofFormula . formula . root) (map term2tree ts))
-  Abs xs t -> term2tree t
-  Hyp x a -> Tree (mkStep x a (QIdent "hypo") []) []
-  Ass x a -> Tree (mkStep x a (QIdent "ass") []) []
-  Dk exp -> Tree  (mkStep (QIdent "?") (exp, exp) (QIdent "Dk") []) [] ---- TODO
-
-bindings :: Term -> [Var]
-bindings t = case t of
-    Abs xs _ -> xs
-    _ -> []
+term2tree :: Exp -> Tree Step
+term2tree exp = case exp of
+  ETyped e typ -> case splitApp e of
+    (EIdent fun, args) ->
+      Tree (mkStep noIdent typ fun (concatMap absIdents args)) (map term2tree args)
+  EAbs _ t -> term2tree t
+  _ -> error ("term2tree " ++ printTree exp)
 
 
-term2lines :: Term -> [Line]
+-----------------------
+-- linear proofs
+----------------------
+
+term2lines :: Exp -> [Line]
 term2lines =
     compress 0 [] [] .
     ps 1 []             
       where
  -- generate lines starting with this line number and context
- ps :: Int -> [Var] -> Term -> [Line]
+ ps :: Int -> [QIdent] -> Exp -> [Line]
  ps ln cont proof = case proof of -- next line number, its context 
 
-   Ass var formula ->
-     [] ---- mkHypoLine ln formula (QIdent "ass") var]
-
-   Hyp var formula ->
-     [] ---- mkHypoLine ln formula (QIdent "hypo") var]
-     
-   App label fs pts conn ->              
-     let
-         pss = psfold cont (pts, ln)
+   ETyped e typ -> case splitApp e of
+    (EIdent fun, args) ->
+      let
+         pss = psfold cont (args, ln)
 	 ln3 = nextline ln (concat pss)
-	 concl = conn (map fst fs)
-     in concat pss ++
-         if isProofFormula concl
-          then [mkLine ln3 cont concl label (nub (map lastline pss)) (concatMap bindings pts)]
-	  else []
-     
-   Abs xs t -> ps ln (cont ++ xs) t
+      in concat pss ++
+         [mkLine ln3 cont typ fun (nub (map lastline pss)) (concatMap absIdents args)]
+   EAbs _ _ -> case splitAbs proof of
+     (binds, body) -> ps ln (cont ++ map bind2ident binds) body
 
-   Dk _ -> [] ---- TODO
+   _ -> error ("term2tree " ++ printTree proof)
 
- psfold :: [Var] -> ([Term], Int) -> [[Line]]
+ psfold :: [QIdent] -> ([Exp], Int) -> [[Line]]
  psfold cont (pts, n) = case pts of
    p : pp -> case
      ps n cont p of
@@ -318,10 +232,10 @@ term2lines =
  nextline ln p = if null p then ln else lastline p + 1
 
  -- compress lines by dropping repetitions of hypotheses and renumbering lines
- compress :: Int -> [(Int, Int)] -> [(Var, (Var, Int))] -> [Line] -> [Line]
+ compress :: Int -> [(Int, Int)] -> [(QIdent, (QIdent, Int))] -> [Line] -> [Line]
  compress gaps relines rehypos ls = case ls of
    ln : rest | elem (rule (step ln)) [QIdent "hypo", QIdent "ass"] ->
-     case (hyponumber (step ln)) of
+     case (hypovar (step ln)) of
        h -> case lookup h rehypos of
          Just (x, k) ->  -- old hypothesis: add gap and re-point line number to first occurrence
 	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest
@@ -330,7 +244,7 @@ term2lines =
 	       vnln = QIdent (printTree h ++ show nln) ---- h TODO
 	   in ln{
 	         line = nln,
-		 step = (step ln){hyponumber=vnln},
+		 step = (step ln){hypovar=vnln},
                  context = vnln : tail (context ln)
 		 } :
 	      compress gaps ((line ln, nln):relines) ((h, (vnln, nln)) : rehypos) rest
@@ -346,18 +260,6 @@ term2lines =
     line = num,
     step = (step ln){discharged = [maybe p fst (lookup p rehypos) | p <- discharged (step ln)]}
     }
-{-
-lines2term :: [Line] -> Term
-lines2term = tree2term . lines2steptree
-
----- TODO
-tree2term :: Tree Step -> Term
-tree2term (Tree s ts) = case (rule s, discharged s) of
-  ("hypo", _) -> hypo (hyponumber s) (formula s) 
-  ("ass", _) -> ass (hyponumber s) (formula s) ---- TODO: sequent lhs
-  (_, xs@(_:_)) -> app (rule s) (map (Abs xs . tree2term) ts) (const (formula s))
-  _ -> app (rule s) (map tree2term ts) (const (formula s))
--}
 
 ----------------------------
 -- printing
@@ -375,7 +277,7 @@ prl ln = [
 ---  concat (replicate (length (context ln)) "\\mid"),
   concat (intersperse "," (map printTree (context ln))),
   show (line ln) ++ ".",
-  prf (formula (step ln)),
+  "\\verb#" ++ printTree (formula (step ln)) ++ "#",
   printTree (rule (step ln)),
   concat (intersperse ", " (map show (premisses ln))),
   let dis = discharged (step ln)
@@ -384,8 +286,8 @@ prl ln = [
   
 prs :: Step -> [String]
 prs st = [
-  printTree (hyponumber st) ++ ".",
-  prf (formula st),
+  printTree (hypovar st) ++ ".",
+  "\\mbox{" ++ printTree (formula st) ++ "}",
   printTree (rule st),
   concat (map ((","++) . printTree) (discharged st))
   ]
@@ -404,22 +306,16 @@ prst = mathdisplay . pr where
                  prs a !! 1, "}{", unwords (intersperse "&" (map pr ts)), "}"]
 
 ---- TODO: pretty-printing on multiple lines
-prt :: Term -> String
-prt term = case term of
-  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prt ts)))
-----  App label ps ts c -> printTree label ++ parenth (unwords (intersperse "," (map prf ps ++ map prt ts)))
-  Abs xs t -> parenth (unwords ("\\lambda" : map prvar xs ++  [".", prt t]))
-  Hyp x a -> prvar x
-  Ass x a -> prcons x
-  Dk e -> parenth ("Dk " ++ printTree e)
- where
-  parenth s = "(" ++ s ++ ")"
-  prvar x = printTree x
-  prcons i = printTree i
+prt :: Exp -> String
+prt exp = printTree exp
 
 mathdisplay s = "\\[" ++ s ++ "\\]"
 
-verbatim s = "\\begin{verbatim}\n" ++ s ++ "\n\\end{verbatim}"
+verbatim s = "\\begin{verbatim}\n" ++ unlines (splitLines (words s)) ++ "\n\\end{verbatim}"
+
+splitLines ws = case splitAt 10 ws of
+  (line, rest@(_:_)) -> unwords line : splitLines rest
+  _ -> [unwords ws]
 
 prLatexFile string = unlines [
   "\\documentstyle[proof]{article}",
@@ -431,6 +327,7 @@ prLatexFile string = unlines [
   "\\end{document}"
   ]
 
+{-
 ---- from DeduktiOperations
 
 -- collect types of idents
@@ -503,3 +400,4 @@ splitType exp = case exp of
     (hypos, rest) -> (hypo:hypos, rest)
   _ -> ([], exp)
 
+-}
