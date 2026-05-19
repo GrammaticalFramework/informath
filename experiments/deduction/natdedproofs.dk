@@ -1,5 +1,9 @@
 (; some theorems of logic ;)
 
+(; A & B -> A ;)
+thm nd00 : (A : Prop) -> (B : Prop) -> Proof (if (and A B) A) :=
+  A => B => ifI (and A B) A (h => (andEl A B (h))).
+
 (; A -> A v A ;)
 thm nd00 : (A : Prop) -> (B : Prop) -> Proof (if A (or A B)) :=
   A => B => ifI A (or A B)
@@ -67,15 +71,7 @@ thm thm1a : Proof (forall Nat (n => (or (even n) (odd n)))) :=
 	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
 	                (y)
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (h)))
-	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).
-			
-thm thm1 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
-  n => NatE n (x => or (even x) (odd x))
-         (orIl (even 0) (odd 0) even0)
-	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
-	                (y)
-	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (h)))
-	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).
+	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).			
 
 thm lemma4 : (n : Elem Nat) -> Proof (if (odd (Succ n)) (even n)) :=
   n =>
@@ -85,5 +81,5 @@ thm lemma4 : (n : Elem Nat) -> Proof (if (odd (Succ n)) (even n)) :=
       (d => d)
       (e => falseE (even n) (neverEvenOdd (Succ n)
         (evenSucc n (e)) (h)))).
-    
+
 

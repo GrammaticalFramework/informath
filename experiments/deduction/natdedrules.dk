@@ -21,12 +21,12 @@ def iff : Prop -> Prop -> Prop := A => B => and (if A B) (if B A).
 
 falseE : (C : Prop) -> Proof false -> Proof C.
 
-andI : (A : Prop) -> (B : Prop) -> Proof A -> Proof B -> Proof (and A B).
+andI : (A : Prop) -> (B : Prop) -> (a : Proof A) -> (b : Proof B) -> Proof (and A B).
 
-def andEl : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof A.
+def andEl : (A : Prop) -> (B : Prop) -> (c : Proof (and A B)) -> Proof A.
 [A, B, a] andEl _ _ (andI A B a _) --> a. 
 
-def andEr : (A : Prop) -> (B : Prop) -> Proof (and A B) -> Proof B.
+def andEr : (A : Prop) -> (B : Prop) -> (c : Proof (and A B)) -> Proof B.
 [A, B, b] andEr _ _ (andI A B _ b) --> b. 
 
 orIl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (or A B).
@@ -120,3 +120,10 @@ def MT : (A : Prop) -> (B : Prop) -> Proof (or A B) -> Proof (not A) -> Proof B 
       (e => hypo B e).
 
 
+thm thm1 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
+  n => NatE n (x => or (even x) (odd x))
+         (orIl (even 0) (odd 0) even0)
+	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
+	                (y)
+	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (h)))
+	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).

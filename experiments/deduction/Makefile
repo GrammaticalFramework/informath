@@ -5,8 +5,8 @@ natural:
 	pdflatex de.tex
 
 compile:
-#	ghc --make -package containers Proofs.hs
-	ghc --make -package containers -package array Proofs.hs
+	ghc --make -package containers Proofs.hs
+#	ghc --make -package containers -package array Proofs.hs
 
 check:
 	cat natdedrules.dk natdedproofs.dk | dk check --stdin=x
