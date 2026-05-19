@@ -14,7 +14,6 @@ executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
     CommonConcepts
-    ConstantData
     Dedukti2Agda
     Dedukti2Rocq
     Dedukti2Lean
@@ -24,7 +23,6 @@ executable RunInformath
     Lexing
     ParseInformath
     Ranking
-    SpecialDeduktiConversions
     Agda.AbsAgda
     Agda.ComposOp
     Agda.PrintAgda

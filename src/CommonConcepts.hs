@@ -4,13 +4,11 @@
 module CommonConcepts where
 
 import Dedukti.AbsDedukti
-import Informath
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (isSuffixOf)
 import Data.Char
 
-type CTree a = Informath.Tree a
 type DTree a = Dedukti.AbsDedukti.Tree a
 
 -- Informath category symbols with arities

@@ -8,7 +8,6 @@ import Dedukti.PrintDedukti
 import Dedukti.ParDedukti (myLexer)
 import Dedukti.LexDedukti (Token(..), prToken)
 import CommonConcepts
-import ConstantData
 
 import Data.Char
 import Data.List
