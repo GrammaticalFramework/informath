@@ -74,3 +74,17 @@ stringJSON s = JSString (toJSString s)
 encodeJSON :: JSON a => a -> String
 encodeJSON = encode
 
+transInEnv :: String -> ([String] -> String) -> [String] -> [String]
+transInEnv env trans = chop where
+
+  chop ss = case break ((== "\\begin{" ++ env ++ "}") . strip) ss of
+    (ls, []) -> ls
+    (ls, rest) -> ls ++ case break ((== "\\end{" ++ env ++ "}") . strip) rest of
+      (ds, line : rest) -> trans (ds ++ [line]) : chop rest
+      (ds, []) -> ds
+
+
+-- like Python strip()
+strip :: String -> String
+strip = unwords . words
+

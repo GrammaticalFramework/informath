@@ -30,6 +30,9 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       mo <- readDeduktiModule [file]
       let results = processDeduktiModule env mo
       mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
+    Just (file, "dktex") -> do
+      ss <- readFile file >>= return . lines
+      mapM_ putStrLn (transEmbeddedDedukti env ss)
     Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-unknown-words" args -> do
       s <- readFile file 
       mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
@@ -81,6 +84,7 @@ helpMsg4 = unlines [
   "",
   just ".dk" "convert to natural language or to another formalism",
   just ".dkgf" "check the consistency of Dedukti to GF mapping",
+  just ".dktex" "convert embedded Dedukti code in begin/end{dedukti} environments",
   just ".tex|.txt|.md" "parse line by line and convert to Dedukti or another formalism",
   "",
   "Output is written to standard output.",

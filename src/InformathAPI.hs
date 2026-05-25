@@ -314,7 +314,7 @@ printGenResult env result = case 0 of
   _ -> printNLGOutput env result
 
 
--- | Just the filan NLG results.
+-- | Just the final NLG results.
 printNLGOutput :: Env -> GenResult -> [String]
 printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
   Just phrases -> map (snd . fst) phrases
@@ -441,6 +441,11 @@ printDeduktiEnv env t =
   then unwords (deduktiTokens (printTree t))
   else printTree t
 
+-- | to translate 
+transEmbeddedDedukti :: Env -> [String] -> [String]
+transEmbeddedDedukti env = transInEnv "dedukti" transDkEnv where
+  transDkEnv (beg : ls) = trans (unlines (init ls))
+  trans = unlines . intersperse "" . concatMap (printGenResult env) . processDeduktiModule env .  parseDeduktiModule
 
 -- ** Seldom explicitly needed one-step conversion.
 

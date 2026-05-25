@@ -166,6 +166,11 @@ sigma:
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
+embedded_sigma:
+	echo "# generating some expressions with sums and integrals in embedded tex"
+	$(RUN) -variations -nbest=3 test/sigma.dktex >out/emsigma.tex
+	cd out ; pdflatex emsigma.tex ; $(OPEN) emsigma.pdf
+
 hott_demo:
 	echo "# generating Homotopy Type Theory statements"
 	$(RUN) -variations -nbest=10 -to-latex-doc -symboltables=test/hott_demo.dkgf test/hott_demo.dk >out/hott_demo.tex
