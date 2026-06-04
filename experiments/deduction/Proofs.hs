@@ -174,7 +174,9 @@ subst gamma bs e = case e of
   EIdent x {- | notElem x bs -} -> case lookup x gamma of
     Just v -> v
     _ -> e
-  EApp f a -> EApp (subst gamma bs f) (subst gamma bs a)
+  EApp f a -> case subst gamma bs f of
+    EAbs bind body -> subst [(bind2ident bind, subst gamma bs a)] bs body -- beta-reduce redex from substituted higher-order arg
+    f' -> EApp f' (subst gamma bs a)
   EAbs (BTyped x ty) a -> EAbs (BTyped x (subst gamma bs ty)) (subst gamma (x : bs) a)
   EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
   EFun (HVarExp x ty) a -> EFun (HVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
@@ -232,34 +234,33 @@ term2lines =
  lastline = line . last
  nextline ln p = if null p then ln else lastline p + 1
 
- -- compress lines by dropping repetitions of hypotheses and renumbering lines
- compress :: Int -> [(Int, Int)] -> [(QIdent, (QIdent, Int))] -> [Line] -> [Line]
+ -- compress lines by dropping repeated hypotheses and renumbering lines accordingly
+ compress :: Int -> [(Int, Int)] -> [((QIdent, Exp), Int)] -> [Line] -> [Line]
  compress gaps relines rehypos ls = case ls of
-   ln : rest | elem (rule (step ln)) [QIdent "hypo", QIdent "ass"] ->
-     case (hypovar (step ln)) of
-       h -> case lookup h rehypos of
-         Just (x, k) ->  -- old hypothesis: add gap and re-point line number to first occurrence
-	   compress (gaps + 1) ((line ln, k) : relines) rehypos rest
-         _ ->       -- new hypothesis: update its line number and hypo number to new line number 
-	   let nln = line ln - gaps
-	       vnln = QIdent (printTree h ++ show nln) ---- h TODO
-	   in ln{
-	         line = nln,
-		 step = (step ln){hypovar=vnln},
-                 context = vnln : tail (context ln)
-		 } :
-	      compress gaps ((line ln, nln):relines) ((h, (vnln, nln)) : rehypos) rest
+   ln : rest | isHypoLine ln ->
+     let key = (rule (step ln), formula (step ln)) -- a hypothesis is identified by its label and formula
+     in case lookup key rehypos of
+          Just k ->  -- old hypothesis: drop this line, re-point its number to the first occurrence
+            compress (gaps + 1) ((line ln, k) : relines) rehypos rest
+          _ ->       -- new hypothesis: keep it, renumbering to close earlier gaps
+            let nln = line ln - gaps
+            in ln{line = nln} :
+               compress gaps ((line ln, nln) : relines) ((key, nln) : rehypos) rest
    ln : rest ->
-           renumberLine (line ln - gaps) relines rehypos ln :
-           compress gaps ((line ln, line ln -gaps):relines) rehypos rest
-   _ -> ls 
+     let nln = line ln - gaps
+         ds  = discharged (step ln) -- hypotheses closed here may be reused (as new) below
+         rehypos' = [r | r@((h, _), _) <- rehypos, notElem h ds]
+     in renumberLine nln relines ln :
+        compress gaps ((line ln, nln) : relines) rehypos' rest
+   _ -> ls
 
- -- change the line number and all references to other line numbers
- renumberLine num relines rehypos ln = ln {
+ -- a hypothesis line just cites an open assumption: no premisses, rule is a context variable
+ isHypoLine ln = null (premisses ln) && elem (rule (step ln)) (context ln)
+
+ -- change the line number and re-point all references to premiss line numbers
+ renumberLine num relines ln = ln {
     premisses = [maybe p id (lookup p relines) | p <- premisses ln],
-    context = [maybe p fst (lookup p rehypos) | p <- context ln],
-    line = num,
-    step = (step ln){discharged = [maybe p fst (lookup p rehypos) | p <- discharged (step ln)]}
+    line = num
     }
 
 ----------------------------
@@ -288,7 +289,7 @@ prl ln = [
 prs :: Step -> [String]
 prs st = [
   printTree (hypovar st) ++ ".",
-  "\\mbox{" ++ printTree (formula st) ++ "}",
+  "\\texttt{" ++ printTree (formula st) ++ "}", -- typewriter, matching the \verb in linear proofs (\verb is illegal inside \infer args)
   printTree (rule st),
   concat (map ((","++) . printTree) (discharged st))
   ]
