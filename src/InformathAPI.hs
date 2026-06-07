@@ -237,7 +237,7 @@ processGFTree env gft =
       nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
       backs = setnub (concatMap (gjmt2dedukti env) exts)
     in GenResult {
-      originalDedukti = head backs, --- always inhabited?
+      originalDedukti = head (gjmt2dedukti env (fg gft)),
       annotatedDedukti = jmts,
       coreGF = core,
       nlgResults = nlgranks,
