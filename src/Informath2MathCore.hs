@@ -106,6 +106,9 @@ sem env t = case t of
       _ ->  GIfProp (sem env cond) (sem env prop)
 -}      
 
+  GDefinedAdjJmt label hypos exp adj prop ->
+    sem env (GDefPropJmt label hypos (GAdjProp adj exp) prop)
+
   GListHypo hypos -> GListHypo (concatMap (semHypo . sem env) hypos)
 
   GIfProp cond prop -> case getAndProps cond of
@@ -252,6 +255,8 @@ sem env t = case t of
     sem env (GExistProp argkinds prop)
   GNoArticleExistProp argkind prop ->
     sem env (GExistProp (GListArgKind [argkind]) prop)
+  GWeDefineAdjJmt label hypos exp adj prop ->
+    sem env (GDefPropJmt label hypos (GAdjProp adj exp) prop)
   _ -> composOp (sem env) t
 
 {- ----

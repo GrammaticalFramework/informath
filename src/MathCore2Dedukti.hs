@@ -96,6 +96,7 @@ jmt2jmt jment = case jment of
       (QIdent "unit")
       MTNone
       (MEExp (unit2exp unit))
+  _ -> error ("TODO jmt2jmt: " ++ showGF jment)
 
 rule2dedukti :: GRule -> Rule
 rule2dedukti rule = case rule of
@@ -314,17 +315,18 @@ termsList terms = case terms of
 exp2deduktiPatt :: GExp -> Patt
 exp2deduktiPatt exp = case exp of
   GTermExp (GIdentTerm ident) -> PVar (ident2ident ident)
-{- ----
-  GAppExp exp (GListExp exps) ->
-    foldl1 EApp (map exp2dedukti (exp : exps))
+  GAppExp exp exps ->
+    foldl1 PApp (map exp2deduktiPatt (exp : exps2list exps))
+  GNameExp (LexName name) -> PVar (QIdent name)
+{-
   GAbsExp (GListIdent idents) exp ->
     foldr
       (\x y -> EAbs (BVar (ident2ident x)) y)
       (exp2dedukti exp)
       idents
-  GNameExp (LexName name) ->
-    EIdent (QIdent (name))
 -}
+  _ -> PVar (iUndefinedDebug exp) ---- TODO
+
 
 proof2dedukti :: GProof -> Exp
 proof2dedukti proof = case proof of

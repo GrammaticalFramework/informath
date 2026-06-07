@@ -222,6 +222,29 @@ dummyGenResult :: Jmt -> GenResult
 dummyGenResult jmt = GenResult jmt [jmt] undefined [] []
 
 
+-- | Get GenResult from a GF tree instead of a Dedukti Jmt
+
+processGFTree :: Env -> GFTree -> GenResult
+processGFTree env gft =
+    let
+      jmts = []
+      core = [gft]
+      exts = concatMap (core2ext env . fg) core
+      nlgs = setnub $ map gf $ exts
+      vars = if elem "-variations" (flags env) then id else (take 1) 
+      best = maybe vars take (nbestNLG env)
+      nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
+      nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
+      backs = setnub (concatMap (gjmt2dedukti env) exts)
+    in GenResult {
+      originalDedukti = head backs, --- always inhabited?
+      annotatedDedukti = jmts,
+      coreGF = core,
+      nlgResults = nlgranks,
+      backToDedukti = backs
+      }
+
+
 -- | Processing a single line of LaTeX.
 
 processLatexLine :: Env -> String -> ParseResult
@@ -523,9 +546,13 @@ findGFFunctions env w = (w, nub [showCId f | (f, _) <- lookupMorpho (morpho env)
 
 -- | To linearize a GF tree (given as string) to a string
 readGFtree2nat :: Env -> String -> String
-readGFtree2nat env s = case readExpr s of
-  Just tree -> linearize (grammar env) (toLang env) tree
-  Nothing -> ("ERROR: not a valid tree: " ++ s)
+readGFtree2nat env s = linearize (grammar env) (toLang env) (readGFtree s)
+
+-- | To read a GF tree from a string
+readGFtree :: String -> GFTree
+readGFtree s = case readExpr s of
+  Just tree -> tree
+  Nothing -> error ("ERROR: not a valid tree: " ++ s)
 
 -- | To show all GF functions with their types, one per line
 showGFFunctions :: Env -> [String]

@@ -5,7 +5,7 @@ module Main where
 
 import Environment
 import InformathAPI
-import Utils (showFreqs)
+import Utils (showFreqs, fileSuffix)
 
 ---- import InformathServer --- TODO-server
 
@@ -17,9 +17,11 @@ main = do
 ----  if elem "-server" xx  --- TODO-server
 ----  then informathServer xx  --- TODO-server
 ----  else
-  main4 xx 
+  case invalidArgs xx of
+    xs@(_:_) -> putStrLn ("invalid arguments: " ++ unwords xs ++ "; see -help")
+    _ ->  main4 xx
 
-main4 args = if elem "-help" args then putStrLn helpMsg4 else do
+main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
   env <- readEnv args 
   let mfile = inputFileArg args
   case mfile of
@@ -33,10 +35,11 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
     Just (file, "dktex") -> do
       ss <- readFile file >>= return . lines
       mapM_ putStrLn (transEmbeddedDedukti env ss)
+    Just (file, "gft") -> do
+      ss <- readFile file >>= return . filter (not . null) . lines
+      let results = map (processGFTree env . readGFtree) ss
+      mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
     Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-unknown-words" args -> do
-      s <- readFile file 
-      mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
-    Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-show-functions" args -> do
       s <- readFile file 
       mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
     Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
@@ -71,9 +74,9 @@ main4 args = if elem "-help" args then putStrLn helpMsg4 else do
       let results = processDeduktiModule env mo
       mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
       
-    _ -> putStrLn helpMsg4 
+    _ -> mapM_ putStrLn helpMsg4 
 
-helpMsg4 = unlines [
+helpMsg4 = [
   "usage: RunInformath <option>* <file>.(dk|dkgf|tex|txt|md|...)*",
   "",
   "If no file is given, read standard input and process as following:",
@@ -85,6 +88,7 @@ helpMsg4 = unlines [
   just ".dk" "convert to natural language or to another formalism",
   just ".dkgf" "check the consistency of Dedukti to GF mapping",
   just ".dktex" "convert embedded Dedukti code in begin/end{dedukti} environments",
+  just ".gft" "read GF trees line by line, informalize or -to-formalism=dedukti|...",
   just ".tex|.txt|.md" "parse line by line and convert to Dedukti or another formalism",
   "",
   "Output is written to standard output.",
@@ -150,8 +154,13 @@ helpMsg4 = unlines [
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
 
---- validOptions = S.fromList [o | o:_ <- map words helpMsg4]
 
+invalidArgs xx =
+  [x | x@('-':_) <- xx, notElem (takeWhile (/='=') x) validOptions] ++
+  [x | x <- xx, head x /= '-', notElem (fileSuffix x) validFileSuffixes]
+ where
+  validOptions = [takeWhile (/='=') o | o:_ <- map words helpMsg4]
+  validFileSuffixes = words "dk dkgf dktex gft tex txt md"
 
 loopInformath env = do
   putStr "> "

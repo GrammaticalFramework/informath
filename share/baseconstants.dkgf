@@ -49,7 +49,7 @@ gcd : gcd_FunC
 even : even_Adj
 odd : odd_Adj
 prime : prime_Adj
-divisible : divisible_Adj2
+divisible : divisible_Adj2 | \divisible
 divide : divide_Verb2 | \divides
 divisor : divisor_Noun2
 converge : converge_Verb
@@ -130,6 +130,7 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
 #MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
 #MACRO \newcommand{\divides}[2]{#1 \mid #2}
+#MACRO \newcommand{\divisible}[2]{#2 \mid #1}
 #MACRO \newcommadn{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
 #MACRO \newcommadn{\infinity}{\infty}
 #MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
