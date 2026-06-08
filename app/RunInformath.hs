@@ -69,6 +69,10 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       s <- getContents 
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
+    Nothing | elem "-from-gf-trees" args -> do
+      ss <- getContents >>= return . filter (not . null) . lines
+      let results = map (processGFTree env . readGFtree) ss
+      mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
     Nothing -> do
       mo <- getContents >>= return . parseDeduktiModule
       let results = processDeduktiModule env mo
@@ -128,10 +132,10 @@ helpMsg4 = [
   just "-unknown-words" "show words in text file not in grammar",
   just "-find-gf" "shows GF functions that match each word in standard input",
   just "-linearize" "linearize GF trees given line by line in standard input",
+  just "-from-gf-trees" "treat input as GF trees (also combinable with -to-formalism=dedukti)",
   just "-all-gf-functions" "show all GF functions with their types",
   just "-parse-example" "parse example candidate lexical item (includes unreachables)",
   just "-failures" "show lines that fail to parse",
----  just "-parseusermacros" "allow backslash in math mode identifiers (can be expensive, to be fixed)",
   "",
   "* General output options:",
   "",
