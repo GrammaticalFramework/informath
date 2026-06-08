@@ -47,10 +47,10 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") -> do
-      (ct, _, dt, mt, bs) <- readConstantTable (grammar env) (fromLang env) [file]
-      putStrLn (printConstantTable ct)
+      st <- readSymbolTable (grammar env) (fromLang env) [file]
+      putStrLn (printSymbolTable st)
       putStrLn (unlines ["## " ++ line |
-        line <- checkConstantTable (baseConstantModule env) (grammar env) dt mt ct bs])
+        line <- checkSymbolTable (baseConstantModule env) (grammar env) st])
       
     Nothing | elem "-loop" args -> do
       loopInformath env

@@ -6,7 +6,7 @@ module MathCore2Informath where
 import Informath
 import Environment
 import Utils
-import BuildConstantTable (symbolics, synonyms, primary)
+import BuildConstantTable (symbolics, synonyms, primary, constantTable)
 import qualified PGF
 
 import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM, composOpMPlus)
@@ -68,7 +68,7 @@ synonymize env t = ---- [t] where ----
                     symbs t where
 
   ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
-  ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable env))
+  ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable (symbolTable env)))
 
   qId :: GIdent -> QIdent
   qId (GStrIdent (GString s)) = QIdent s

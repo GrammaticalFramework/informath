@@ -66,20 +66,15 @@ readEnv args = do
 	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   let sym = mkLanguage gr (argValue "-symboltable-lang" english args)
-  (ct, cvt, dt, mt, bs) <- readConstantTable gr sym symboltables
-  ifArg "-check-constant-table" args (unlines (checkConstantTable mo gr dt mt ct bs))
-  let bt = buildBackConstantTable ct
+  symt <- readSymbolTable gr sym symboltables
+  ifArg "-check-constant-table" args (unlines (checkSymbolTable mo gr symt))
   return Env {
     flags = args,
     informathRoot = root,
     grammar = gr,
-    constantTable = ct,
-    conversionTable = cvt,
-    backConstantTable = bt,
-    reachableFunctions = reachableGFFunctions bt,
+    symbolTable = symt,
+    reachableFunctions = reachableGFFunctions (backConstantTable symt),
     baseConstantModule = mo,
-    dropTable = dt,
-    macroTable = mt,
     formalisms = words "agda dedukti lean rocq",
     langs = languages gr, ---- | relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
@@ -90,6 +85,17 @@ readEnv args = do
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
     morpho = buildMorpho gr fro
     }
+
+-- | direct access to parts of the symbol table
+
+constantTableEnv = constantTable . symbolTable
+backConstantTableEnv = backConstantTable . symbolTable
+conversionTableEnv = conversionTable . symbolTable
+dropTableEnv = dropTable . symbolTable
+macroTableEnv = macroTable . symbolTable
+semanticsTableEnv = semanticsTable . symbolTable
+builtinSetEnv = builtinSet . symbolTable
+
 
 
 -- ** Low-level access to data sources
@@ -104,12 +110,11 @@ The following functions read them directly, but need hardly be called explicitly
 readGFGrammar :: FilePath -> IO PGF
 readGFGrammar = readPGF
 
--- | To read a constant table from a .dkgf file. 
-readConstantTable :: PGF -> Language -> [FilePath] ->
-      IO (ConstantTable, ConversionTable, DropTable, MacroTable, BuiltinSet)
-readConstantTable pgf lang dkgfs = do
+-- | To read a symbol table from a .dkgf file. 
+readSymbolTable :: PGF -> Language -> [FilePath] -> IO SymbolTable
+readSymbolTable pgf lang dkgfs = do
   ls <- mapM readFile dkgfs >>= return . concatMap lines 
-  return $ buildConstantTable pgf lang ls
+  return $ buildSymbolTable pgf lang ls
 
 -- | To construct a concrete syntax name from a 3-letter language code.
 mkLanguage :: PGF -> String -> Language
@@ -276,7 +281,7 @@ processLatexLine env s =
           t <- ts,
           ut <- uts,
           let fut = tracs env ("FUT.") (fg ut),
-          let ct = tracs env "CT." (ext2core  fut)
+          let ct = tracs env "CT." (ext2core env fut)
           ],
     transResults = [
       unindexString tindex
@@ -295,7 +300,7 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
           ("-peano2int", peano2int),
           ("-drop-qualifs", stripQualifiers),
 	  ("-drop-definitions", dropDefinitions),
-	  ("-hide-arguments", ignoreFirstArguments (dropTable env))
+	  ("-hide-arguments", ignoreFirstArguments (dropTableEnv env))
          ], isFlag flag env
        ]
 
@@ -303,7 +308,7 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
 
 -- | Annotate Dedukti with GF information.
 annotateDedukti :: Env -> Jmt -> [Jmt]
-annotateDedukti env t = annotateDkIdents msyns msymbs (constantTable env) (dropTable env) t
+annotateDedukti env t = annotateDkIdents msyns msymbs (constantTableEnv env) (dropTableEnv env) t
   where
     msyns = argValueMaybeInt "-synonyms" (flags env)
     msymbs = argValueMaybeInt "-symbolics" (flags env)
@@ -313,14 +318,14 @@ dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 
 -- | Check type mismatches and missing items; performed as a part of building Env
-checkConstantTable :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
-checkConstantTable = constantTableErrors
+checkSymbolTable :: Module -> PGF -> SymbolTable -> [String]
+checkSymbolTable = symbolTableErrors
 
-printConstantTable :: ConstantTable -> String
-printConstantTable = showConstantTable
+printSymbolTable :: SymbolTable -> String
+printSymbolTable = showConstantTable . constantTable
 
-printConstantTableLong :: ConstantTable -> String
-printConstantTableLong = showConstantTableLong
+printSymbolTableLong :: SymbolTable -> String
+printSymbolTableLong = showConstantTableLong . constantTable
 
 
 -- * Printing conversions
@@ -389,15 +394,15 @@ printFormalismJmt env formalism jmt = case formalism of
 
 dedukti2agda :: Env -> Jmt -> String
 dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "agda" (conversionTable env))
+  conv = maybe id alphaConvert (M.lookup "agda" (conversionTableEnv env))
 
 dedukti2lean :: Env -> Jmt -> String
 dedukti2lean env jmt = unlines [DL.printLeanJmt (DL.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "lean" (conversionTable env))
+  conv = maybe id alphaConvert (M.lookup "lean" (conversionTableEnv env))
 
 dedukti2rocq :: Env -> Jmt -> String
 dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTable env))
+  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTableEnv env))
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool
@@ -454,7 +459,7 @@ printFinalParseResult env (t, ut, ct, jmts) = encodeJSON $ mkJSONObject [
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
   if isFlag "-to-latex-doc" env
-  then toLatexDoc (macroCommands (macroTable env)) (intersperse "" (nub ss))
+  then toLatexDoc (macroCommands (macroTableEnv env)) (intersperse "" (nub ss))
   else ss
 
 -- | To print Dedukti under environment options, given in flags. 
@@ -478,14 +483,14 @@ core2ext env jmt = MCI.nlg env jmt
 rankGFTreesAndNat :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))]
 rankGFTreesAndNat = rankTreesAndStrings
 
-ext2core :: GJmt -> GJmt
-ext2core = IMC.semantics
+ext2core :: Env -> GJmt -> GJmt
+ext2core env = IMC.semantics (semanticsTableEnv env)
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
-gjmt2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env) . ext2core
+gjmt2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env) . ext2core env
 
 core2dedukti :: Env -> GJmt -> [Jmt]
-core2dedukti env = MCD.jmt2dedukti (backConstantTable env) (dropTable env)
+core2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)
 
 
 -- * Reading input for processing
@@ -522,7 +527,7 @@ identsInDedukti env mo = map stringify (mfilter freqs) where
   stringify (c, i) = (printDeduktiEnv env c, i)
   freqs = sortOn (\ (_,i) -> -i) (M.toList (identsInTypes mo))
   mfilter = if elem "-unknown-idents" (flags env) then filter (notInTable . fst) else id 
-  notInTable qid = M.notMember qid (constantTable env) && not (all isDigit (printDeduktiEnv env qid))
+  notInTable qid = M.notMember qid (constantTableEnv env) && not (all isDigit (printDeduktiEnv env qid))
 
 
 -- | Statistics of unknown words in text (not recognized in .pgf).

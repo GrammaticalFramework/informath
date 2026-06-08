@@ -9,6 +9,7 @@ import Dedukti.PrintDedukti
 import CommonConcepts
 import DeduktiOperations
 import Lexing (lextex)
+import Semantics
 
 import PGF
 
@@ -55,6 +56,16 @@ readGFTree s = case s of
   _ -> maybe (error ("cannot parse as GFTree: " ++ s)) id (readExpr s)
 
 ------
+
+data SymbolTable = SymbolTable {
+  constantTable :: ConstantTable,
+  backConstantTable :: BackConstantTable,
+  conversionTable :: ConversionTable,
+  dropTable :: DropTable,
+  macroTable :: MacroTable,
+  semanticsTable :: SemDefs,
+  builtinSet :: S.Set QIdent
+  }
 
 -- conversion from Dk to GF, with synonyms and category information
 type ConstantTable = M.Map QIdent ConstantTableEntry
@@ -119,32 +130,42 @@ printBackTable = unlines . map prEntry . M.toList where
   prEntry :: (Fun, [QIdent]) -> String
   prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
 
-buildConstantTable :: PGF -> Language -> [String] ->
-  (ConstantTable, ConversionTable, DropTable, MacroTable, BuiltinSet)
-buildConstantTable pgf lang ls =
-    (constantTable, conversionTable, dropTable, macroTable, builtinSet)
-  where
+buildSymbolTable :: PGF -> Language -> [String] -> SymbolTable
+buildSymbolTable pgf lang ls = SymbolTable {
+  constantTable = constantTable,
+  backConstantTable = backConstantTable,
+  conversionTable = conversionTable,
+  dropTable = dropTable,
+  macroTable = macroTable,
+  semanticsTable = semanticsTable,
+  builtinSet = builtinSet
+  }
+ where
     entrylines = filter (not . null) (map words ls)
     constantlines = filter isConstantEntry entrylines
     conversionlines = filter isConversion entrylines
     droplines = filter isDrop entrylines
     macrolines = filter isMacro entrylines
     builtinlines = filter isBuiltin entrylines
+    semanticslines = filter isSemantics entrylines
     constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
                      qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
+    backConstantTable = buildBackConstantTable constantTable
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
     macroTable = M.fromList [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)]
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
+    semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
     
     isConstantEntry line = head (head line) /= '#'
     isConversion line = head line == "#CONV"
     isDrop line = head line == "#DROP"
     isMacro line = head line == "#MACRO"
     isBuiltin line = head line == "#BUILTIN"
+    isSemantics line = head line == "#SEMANTICS"
 
 splitEntry s = case split '|' s of
   fg : ws -> split ':' fg ++ ws
@@ -229,15 +250,19 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
 
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
-constantTableErrors :: Module -> PGF -> DropTable -> MacroTable -> ConstantTable -> BuiltinSet -> [String]
-constantTableErrors dk pgf dt mt table bset = 
-  let funs = deduktiFunctions dk
-      missing = [fun | (fun, _) <- funs, M.notMember fun table, S.notMember fun bset]
+symbolTableErrors :: Module -> PGF -> SymbolTable -> [String]
+symbolTableErrors dk pgf st =
+  let dt = dropTable st
+      mt = macroTable st
+      ct = constantTable st
+      bset = builtinSet st 
+      funs = deduktiFunctions dk
+      missing = [fun | (fun, _) <- funs, M.notMember fun ct, S.notMember fun bset]
       mismatches = [((dkfun, gffun), (e, f)) |
                       (dkfun, (hypos, valtype)) <- funs,
 		      let drops = maybe 0 id (M.lookup dkfun dt),
 		      let dktyp = (drop drops hypos, valtype),
-		      (gffun, gftyp) <- allGFFuns table dkfun,
+		      (gffun, gftyp) <- allGFFuns ct dkfun,
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++

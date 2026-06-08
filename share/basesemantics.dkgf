@@ -1,0 +1,2 @@
+#SEMANTICS NotAdjProp adj exp = CoreNotProp (AdjProp adj exp)
+

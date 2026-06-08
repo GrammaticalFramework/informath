@@ -23,8 +23,8 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   x = head [x | x <- ["_h" ++ show i | i <- [0..]], notElem x (varlist senv)]
   xi = GStrIdent (GString x)
   
-semantics :: GJmt -> GJmt
-semantics = addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs M.empty
+semantics :: SemDefs -> GJmt -> GJmt
+semantics defs = addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs defs
 
 addCoercions :: Tree a -> Tree a
 addCoercions t = case t of

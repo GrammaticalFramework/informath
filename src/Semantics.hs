@@ -20,10 +20,10 @@ applySemDefs defs exp = case unApp exp of
   _ -> exp
 
 
-mkSemDef :: Expr -> Expr -> [Expr] -> Expr
+mkSemDef :: Expr -> Expr -> (CId, [Expr] -> Expr)
 mkSemDef a b = case unApp a of
   Just (fun, args) -> case mapM getVar args of
-    Just xs -> mkFun xs b
+    Just xs -> (fun, mkFun xs b)
     _ -> error ("not a valid function definition " ++ showExpr [] a)
   _ -> error ("not a valid function definition " ++ showExpr [] a)
  where
@@ -39,7 +39,7 @@ mkSemDef a b = case unApp a of
     _ -> exp
 
 
-readSemDef :: String -> [Expr] -> Expr
+readSemDef :: String -> (CId, [Expr] -> Expr)
 readSemDef s = case break (=='=') s of
   (a, _:b) -> case (readExpr a, readExpr b) of
     (Just a', Just b') -> mkSemDef a' b'
