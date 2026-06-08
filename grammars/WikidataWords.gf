@@ -969,7 +969,6 @@ fun implication_Noun : Noun ;
 fun implicit_Adj : Adj ;
 fun importance_Noun : Noun ;
 fun improper_Adj : Adj ;
-fun in_Adj : Adj ;
 fun inaccessible_Adj : Adj ;
 fun inclusion_Noun : Noun ;
 fun ind_Noun : Noun ;

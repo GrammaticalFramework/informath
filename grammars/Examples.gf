@@ -32,6 +32,11 @@ fun
   Dep2Example : Dep2 -> Argument -> Argument -> Example ;
   DepCExample : DepC -> Argument -> Argument -> Example ;
 
+  AdvExample : Adv -> Argument -> Example ;
+  Adv2Example : Adv2 -> Argument -> Argument -> Example ;
+  AdvCExample : AdvC -> Argument -> Argument -> Example ;
+
+
   BinderExample : Binder -> BoundVariable -> Argument -> Example ;
   Binder1Example : Binder1 -> KindArgument -> BoundVariable -> Argument -> Example ;
   Binder2Example : Binder2 -> Argument -> Argument -> BoundVariable -> Argument -> Example ;
@@ -80,6 +85,10 @@ fun
   NounPrepDep : Noun -> Prep -> Dep ;
   NounPrepDep2 : Noun -> Prep -> Prep -> Dep2 ;
   NounPrepDepC : Noun -> Prep -> DepC ;
+
+  PrepAdv2 : Prep -> Adv2 ;
+  AdvAdvC : Adv -> AdvC ;
+  PrepNounAdv : Prep -> Noun -> Adv ;
 
   NounBinder : Noun -> Binder ;
   NounBinder1 : Noun -> Binder1 ;

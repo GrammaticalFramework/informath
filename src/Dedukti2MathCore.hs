@@ -167,6 +167,9 @@ funListProp ident exps = annotateProp ident $ case ident of
     (Just ("AdjC", c), [x, y]) -> GAdjCProp (fgTree c) x y
     (Just ("AdjE", c), [x, y]) -> GAdjEProp (fgTree c) x y
     (Just ("Adj3", c), [x, y, z]) -> GAdj3Prop (fgTree c) x y z
+    (Just ("Adv", c), [x]) -> GAdvProp (fgTree c) x
+    (Just ("Adv2", c), [x, y]) -> GAdv2Prop (fgTree c) x y
+    (Just ("AdvC", c), [x, y]) -> GAdvCProp (fgTree c) x y
     (Just ("Verb", c), [x]) -> GVerbProp (fgTree c) x
     (Just ("Verb2", c), [x, y]) -> GVerb2Prop (fgTree c) x y
     (Just ("VerbC", c), [x, y]) -> GVerbCProp (fgTree c) x y

@@ -99,6 +99,10 @@ fun
   Dep2Kind : Dep2 -> Exp -> Exp -> Kind ;
   DepCKind : DepC -> Exp -> Exp -> Kind ;
 
+  AdvProp : Adv -> Exp -> Prop ;
+  Adv2Prop : Adv2 -> Exp -> Exp -> Prop ;
+  AdvCProp : AdvC -> Exp -> Exp -> Prop ;
+
   BinderExp : Binder -> Ident -> Exp -> Exp ;
   Binder1Exp : Binder1 -> Kind -> Ident -> Exp -> Exp ;
   Binder2Exp : Binder2 -> Exp -> Exp -> Ident -> Exp -> Exp ;

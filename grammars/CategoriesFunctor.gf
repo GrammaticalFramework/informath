@@ -12,13 +12,13 @@ in {
 lincat
 -- syntax
   Exp = NP ;
-  Kind = {cn : CN ; adv : Adv} ;
+  Kind = {cn : CN ; adv : Syntax.Adv} ;
   Prop = Proposition ;
   Jmt = Text ;
   Exps = {np : NP ; isPl : Bool} ;
   [Exp] = Syntax.ListNP ;
   [Prop] = ListS ;
-  ArgKind = {cn : CN ; adv : Adv ; isPl : Bool} ;  -- isPl = idents.isPl
+  ArgKind = {cn : CN ; adv : Syntax.Adv ; isPl : Bool} ;  -- isPl = idents.isPl
   [ArgKind] = {sg, neg, pl : NP} ;  -- there exists an A / there exists no A / for all As
   Hypo = Utt ;
   [Hypo] = {text : Text ; isEmpty : Bool} ;
@@ -31,7 +31,6 @@ lincat
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
   Unit = Text ;
-  Adverb = Adv ;
 
 -- lexicon, verbal
   Noun = CN ;
@@ -46,24 +45,29 @@ lincat
   Verb = VerbT ;
   Verb2 = Verb2T ;
   VerbC = VerbT ;
-  Noun2 = {cn : CN ; prep : Prep} ;
+  Noun2 = {cn : CN ; prep : Syntax.Prep} ;
   NounC = CN ;
   Name = NP ;
   Fun = FunT ;
   Fun2 = Fun2T ;
   FunC = FunT ;
   Label = LabelT ;
-  Dep = {cn : CN ; prep : Prep} ;
-  Dep2 =  {cn : CN ; prep1, prep2 : Prep} ;
-  DepC =  {cn : CN ; prep : Prep} ;
+  Dep = {cn : CN ; prep : Syntax.Prep} ;
+  Dep2 =  {cn : CN ; prep1, prep2 : Syntax.Prep} ;
+  DepC =  {cn : CN ; prep : Syntax.Prep} ;
 
+  Adv = Syntax.Adv ;
+  Adv2 = Syntax.Prep ;
+  AdvC = Syntax.Adv ;
+  
   Binder = CN ;
   Binder1 = CN ;
   Binder2 = CN ;
 
   Prep = Syntax.Prep ;
   ProperName = PN ;
-
+  Adverb = Syntax.Adv ;
+  
 linref
   Kind = \kind -> (mkUtt (useKind kind)).s ;
   Verb = \verb -> (mkUtt verb).s ;

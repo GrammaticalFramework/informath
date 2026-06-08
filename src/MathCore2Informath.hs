@@ -493,5 +493,8 @@ negated t = case t of
   GCoreNotProp (GNoun2Prop adj x y) -> GNotNoun2Prop adj x y
   GCoreNotProp (GVerbProp adj x) -> GNotVerbProp adj x
   GCoreNotProp (GVerb2Prop adj x y) -> GNotVerb2Prop adj x y
+  GCoreNotProp (GAdvProp adv x) -> GNotAdvProp adv x
+  GCoreNotProp (GAdv2Prop adv x y) -> GNotAdv2Prop adv x y
+  GCoreNotProp (GAdvCProp adv x y) -> GNotAdvCProp adv (GListExp [x, y])
   _ -> composOp negated t
 

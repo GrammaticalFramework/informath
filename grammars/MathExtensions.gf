@@ -45,6 +45,9 @@ fun
   NotVerb2Prop : Verb2 -> Exp -> Exp -> Prop ;
   NotVerbCProp : VerbC -> [Exp] -> Prop ;
   NotVerbProp : Verb -> Exp -> Prop ;
+  NotAdvProp : Adv -> Exp -> Prop ;
+  NotAdv2Prop : Adv2 -> Exp -> Exp -> Prop ;
+  NotAdvCProp : AdvC -> [Exp] -> Prop ;
 
   AndAdj : [Adj] -> Adj ;
   OrAdj : [Adj] -> Adj ;
@@ -105,6 +108,7 @@ fun
   AdjCCollProp : AdjC -> [Exp] -> Prop ;
   AdjECollProp : AdjE -> [Exp] -> Prop ;
   FunCCollExp : FunC -> [Exp] -> Exp ;
+  AdvCCollProp : AdvC -> [Exp] -> Prop ;
 
 -- predicates as a general category
 {- ----

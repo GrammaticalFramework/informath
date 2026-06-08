@@ -56,6 +56,9 @@ lin
   NotVerbProp verb exp = simpleProp (mkS negPol (mkCl exp verb)) ; 
   NotVerb2Prop verb x y = simpleProp (mkS negPol (mkCl x (mkVP verb.vp (Syntax.mkAdv verb.prep y)))) ; 
   NotVerbCProp verb exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) verb)) ;
+  NotAdvProp adv exp = simpleProp (mkS negPol (mkCl exp adv)) ;
+  NotAdv2Prop adv x y = simpleProp (mkS negPol (mkCl x (Syntax.mkAdv adv y))) ;
+  NotAdvCProp adv exps = simpleProp (mkS negPol (mkCl (mkNP and_Conj exps) adv)) ;
 
   AndAdj adjs = mkAP and_Conj adjs | mkAP both7and_DConj adjs ;
   OrAdj adjs = mkAP or_Conj adjs  | mkAP either7or_DConj adjs ;
@@ -133,6 +136,7 @@ lin
   AdjCCollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
   AdjECollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
   FunCCollExp f exps = mkNP the_Det (mkCN f.cn (Syntax.mkAdv f.prep (mkNP and_Conj exps))) ;
+  AdvCCollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
 
 {- ----
   PredProp pred exp = simpleProp (mkS (mkCl exp pred)) ;

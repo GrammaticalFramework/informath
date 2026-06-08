@@ -211,6 +211,9 @@ sem env t = case t of
   GNotNoun2Prop adj x y -> GCoreNotProp (sem env (GNoun2Prop adj x y))
   GNotVerbProp adj exp -> GCoreNotProp (sem env (GVerbProp adj exp))
   GNotVerb2Prop adj x y -> GCoreNotProp (sem env (GVerb2Prop adj x y))
+  GNotAdvProp adv exp -> GCoreNotProp (sem env (GAdvProp adv exp))
+  GNotAdv2Prop adv x y -> GCoreNotProp (sem env (GAdv2Prop adv x y))
+  GNotAdvCProp adv exps -> GCoreNotProp (sem env (GAdvCCollProp adv exps))
 
   GPluralKindExp kind -> GKindExp kind
 

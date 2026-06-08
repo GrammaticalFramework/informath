@@ -24,7 +24,6 @@ cat
   Coercion ;
   [Ident] {1} ;
   Unit ;
-  Adverb ;
 
 -- lexicon, verbal
   Noun ;    -- Kind -- set
@@ -49,12 +48,16 @@ cat
   Dep ;     -- Exp -> Kind          -- divisor of x
   Dep2 ;    -- Exp -> Exp -> Kind   -- path from x to y
   DepC ;    -- [Exp] -> Kind        -- connection between x and y
+  Adv ;     -- Exp -> Prop          -- X is in the universe
+  Adv2 ;    -- Exp -> Exp -> Prop   -- X is outside Y
+  AdvC ;    -- [Exp] -> Prop        -- X and Y are in opposition
+  
   Binder ;
   Binder1 ;
   Binder2 ;
   
-
-  Prep ;    -- used for symbol table extensions of grammar
-  ProperName ; -- names of mathematicians occurring in concepts
+  Adverb ; -- used for modifying adjectives, as "uniformly"
+  Prep ; -- used for symbol table extensions of grammar
+  ProperName ;  -- names of mathematicians occurring in concepts
 
 }

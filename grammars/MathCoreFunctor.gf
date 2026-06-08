@@ -185,6 +185,10 @@ lin
     adv = Syntax.mkAdv dep.prep (mkNP and_Conj x y)
     } ;
 
+  AdvProp adv exp = simpleProp (mkS (mkCl exp adv)) ;
+  Adv2Prop adv x y = simpleProp (mkS (mkCl x (Syntax.mkAdv adv y))) ;
+  AdvCProp adv x y = simpleProp (mkS (mkCl (mkNP and_Conj x y) adv)) ;
+
   BinderExp binder ident exp =
     mkNP the_Det (mkCN (mkCN binder exp) (Syntax.mkAdv possess_Prep (latexNP (mkSymb ident)))) ;
 

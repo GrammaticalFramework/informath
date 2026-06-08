@@ -23,6 +23,10 @@ lin
   AdjEExample adj x y = mkExample (mkExample (AdjEProp adj x y)) "EQUIVALENCE" ;
   Adj3Example adj x y z = mkExample (Adj3Prop adj x y z) ;
 
+  AdvExample adv x = mkExample (AdvProp adv x) ;
+  Adv2Example adv x y = mkExample (Adv2Prop adv x y) ;
+  AdvCExample adv x y = mkExample (AdvCProp adv x y) ;
+
   NounExample noun = mkExample (NounKind noun) ;
 
   FamExample fam a = mkExample (FamKind fam a) ;
@@ -103,6 +107,10 @@ lin
   NounIdentLabel noun ident = mkLabel (mkNP (mkCN noun <symb (mkSymb ident) : NP>)) ;
   NounOfNounLabel noun1 noun2 = mkLabel (mkNP the_Det (mkCN noun1 (mkAdv of_Prep (mkNP noun2)))) ;
   ProperNameNounLabel name noun = mkLabel (npGenNounNP (mkNP name) noun) ;
+
+  PrepAdv2 prep = prep ;
+  AdvAdvC adv = adv ;
+  PrepNounAdv prep noun = Syntax.mkAdv prep (mkNP noun) ;
 
   NounBinder noun = noun ;
   NounBinder1 noun = noun ;

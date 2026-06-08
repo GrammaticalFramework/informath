@@ -49,6 +49,12 @@ type GAdjC = Tree GAdjC_
 data GAdjC_
 type GAdjE = Tree GAdjE_
 data GAdjE_
+type GAdv = Tree GAdv_
+data GAdv_
+type GAdv2 = Tree GAdv2_
+data GAdv2_
+type GAdvC = Tree GAdvC_
+data GAdvC_
 type GAdverb = Tree GAdverb_
 data GAdverb_
 type GArgKind = Tree GArgKind_
@@ -210,6 +216,9 @@ data Tree :: * -> * where
   LexAdjC :: String -> Tree GAdjC_
   GAdjAdjE :: GAdj -> Tree GAdjE_
   LexAdjE :: String -> Tree GAdjE_
+  GPrepNounAdv :: GPrep -> GNoun -> Tree GAdv_
+  GPrepAdv2 :: GPrep -> Tree GAdv2_
+  GAdvAdvC :: GAdv -> Tree GAdvC_
   Galmost_everywhere_Adverb :: Tree GAdverb_
   Geverywhere_Adverb :: Tree GAdverb_
   Guniformly_Adverb :: Tree GAdverb_
@@ -245,6 +254,9 @@ data Tree :: * -> * where
   GAdjCExample :: GAdjC -> GArgument -> GArgument -> Tree GExample_
   GAdjEExample :: GAdjE -> GArgument -> GArgument -> Tree GExample_
   GAdjExample :: GAdj -> GArgument -> Tree GExample_
+  GAdv2Example :: GAdv2 -> GArgument -> GArgument -> Tree GExample_
+  GAdvCExample :: GAdvC -> GArgument -> GArgument -> Tree GExample_
+  GAdvExample :: GAdv -> GArgument -> Tree GExample_
   GBinder1Example :: GBinder1 -> GKindArgument -> GBoundVariable -> GArgument -> Tree GExample_
   GBinder2Example :: GBinder2 -> GArgument -> GArgument -> GBoundVariable -> GArgument -> Tree GExample_
   GBinderExample :: GBinder -> GBoundVariable -> GArgument -> Tree GExample_
@@ -439,6 +451,10 @@ data Tree :: * -> * where
   GAdjECollProp :: GAdjE -> GListExp -> Tree GProp_
   GAdjEProp :: GAdjE -> GExp -> GExp -> Tree GProp_
   GAdjProp :: GAdj -> GExp -> Tree GProp_
+  GAdv2Prop :: GAdv2 -> GExp -> GExp -> Tree GProp_
+  GAdvCCollProp :: GAdvC -> GListExp -> Tree GProp_
+  GAdvCProp :: GAdvC -> GExp -> GExp -> Tree GProp_
+  GAdvProp :: GAdv -> GExp -> Tree GProp_
   GAllProp :: GListArgKind -> GProp -> Tree GProp_
   GAndProp :: GListProp -> Tree GProp_
   GAnnotateProp :: GIdent -> GProp -> Tree GProp_
@@ -471,6 +487,9 @@ data Tree :: * -> * where
   GNotAdjCProp :: GAdjC -> GListExp -> Tree GProp_
   GNotAdjEProp :: GAdjE -> GListExp -> Tree GProp_
   GNotAdjProp :: GAdj -> GExp -> Tree GProp_
+  GNotAdv2Prop :: GAdv2 -> GExp -> GExp -> Tree GProp_
+  GNotAdvCProp :: GAdvC -> GListExp -> Tree GProp_
+  GNotAdvProp :: GAdv -> GExp -> Tree GProp_
   GNotNoun1Prop :: GNoun1 -> GExp -> Tree GProp_
   GNotNoun2Prop :: GNoun2 -> GExp -> GExp -> Tree GProp_
   GNotNounCProp :: GNounC -> GListExp -> Tree GProp_
@@ -938,6 +957,9 @@ instance Eq (Tree a) where
     (LexAdjC x,LexAdjC y) -> x == y
     (GAdjAdjE x1,GAdjAdjE y1) -> and [ x1 == y1 ]
     (LexAdjE x,LexAdjE y) -> x == y
+    (GPrepNounAdv x1 x2,GPrepNounAdv y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GPrepAdv2 x1,GPrepAdv2 y1) -> and [ x1 == y1 ]
+    (GAdvAdvC x1,GAdvAdvC y1) -> and [ x1 == y1 ]
     (Galmost_everywhere_Adverb,Galmost_everywhere_Adverb) -> and [ ]
     (Geverywhere_Adverb,Geverywhere_Adverb) -> and [ ]
     (Guniformly_Adverb,Guniformly_Adverb) -> and [ ]
@@ -973,6 +995,9 @@ instance Eq (Tree a) where
     (GAdjCExample x1 x2 x3,GAdjCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjEExample x1 x2 x3,GAdjEExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjExample x1 x2,GAdjExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GAdv2Example x1 x2 x3,GAdv2Example y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAdvCExample x1 x2 x3,GAdvCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAdvExample x1 x2,GAdvExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GBinder1Example x1 x2 x3 x4,GBinder1Example y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GBinder2Example x1 x2 x3 x4 x5,GBinder2Example y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GBinderExample x1 x2 x3,GBinderExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1167,6 +1192,10 @@ instance Eq (Tree a) where
     (GAdjECollProp x1 x2,GAdjECollProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAdjEProp x1 x2 x3,GAdjEProp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAdjProp x1 x2,GAdjProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GAdv2Prop x1 x2 x3,GAdv2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAdvCCollProp x1 x2,GAdvCCollProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GAdvCProp x1 x2 x3,GAdvCProp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GAdvProp x1 x2,GAdvProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAllProp x1 x2,GAllProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAndProp x1,GAndProp y1) -> and [ x1 == y1 ]
     (GAnnotateProp x1 x2,GAnnotateProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1199,6 +1228,9 @@ instance Eq (Tree a) where
     (GNotAdjCProp x1 x2,GNotAdjCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotAdjEProp x1 x2,GNotAdjEProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotAdjProp x1 x2,GNotAdjProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GNotAdv2Prop x1 x2 x3,GNotAdv2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNotAdvCProp x1 x2,GNotAdvCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GNotAdvProp x1 x2,GNotAdvProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun1Prop x1 x2,GNotNoun1Prop y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun2Prop x1 x2 x3,GNotNoun2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNotNounCProp x1 x2,GNotNounCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1717,6 +1749,36 @@ instance Gf GAdjE where
       Just (i,[]) -> LexAdjE (showCId i)
       _ -> error ("no AdjE " ++ show t)
 
+instance Gf GAdv where
+  gf (GPrepNounAdv x1 x2) = mkApp (mkCId "PrepNounAdv") [gf x1, gf x2]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "PrepNounAdv" -> GPrepNounAdv (fg x1) (fg x2)
+
+
+      _ -> error ("no Adv " ++ show t)
+
+instance Gf GAdv2 where
+  gf (GPrepAdv2 x1) = mkApp (mkCId "PrepAdv2") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "PrepAdv2" -> GPrepAdv2 (fg x1)
+
+
+      _ -> error ("no Adv2 " ++ show t)
+
+instance Gf GAdvC where
+  gf (GAdvAdvC x1) = mkApp (mkCId "AdvAdvC") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1]) | i == mkCId "AdvAdvC" -> GAdvAdvC (fg x1)
+
+
+      _ -> error ("no AdvC " ++ show t)
+
 instance Gf GAdverb where
   gf Galmost_everywhere_Adverb = mkApp (mkCId "almost_everywhere_Adverb") []
   gf Geverywhere_Adverb = mkApp (mkCId "everywhere_Adverb") []
@@ -1897,6 +1959,9 @@ instance Gf GExample where
   gf (GAdjCExample x1 x2 x3) = mkApp (mkCId "AdjCExample") [gf x1, gf x2, gf x3]
   gf (GAdjEExample x1 x2 x3) = mkApp (mkCId "AdjEExample") [gf x1, gf x2, gf x3]
   gf (GAdjExample x1 x2) = mkApp (mkCId "AdjExample") [gf x1, gf x2]
+  gf (GAdv2Example x1 x2 x3) = mkApp (mkCId "Adv2Example") [gf x1, gf x2, gf x3]
+  gf (GAdvCExample x1 x2 x3) = mkApp (mkCId "AdvCExample") [gf x1, gf x2, gf x3]
+  gf (GAdvExample x1 x2) = mkApp (mkCId "AdvExample") [gf x1, gf x2]
   gf (GBinder1Example x1 x2 x3 x4) = mkApp (mkCId "Binder1Example") [gf x1, gf x2, gf x3, gf x4]
   gf (GBinder2Example x1 x2 x3 x4 x5) = mkApp (mkCId "Binder2Example") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GBinderExample x1 x2 x3) = mkApp (mkCId "BinderExample") [gf x1, gf x2, gf x3]
@@ -1925,6 +1990,9 @@ instance Gf GExample where
       Just (i,[x1,x2,x3]) | i == mkCId "AdjCExample" -> GAdjCExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "AdjEExample" -> GAdjEExample (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "AdjExample" -> GAdjExample (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "Adv2Example" -> GAdv2Example (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "AdvCExample" -> GAdvCExample (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "AdvExample" -> GAdvExample (fg x1) (fg x2)
       Just (i,[x1,x2,x3,x4]) | i == mkCId "Binder1Example" -> GBinder1Example (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "Binder2Example" -> GBinder2Example (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2,x3]) | i == mkCId "BinderExample" -> GBinderExample (fg x1) (fg x2) (fg x3)
@@ -2617,6 +2685,10 @@ instance Gf GProp where
   gf (GAdjECollProp x1 x2) = mkApp (mkCId "AdjECollProp") [gf x1, gf x2]
   gf (GAdjEProp x1 x2 x3) = mkApp (mkCId "AdjEProp") [gf x1, gf x2, gf x3]
   gf (GAdjProp x1 x2) = mkApp (mkCId "AdjProp") [gf x1, gf x2]
+  gf (GAdv2Prop x1 x2 x3) = mkApp (mkCId "Adv2Prop") [gf x1, gf x2, gf x3]
+  gf (GAdvCCollProp x1 x2) = mkApp (mkCId "AdvCCollProp") [gf x1, gf x2]
+  gf (GAdvCProp x1 x2 x3) = mkApp (mkCId "AdvCProp") [gf x1, gf x2, gf x3]
+  gf (GAdvProp x1 x2) = mkApp (mkCId "AdvProp") [gf x1, gf x2]
   gf (GAllProp x1 x2) = mkApp (mkCId "AllProp") [gf x1, gf x2]
   gf (GAndProp x1) = mkApp (mkCId "AndProp") [gf x1]
   gf (GAnnotateProp x1 x2) = mkApp (mkCId "AnnotateProp") [gf x1, gf x2]
@@ -2649,6 +2721,9 @@ instance Gf GProp where
   gf (GNotAdjCProp x1 x2) = mkApp (mkCId "NotAdjCProp") [gf x1, gf x2]
   gf (GNotAdjEProp x1 x2) = mkApp (mkCId "NotAdjEProp") [gf x1, gf x2]
   gf (GNotAdjProp x1 x2) = mkApp (mkCId "NotAdjProp") [gf x1, gf x2]
+  gf (GNotAdv2Prop x1 x2 x3) = mkApp (mkCId "NotAdv2Prop") [gf x1, gf x2, gf x3]
+  gf (GNotAdvCProp x1 x2) = mkApp (mkCId "NotAdvCProp") [gf x1, gf x2]
+  gf (GNotAdvProp x1 x2) = mkApp (mkCId "NotAdvProp") [gf x1, gf x2]
   gf (GNotNoun1Prop x1 x2) = mkApp (mkCId "NotNoun1Prop") [gf x1, gf x2]
   gf (GNotNoun2Prop x1 x2 x3) = mkApp (mkCId "NotNoun2Prop") [gf x1, gf x2, gf x3]
   gf (GNotNounCProp x1 x2) = mkApp (mkCId "NotNounCProp") [gf x1, gf x2]
@@ -2676,6 +2751,10 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "AdjECollProp" -> GAdjECollProp (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "AdjEProp" -> GAdjEProp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "AdjProp" -> GAdjProp (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "Adv2Prop" -> GAdv2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "AdvCCollProp" -> GAdvCCollProp (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "AdvCProp" -> GAdvCProp (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "AdvProp" -> GAdvProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AllProp" -> GAllProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "AndProp" -> GAndProp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "AnnotateProp" -> GAnnotateProp (fg x1) (fg x2)
@@ -2708,6 +2787,9 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "NotAdjCProp" -> GNotAdjCProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotAdjEProp" -> GNotAdjEProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotAdjProp" -> GNotAdjProp (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "NotAdv2Prop" -> GNotAdv2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "NotAdvCProp" -> GNotAdvCProp (fg x1) (fg x2)
+      Just (i,[x1,x2]) | i == mkCId "NotAdvProp" -> GNotAdvProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotNoun1Prop" -> GNotNoun1Prop (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "NotNoun2Prop" -> GNotNoun2Prop (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "NotNounCProp" -> GNotNounCProp (fg x1) (fg x2)
@@ -3683,6 +3765,9 @@ instance Compos Tree where
     GAdjPrepAdj3 x1 x2 x3 -> r GAdjPrepAdj3 `a` f x1 `a` f x2 `a` f x3
     GAdjAdjC x1 -> r GAdjAdjC `a` f x1
     GAdjAdjE x1 -> r GAdjAdjE `a` f x1
+    GPrepNounAdv x1 x2 -> r GPrepNounAdv `a` f x1 `a` f x2
+    GPrepAdv2 x1 -> r GPrepAdv2 `a` f x1
+    GAdvAdvC x1 -> r GAdvAdvC `a` f x1
     GBareIdentsArgKind x1 -> r GBareIdentsArgKind `a` f x1
     GDeclarationArgKind x1 -> r GDeclarationArgKind `a` f x1
     GIdentArgKind x1 x2 -> r GIdentArgKind `a` f x1 `a` f x2
@@ -3704,6 +3789,9 @@ instance Compos Tree where
     GAdjCExample x1 x2 x3 -> r GAdjCExample `a` f x1 `a` f x2 `a` f x3
     GAdjEExample x1 x2 x3 -> r GAdjEExample `a` f x1 `a` f x2 `a` f x3
     GAdjExample x1 x2 -> r GAdjExample `a` f x1 `a` f x2
+    GAdv2Example x1 x2 x3 -> r GAdv2Example `a` f x1 `a` f x2 `a` f x3
+    GAdvCExample x1 x2 x3 -> r GAdvCExample `a` f x1 `a` f x2 `a` f x3
+    GAdvExample x1 x2 -> r GAdvExample `a` f x1 `a` f x2
     GBinder1Example x1 x2 x3 x4 -> r GBinder1Example `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GBinder2Example x1 x2 x3 x4 x5 -> r GBinder2Example `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GBinderExample x1 x2 x3 -> r GBinderExample `a` f x1 `a` f x2 `a` f x3
@@ -3863,6 +3951,10 @@ instance Compos Tree where
     GAdjECollProp x1 x2 -> r GAdjECollProp `a` f x1 `a` f x2
     GAdjEProp x1 x2 x3 -> r GAdjEProp `a` f x1 `a` f x2 `a` f x3
     GAdjProp x1 x2 -> r GAdjProp `a` f x1 `a` f x2
+    GAdv2Prop x1 x2 x3 -> r GAdv2Prop `a` f x1 `a` f x2 `a` f x3
+    GAdvCCollProp x1 x2 -> r GAdvCCollProp `a` f x1 `a` f x2
+    GAdvCProp x1 x2 x3 -> r GAdvCProp `a` f x1 `a` f x2 `a` f x3
+    GAdvProp x1 x2 -> r GAdvProp `a` f x1 `a` f x2
     GAllProp x1 x2 -> r GAllProp `a` f x1 `a` f x2
     GAndProp x1 -> r GAndProp `a` f x1
     GAnnotateProp x1 x2 -> r GAnnotateProp `a` f x1 `a` f x2
@@ -3894,6 +3986,9 @@ instance Compos Tree where
     GNotAdjCProp x1 x2 -> r GNotAdjCProp `a` f x1 `a` f x2
     GNotAdjEProp x1 x2 -> r GNotAdjEProp `a` f x1 `a` f x2
     GNotAdjProp x1 x2 -> r GNotAdjProp `a` f x1 `a` f x2
+    GNotAdv2Prop x1 x2 x3 -> r GNotAdv2Prop `a` f x1 `a` f x2 `a` f x3
+    GNotAdvCProp x1 x2 -> r GNotAdvCProp `a` f x1 `a` f x2
+    GNotAdvProp x1 x2 -> r GNotAdvProp `a` f x1 `a` f x2
     GNotNoun1Prop x1 x2 -> r GNotNoun1Prop `a` f x1 `a` f x2
     GNotNoun2Prop x1 x2 x3 -> r GNotNoun2Prop `a` f x1 `a` f x2 `a` f x3
     GNotNounCProp x1 x2 -> r GNotNounCProp `a` f x1 `a` f x2

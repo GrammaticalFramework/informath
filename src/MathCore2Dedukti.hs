@@ -161,7 +161,14 @@ prop2dedukti prop = case prop of
     foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b])
   GAdj3Prop adj a b c ->
     foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [a, b, c])
-    
+
+  GAdvProp adv exp ->
+    EApp (EIdent (QIdent (showGF adv))) (exp2dedukti exp)
+  GAdv2Prop adv a b ->
+    foldl EApp (EIdent (QIdent (showGF adv))) (map exp2dedukti [a, b])
+  GAdvCProp adv a b ->
+    foldl EApp (EIdent (QIdent (showGF adv))) (map exp2dedukti [a, b])
+
   GVerbProp verb exp ->
     EApp (EIdent (QIdent (showGF verb))) (exp2dedukti exp)
   GVerb2Prop verb x y ->
