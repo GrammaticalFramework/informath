@@ -3,8 +3,13 @@
 
 module Informath2MathCore where
 
+import Semantics
+
 import Informath
 import PGF (showExpr)
+
+import qualified Data.Map as M
+
 
 data SEnv = SEnv {varlist :: [String]}
 initSEnv = SEnv {varlist = []}
@@ -18,8 +23,8 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   x = head [x | x <- ["_h" ++ show i | i <- [0..]], notElem x (varlist senv)]
   xi = GStrIdent (GString x)
   
-semantics :: Tree a -> Tree a
-semantics = addCoercions . addParenth . sem initSEnv . removeFonts
+semantics :: GJmt -> GJmt
+semantics = addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs M.empty
 
 addCoercions :: Tree a -> Tree a
 addCoercions t = case t of

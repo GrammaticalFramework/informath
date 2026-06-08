@@ -46,6 +46,7 @@ executable RunInformath
     InformathAPI
     Utils
     SpecialConstants
+    Semantics
 
   hs-source-dirs:      app src web src/typetheory
   ghc-options:         -O2
