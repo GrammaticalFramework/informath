@@ -1,9 +1,0 @@
-ex . let x ∈ R . if x < 0 , then x ^ 2 + 1 > 0 .
-ex . let x ∈ R . if x ^ 2 - 2 x + 2 ≤ 0 , then x ^ 3 ≥ 8 .
-ex . if n is an odd integer , then 3 n + 7 is an even integer . 
-ex . if n is an even integer , then - 5 n - 3 is an odd integer .
-ex . if x is an even integer , then 5 x - 3 is an odd integer .
-ex . let n ∈ Z . if 1 - n ^ 2 > 0 , then 3 n - 2 is an even integer .
-ex . let x , y ∈ Z . if 3 x + 4 y and 4 x + 5 y are even , then x and y are even .
-ex . let x ∈ R . if 0 < x < 1 , then x ^ 2 - 2 x + 2 ≠ 0 .
-ex . let a , b be integers . then a b is even if and only if a is even or b is even .

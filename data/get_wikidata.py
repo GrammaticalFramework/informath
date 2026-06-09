@@ -112,6 +112,7 @@ def merge_lexica(lex1, lex2):
 # convert 2-letter codes to 3-letter ones
 language_codes = {
     'ar': 'Ara',
+    'cs': 'Cze',
     'de': 'Ger',
     'en': 'Eng',
     'fi': 'Fin',
