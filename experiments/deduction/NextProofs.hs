@@ -193,9 +193,23 @@ term2tree :: Exp -> Tree Step
 term2tree exp = case exp of
   ETyped e typ -> case splitApp e of
     (EIdent fun, args) ->
-      Tree (mkStep noIdent typ fun (concatMap absIdents args)) (map term2tree args)
+      Tree (mkStep noIdent typ fun (concatMap absIdents args)) (concatMap argTrees args)
   EAbs _ t -> term2tree t
   _ -> error ("term2tree " ++ printTree exp)
+ where
+  -- an argument contributes a leaf for each Elem-typed variable it binds (an eigenvariable),
+  -- followed by the subtree for the argument itself
+  argTrees arg = [Tree (mkStep noIdent t v []) [] | (v, t) <- elemBinders arg] ++ [term2tree arg]
+
+-- the Elem-typed variables bound at the top of an abstraction (eigenvariables, e.g. x : Elem A)
+elemBinders :: Exp -> [(QIdent, Exp)]
+elemBinders arg = [(v, t) | BTyped v t <- fst (splitAbs arg), isElemType t]
+
+-- an object-language type Elem A (as opposed to a Proof of a proposition)
+isElemType :: Exp -> Bool
+isElemType e = case splitApp e of
+  (EIdent (QIdent "Elem"), _) -> True
+  _ -> False
 
 
 -----------------------
@@ -214,22 +228,37 @@ term2lines =
    ETyped e typ -> case splitApp e of
     (EIdent fun, args) ->
       let
-         pss = psfold cont (args, ln)
-	 ln3 = nextline ln (concat pss)
-      in concat pss ++
-         [mkLine ln3 cont typ fun (nub (map lastline pss)) (concatMap absIdents args)]
+         (argss, prems, lnConcl) = psArgs ln cont args
+      in concat argss ++
+         [mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)]
    EAbs _ _ -> case splitAbs proof of
      (binds, body) -> ps ln (cont ++ map bind2ident binds) body
 
    _ -> error ("term2tree " ++ printTree proof)
 
- psfold :: [QIdent] -> ([Exp], Int) -> [[Line]]
- psfold cont (pts, n) = case pts of
-   p : pp -> case
-     ps n cont p of
-       [] -> psfold cont (pp, n)
-       ls -> ls : psfold cont (pp, nextline n ls)
-   [] -> []
+ -- process arguments left to right, threading line numbers; each argument yields its lines
+ -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
+ -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
+ psArgs :: Int -> [QIdent] -> [Exp] -> ([[Line]], [Int], Int)
+ psArgs n cont [] = ([], [], n)
+ psArgs n cont (a:as) =
+   let (ls, prem) = psArg n cont a
+       (lss, prems, nf) = psArgs (nextline n ls) cont as
+   in (ls : lss, prem ++ prems, nf)
+
+ psArg :: Int -> [QIdent] -> Exp -> ([Line], [Int])
+ psArg n cont arg = case arg of
+   EAbs _ _ ->
+     let (binds, body) = splitAbs arg
+         cont' = cont ++ map bind2ident binds
+         elemvs = [(v, t) | BTyped v t <- binds, isElemType t]
+         eigenLines = [mkLine (n + i) cont' t v [] [] | (i, (v, t)) <- zip [0 ..] elemvs]
+         bodyLines = ps (n + length eigenLines) cont' body
+     in (eigenLines ++ bodyLines,
+         map line eigenLines ++ [lastline bodyLines | not (null bodyLines)])
+   _ ->
+     let ls = ps n cont arg
+     in (ls, [lastline ls | not (null ls)])
 
  lastline = line . last
  nextline ln p = if null p then ln else lastline p + 1
@@ -275,7 +304,13 @@ prls lns = unlines $
   ["\\end{array}", "\\]"] 
 
 prl :: Line -> [String]
-prl ln = [
+prl ln
+  | null (premisses ln) && isElemType (formula (step ln)) =  -- object variable assumption: "x : Elem A" on one line
+      [ concat (intersperse "," (map printTree (context ln))),
+        show (line ln) ++ ".",
+        "\\verb#" ++ printTree (rule (step ln)) ++ " : " ++ printTree (formula (step ln)) ++ "#",
+        "", "", "" ]
+  | otherwise = [
 ---  concat (replicate (length (context ln)) "\\mid"),
   concat (intersperse "," (map printTree (context ln))),
   show (line ln) ++ ".",
@@ -304,9 +339,11 @@ prst :: M.Map QIdent Exp -> Tree Step -> String
 prst rules = mathdisplay . pr where
   pr (Tree a ts) = case ts of
     []
+      | isElemType (formula a) ->   -- an object variable, e.g. x : Elem A: variable beside the type, on one line
+          concat ["\\texttt{", printTree (rule a), " : ", printTree (formula a), "}"]
       | M.member (rule a) rules ->  -- a nullary rule/axiom (e.g. even0): show its name, not a discharge
           concat ["\\infer[{\\scriptstyle ", prs a !! 2, "}]{", prs a !! 1, "}{}"]
-      | otherwise ->                -- a discharged hypothesis/eigenvariable: its label sits above the formula
+      | otherwise ->                -- a discharged hypothesis: its label sits above the formula
           concat ["\\discharge{", prs a !! 2, "}{", prs a !! 1, "}"]
     _ -> concat ["\\infer[{\\scriptstyle ", prs a !! 2, prs a !! 3, "}]{",
                  prs a !! 1, "}{", unwords (intersperse "&" (map pr ts)), "}"]
