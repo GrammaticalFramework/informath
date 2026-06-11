@@ -118,5 +118,6 @@ fun vector_plus_FunC : FunC ;
 fun everywhere_Adverb : Adverb ;
 fun almost_everywhere_Adverb : Adverb ;
 fun uniformly_Adverb : Adverb ;
+fun non_Adverb : Adverb ;
 
 }

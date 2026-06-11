@@ -127,6 +127,6 @@ lin vector_plus_FunC = mkFunC "Summe" ;
 lin everywhere_Adverb = mkAdv "überall" ;
 lin almost_everywhere_Adverb = mkAdv "fast überall" ;
 lin uniformly_Adverb = mkAdv "gleichäßig" ;
-
+lin non_Adverb = mkAdv "nicht";
 
 }

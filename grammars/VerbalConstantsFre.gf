@@ -127,6 +127,6 @@ lin vector_plus_FunC = mkFunC "somme" ;
 lin everywhere_Adverb = mkAdv "partout" ;
 lin almost_everywhere_Adverb = mkAdv "presque partout" ;
 lin uniformly_Adverb = mkAdv "uniformément" ;
-
+lin non_Adverb = mkAdv "non" ;
 
 }
