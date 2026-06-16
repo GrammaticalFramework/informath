@@ -8,6 +8,8 @@
 
 #### LATEST NEWS
 
+15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
+
 9 June 2026: moved experimental and/or deprecated code to a separate repo, [informath-experiments](https://github.com/aarneranta/informath-experiments).
 
 6 May 2026: New binary release, entitled [Informath-0.3](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.3).
@@ -21,6 +23,8 @@
 
 
 ## Documentation
+
+[Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). As of June 2026, the most up-to-date description on some features of Informath.
 
 This README: using Informath with ready-made binaries and grammars.
 
