@@ -266,7 +266,7 @@ groupProps conj = groups where
 	  _ -> p : groups pp
     p@(GFormulaProp (GEquationFormula (GBinaryEquation lt a b))) : pp ->
       case getEquations pp b of
-        Just (eqs, ps) -> (GFormulaProp (GEquationFormula (GChainEquation lt a eqs))) : groups ps
+        Just (eqs, ps) | conj == "and" -> (GFormulaProp (GEquationFormula (GChainEquation lt a eqs))) : groups ps
 	_ -> p : groups pp
     p : pp -> p : groups pp
     _ -> []

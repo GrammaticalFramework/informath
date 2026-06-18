@@ -221,6 +221,7 @@ data Tree :: * -> * where
   GAdvAdvC :: GAdv -> Tree GAdvC_
   Galmost_everywhere_Adverb :: Tree GAdverb_
   Geverywhere_Adverb :: Tree GAdverb_
+  Gnon_Adverb :: Tree GAdverb_
   Guniformly_Adverb :: Tree GAdverb_
   GBareIdentsArgKind :: GListIdent -> Tree GArgKind_
   GDeclarationArgKind :: GDeclaration -> Tree GArgKind_
@@ -962,6 +963,7 @@ instance Eq (Tree a) where
     (GAdvAdvC x1,GAdvAdvC y1) -> and [ x1 == y1 ]
     (Galmost_everywhere_Adverb,Galmost_everywhere_Adverb) -> and [ ]
     (Geverywhere_Adverb,Geverywhere_Adverb) -> and [ ]
+    (Gnon_Adverb,Gnon_Adverb) -> and [ ]
     (Guniformly_Adverb,Guniformly_Adverb) -> and [ ]
     (GBareIdentsArgKind x1,GBareIdentsArgKind y1) -> and [ x1 == y1 ]
     (GDeclarationArgKind x1,GDeclarationArgKind y1) -> and [ x1 == y1 ]
@@ -1782,12 +1784,14 @@ instance Gf GAdvC where
 instance Gf GAdverb where
   gf Galmost_everywhere_Adverb = mkApp (mkCId "almost_everywhere_Adverb") []
   gf Geverywhere_Adverb = mkApp (mkCId "everywhere_Adverb") []
+  gf Gnon_Adverb = mkApp (mkCId "non_Adverb") []
   gf Guniformly_Adverb = mkApp (mkCId "uniformly_Adverb") []
 
   fg t =
     case unApp t of
       Just (i,[]) | i == mkCId "almost_everywhere_Adverb" -> Galmost_everywhere_Adverb 
       Just (i,[]) | i == mkCId "everywhere_Adverb" -> Geverywhere_Adverb 
+      Just (i,[]) | i == mkCId "non_Adverb" -> Gnon_Adverb 
       Just (i,[]) | i == mkCId "uniformly_Adverb" -> Guniformly_Adverb 
 
 
