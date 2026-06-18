@@ -326,9 +326,9 @@ variations tree = case tree of
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
   GAllProp (GListArgKind [argkind]) prop ->
-    tree : [GPostQuantProp prop exp | exp <- allExpVariations argkind]
+    tree : [GPostQuantProp prop exp | exp <- allQuantVariations argkind]
   GExistProp (GListArgKind [argkind]) prop ->
-    tree : [GPostQuantProp prop exp | exp <- existExpVariations argkind]
+    tree : [GPostQuantProp prop exp | exp <- existQuantVariations argkind]
   GCoreNotProp (GExistProp argkinds prop) ->
     tree : [GExistNoProp argkinds prop]
   GIfProp a@(GFormulaProp fa) b@(GFormulaProp fb) ->
@@ -382,16 +382,16 @@ ifNeeded given alts = case alts of
   [] -> [given]
   _ -> alts
 
-allExpVariations :: GArgKind -> [GExp]
-allExpVariations argkind = case argkind of
-  GIdentsArgKind kind (GListIdent [x]) -> [GEveryIdentKindExp x kind , GAllIdentsKindExp (GListIdent [x]) kind]
-  GIdentsArgKind kind xs -> [GAllIdentsKindExp xs kind]
+allQuantVariations :: GArgKind -> [GQuant]
+allQuantVariations argkind = case argkind of
+  GIdentsArgKind kind (GListIdent [x]) -> [GEveryIdentKindQuant x kind , GAllIdentsKindQuant (GListIdent [x]) kind]
+  GIdentsArgKind kind xs -> [GAllIdentsKindQuant xs kind]
   _ -> []
 
-existExpVariations :: GArgKind -> [GExp]
-existExpVariations argkind = case argkind of
-  GIdentsArgKind kind (GListIdent [x]) -> [GIndefIdentKindExp x kind, GSomeIdentsKindExp (GListIdent [x]) kind]
-  GIdentsArgKind kind xs -> [GSomeIdentsKindExp xs kind]
+existQuantVariations :: GArgKind -> [GQuant]
+existQuantVariations argkind = case argkind of
+  GIdentsArgKind kind (GListIdent [x]) -> [GIndefIdentKindQuant x kind, GSomeIdentsKindQuant (GListIdent [x]) kind]
+  GIdentsArgKind kind xs -> [GSomeIdentsKindQuant xs kind]
   _ -> []
 
 hypoProp :: [GHypo] -> GProp -> [GProp]
@@ -406,13 +406,13 @@ hypoProp hypos prop = case hypos of
 insitu :: Tree a -> Tree a
 insitu t = case t of
   GAllProp (GListArgKind [argkind]) (GAdjProp adj exp) -> case subst argkind exp of
-    Just (x, kind) -> GAdjProp adj (GAllIdentsKindExp (GListIdent [x]) kind)
+    Just (x, kind) -> GAdjProp adj (GQuantExp (GAllIdentsKindQuant (GListIdent [x]) kind))
     _ -> t
   GAllProp (GListArgKind [argkind]) (GNotAdjProp adj exp) -> case subst argkind exp of
-    Just (x, kind) -> GAdjProp adj (GNoIdentsKindExp (GListIdent [x]) kind)
+    Just (x, kind) -> GAdjProp adj (GQuantExp (GNoIdentsKindQuant (GListIdent [x]) kind))
     _ -> t
   GExistProp (GListArgKind [argkind]) (GAdjProp adj exp) -> case subst argkind exp of
-    Just (x, kind) -> GAdjProp adj (GSomeIdentsKindExp (GListIdent [x]) kind)
+    Just (x, kind) -> GAdjProp adj (GQuantExp (GSomeIdentsKindQuant (GListIdent [x]) kind))
     _ -> t
   _ -> composOp insitu t
 
@@ -428,11 +428,11 @@ substTerm x val body = case body of
 
 varless :: Tree a -> Tree a
 varless t = case t of
-  GEveryIdentKindExp _ kind -> GEveryKindExp kind
-  GAllIdentsKindExp (GListIdent [_]) kind -> GAllKindExp kind
-  GNoIdentsKindExp (GListIdent [_]) kind -> GNoKindExp kind
-  GSomeIdentsKindExp (GListIdent [_]) kind -> GSomeKindExp kind
-  GIndefIdentKindExp _ kind -> GSomeKindExp kind
+  GEveryIdentKindQuant _ kind -> GEveryKindQuant kind
+  GAllIdentsKindQuant (GListIdent [_]) kind -> GAllKindQuant kind
+  GNoIdentsKindQuant (GListIdent [_]) kind -> GNoKindQuant kind
+  GSomeIdentsKindQuant (GListIdent [_]) kind -> GSomeKindQuant kind
+  GIndefIdentKindQuant _ kind -> GSomeKindQuant kind
   _ -> composOp varless t
 
 exps2list :: GExps -> [GExp]

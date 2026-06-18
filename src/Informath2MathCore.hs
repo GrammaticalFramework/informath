@@ -127,50 +127,50 @@ sem env t = case t of
   GExistNoProp argkinds prop -> GCoreNotProp (sem env (GExistProp argkinds prop))
 
   GPostQuantProp prop exp -> case sem env exp of
-    GEveryIdentKindExp ident kind ->
+    GEveryIdentKindQuant ident kind ->
       sem env (GCoreAllProp kind ident prop)
-    GIndefIdentKindExp ident kind ->
+    GIndefIdentKindQuant ident kind ->
       sem env (GCoreExistProp kind ident prop)
-    GSomeIdentsKindExp idents kind ->
+    GSomeIdentsKindQuant idents kind ->
       sem env (GExistProp (GListArgKind [GIdentsArgKind kind idents]) prop)
-    GAllIdentsKindExp idents kind ->
+    GAllIdentsKindQuant idents kind ->
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) prop)
-    GNoIdentsKindExp idents kind ->
+    GNoIdentsKindQuant idents kind ->
       sem env (GAllProp (GListArgKind [GIdentsArgKind kind idents]) (GCoreNotProp prop))
     _ -> t ----TODO some cases: error ("sem not yet: " ++ showExpr [] (gf t))
 
   GAllProp argkinds prop -> GAllProp (sem env argkinds) (sem env prop)
     
   ---- TODO: generalize agremment and in situ resolution to all predication functions
-  GAdjProp adj (GAllIdentsKindExp (GListIdent [x]) kind) ->
+  GAdjProp adj (GQuantExp (GAllIdentsKindQuant (GListIdent [x]) kind)) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GAdjProp adj (GTermExp (GIdentTerm x))))
-  GAdjProp adj (GEveryIdentKindExp x kind) ->
-    sem env (GAdjProp adj (GAllIdentsKindExp  (GListIdent [x]) kind))
-  GAdjProp adj (GSomeIdentsKindExp (GListIdent [x]) kind) ->
+  GAdjProp adj (GQuantExp (GEveryIdentKindQuant x kind)) ->
+    sem env (GAdjProp adj (GQuantExp (GAllIdentsKindQuant  (GListIdent [x]) kind)))
+  GAdjProp adj (GQuantExp (GSomeIdentsKindQuant (GListIdent [x]) kind)) ->
     sem env (GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GAdjProp adj (GTermExp (GIdentTerm x))))
-  GAdjProp adj (GIndefIdentKindExp x kind) ->
-    sem env (GAdjProp adj (GSomeIdentsKindExp  (GListIdent [x]) kind))
-  GAdjProp adj (GNoIdentsKindExp (GListIdent [x]) kind) ->
+  GAdjProp adj (GQuantExp (GIndefIdentKindQuant x kind)) ->
+    sem env (GAdjProp adj (GQuantExp (GSomeIdentsKindQuant  (GListIdent [x]) kind)))
+  GAdjProp adj (GQuantExp (GNoIdentsKindQuant (GListIdent [x]) kind)) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GNotAdjProp adj (GTermExp (GIdentTerm x))))
 	      
-  GAdjProp adj (GEveryKindExp kind) ->
+  GAdjProp adj (GQuantExp (GEveryKindQuant kind)) ->
     let (x, env') = newVar env
     in sem env'
       (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
         (GAdjProp adj (GTermExp (GIdentTerm x))))
-  GAdjProp adj (GAllKindExp kind) ->
-    sem env (GAdjProp adj (GEveryKindExp kind))
-  GAdjProp adj (GSomeKindExp kind) ->
+  GAdjProp adj (GQuantExp (GAllKindQuant kind)) ->
+    sem env (GAdjProp adj (GQuantExp (GEveryKindQuant kind)))
+  GAdjProp adj (GQuantExp (GSomeKindQuant kind)) ->
     let (x, env') = newVar env
     in sem env'
       (GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
         (GAdjProp adj (GTermExp (GIdentTerm x))))
-  GAdjProp adj (GIndefKindExp kind) ->
-    sem env (GAdjProp adj (GSomeKindExp kind))
-  GAdjProp adj (GNoKindExp kind) ->
+  GAdjProp adj (GQuantExp (GIndefKindQuant kind)) ->
+    sem env (GAdjProp adj (GQuantExp (GSomeKindQuant kind)))
+  GAdjProp adj (GQuantExp (GNoKindQuant kind)) ->
     let (x, env') = newVar env
     in sem env'
       (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
@@ -255,8 +255,6 @@ sem env t = case t of
   GDeclarationArgKind declaration -> case sem env declaration of
    ---- TODO: check that all are idents
     GElemDeclaration (GListTerm terms) term ->
-      GIdentsArgKind (GExpKind (GTermExp term)) (GListIdent [x | GIdentTerm x <- terms])
-    GElemDeclaration (GListTerm terms) term -> 
       GIdentsArgKind (GExpKind (GTermExp term)) (GListIdent [x | GIdentTerm x <- terms])
     _ -> t ---- error "cannot use declaration as argkind yet"
   GNoCommaExistProp argkinds prop ->

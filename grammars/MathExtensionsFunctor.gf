@@ -16,6 +16,7 @@ in {
 lincat
   [Adj] = Syntax.ListAP ;
   Pred = VP ;
+  Quant = NP ;
 
 lin
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
@@ -113,26 +114,28 @@ lin
 
   PluralKindExp kind = mkNP thePl_Det (useKind kind) ;
 
-  AllKindExp kind = mkNP all_Predet (mkNP aPl_Det (useKind kind)) ;
-  AllIdentsKindExp idents kind = mkNP all_Predet (mkNP aPl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)) ;
+  QuantExp quant = quant ;
 
-  EveryKindExp kind =
+  AllKindQuant kind = mkNP all_Predet (mkNP aPl_Det (useKind kind)) ;
+  AllIdentsKindQuant idents kind = mkNP all_Predet (mkNP aPl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)) ;
+
+  EveryKindQuant kind =
     mkNP every_Det (mkCN kind.cn kind.adv) | mkNP all_Predet (mkNP aPl_Det (mkCN kind.cn kind.adv)) ;
-  EveryIdentKindExp ident kind = mkNP every_Det (mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv) ;
+  EveryIdentKindQuant ident kind = mkNP every_Det (mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv) ;
 
-  SomeKindExp kind = mkNP someSg_Det (mkCN kind.cn kind.adv) ;
-  SomeIdentsKindExp idents kind = case idents.isPl of {
+  SomeKindQuant kind = mkNP someSg_Det (mkCN kind.cn kind.adv) ;
+  SomeIdentsKindQuant idents kind = case idents.isPl of {
     False => mkNP someSg_Det (mkCN (mkCN kind.cn idents.np) kind.adv) ;
     True  => mkNP somePl_Det (mkCN (mkCN kind.cn idents.np) kind.adv)
     } ;
-  IndefKindExp kind = mkNP a_Det (mkCN kind.cn kind.adv) ;
-  IndefIdentKindExp ident kind = mkNP a_Det (mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv) ;
+  IndefKindQuant kind = mkNP a_Det (mkCN kind.cn kind.adv) ;
+  IndefIdentKindQuant ident kind = mkNP a_Det (mkCN (mkCN kind.cn (latexNP (mkSymb ident))) kind.adv) ;
   
-  NoIdentsKindExp idents kind = case idents.isPl of {
+  NoIdentsKindQuant idents kind = case idents.isPl of {
     False => mkNP no_Quant (mkCN (mkCN kind.cn idents.np) kind.adv) ;
     True  => mkNP (mkDet no_Quant pluralNum) (mkCN (mkCN kind.cn idents.np) kind.adv)
     } ;
-  NoKindExp kind = mkNP no_Quant (mkCN kind.cn kind.adv) ;
+  NoKindQuant kind = mkNP no_Quant (mkCN kind.cn kind.adv) ;
 
   AdjCCollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;
   AdjECollProp adj exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) adj)) ;

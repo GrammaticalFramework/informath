@@ -7,6 +7,7 @@ cat
   [Adj] {2} ;
   Pred ;
 ----  [Pred] {2} ;
+  Quant ;
 
 fun
   FormulaProp : Formula -> Prop ;
@@ -79,7 +80,7 @@ fun
 -- for Pathak's examples (and more)
 
   LetFormulaHypo : Formula -> Hypo ;
-  PostQuantProp : Prop -> Exp -> Prop ;
+  PostQuantProp : Prop -> Quant -> Prop ;
 
   LetDeclarationHypo : Declaration -> Hypo ;
 
@@ -88,23 +89,23 @@ fun
 
   PluralKindExp : Kind -> Exp ; -- the rationals
 
-  AllKindExp : Kind -> Exp ;
-  AllIdentsKindExp : [Ident] -> Kind -> Exp ;
-  EveryKindExp : Kind -> Exp ;
-  EveryIdentKindExp : Ident -> Kind -> Exp ;
-----  AllIdentsSetExp : [Ident] -> Set -> Exp ; -- TODO: all $x, y : N$
+
+  QuantExp : Quant -> Exp ;
+  
+  AllKindQuant : Kind -> Quant ;
+  AllIdentsKindQuant : [Ident] -> Kind -> Quant ;
+  EveryKindQuant : Kind -> Quant ;
+  EveryIdentKindQuant : Ident -> Kind -> Quant ;
 
   IdentsArgKind : Kind -> [Ident] -> ArgKind ;
 
-  SomeKindExp : Kind -> Exp ;
-  SomeIdentsKindExp : [Ident] -> Kind -> Exp ;
-  IndefKindExp : Kind -> Exp ;
-  IndefIdentKindExp : Ident -> Kind -> Exp ;
-----  SomeIdentsSetExp : [Ident] -> Set -> Exp ;
+  SomeKindQuant : Kind -> Quant ;
+  SomeIdentsKindQuant : [Ident] -> Kind -> Quant ;
+  IndefKindQuant : Kind -> Quant ;
+  IndefIdentKindQuant : Ident -> Kind -> Quant ;
 
-  NoIdentsKindExp : [Ident] -> Kind -> Exp ;
-  NoKindExp : Kind -> Exp ;
-----  NoIdentsSetExp : [Ident] -> Set -> Exp ;
+  NoIdentsKindQuant : [Ident] -> Kind -> Quant ;
+  NoKindQuant : Kind -> Quant ;
 
   AdjCCollProp : AdjC -> [Exp] -> Prop ;
   AdjECollProp : AdjE -> [Exp] -> Prop ;
