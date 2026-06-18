@@ -1,2 +1,6 @@
-#SEMANTICS NotAdjProp adj exp = CoreNotProp (AdjProp adj exp)
+#SEMANTICS InverseIfProp a b = IfProp b a 
+
+#NLG IfProp a b = InverseIfProp b a
+
+
 

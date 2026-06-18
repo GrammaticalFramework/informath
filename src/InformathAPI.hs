@@ -94,9 +94,8 @@ conversionTableEnv = conversionTable . symbolTable
 dropTableEnv = dropTable . symbolTable
 macroTableEnv = macroTable . symbolTable
 semanticsTableEnv = semanticsTable . symbolTable
+nlgTableEnv = nlgTable . symbolTable
 builtinSetEnv = builtinSet . symbolTable
-
-
 
 -- ** Low-level access to data sources
 
@@ -321,8 +320,12 @@ dedukti2core = DMC.jmt2core
 checkSymbolTable :: Module -> PGF -> SymbolTable -> [String]
 checkSymbolTable = symbolTableErrors
 
-printSymbolTable :: SymbolTable -> String
-printSymbolTable = showConstantTable . constantTable
+printSymbolTable :: SymbolTable -> String ---- TODO show complete information
+printSymbolTable st = unlines [
+  showConstantTable (constantTable st),
+  "# semantics table keys: " ++ show (M.keys (semanticsTable st)),
+  "# NLG table keys: " ++ show (M.keys (nlgTable st))
+  ]
 
 printSymbolTableLong :: SymbolTable -> String
 printSymbolTableLong = showConstantTableLong . constantTable

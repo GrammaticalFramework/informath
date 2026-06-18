@@ -76,6 +76,7 @@ lin
   EitherOrExp x y = mkNP either7or_DConj x y ;
 
   OnlyIfProp A B = simpleProp (Grammar.SSubjS (partProp A) only_if_Subj (partProp B)) ;
+  InverseIfProp B A = simpleProp (Grammar.SSubjS (partProp A) if_Subj (partProp B)) ;
 
   ExistNoProp argkinds prop = simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP argkinds.neg)) such_that_Subj (partProp prop)) ; 
 

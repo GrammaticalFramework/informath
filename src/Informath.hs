@@ -481,6 +481,7 @@ data Tree :: * -> * where
   GIffIffProp :: GProp -> GProp -> Tree GProp_
   GIffProp :: GProp -> GProp -> Tree GProp_
   GIndexedFormulaProp :: GInt -> Tree GProp_
+  GInverseIfProp :: GProp -> GProp -> Tree GProp_
   GNoArticleExistProp :: GArgKind -> GProp -> Tree GProp_
   GNoCommaAllProp :: GListArgKind -> GProp -> Tree GProp_
   GNoCommaExistProp :: GListArgKind -> GProp -> Tree GProp_
@@ -1223,6 +1224,7 @@ instance Eq (Tree a) where
     (GIffIffProp x1 x2,GIffIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIffProp x1 x2,GIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIndexedFormulaProp x1,GIndexedFormulaProp y1) -> and [ x1 == y1 ]
+    (GInverseIfProp x1 x2,GInverseIfProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoArticleExistProp x1 x2,GNoArticleExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaAllProp x1 x2,GNoCommaAllProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaExistProp x1 x2,GNoCommaExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -2718,6 +2720,7 @@ instance Gf GProp where
   gf (GIffIffProp x1 x2) = mkApp (mkCId "IffIffProp") [gf x1, gf x2]
   gf (GIffProp x1 x2) = mkApp (mkCId "IffProp") [gf x1, gf x2]
   gf (GIndexedFormulaProp x1) = mkApp (mkCId "IndexedFormulaProp") [gf x1]
+  gf (GInverseIfProp x1 x2) = mkApp (mkCId "InverseIfProp") [gf x1, gf x2]
   gf (GNoArticleExistProp x1 x2) = mkApp (mkCId "NoArticleExistProp") [gf x1, gf x2]
   gf (GNoCommaAllProp x1 x2) = mkApp (mkCId "NoCommaAllProp") [gf x1, gf x2]
   gf (GNoCommaExistProp x1 x2) = mkApp (mkCId "NoCommaExistProp") [gf x1, gf x2]
@@ -2784,6 +2787,7 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "IffIffProp" -> GIffIffProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "IffProp" -> GIffProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "IndexedFormulaProp" -> GIndexedFormulaProp (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "InverseIfProp" -> GInverseIfProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoArticleExistProp" -> GNoArticleExistProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaAllProp" -> GNoCommaAllProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaExistProp" -> GNoCommaExistProp (fg x1) (fg x2)
@@ -3983,6 +3987,7 @@ instance Compos Tree where
     GIffIffProp x1 x2 -> r GIffIffProp `a` f x1 `a` f x2
     GIffProp x1 x2 -> r GIffProp `a` f x1 `a` f x2
     GIndexedFormulaProp x1 -> r GIndexedFormulaProp `a` f x1
+    GInverseIfProp x1 x2 -> r GInverseIfProp `a` f x1 `a` f x2
     GNoArticleExistProp x1 x2 -> r GNoArticleExistProp `a` f x1 `a` f x2
     GNoCommaAllProp x1 x2 -> r GNoCommaAllProp `a` f x1 `a` f x2
     GNoCommaExistProp x1 x2 -> r GNoCommaExistProp `a` f x1 `a` f x2

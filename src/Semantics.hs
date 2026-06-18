@@ -45,3 +45,22 @@ readSemDef s = case break (=='=') s of
     (Just a', Just b') -> mkSemDef a' b'
     _ -> error ("cannot read semantic definition " ++ s)
   _ -> error ("cannot parse semantic definition " ++ s)
+
+
+-- the opposite direction: NLG defs, returning lists of variants
+
+type NLGDefs = M.Map CId [[Expr] -> Expr]
+
+
+appNLGDefs :: Gf a => NLGDefs -> a -> [a]
+appNLGDefs defs = map fg . applyNLGDefs defs . gf
+
+
+applyNLGDefs :: NLGDefs -> Expr -> [Expr]
+applyNLGDefs defs exp = case unApp exp of
+  Just (fun, args) ->
+    let argss' = sequence (map (applyNLGDefs defs) args) in case M.lookup fun defs of
+          Just funs' -> [fun' args' | fun' <- funs', args' <- argss']
+          _ -> [mkApp fun args' | args' <- argss']
+  _ -> [exp]
+

@@ -64,7 +64,8 @@ fun
   BothAndExp : Exp -> Exp -> Exp ;
   EitherOrExp : Exp -> Exp -> Exp ;
 
-  OnlyIfProp : Prop -> Prop -> Prop ;
+  OnlyIfProp : Prop -> Prop -> Prop ;    -- A only if B <-> if A then B
+  InverseIfProp : Prop -> Prop -> Prop ; -- B if A <-> if A then B
 
   Adj2Adj : Adj2 -> Exp -> Adj ;
   Adj3Adj : Adj3 -> Exp -> Exp -> Adj ;

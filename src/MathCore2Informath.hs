@@ -6,7 +6,8 @@ module MathCore2Informath where
 import Informath
 import Environment
 import Utils
-import BuildConstantTable (symbolics, synonyms, primary, constantTable)
+import BuildConstantTable (symbolics, synonyms, primary, constantTable, nlgTable)
+import Semantics (appNLGDefs)
 import qualified PGF
 
 import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM, composOpMPlus)
@@ -17,10 +18,10 @@ import qualified Data.Map as M
 
 type Opts = [String]
 
-nlg :: Env -> Tree a -> [Tree a]
+nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [deAnnotate tree]
-  _  -> concat [map deAnnotate [ft, t, tree], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts]
+  _  -> concat [map deAnnotate [ft, t, tree], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
   ---- TODO more option combinations
  where
    t = unparenth tree
@@ -35,6 +36,7 @@ nlg env tree = case () of
    cviafts = concatMap collectivize viafts
    ncviafts = map negated cviafts  -- better do this at this late stage
    vncviafts = if isFlag "-less-variants" env then [] else concatMap variations ncviafts
+   uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
 
 deAnnotate :: Tree a -> Tree a
 deAnnotate tree = case tree of

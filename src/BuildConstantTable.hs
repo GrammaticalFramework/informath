@@ -64,6 +64,7 @@ data SymbolTable = SymbolTable {
   dropTable :: DropTable,
   macroTable :: MacroTable,
   semanticsTable :: SemDefs,
+  nlgTable :: NLGDefs,
   builtinSet :: S.Set QIdent
   }
 
@@ -138,6 +139,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
   dropTable = dropTable,
   macroTable = macroTable,
   semanticsTable = semanticsTable,
+  nlgTable = nlgTable,
   builtinSet = builtinSet
   }
  where
@@ -148,6 +150,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     macrolines = filter isMacro entrylines
     builtinlines = filter isBuiltin entrylines
     semanticslines = filter isSemantics entrylines
+    nlglines = filter isNLG entrylines
     constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
                      qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
@@ -159,6 +162,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     macroTable = M.fromList [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)]
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
     semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
+    nlgTable = M.fromListWith (++) [(c, [f]) | _:ws <- nlglines, let (c, f) = readSemDef (unwords ws)]
     
     isConstantEntry line = head (head line) /= '#'
     isConversion line = head line == "#CONV"
@@ -166,6 +170,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     isMacro line = head line == "#MACRO"
     isBuiltin line = head line == "#BUILTIN"
     isSemantics line = head line == "#SEMANTICS"
+    isNLG line = head line == "#NLG"
 
 splitEntry s = case split '|' s of
   fg : ws -> split ':' fg ++ ws
