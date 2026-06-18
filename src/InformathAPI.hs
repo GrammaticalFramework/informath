@@ -280,7 +280,7 @@ processLatexLine env s =
           t <- ts,
           ut <- uts,
           let fut = tracs env ("FUT.") (fg ut),
-          let ct = tracs env "CT." (ext2core env fut)
+          ct <- ext2core env fut
           ],
     transResults = [
       unindexString tindex
@@ -486,11 +486,11 @@ core2ext env jmt = MCI.nlg env jmt
 rankGFTreesAndNat :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))]
 rankGFTreesAndNat = rankTreesAndStrings
 
-ext2core :: Env -> GJmt -> GJmt
+ext2core :: Env -> GJmt -> [GJmt]
 ext2core env = IMC.semantics (semanticsTableEnv env)
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
-gjmt2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env) . ext2core env
+gjmt2dedukti env = concatMap (MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)) . ext2core env
 
 core2dedukti :: Env -> GJmt -> [Jmt]
 core2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)

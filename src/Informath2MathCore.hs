@@ -23,8 +23,8 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   x = head [x | x <- ["_h" ++ show i | i <- [0..]], notElem x (varlist senv)]
   xi = GStrIdent (GString x)
   
-semantics :: SemDefs -> GJmt -> GJmt
-semantics defs = addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs defs
+semantics :: SemDefs -> GJmt -> [GJmt]
+semantics defs = inSituResults . addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs defs
 
 addCoercions :: Tree a -> Tree a
 addCoercions t = case t of
@@ -140,8 +140,8 @@ sem env t = case t of
     _ -> t ----TODO some cases: error ("sem not yet: " ++ showExpr [] (gf t))
 
   GAllProp argkinds prop -> GAllProp (sem env argkinds) (sem env prop)
-    
-  ---- TODO: generalize agremment and in situ resolution to all predication functions
+
+  ---- TODO: generalize aggregation and in situ resolution to all predication functions
   GAdjProp adj (GQuantExp (GAllIdentsKindQuant (GListIdent [x]) kind)) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GAdjProp adj (GTermExp (GIdentTerm x))))
