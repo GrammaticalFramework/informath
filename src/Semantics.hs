@@ -86,10 +86,18 @@ storageResults :: GProp -> [GProp]
 storageResults = results . analysedT where
 
   results :: (GProp, QEnv) -> [GProp] 
-  results (prop, (_, quants)) = [foldr (\q p -> q p) prop prefs | prefs <- prefixes quants]
+  results (prop, (_, quants)) =
+    let (negs, prop') = getNeg prop
+    in [foldr (\q p -> q p) prop' prefs | prefs <- permutations (negs ++ prefixes quants)]
 
-  prefixes :: [GQuant] -> [[GProp -> GProp]]
-  prefixes quants = permutations (map mkPrefix (zip quants [0..]))
+  prefixes :: [GQuant] -> [GProp -> GProp]
+  prefixes quants = map mkPrefix (zip quants [0..])
+
+  --- this assumes that negations have been computed to CoreNotProp
+  getNeg :: GProp -> ([GProp -> GProp], GProp)
+  getNeg prop = case prop of
+    GCoreNotProp p -> ([GCoreNotProp], p)
+    _ -> ([], prop)
 
   mkPrefix :: (GQuant, Int) -> (GProp -> GProp)
   mkPrefix (quant, i) = case quant of
@@ -107,6 +115,8 @@ inSituResults t = case t of
   GVerb2Prop _ _ _ -> storageResults t
   GNoun2Prop _ _ _ -> storageResults t
   GAdv2Prop _ _ _ -> storageResults t
+  GVerbProp _ _ -> storageResults t
+  GNoun1Prop _ _ -> storageResults t
   GAxiomJmt label hypos prop -> [GAxiomJmt label hypos prop' | prop' <- inSituResults prop]
   ---- TODO more cases in inSituResults
   _ -> composOpM inSituResults t
