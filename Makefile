@@ -129,6 +129,11 @@ top100:
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
+top100verbal:
+	echo "## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable"
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symboltables=test/verbalconstants.dkgf -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
+	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
+
 top100check:
 	echo "## type-checking the theorems in Dedukti"
 	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
