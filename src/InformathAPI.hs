@@ -321,11 +321,12 @@ checkSymbolTable :: Module -> PGF -> SymbolTable -> [String]
 checkSymbolTable = symbolTableErrors
 
 printSymbolTable :: SymbolTable -> String ---- TODO show complete information
-printSymbolTable st = unlines [
+printSymbolTable st = unlines $ [
   showConstantTable (constantTable st),
   "# semantics table keys: " ++ show (M.keys (semanticsTable st)),
   "# NLG table keys: " ++ show (M.keys (nlgTable st))
-  ]
+  ] ++
+  macroCommands (macroTable st)
 
 printSymbolTableLong :: SymbolTable -> String
 printSymbolTableLong = showConstantTableLong . constantTable

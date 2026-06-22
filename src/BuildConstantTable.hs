@@ -18,7 +18,7 @@ import Utils
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (partition, sortOn, sort, groupBy, intersperse)
-import Data.Char (isDigit)
+import Data.Char (isDigit, isAlpha)
 
 type GFTree = PGF.Tree
 type Fun = GFTree
@@ -152,14 +152,21 @@ buildSymbolTable pgf lang ls = SymbolTable {
     semanticslines = filter isSemantics entrylines
     nlglines = filter isNLG entrylines
     constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) gfids)) |
-                     qid:gfids@(_:_) <- map (splitEntry . unwords) constantlines]
+        (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) (gfids ++ macros))) |
+                     qid:gids@(_:_) <- map (splitEntry . unwords) constantlines,
+		     let (latexs, gfids) = partition ((=='$') . head) gids,
+		     let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
+		     ]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
     backConstantTable = buildBackConstantTable constantTable
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
-    macroTable = M.fromList [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)]
+    macroTable = M.fromList (
+        [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)] ++
+	[mkMacro qid gid i |
+	    qid:gids <- map (splitEntry . unwords) constantlines,
+	    (gid, i) <- zip [gid | gid@('$':_) <- gids] [0..]])
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
     semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
     nlgTable = M.fromListWith (++) [(c, [f]) | _:ws <- nlglines, let (c, f) = readSemDef (unwords ws)]
@@ -188,6 +195,16 @@ splitNewcommand s = case break (=='{') s of
   _ -> error ("expected valid newcommand, found: " ++ s)
 
 
+mkMacro :: String -> String -> Int -> (String, (Int, String))
+mkMacro qid s i = (macroName qid i, (maximum (0 : args s), init (tail s)))
+ where
+   args s = case s of
+     '#':c:cs | isDigit c -> read [c] : args cs --- only one-digit arguments
+     c:cs -> args cs
+     _ -> []
+
+macroName :: String -> Int -> String
+macroName c i = "\\" ++ filter isAlpha c ++ "MACRo" ++ replicate i 'I'
 
 mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
