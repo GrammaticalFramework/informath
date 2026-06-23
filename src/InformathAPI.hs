@@ -29,6 +29,8 @@ import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
 import Utils
 
+import ProofText(proofDemo)
+
 import Informath
 import PGF
 
@@ -585,3 +587,15 @@ reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
     Just (f, xs) -> f : concatMap ids xs
     _ -> []
 
+-- | proof text demo, experimental
+showProofDemo :: Env -> Module -> Module -> String
+showProofDemo env base mo = proofDemo base mo (dropTableEnv env) (informalizeExp env)
+
+
+-- | informalize a single Dedukti expression as a proof step; quick hack, should be revised
+informalizeExp :: Env -> Exp -> String
+informalizeExp env exp = head (printResults env (concatMap (printGenResult env) results))
+  where
+   results = processDeduktiModule env (MJmts [jmt])
+   jmt = JDef (QIdent "") (MTExp exp) MENone
+   

@@ -245,11 +245,14 @@ fermat:
 	$(RUN) -add-symboltables=test/fermat.dkgf -variations test/fermat.dk
 
 cartesian:
-	RunInformath -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
+	$(RUN)  -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
 
 bind:
-	RunInformath -add-symboltables=test/bind.dkgf -variations test/bind.dk
+	$(RUN)  -add-symboltables=test/bind.dkgf -variations test/bind.dk
 
+prooftextdemo:
+	$(RUN) -proof-text -base=test/natdedrules.dk test/natdedproofs.dk >out/prooftextdemo.tex
+	cd out ; pdflatex prooftextdemo.tex ; $(OPEN) prooftextdemo.pdf
 
 binary_packages:
 	cp -p `which RunInformath` tmp/
