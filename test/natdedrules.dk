@@ -127,3 +127,4 @@ thm thm1 : (n : Elem Nat) -> Proof (or (even n) (odd n)) :=
 	                (y)
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (h)))
 	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).
+

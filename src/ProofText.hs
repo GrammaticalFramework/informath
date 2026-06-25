@@ -83,7 +83,7 @@ data Line a = Line {
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
-noIdent = QIdent "" ---- 
+noIdent = QIdent "NOIDENT" ---- 
 
 -- an object-language type Elem A (as opposed to a Proof of a proposition)
 isElemType :: Exp -> Bool

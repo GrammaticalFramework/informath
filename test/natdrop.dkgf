@@ -1,3 +1,5 @@
+Succ: "the successor of X"
+
 #DROP falseE 1
 #DROP andI 2
 #DROP andEl 2

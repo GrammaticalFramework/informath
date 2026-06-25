@@ -251,7 +251,7 @@ bind:
 	$(RUN)  -add-symboltables=test/bind.dkgf -variations test/bind.dk
 
 prooftextdemo:
-	$(RUN) -proof-text -base=test/natdedrules.dk test/natdedproofs.dk >out/prooftextdemo.tex
+	$(RUN) -proof-text -base=test/natdedrules.dk -add-symboltables=test/natdrop.dkgf test/natdedproofs.dk >out/prooftextdemo.tex
 	cd out ; pdflatex prooftextdemo.tex ; $(OPEN) prooftextdemo.pdf
 
 binary_packages:

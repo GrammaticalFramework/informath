@@ -34,7 +34,7 @@ import ProofText(proofDemo)
 import Informath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
+import Data.List (partition, isSuffixOf, isPrefixOf, isInfixOf, intersperse, sortOn, nub)
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -589,13 +589,19 @@ reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
 
 -- | proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
-showProofDemo env base mo = proofDemo base mo (dropTableEnv env) (informalizeExp env)
+showProofDemo env base mo = proofDemo base mo (dropTableEnv env) (informalizeProofStep env)
 
 
--- | informalize a single Dedukti expression as a proof step; quick hack, should be revised
-informalizeExp :: Env -> Exp -> String
-informalizeExp env exp = head (printResults env (concatMap (printGenResult env) results))
+--- informalize a single Dedukti expression as a proof step;
+---- TODO: this is a quick hack, should be rewritten by using ProofUnits
+informalizeProofStep :: Env -> Exp -> String
+informalizeProofStep env exp = case head (printResults env (concatMap (printGenResult env) results)) of
+    s -> undef s
   where
    results = processDeduktiModule env (MJmts [jmt])
    jmt = JDef (QIdent "") (MTExp exp) MENone
-   
+   undef s =
+     if isInfixOf "Definition. $$" s
+     then let (s1, s2) = break (=='D') s in s1 ++ drop 17 s2
+     else s
+
