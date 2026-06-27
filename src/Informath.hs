@@ -342,6 +342,7 @@ data Tree :: * -> * where
   GLetFormulaHypo :: GFormula -> Tree GHypo_
   GLocalHypo :: GLocal -> Tree GHypo_
   GPropHypo :: GProp -> Tree GHypo_
+  GPropVarHypo :: GIdent -> GProp -> Tree GHypo_
   GSupposePropHypo :: GProp -> Tree GHypo_
   GVarHypo :: GIdent -> GKind -> Tree GHypo_
   GVarsHypo :: GListIdent -> GKind -> Tree GHypo_
@@ -912,11 +913,13 @@ data Tree :: * -> * where
   GBeginProofMethodUnit :: GLabel -> GMethod -> Tree GUnit_
   GCaseGoal :: GProp -> GIdent -> Tree GUnit_
   GCasesGoal :: Tree GUnit_
+  GConclusionUnit :: GProp -> Tree GUnit_
   GEndEnvironmentUnit :: GEnvironment -> Tree GUnit_
   GEnoughGoal :: GProp -> Tree GUnit_
   GFirstVerifyGoal :: GProp -> Tree GUnit_
   GFollowsPropConclusion :: GProp -> Tree GUnit_
   GHyposAssumption :: GListHypo -> Tree GUnit_
+  GHyposUnit :: GListHypo -> Tree GUnit_
   GIdentExpAssumption :: GExp -> GIdent -> Tree GUnit_
   GIdentKindAssumption :: GKind -> GIdent -> Tree GUnit_
   GImportUnit :: GString -> Tree GUnit_
@@ -1086,6 +1089,7 @@ instance Eq (Tree a) where
     (GLetFormulaHypo x1,GLetFormulaHypo y1) -> and [ x1 == y1 ]
     (GLocalHypo x1,GLocalHypo y1) -> and [ x1 == y1 ]
     (GPropHypo x1,GPropHypo y1) -> and [ x1 == y1 ]
+    (GPropVarHypo x1 x2,GPropVarHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSupposePropHypo x1,GSupposePropHypo y1) -> and [ x1 == y1 ]
     (GVarHypo x1 x2,GVarHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GVarsHypo x1 x2,GVarsHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1656,11 +1660,13 @@ instance Eq (Tree a) where
     (GBeginProofMethodUnit x1 x2,GBeginProofMethodUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCaseGoal x1 x2,GCaseGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCasesGoal,GCasesGoal) -> and [ ]
+    (GConclusionUnit x1,GConclusionUnit y1) -> and [ x1 == y1 ]
     (GEndEnvironmentUnit x1,GEndEnvironmentUnit y1) -> and [ x1 == y1 ]
     (GEnoughGoal x1,GEnoughGoal y1) -> and [ x1 == y1 ]
     (GFirstVerifyGoal x1,GFirstVerifyGoal y1) -> and [ x1 == y1 ]
     (GFollowsPropConclusion x1,GFollowsPropConclusion y1) -> and [ x1 == y1 ]
     (GHyposAssumption x1,GHyposAssumption y1) -> and [ x1 == y1 ]
+    (GHyposUnit x1,GHyposUnit y1) -> and [ x1 == y1 ]
     (GIdentExpAssumption x1 x2,GIdentExpAssumption y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIdentKindAssumption x1 x2,GIdentKindAssumption y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GImportUnit x1,GImportUnit y1) -> and [ x1 == y1 ]
@@ -2227,6 +2233,7 @@ instance Gf GHypo where
   gf (GLetFormulaHypo x1) = mkApp (mkCId "LetFormulaHypo") [gf x1]
   gf (GLocalHypo x1) = mkApp (mkCId "LocalHypo") [gf x1]
   gf (GPropHypo x1) = mkApp (mkCId "PropHypo") [gf x1]
+  gf (GPropVarHypo x1 x2) = mkApp (mkCId "PropVarHypo") [gf x1, gf x2]
   gf (GSupposePropHypo x1) = mkApp (mkCId "SupposePropHypo") [gf x1]
   gf (GVarHypo x1 x2) = mkApp (mkCId "VarHypo") [gf x1, gf x2]
   gf (GVarsHypo x1 x2) = mkApp (mkCId "VarsHypo") [gf x1, gf x2]
@@ -2241,6 +2248,7 @@ instance Gf GHypo where
       Just (i,[x1]) | i == mkCId "LetFormulaHypo" -> GLetFormulaHypo (fg x1)
       Just (i,[x1]) | i == mkCId "LocalHypo" -> GLocalHypo (fg x1)
       Just (i,[x1]) | i == mkCId "PropHypo" -> GPropHypo (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "PropVarHypo" -> GPropVarHypo (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "SupposePropHypo" -> GSupposePropHypo (fg x1)
       Just (i,[x1,x2]) | i == mkCId "VarHypo" -> GVarHypo (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "VarsHypo" -> GVarsHypo (fg x1) (fg x2)
@@ -3662,11 +3670,13 @@ instance Gf GUnit where
   gf (GBeginProofMethodUnit x1 x2) = mkApp (mkCId "BeginProofMethodUnit") [gf x1, gf x2]
   gf (GCaseGoal x1 x2) = mkApp (mkCId "CaseGoal") [gf x1, gf x2]
   gf GCasesGoal = mkApp (mkCId "CasesGoal") []
+  gf (GConclusionUnit x1) = mkApp (mkCId "ConclusionUnit") [gf x1]
   gf (GEndEnvironmentUnit x1) = mkApp (mkCId "EndEnvironmentUnit") [gf x1]
   gf (GEnoughGoal x1) = mkApp (mkCId "EnoughGoal") [gf x1]
   gf (GFirstVerifyGoal x1) = mkApp (mkCId "FirstVerifyGoal") [gf x1]
   gf (GFollowsPropConclusion x1) = mkApp (mkCId "FollowsPropConclusion") [gf x1]
   gf (GHyposAssumption x1) = mkApp (mkCId "HyposAssumption") [gf x1]
+  gf (GHyposUnit x1) = mkApp (mkCId "HyposUnit") [gf x1]
   gf (GIdentExpAssumption x1 x2) = mkApp (mkCId "IdentExpAssumption") [gf x1, gf x2]
   gf (GIdentKindAssumption x1 x2) = mkApp (mkCId "IdentKindAssumption") [gf x1, gf x2]
   gf (GImportUnit x1) = mkApp (mkCId "ImportUnit") [gf x1]
@@ -3688,11 +3698,13 @@ instance Gf GUnit where
       Just (i,[x1,x2]) | i == mkCId "BeginProofMethodUnit" -> GBeginProofMethodUnit (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "CaseGoal" -> GCaseGoal (fg x1) (fg x2)
       Just (i,[]) | i == mkCId "CasesGoal" -> GCasesGoal 
+      Just (i,[x1]) | i == mkCId "ConclusionUnit" -> GConclusionUnit (fg x1)
       Just (i,[x1]) | i == mkCId "EndEnvironmentUnit" -> GEndEnvironmentUnit (fg x1)
       Just (i,[x1]) | i == mkCId "EnoughGoal" -> GEnoughGoal (fg x1)
       Just (i,[x1]) | i == mkCId "FirstVerifyGoal" -> GFirstVerifyGoal (fg x1)
       Just (i,[x1]) | i == mkCId "FollowsPropConclusion" -> GFollowsPropConclusion (fg x1)
       Just (i,[x1]) | i == mkCId "HyposAssumption" -> GHyposAssumption (fg x1)
+      Just (i,[x1]) | i == mkCId "HyposUnit" -> GHyposUnit (fg x1)
       Just (i,[x1,x2]) | i == mkCId "IdentExpAssumption" -> GIdentExpAssumption (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "IdentKindAssumption" -> GIdentKindAssumption (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ImportUnit" -> GImportUnit (fg x1)
@@ -3883,6 +3895,7 @@ instance Compos Tree where
     GLetFormulaHypo x1 -> r GLetFormulaHypo `a` f x1
     GLocalHypo x1 -> r GLocalHypo `a` f x1
     GPropHypo x1 -> r GPropHypo `a` f x1
+    GPropVarHypo x1 x2 -> r GPropVarHypo `a` f x1 `a` f x2
     GSupposePropHypo x1 -> r GSupposePropHypo `a` f x1
     GVarHypo x1 x2 -> r GVarHypo `a` f x1 `a` f x2
     GVarsHypo x1 x2 -> r GVarsHypo `a` f x1 `a` f x2
@@ -4057,11 +4070,13 @@ instance Compos Tree where
     GBeginEnvironmentUnit x1 x2 -> r GBeginEnvironmentUnit `a` f x1 `a` f x2
     GBeginProofMethodUnit x1 x2 -> r GBeginProofMethodUnit `a` f x1 `a` f x2
     GCaseGoal x1 x2 -> r GCaseGoal `a` f x1 `a` f x2
+    GConclusionUnit x1 -> r GConclusionUnit `a` f x1
     GEndEnvironmentUnit x1 -> r GEndEnvironmentUnit `a` f x1
     GEnoughGoal x1 -> r GEnoughGoal `a` f x1
     GFirstVerifyGoal x1 -> r GFirstVerifyGoal `a` f x1
     GFollowsPropConclusion x1 -> r GFollowsPropConclusion `a` f x1
     GHyposAssumption x1 -> r GHyposAssumption `a` f x1
+    GHyposUnit x1 -> r GHyposUnit `a` f x1
     GIdentExpAssumption x1 x2 -> r GIdentExpAssumption `a` f x1 `a` f x2
     GIdentKindAssumption x1 x2 -> r GIdentKindAssumption `a` f x1 `a` f x2
     GImportUnit x1 -> r GImportUnit `a` f x1

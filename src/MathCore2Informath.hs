@@ -433,6 +433,7 @@ varless t = case t of
   GNoIdentsKindQuant (GListIdent [_]) kind -> GNoKindQuant kind
   GSomeIdentsKindQuant (GListIdent [_]) kind -> GSomeKindQuant kind
   GIndefIdentKindQuant _ kind -> GSomeKindQuant kind
+  GPropVarHypo _ prop -> GPropHypo prop
   _ -> composOp varless t
 
 exps2list :: GExps -> [GExp]

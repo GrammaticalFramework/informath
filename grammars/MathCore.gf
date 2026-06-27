@@ -23,6 +23,7 @@ fun
   NoVarRewriteRule : Exp -> Exp -> Rule ;
 
   PropHypo : Prop -> Hypo ;
+  PropVarHypo : Ident -> Prop -> Hypo ;
   VarHypo : Ident -> Kind -> Hypo ;
   BareVarHypo : Ident -> Hypo ;  -- needed in proofs: let x be arbitrary
   LocalHypo : Local -> Hypo ;

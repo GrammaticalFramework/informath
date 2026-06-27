@@ -19,5 +19,6 @@ in {
 -- functor exceptions
 lin
   PropHypo prop = lets_Utt (mkVP assume_VS (topProp prop)) ;
+  PropVarHypo ident prop = lin Utt {s = (lets_Utt (mkVP assume_VS (topProp prop))).s ++  "(" ++ ident ++ ")"} ; 
 
 }

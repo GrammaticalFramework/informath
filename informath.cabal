@@ -47,6 +47,7 @@ executable RunInformath
     Utils
     SpecialConstants
     Semantics
+    ProofText
 
   hs-source-dirs:      app src web src/typetheory
   ghc-options:         -O2

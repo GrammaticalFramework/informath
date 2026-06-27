@@ -204,6 +204,8 @@ hypo2dedukti :: GHypo -> [Hypo]
 hypo2dedukti hypo = case hypo of
   GVarsHypo (GListIdent idents) kind ->
     [HVarExp (ident2ident ident) (kind2dedukti kind) | ident <- idents]
+  GPropVarHypo ident prop ->
+    [HVarExp (ident2ident ident) (prop2dedukti prop)]
   GPropHypo prop ->
     [HExp (prop2dedukti prop)]
   GIndexedLetFormulaHypo (GInt i) ->

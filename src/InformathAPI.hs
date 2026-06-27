@@ -587,21 +587,12 @@ reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
     Just (f, xs) -> f : concatMap ids xs
     _ -> []
 
--- | proof text demo, experimental
+--- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
-showProofDemo env base mo = proofDemo base mo (dropTableEnv env) (informalizeProofStep env)
+showProofDemo env base mo = proofDemo env base mo unit2nat
+ where
+   unit2nat :: GUnit -> String
+   unit2nat u = gftree2nat env (toLang env) (gf (best u))
 
-
---- informalize a single Dedukti expression as a proof step;
----- TODO: this is a quick hack, should be rewritten by using ProofUnits
-informalizeProofStep :: Env -> Exp -> String
-informalizeProofStep env exp = case head (printResults env (concatMap (printGenResult env) results)) of
-    s -> undef s
-  where
-   results = processDeduktiModule env (MJmts [jmt])
-   jmt = JDef (QIdent "") (MTExp exp) MENone
-   undef s =
-     if isInfixOf "Definition. $$" s
-     then let (s1, s2) = break (=='D') s in s1 ++ drop 17 s2
-     else s
+   best u = head [u | GUnitJmt u <- core2ext env (GUnitJmt u)]
 

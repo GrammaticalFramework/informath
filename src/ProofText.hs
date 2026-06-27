@@ -8,6 +8,10 @@ import qualified Dedukti.ErrM as DE
 
 import DeduktiOperations
 import BuildConstantTable
+import Environment
+
+import Informath
+import Dedukti2MathCore (exp2prop, hypos2hypos)
 
 import Data.List (intersperse, nub, nubBy, sortOn)
 import qualified Data.Map as M
@@ -29,29 +33,48 @@ import System.Environment (getArgs)
 --   Lines -> Term  -- TODO
 --
 
-proofDemo :: Module -> Module -> DropTable -> (Exp -> String) -> String
-proofDemo base (MJmts proofs) dropmap informalize = 
+proofDemo :: Env -> Module -> Module -> (GUnit -> String) -> String
+proofDemo env base (MJmts proofs) informalize = 
   prLatexFile $ unlines $ intersperse "\n\n" [
-    oneProof dkmap dropmap informalize t e | JThm _ (MTExp t) (MEExp e) <- proofs]
+    oneProof env dkmap informalize t e | JThm _ (MTExp t) (MEExp e) <- proofs]
  where
    dkmap = identTypes base
 
-oneProof :: M.Map QIdent Exp -> DropTable -> (Exp -> String) -> Exp -> Exp -> String  
-oneProof dkmap dropmap informalize typ exp = unlines $ intersperse "\n\n" [
+oneProof :: Env -> M.Map QIdent Exp -> (GUnit -> String) -> Exp -> Exp -> String  
+oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" [
     "\\subsection*{From term to lines and back}"
     , "Original proved theorem"
     , verbatim (printTree typ)
     , "Original proof exp"
     , verbatim (printTree exp)
     , "Generated linear proof"
-    , prls printTree linesterm
+    , prls prle linesterm
     , "Generated linear proof with informalized steps"
-    , prls informalize linesterm
+    , prls (prlu lin) (map (line2unitline env dkmap) linesterm)
     , "\\clearpage"
     ]
   where
-    term = ignoreFirstArguments dropmap (typeAnnotate dkmap [] typ exp)
+    term = ignoreFirstArguments (dropTable (symbolTable env)) (typeAnnotate dkmap [] typ exp)
     linesterm = term2lines term
+    
+
+
+line2unitline :: Env ->  M.Map QIdent Exp -> Line Exp -> Line GUnit
+line2unitline env dkmap line = line {
+  step = (step line){formula = unit}
+  }
+ where
+   unit = case rule (step line) of
+     h | constant h -> GConclusionUnit (exp2prop fla)
+     h -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
+   fla = head (annotateDedukti env (formula (step line)))
+
+   annotateDedukti env t = annotateDkIdents msyns msymbs (constantTable (symbolTable env)) M.empty t  -- no dropTable again
+    where
+      msyns = argValueMaybeInt "-synonyms" (flags env)
+      msymbs = argValueMaybeInt "-symbolics" (flags env)
+
+   constant h = maybe False (const True) (M.lookup h dkmap)
 
 
 -------------------------------
@@ -83,7 +106,7 @@ data Line a = Line {
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
-noIdent = QIdent "NOIDENT" ---- 
+noIdent = QIdent "#NOIDENT" ---- 
 
 -- an object-language type Elem A (as opposed to a Proof of a proposition)
 isElemType :: Exp -> Bool
@@ -230,31 +253,50 @@ term2lines =
 -- printing
 -----------------------------
 
-prls :: (a -> String) -> [Line a] -> String
+prls :: (Line a -> [String]) -> [Line a] -> String
 prls pr lns = unlines $
   "\\[" :
   "\\begin{array}{llllll}" :
-  [unwords (intersperse "&" (prl pr ln)) ++ "\\\\" | ln <- lns] ++
+  [unwords (intersperse "&" (pr ln)) ++ "\\\\" | ln <- lns] ++
   ["\\end{array}", "\\]"] 
 
-prl :: (a -> String) -> Line a -> [String]
-prl pr ln
+prle :: Line Exp -> [String]
+prle ln
 -- object variable assumption: "x : Elem A" on one line
 ---- TODO isElemType for other types than Exp; should this even be tested here?
   | null (premisses ln) {- && isElemType (formula (step ln)) -} =  
       [ concat (intersperse "," (map printTree (context ln))),
         show (line ln) ++ ".",
-        "\\verb#" ++ printTree (rule (step ln)) ++ " : " ++ pr (formula (step ln)) ++ "#",
+        "\\verb#" ++ printTree (rule (step ln)) ++ " : " ++ printTree (formula (step ln)) ++ "#",
         "", "", "" ]
   | otherwise = [
 ---  concat (replicate (length (context ln)) "\\mid"),
   concat (intersperse "," (map printTree (context ln))),
   show (line ln) ++ ".",
-  "\\verb#" ++ pr (formula (step ln)) ++ "#",
+  "\\verb#" ++ printTree (formula (step ln)) ++ "#",
   printTree (rule (step ln)),
   concat (intersperse ", " (map show (premisses ln))),
   let dis = discharged (step ln)
     in if null dis then "" else "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
+  ]
+  
+prlu :: (GUnit -> String) -> Line GUnit -> [String]
+prlu lin ln
+-- object variable assumption: "x : Elem A" on one line
+---- TODO isElemType for other types than Exp; should this even be tested here?
+  | null (premisses ln) =
+      [ concat (intersperse "," (map printTree (context ln))),
+        show (line ln) ++ ".",
+        "\\mbox{" ++ lin (formula (step ln)) ++"}",
+        "", "", "" ]
+  | otherwise = [
+      concat (intersperse "," (map printTree (context ln))),
+      show (line ln) ++ ".",
+      "\\mbox{" ++ lin (formula (step ln)) ++"}",
+      printTree (rule (step ln)),
+      concat (intersperse ", " (map show (premisses ln))),
+      let dis = discharged (step ln)
+        in if null dis then "" else "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
   ]
   
 
