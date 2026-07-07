@@ -314,6 +314,7 @@ oper
   applied_to_Prep : Prep ;
   defined_as_Prep : Prep ;
   function_N : N ;
+  predicate_N : N ;
   basic_type_CN : CN ;
   map_V3 : V3 ;
   say_VS : VS ;

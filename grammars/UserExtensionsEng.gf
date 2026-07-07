@@ -5,5 +5,7 @@ concrete UserExtensionsEng of UserExtensions =
   HottWordsEng,
   GodementWordsEng,
   NaturalDeductionEng,
-  ProofUnitsEng
+  ProofUnitsEng,
+  MizarEng,
+  MizarWordsEng
   ;

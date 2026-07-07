@@ -59,6 +59,9 @@ fun
   
   App4MacroFormula : Macro -> Term -> Term -> Term -> Term -> Formula ;
   App4MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term ;
+
+  App5MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Formula ;
+  App5MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term ;
   
   StringMacro : String -> Macro ;
   

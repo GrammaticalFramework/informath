@@ -86,6 +86,11 @@ lin
   App4MacroTerm ident x y z u =
     mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mtop u)) ** {isNumber = False} ; --- False impossible to know
 
+  App5MacroFormula ident x y z t u =
+    mconstant (ident ++ curly (mftop x) ++ curly (mftop y) ++ curly (mftop z) ++ curly (mftop t) ++ curly (mftop u)) ;
+  App5MacroTerm ident x y z t u =
+    mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mftop t) ++ curly (mtop u)) ** {isNumber = False} ; --- False impossible to know
+
   StringMacro s = s.s ;
   
 oper

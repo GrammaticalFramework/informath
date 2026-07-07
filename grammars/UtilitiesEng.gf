@@ -47,6 +47,7 @@ oper
   applied_to_Prep : Prep = mkPrep "applied to" ;
   defined_as_Prep : Prep = mkPrep "defined as" ;
   function_N : N = mkN "function" ;
+  predicate_N : N = mkN "predicate" ;
   basic_type_CN : CN = mkCN (mkA "basic") (mkN "type") ;
   map_V3 = mkV3 (mkV "map") noPrep to_Prep ;
   say_VS = mkVS I.say_V ;

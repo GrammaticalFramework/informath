@@ -5,6 +5,8 @@ abstract UserExtensions =
   HottWords,
   GodementWords,
   NaturalDeduction,
-  ProofUnits
+  ProofUnits,
+  Mizar,
+  MizarWords
   ;
 
