@@ -1,13 +1,25 @@
 abstract ProofUnits = Categories ** {
 
+-- core functions for proof text linearization
+
+fun
+  HyposUnit : [Hypo] -> Unit ;
+  ConclusionUnit : Prop -> Unit ;
+  
+  UnitJmt : Unit -> Jmt ; --- for top level?
+
+
+
+-- old stuff
+
 cat
   [Unit] ;
   Hence ;
 
+
 fun
   --- these are not (yet) interpretable in Dedukti
   UnitsProof : [Unit] -> Proof ;
-  UnitJmt : Unit -> Jmt ;
 
   HyposAssumption : [Hypo] -> Unit ;
   IdentKindAssumption : Kind -> Ident -> Unit ;

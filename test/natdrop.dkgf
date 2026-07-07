@@ -1,0 +1,23 @@
+Succ: "the successor of X"
+
+#DROP falseE 1
+#DROP andI 2
+#DROP andEl 2
+#DROP andEr 2
+#DROP orIl 2
+#DROP orIr 2
+#DROP orE 3
+#DROP ifI 2
+#DROP ifE 2
+#DROP notI 1
+#DROP notE 1
+#DROP forallI 2
+#DROP forallE 2
+#DROP existsI 2
+#DROP existsE 3
+#DROP NatInd 1
+#DROP evenSucc 1
+#DROP oddSucc 1
+#DROP neverEvenOdd 1
+#DROP MT 2
+

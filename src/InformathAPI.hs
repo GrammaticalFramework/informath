@@ -29,10 +29,12 @@ import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
 import Utils
 
+import ProofText(proofDemo)
+
 import Informath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, intersperse, sortOn, nub)
+import Data.List (partition, isSuffixOf, isPrefixOf, isInfixOf, intersperse, sortOn, nub)
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -94,9 +96,8 @@ conversionTableEnv = conversionTable . symbolTable
 dropTableEnv = dropTable . symbolTable
 macroTableEnv = macroTable . symbolTable
 semanticsTableEnv = semanticsTable . symbolTable
+nlgTableEnv = nlgTable . symbolTable
 builtinSetEnv = builtinSet . symbolTable
-
-
 
 -- ** Low-level access to data sources
 
@@ -281,7 +282,7 @@ processLatexLine env s =
           t <- ts,
           ut <- uts,
           let fut = tracs env ("FUT.") (fg ut),
-          let ct = tracs env "CT." (ext2core env fut)
+          ct <- ext2core env fut
           ],
     transResults = [
       unindexString tindex
@@ -321,8 +322,13 @@ dedukti2core = DMC.jmt2core
 checkSymbolTable :: Module -> PGF -> SymbolTable -> [String]
 checkSymbolTable = symbolTableErrors
 
-printSymbolTable :: SymbolTable -> String
-printSymbolTable = showConstantTable . constantTable
+printSymbolTable :: SymbolTable -> String ---- TODO show complete information
+printSymbolTable st = unlines $ [
+  showConstantTable (constantTable st),
+  "# semantics table keys: " ++ show (M.keys (semanticsTable st)),
+  "# NLG table keys: " ++ show (M.keys (nlgTable st))
+  ] ++
+  macroCommands (macroTable st)
 
 printSymbolTableLong :: SymbolTable -> String
 printSymbolTableLong = showConstantTableLong . constantTable
@@ -483,11 +489,11 @@ core2ext env jmt = MCI.nlg env jmt
 rankGFTreesAndNat :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))]
 rankGFTreesAndNat = rankTreesAndStrings
 
-ext2core :: Env -> GJmt -> GJmt
+ext2core :: Env -> GJmt -> [GJmt]
 ext2core env = IMC.semantics (semanticsTableEnv env)
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
-gjmt2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env) . ext2core env
+gjmt2dedukti env = concatMap (MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)) . ext2core env
 
 core2dedukti :: Env -> GJmt -> [Jmt]
 core2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)
@@ -580,4 +586,13 @@ reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
   ids t = case unApp t of
     Just (f, xs) -> f : concatMap ids xs
     _ -> []
+
+--- proof text demo, experimental
+showProofDemo :: Env -> Module -> Module -> String
+showProofDemo env base mo = proofDemo env base mo unit2nat
+ where
+   unit2nat :: GUnit -> String
+   unit2nat u = gftree2nat env (toLang env) (gf (best u))
+
+   best u = head [u | GUnitJmt u <- core2ext env (GUnitJmt u)]
 

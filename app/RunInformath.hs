@@ -28,6 +28,10 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
     Just (file, "dk") | any (flip elem args) ["-idents", "-unknown-idents"] -> do
       mo <- readDeduktiModule [file]
       mapM_ putStrLn (showFreqs (identsInDedukti env mo)) 
+    Just (file, "dk") | elem "-proof-text" args -> do
+      mo <- readDeduktiModule [file]
+      let base = baseConstantModule env
+      putStrLn (showProofDemo env base mo)
     Just (file, "dk") -> do
       mo <- readDeduktiModule [file]
       let results = processDeduktiModule env mo
@@ -120,6 +124,7 @@ helpMsg4 = [
   just "-no-ranking" "do not rank the NLG results (which can be expensive)",
   just "-test-ambiguity" "test ambiguity when ranking NLG results (can be very slow)",
   just "-parallel-data" "print complete parallel data in jsonl",
+  just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
   just "-to-lang=<lang>" "linearize to natural language <lang>, default Eng",
   just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",
   "",

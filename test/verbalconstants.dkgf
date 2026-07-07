@@ -3,7 +3,9 @@ Type : "type"
 Prop : "proposition"
 
 #Elem : ElemKind
+
 #Proof : ProofProp
+
 
 false : FalseProp
 and : CoreAndProp
@@ -20,57 +22,57 @@ Num : "number"
 bool : "boolean"
 List : "list of As"
 Dig : "digit"
-Nat : "natural number" | \Nat
-Int : "integer" | \Int
-Rat : "rational number" | \Rat
-Real : "real number" | \Real
-Complex : "complex number" | \Complex
+Nat : "natural number" | $\mathbb{N}$
+Int : "integer" |  $\mathbb{Z}$
+Rat : "rational number" | $\mathbb{Q}$
+Real : "real number" |  $\mathbb{R}$
+Complex : "complex number" | $\mathbb{C}$
 Cardinal : "cardinal"
-Eq : "X is equal to Y" | "X and Y are equal" | \Eq
-Lt : Lt_Adj2 | \Lt
-Gt : Gt_Adj2 | \Gt
-Neq : "X is distinct from Y" | "X and Y are distinct" | Neq_Compar
-Leq : Leq_Adj2 | \Leq
-Geq : Geq_Adj2 | \Geq
+Eq : "X is equal to Y" | "X and Y are equal" | $#1 = #2$
+Lt : Lt_Adj2 | $#1 < #2$
+Gt : Gt_Adj2 | $#1 > #2$
+Neq : "X is distinct from Y" | "X and Y are distinct" | $#1 \neq #2$
+Leq : Leq_Adj2 | $#1 \leq #2$
+Geq : Geq_Adj2 | $#1 \geq #2$
 positive : "X is positive"
 negative : "X is negative"
-plus : "the sum of X and Y" | plus_Oper2
-minus : "the difference of X and Y" | minus_Oper2
-times : "the product of X and Y" | times_Oper2
-div : "the quotient of X and Y" | div_Oper2
-pow : "the power of X to Y" | pow_Oper2
-neg : "the negation of X" | neg_Oper
-log : "the logarithm of X in Y" | \Logarithm
-sqrt : "the square root of X" | \Sqrt
+plus : "the sum of X and Y" | $#1 + #2$
+minus : "the difference of X and Y" | $#1 - #2$
+times : "the product of X and Y" | $#1 \times #2$
+div : "the quotient of X and Y" | $\frac{#1}{#2}$
+pow : "the power of X to Y" | $#1^{#2}$
+neg : "the negation of X" | $-#1$
+log : "the logarithm of X in Y" | $\log_{#2} #1$
+sqrt : "the square root of X" | $\sqrt{#1}$
 succ : "the successor of X"
-abs : "the absolute value of X" | \Abs
-factorial : "the factorial of X" | \Factorial
+abs : "the absolute value of X" | $\mid #1 \mid$
+factorial : "the factorial of X" | $#1 !$
 gcd : "the greatest common divisor of X and Y"
 even : "X is even"
 odd : "X is odd"
 prime : "X is prime"
 divisible : "X is divisible by Y"
-divide : "X divides Y" | \Divides
+divide : "X divides Y" | $#1 \mid $2$
 divisor : "X is a divisor of Y"
 converge : "X converges"
 function : "function from As to Bs"
-union : "the union of X and Y" | \Union
-intersection : "the intersection of X and Y" | \Intersection
-difference : "the difference of X and Y" | \Difference
-cartesian : "the cartesian product of X and Y" | \Cartesian
-powerset : "the powerset of X" | \Powerset
-complement : "the complement of X" | \Complement
-subset : "X is a proper subset of Y" | \Subset
-subseteq : "X is a subset of Y" | \Subseteq
-superset : "X is a proper superset of Y" | \Superset
-superseteq : "X is a superset of Y" | \Superset
-equalset : "X and Y are equal sets" | "X is equal to Y" | \Equal
-notequalset : "X and Y are distinct sets" | "X is distinct from Y" | \Nequal
-element : "X is an element of Y" | \Element
-notelement : notelement_Noun2 | notelement_Compar
-emptyset : "the empty set" | \Emptyset
-universeset : "the universal set" | \Universeset
-congruent : "X is congruent to Y modulo Z" | \Congruent
+union : "the union of X and Y" | $#1 \cup #2$
+intersection : "the intersection of X and Y" | $#1 \cap #2$
+difference : "the difference of X and Y" | $#1 \setminus #2$
+cartesian : "the cartesian product of X and Y" | $#1 \times #2$
+powerset : "the powerset of X" | $\wp #1$
+complement : "the complement of X" | $$
+subset : "X is a proper subset of Y" | $#1 \subset #2$
+subseteq : "X is a subset of Y" | $#1 \subseteq #2$
+superset : "X is a proper superset of Y" | $#1 \supset #2$
+superseteq : "X is a superset of Y" | $#1 \supset #2$
+equalset : "X and Y are equal sets" | "X is equal to Y" | $#1 = #2$
+notequalset : "X and Y are distinct sets" | "X is distinct from Y" | $#1 \neq #2$
+element : "X is an element of Y" | $#1 \in #2$
+notelement : notelement_Noun2 | $#1 \notin #2$
+emptyset : "the empty set" | $\emptyset$
+universeset : "the universal set" | $U$
+congruent : "X is congruent to Y modulo Z" | $#1 \equiv #2 \, \mbox{mod} \, #3$
 finite : "X is finite"
 infinite : "X is infinite"
 rational : "X is rational"
@@ -78,116 +80,130 @@ irrational : "X is irrational"
 Polynomial : "polynomial"
 degree : "the degree of X"
 isRoot : "X is a root of Y"
-cardinality : "the cardinality of X" | \Cardinality
+cardinality : "the cardinality of X" | $\mid #1 \mid$
 denumerable : "X is denumerable"
 Vector : "vector"
 length : "the length of X" | \Norm
-norm : "the length of X" | "the norm of X" | \Norm
-square : "the square of X" | \Square
-legendre : "the Legendre symbol of X and Y" | \Legendre
-pi : pi_Name | \PiConst
+norm : "the length of X" | "the norm of X" | $\mid #1 \mid$
+square : "the square of X" | $#1 ^$
+legendre : "the Legendre symbol of X and Y" | $\left(\frac{" "}{" "}\right)$
+pi : pi_Name | $\pi$
 Circle : "circle"
 radius : "the radius of X"
 area : "the area of X"
-binomial : "the binomial coefficient of X over Y" | \Binomial
-combinations : combinations_Fun2 | \Combinations
-combinationsFromSet : combinationsFromSet_Fun2 | \Combinations
-sin : "the sin of X" | \Sin
-cos : "the cosine of X" | \Cos
-tan : "the tangent of X" | \Tan
-arcsin : "the arcsine of X" | \Arcsin
-arccos : "the arccosine of X" | \Arccos
-arctan : "the arctangent of X" | \Arctan
-orthogonal : "X is orthogonal to Y" | "X is perpendicular to Y" | "X and Y are orthogonal" | "X and Y are perpendicular" | \Orthogonal
+binomial : "the binomial coefficient of X over Y" | $\binom{#1}{#2}$
+combinations : combinations_Fun2 | $C^{#1}_{#2}$
+combinationsFromSet : combinationsFromSet_Fun2 | $C^{#1}_{#2}$
+sin : "the sin of X" | $\sin #1$
+cos : "the cosine of X" | $\cos #1$
+tan : "the tangent of X" | $\tan #1$
+arcsin : "the arcsine of X" | $\arcsin #1$
+arccos : "the arccosine of X" | $\arccos #1$
+arctan : "the arctangent of X" | $\arctan #1$
+orthogonal : "X is orthogonal to Y" | "X is perpendicular to Y" | "X and Y are orthogonal" | "X and Y are perpendicular" | $#1 \perp #2$
 angleBetween : "the angle between X and Y"
-dotProduct : "the dot product of X and Y" | "the scalar product of X and Y" | dot_product_Oper2
-vectorPlus : "the sum of X and Y" | "the resultant of X and Y" | plus_Oper2
+dotProduct : "the dot product of X and Y" | "the scalar product of X and Y" | $#1 \cdot #2$
+vectorPlus : "the sum of X and Y" | "the resultant of X and Y" | $#1 + #2$
 sphenic : "X is sphenic"
-infinity : "the infinity" | \Infinity
-sigma : NounBinder2 sum_Noun | \Summa
-integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | \Integral
-ni : "X contains Y" | \Ni
-disjoint : "X and Y are disjoint" | "X is disjoint from Y" | \Disjoint
-empty : "X is empty" | \isempty
+infinity : "the infinity" | $\infty$
+sigma : NounBinder2 sum_Noun | $\sum_{ #3 = #1 }^{#2}{#4}$
+integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | $\int_{ #1 }^{#2} #4 d #3$
+ni : "X contains Y" | $#1 \ni #2$
+disjoint : "X and Y are disjoint" | "X is disjoint from Y" | $#1 \notmeets #2$
+empty : "X is empty" | $#1 = \emptyset$
 inhabited : "X is inhabited"
 sameParity : "X and Y have the same parity"
 
 
 #CONV agda forall all
+
 #CONV agda Type Set
+
 #CONV lean forall All
+
 #CONV lean exists Exist
+
 #CONV rocq forall All
+
 #CONV rocq exists Exist
+
 #CONV rocq Nat nat
+
 #CONV rocq _ x_
 
-Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
+
+Equ : Eq_Adj2 | Eq_AdjE | $#1 = #2$
 #DROP Equ 1
+
 
 #BUILTIN Elem Proof Enum nd nn 0 1 2 3 4 5 6 7 8 9
 
+
 #DROP id 3
+
 #DROP {|!_∘_|} 6
+
 #DROP const 4
+
 #DROP Π-swap 6
 
-#MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
-#MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
-#MACRO \newcommand{\divides}[2]{#1 \mid #2}
-#MACRO \newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
-#MACRO \newcommand{\infinity}{\infty}
-#MACRO \newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
-#MACRO \newcommand{\Natural}{\mathbb{N}}
 
 
 
-#MACRO \newcommand{\Binomial}[2]{\binom{ #1 }{ #2 }}
-#MACRO \newcommand{\Cartesian}[2]{#1 \times #2}
-#MACRO \newcommand{\Combinations}[2]{C^{ #1 }_{ #2 }}
-#MACRO \newcommand{\Difference}[2]{#1 \setminus #2}
-#MACRO \newcommand{\Div}[2]{\frac{ #1 } { #2 }}
-#MACRO \newcommand{\Dotproduct}[2]{#1 \cdot #2}
-#MACRO \newcommand{\Function}[2]{#1 \rightarrow #2}
-#MACRO \newcommand{\Intersection}[2]{#1 \cap #2}
-#MACRO \newcommand{\Legendresymbol}[2]{\left(\frac{ #1 }{ #2 }\right)}
-#MACRO \newcommand{\Logarithm}[2]{\log_{ #1 } #2}
-#MACRO \newcommand{\Minus}[2]{#1 - #2}
-#MACRO \newcommand{\Plus}[2]{#1 + #2}
-#MACRO \newcommand{\Pow}[2]{#1 ^ { #2 }}
-#MACRO \newcommand{\Times}[2]{#1 \times #2}
-#MACRO \newcommand{\Union}[2]{#1 \cup #2}
-#MACRO \newcommand{\Absolutevalue}[1]{| #1 |}
-#MACRO \newcommand{\Arccos}[1]{\arccos #1}
-#MACRO \newcommand{\Arcsin}[1]{\arcsin #1}
-#MACRO \newcommand{\Arctan}[1]{\arctan #1}
-#MACRO \newcommand{\Cardinality}[1]{| #1 |}
-#MACRO \newcommand{\Complement}[1]{{ #1 }^{\complement}}
-#MACRO \newcommand{\Cos}[1]{\cos #1}
-#MACRO \newcommand{\Factorial}[1]{#1 !}
-#MACRO \newcommand{\Length}[1]{\| #1 \|}
-#MACRO \newcommand{\Neg}[1]{- #1}
-#MACRO \newcommand{\Negativepart}[1]{#1 ^{-}}
-#MACRO \newcommand{\Positivepart}[1]{#1 ^{+}}
-#MACRO \newcommand{\Powerset}[1]{\wp #1}
-#MACRO \newcommand{\Sin}[1]{\sin #1}
-#MACRO \newcommand{\Square}[1]{#1 ^{ #2 }}
-#MACRO \newcommand{\Squareroot}[1]{\sqrt{ #1 }}
-#MACRO \newcommand{\Tan}[1]{\tan #1}
-#MACRO \newcommand{\Eq}[2]{#1 = #2}
-#MACRO \newcommand{\Geq}[2]{#1 \geq #2}
-#MACRO \newcommand{\Gt}[2]{#1 > #2}
-#MACRO \newcommand{\Leq}[2]{#1 \leq #2}
-#MACRO \newcommand{\Lt}[2]{#1 < #2}
-#MACRO \newcommand{\Neq}[2]{#1 \neq #2}
-#MACRO \newcommand{\Disjoint}[2]{#1 \notmeets #2}
-#MACRO \newcommand{\Element}[2]{#1 \in #2}
-#MACRO \newcommand{\Ni}[2]{#1 \ni #2}
-#MACRO \newcommand{\Notelement}[2]{#1 \notin #2}
-#MACRO \newcommand{\Orthogonal}[2]{#1 \perp #2}
-#MACRO \newcommand{\Perpendicular}[2]{#1 \perp #2}
-#MACRO \newcommand{\Subset}[2]{#1 \subset #2}
-#MACRO \newcommand{\Subseteq}[2]{#1 \subseteq #2}
-#MACRO \newcommand{\Superset}[2]{#1 \supset #2}
-#MACRO \newcommand{\Superseteq}[2]{#1 \supseteq #2}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

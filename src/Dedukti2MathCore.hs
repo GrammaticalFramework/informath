@@ -201,7 +201,7 @@ hypoIdents hypo = case hypo of
 
 hypos2hypos :: [Hypo] -> [GHypo]
 hypos2hypos hypos = case hypos of
-  HVarExp x p : hs | catExp p == "Prop" -> GPropHypo (exp2prop p) : hypos2hypos hs
+  HVarExp x p : hs | catExp p == "Prop" -> GPropVarHypo (ident2ident x) (exp2prop p) : hypos2hypos hs
   hypo@(HVarExp var kind) : hh -> case getVarsHypos kind hh of
     ([], _) -> GVarsHypo (GListIdent [ident2ident var]) (exp2kind kind) : hypos2hypos hh
     (xs, hs) -> GVarsHypo (GListIdent (map ident2ident (var:xs))) (exp2kind kind) : hypos2hypos hs

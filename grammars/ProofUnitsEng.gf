@@ -10,16 +10,25 @@ open
 
 in {
 
+lin
+  HyposUnit hypos = hypos.text ;
+  ConclusionUnit prop = mkText (topProp prop) ;
+
+---  UnitJmt unit = unit ; --- not to be parsed?
+
+
+
+-- old stuff
+
 lincat
   [Unit] = Text ;
   Hence = Adv ;
 
 lin
 ----  UnitsProof units = units ;
-  UnitJmt unit = unit ;
 
-  HyposAssumption hypos =
-    hypos.text ;
+---  HyposAssumption hypos =
+---    hypos.text ;
   IdentKindAssumption kind ident =
     mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ; 
   IdentExpAssumption exp ident =

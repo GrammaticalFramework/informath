@@ -57,6 +57,7 @@ lin
     mkUtt (mkS (mkCl patt exp)) ;
 
   PropHypo prop = mkUtt (mkImp (mkVP assume_VS (topProp prop))) ; 
+  PropVarHypo ident prop = lin Utt {s = (mkUtt (mkImp (mkVP assume_VS (topProp prop)))).s ++ "(" ++ ident ++ ")"} ; 
   VarHypo ident kind = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind)) ; 
   BareVarHypo ident = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP arbitrary_A) ;
   LocalHypo local = Grammar.ImpP3 local.name (mkVP local.value) ; 

@@ -127,18 +127,15 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 
 #BUILTIN Elem Proof Enum nd nn 0 1 2 3 4 5 6 7 8 9
 
-#MACRO \newcommend{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+#MACRO \newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
 #MACRO \newcommand{\isempty}[1]{#1 = \emptyset}
 #MACRO \newcommand{\divides}[2]{#1 \mid #2}
 #MACRO \newcommand{\divisible}[2]{#2 \mid #1}
-#MACRO \newcommadn{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
-#MACRO \newcommadn{\infinity}{\infty}
-#MACRO \newcommadn{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+#MACRO \newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+#MACRO \newcommand{\infinity}{\infty}
+#MACRO \newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
 #MACRO \newcommand{\Natural}{\mathbb{N}}
 #MACRO \newcommand{\Integer}{\mathbb{Z}}
 #MACRO \newcommand{\Rational}{\mathbb{Q}}
 #MACRO \newcommand{\Real}{\mathbb{R}}
 #MACRO \newcommand{\Complex}{\mathbb{C}}
-
-
-

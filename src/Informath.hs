@@ -171,6 +171,8 @@ type GProp = Tree GProp_
 data GProp_
 type GProperName = Tree GProperName_
 data GProperName_
+type GQuant = Tree GQuant_
+data GQuant_
 type GRule = Tree GRule_
 data GRule_
 type GTerm = Tree GTerm_
@@ -279,8 +281,6 @@ data Tree :: * -> * where
   GVerbCExample :: GVerbC -> GArgument -> GArgument -> Tree GExample_
   GVerbExample :: GVerb -> GArgument -> Tree GExample_
   GAbsExp :: GListIdent -> GExp -> Tree GExp_
-  GAllIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
-  GAllKindExp :: GKind -> Tree GExp_
   GAndExp :: GListExp -> Tree GExp_
   GAnnotateExp :: GIdent -> GExp -> Tree GExp_
   GAppExp :: GExp -> GExps -> Tree GExp_
@@ -291,24 +291,17 @@ data Tree :: * -> * where
   GCoercionExp :: GCoercion -> GExp -> Tree GExp_
   GEitherOrExp :: GExp -> GExp -> Tree GExp_
   GEnumSetExp :: GExps -> Tree GExp_
-  GEveryIdentKindExp :: GIdent -> GKind -> Tree GExp_
-  GEveryKindExp :: GKind -> Tree GExp_
   GFun2Exp :: GFun2 -> GExp -> GExp -> Tree GExp_
   GFunCCollExp :: GFunC -> GListExp -> Tree GExp_
   GFunCExp :: GFunC -> GExp -> GExp -> Tree GExp_
   GFunExp :: GFun -> GExp -> Tree GExp_
-  GIndefIdentKindExp :: GIdent -> GKind -> Tree GExp_
-  GIndefKindExp :: GKind -> Tree GExp_
   GIndexedTermExp :: GInt -> Tree GExp_
   GKindExp :: GKind -> Tree GExp_
   GNameExp :: GName -> Tree GExp_
-  GNoIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
-  GNoKindExp :: GKind -> Tree GExp_
   GOrExp :: GListExp -> Tree GExp_
   GPluralKindExp :: GKind -> Tree GExp_
   GPropExp :: GProp -> Tree GExp_
-  GSomeIdentsKindExp :: GListIdent -> GKind -> Tree GExp_
-  GSomeKindExp :: GKind -> Tree GExp_
+  GQuantExp :: GQuant -> Tree GExp_
   GTermExp :: GTerm -> Tree GExp_
   GTypedExp :: GExp -> GKind -> Tree GExp_
   GManyExps :: GListExp -> Tree GExps_
@@ -349,6 +342,7 @@ data Tree :: * -> * where
   GLetFormulaHypo :: GFormula -> Tree GHypo_
   GLocalHypo :: GLocal -> Tree GHypo_
   GPropHypo :: GProp -> Tree GHypo_
+  GPropVarHypo :: GIdent -> GProp -> Tree GHypo_
   GSupposePropHypo :: GProp -> Tree GHypo_
   GVarHypo :: GIdent -> GKind -> Tree GHypo_
   GVarsHypo :: GListIdent -> GKind -> Tree GHypo_
@@ -481,6 +475,7 @@ data Tree :: * -> * where
   GIffIffProp :: GProp -> GProp -> Tree GProp_
   GIffProp :: GProp -> GProp -> Tree GProp_
   GIndexedFormulaProp :: GInt -> Tree GProp_
+  GInverseIfProp :: GProp -> GProp -> Tree GProp_
   GNoArticleExistProp :: GArgKind -> GProp -> Tree GProp_
   GNoCommaAllProp :: GListArgKind -> GProp -> Tree GProp_
   GNoCommaExistProp :: GListArgKind -> GProp -> Tree GProp_
@@ -502,7 +497,7 @@ data Tree :: * -> * where
   GNounCProp :: GNounC -> GExp -> GExp -> Tree GProp_
   GOnlyIfProp :: GProp -> GProp -> Tree GProp_
   GOrProp :: GListProp -> Tree GProp_
-  GPostQuantProp :: GProp -> GExp -> Tree GProp_
+  GPostQuantProp :: GProp -> GQuant -> Tree GProp_
   GProofProp :: GProp -> Tree GProp_
   GVerb2Prop :: GVerb2 -> GExp -> GExp -> Tree GProp_
   GVerbCProp :: GVerbC -> GExp -> GExp -> Tree GProp_
@@ -880,6 +875,16 @@ data Tree :: * -> * where
   GZuckerman_ProperName :: Tree GProperName_
   GŁojasiewicz_ProperName :: Tree GProperName_
   GŁukasiewicz_ProperName :: Tree GProperName_
+  GAllIdentsKindQuant :: GListIdent -> GKind -> Tree GQuant_
+  GAllKindQuant :: GKind -> Tree GQuant_
+  GEveryIdentKindQuant :: GIdent -> GKind -> Tree GQuant_
+  GEveryKindQuant :: GKind -> Tree GQuant_
+  GIndefIdentKindQuant :: GIdent -> GKind -> Tree GQuant_
+  GIndefKindQuant :: GKind -> Tree GQuant_
+  GNoIdentsKindQuant :: GListIdent -> GKind -> Tree GQuant_
+  GNoKindQuant :: GKind -> Tree GQuant_
+  GSomeIdentsKindQuant :: GListIdent -> GKind -> Tree GQuant_
+  GSomeKindQuant :: GKind -> Tree GQuant_
   GNoVarRewriteRule :: GExp -> GExp -> Tree GRule_
   GRewriteRule :: GListIdent -> GExp -> GExp -> Tree GRule_
   GAbsTerm :: GIdent -> GTerm -> Tree GTerm_
@@ -908,11 +913,13 @@ data Tree :: * -> * where
   GBeginProofMethodUnit :: GLabel -> GMethod -> Tree GUnit_
   GCaseGoal :: GProp -> GIdent -> Tree GUnit_
   GCasesGoal :: Tree GUnit_
+  GConclusionUnit :: GProp -> Tree GUnit_
   GEndEnvironmentUnit :: GEnvironment -> Tree GUnit_
   GEnoughGoal :: GProp -> Tree GUnit_
   GFirstVerifyGoal :: GProp -> Tree GUnit_
   GFollowsPropConclusion :: GProp -> Tree GUnit_
   GHyposAssumption :: GListHypo -> Tree GUnit_
+  GHyposUnit :: GListHypo -> Tree GUnit_
   GIdentExpAssumption :: GExp -> GIdent -> Tree GUnit_
   GIdentKindAssumption :: GKind -> GIdent -> Tree GUnit_
   GImportUnit :: GString -> Tree GUnit_
@@ -1021,8 +1028,6 @@ instance Eq (Tree a) where
     (GVerbCExample x1 x2 x3,GVerbCExample y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbExample x1 x2,GVerbExample y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAbsExp x1 x2,GAbsExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GAllIdentsKindExp x1 x2,GAllIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GAllKindExp x1,GAllKindExp y1) -> and [ x1 == y1 ]
     (GAndExp x1,GAndExp y1) -> and [ x1 == y1 ]
     (GAnnotateExp x1 x2,GAnnotateExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAppExp x1 x2,GAppExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1033,24 +1038,17 @@ instance Eq (Tree a) where
     (GCoercionExp x1 x2,GCoercionExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEitherOrExp x1 x2,GEitherOrExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GEnumSetExp x1,GEnumSetExp y1) -> and [ x1 == y1 ]
-    (GEveryIdentKindExp x1 x2,GEveryIdentKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GEveryKindExp x1,GEveryKindExp y1) -> and [ x1 == y1 ]
     (GFun2Exp x1 x2 x3,GFun2Exp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GFunCCollExp x1 x2,GFunCCollExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GFunCExp x1 x2 x3,GFunCExp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GFunExp x1 x2,GFunExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GIndefIdentKindExp x1 x2,GIndefIdentKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GIndefKindExp x1,GIndefKindExp y1) -> and [ x1 == y1 ]
     (GIndexedTermExp x1,GIndexedTermExp y1) -> and [ x1 == y1 ]
     (GKindExp x1,GKindExp y1) -> and [ x1 == y1 ]
     (GNameExp x1,GNameExp y1) -> and [ x1 == y1 ]
-    (GNoIdentsKindExp x1 x2,GNoIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GNoKindExp x1,GNoKindExp y1) -> and [ x1 == y1 ]
     (GOrExp x1,GOrExp y1) -> and [ x1 == y1 ]
     (GPluralKindExp x1,GPluralKindExp y1) -> and [ x1 == y1 ]
     (GPropExp x1,GPropExp y1) -> and [ x1 == y1 ]
-    (GSomeIdentsKindExp x1 x2,GSomeIdentsKindExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GSomeKindExp x1,GSomeKindExp y1) -> and [ x1 == y1 ]
+    (GQuantExp x1,GQuantExp y1) -> and [ x1 == y1 ]
     (GTermExp x1,GTermExp y1) -> and [ x1 == y1 ]
     (GTypedExp x1 x2,GTypedExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GManyExps x1,GManyExps y1) -> and [ x1 == y1 ]
@@ -1091,6 +1089,7 @@ instance Eq (Tree a) where
     (GLetFormulaHypo x1,GLetFormulaHypo y1) -> and [ x1 == y1 ]
     (GLocalHypo x1,GLocalHypo y1) -> and [ x1 == y1 ]
     (GPropHypo x1,GPropHypo y1) -> and [ x1 == y1 ]
+    (GPropVarHypo x1 x2,GPropVarHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSupposePropHypo x1,GSupposePropHypo y1) -> and [ x1 == y1 ]
     (GVarHypo x1 x2,GVarHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GVarsHypo x1 x2,GVarsHypo y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1223,6 +1222,7 @@ instance Eq (Tree a) where
     (GIffIffProp x1 x2,GIffIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIffProp x1 x2,GIffProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIndexedFormulaProp x1,GIndexedFormulaProp y1) -> and [ x1 == y1 ]
+    (GInverseIfProp x1 x2,GInverseIfProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoArticleExistProp x1 x2,GNoArticleExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaAllProp x1 x2,GNoCommaAllProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoCommaExistProp x1 x2,GNoCommaExistProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1622,6 +1622,16 @@ instance Eq (Tree a) where
     (GZuckerman_ProperName,GZuckerman_ProperName) -> and [ ]
     (GŁojasiewicz_ProperName,GŁojasiewicz_ProperName) -> and [ ]
     (GŁukasiewicz_ProperName,GŁukasiewicz_ProperName) -> and [ ]
+    (GAllIdentsKindQuant x1 x2,GAllIdentsKindQuant y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GAllKindQuant x1,GAllKindQuant y1) -> and [ x1 == y1 ]
+    (GEveryIdentKindQuant x1 x2,GEveryIdentKindQuant y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GEveryKindQuant x1,GEveryKindQuant y1) -> and [ x1 == y1 ]
+    (GIndefIdentKindQuant x1 x2,GIndefIdentKindQuant y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GIndefKindQuant x1,GIndefKindQuant y1) -> and [ x1 == y1 ]
+    (GNoIdentsKindQuant x1 x2,GNoIdentsKindQuant y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GNoKindQuant x1,GNoKindQuant y1) -> and [ x1 == y1 ]
+    (GSomeIdentsKindQuant x1 x2,GSomeIdentsKindQuant y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GSomeKindQuant x1,GSomeKindQuant y1) -> and [ x1 == y1 ]
     (GNoVarRewriteRule x1 x2,GNoVarRewriteRule y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GRewriteRule x1 x2 x3,GRewriteRule y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GAbsTerm x1 x2,GAbsTerm y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1650,11 +1660,13 @@ instance Eq (Tree a) where
     (GBeginProofMethodUnit x1 x2,GBeginProofMethodUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCaseGoal x1 x2,GCaseGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GCasesGoal,GCasesGoal) -> and [ ]
+    (GConclusionUnit x1,GConclusionUnit y1) -> and [ x1 == y1 ]
     (GEndEnvironmentUnit x1,GEndEnvironmentUnit y1) -> and [ x1 == y1 ]
     (GEnoughGoal x1,GEnoughGoal y1) -> and [ x1 == y1 ]
     (GFirstVerifyGoal x1,GFirstVerifyGoal y1) -> and [ x1 == y1 ]
     (GFollowsPropConclusion x1,GFollowsPropConclusion y1) -> and [ x1 == y1 ]
     (GHyposAssumption x1,GHyposAssumption y1) -> and [ x1 == y1 ]
+    (GHyposUnit x1,GHyposUnit y1) -> and [ x1 == y1 ]
     (GIdentExpAssumption x1 x2,GIdentExpAssumption y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIdentKindAssumption x1 x2,GIdentKindAssumption y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GImportUnit x1,GImportUnit y1) -> and [ x1 == y1 ]
@@ -2023,8 +2035,6 @@ instance Gf GExample where
 
 instance Gf GExp where
   gf (GAbsExp x1 x2) = mkApp (mkCId "AbsExp") [gf x1, gf x2]
-  gf (GAllIdentsKindExp x1 x2) = mkApp (mkCId "AllIdentsKindExp") [gf x1, gf x2]
-  gf (GAllKindExp x1) = mkApp (mkCId "AllKindExp") [gf x1]
   gf (GAndExp x1) = mkApp (mkCId "AndExp") [gf x1]
   gf (GAnnotateExp x1 x2) = mkApp (mkCId "AnnotateExp") [gf x1, gf x2]
   gf (GAppExp x1 x2) = mkApp (mkCId "AppExp") [gf x1, gf x2]
@@ -2035,32 +2045,23 @@ instance Gf GExp where
   gf (GCoercionExp x1 x2) = mkApp (mkCId "CoercionExp") [gf x1, gf x2]
   gf (GEitherOrExp x1 x2) = mkApp (mkCId "EitherOrExp") [gf x1, gf x2]
   gf (GEnumSetExp x1) = mkApp (mkCId "EnumSetExp") [gf x1]
-  gf (GEveryIdentKindExp x1 x2) = mkApp (mkCId "EveryIdentKindExp") [gf x1, gf x2]
-  gf (GEveryKindExp x1) = mkApp (mkCId "EveryKindExp") [gf x1]
   gf (GFun2Exp x1 x2 x3) = mkApp (mkCId "Fun2Exp") [gf x1, gf x2, gf x3]
   gf (GFunCCollExp x1 x2) = mkApp (mkCId "FunCCollExp") [gf x1, gf x2]
   gf (GFunCExp x1 x2 x3) = mkApp (mkCId "FunCExp") [gf x1, gf x2, gf x3]
   gf (GFunExp x1 x2) = mkApp (mkCId "FunExp") [gf x1, gf x2]
-  gf (GIndefIdentKindExp x1 x2) = mkApp (mkCId "IndefIdentKindExp") [gf x1, gf x2]
-  gf (GIndefKindExp x1) = mkApp (mkCId "IndefKindExp") [gf x1]
   gf (GIndexedTermExp x1) = mkApp (mkCId "IndexedTermExp") [gf x1]
   gf (GKindExp x1) = mkApp (mkCId "KindExp") [gf x1]
   gf (GNameExp x1) = mkApp (mkCId "NameExp") [gf x1]
-  gf (GNoIdentsKindExp x1 x2) = mkApp (mkCId "NoIdentsKindExp") [gf x1, gf x2]
-  gf (GNoKindExp x1) = mkApp (mkCId "NoKindExp") [gf x1]
   gf (GOrExp x1) = mkApp (mkCId "OrExp") [gf x1]
   gf (GPluralKindExp x1) = mkApp (mkCId "PluralKindExp") [gf x1]
   gf (GPropExp x1) = mkApp (mkCId "PropExp") [gf x1]
-  gf (GSomeIdentsKindExp x1 x2) = mkApp (mkCId "SomeIdentsKindExp") [gf x1, gf x2]
-  gf (GSomeKindExp x1) = mkApp (mkCId "SomeKindExp") [gf x1]
+  gf (GQuantExp x1) = mkApp (mkCId "QuantExp") [gf x1]
   gf (GTermExp x1) = mkApp (mkCId "TermExp") [gf x1]
   gf (GTypedExp x1 x2) = mkApp (mkCId "TypedExp") [gf x1, gf x2]
 
   fg t =
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "AbsExp" -> GAbsExp (fg x1) (fg x2)
-      Just (i,[x1,x2]) | i == mkCId "AllIdentsKindExp" -> GAllIdentsKindExp (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "AllKindExp" -> GAllKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "AndExp" -> GAndExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "AnnotateExp" -> GAnnotateExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AppExp" -> GAppExp (fg x1) (fg x2)
@@ -2071,24 +2072,17 @@ instance Gf GExp where
       Just (i,[x1,x2]) | i == mkCId "CoercionExp" -> GCoercionExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "EitherOrExp" -> GEitherOrExp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "EnumSetExp" -> GEnumSetExp (fg x1)
-      Just (i,[x1,x2]) | i == mkCId "EveryIdentKindExp" -> GEveryIdentKindExp (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "EveryKindExp" -> GEveryKindExp (fg x1)
       Just (i,[x1,x2,x3]) | i == mkCId "Fun2Exp" -> GFun2Exp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "FunCCollExp" -> GFunCCollExp (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "FunCExp" -> GFunCExp (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "FunExp" -> GFunExp (fg x1) (fg x2)
-      Just (i,[x1,x2]) | i == mkCId "IndefIdentKindExp" -> GIndefIdentKindExp (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "IndefKindExp" -> GIndefKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "IndexedTermExp" -> GIndexedTermExp (fg x1)
       Just (i,[x1]) | i == mkCId "KindExp" -> GKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "NameExp" -> GNameExp (fg x1)
-      Just (i,[x1,x2]) | i == mkCId "NoIdentsKindExp" -> GNoIdentsKindExp (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "NoKindExp" -> GNoKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "OrExp" -> GOrExp (fg x1)
       Just (i,[x1]) | i == mkCId "PluralKindExp" -> GPluralKindExp (fg x1)
       Just (i,[x1]) | i == mkCId "PropExp" -> GPropExp (fg x1)
-      Just (i,[x1,x2]) | i == mkCId "SomeIdentsKindExp" -> GSomeIdentsKindExp (fg x1) (fg x2)
-      Just (i,[x1]) | i == mkCId "SomeKindExp" -> GSomeKindExp (fg x1)
+      Just (i,[x1]) | i == mkCId "QuantExp" -> GQuantExp (fg x1)
       Just (i,[x1]) | i == mkCId "TermExp" -> GTermExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "TypedExp" -> GTypedExp (fg x1) (fg x2)
 
@@ -2239,6 +2233,7 @@ instance Gf GHypo where
   gf (GLetFormulaHypo x1) = mkApp (mkCId "LetFormulaHypo") [gf x1]
   gf (GLocalHypo x1) = mkApp (mkCId "LocalHypo") [gf x1]
   gf (GPropHypo x1) = mkApp (mkCId "PropHypo") [gf x1]
+  gf (GPropVarHypo x1 x2) = mkApp (mkCId "PropVarHypo") [gf x1, gf x2]
   gf (GSupposePropHypo x1) = mkApp (mkCId "SupposePropHypo") [gf x1]
   gf (GVarHypo x1 x2) = mkApp (mkCId "VarHypo") [gf x1, gf x2]
   gf (GVarsHypo x1 x2) = mkApp (mkCId "VarsHypo") [gf x1, gf x2]
@@ -2253,6 +2248,7 @@ instance Gf GHypo where
       Just (i,[x1]) | i == mkCId "LetFormulaHypo" -> GLetFormulaHypo (fg x1)
       Just (i,[x1]) | i == mkCId "LocalHypo" -> GLocalHypo (fg x1)
       Just (i,[x1]) | i == mkCId "PropHypo" -> GPropHypo (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "PropVarHypo" -> GPropVarHypo (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "SupposePropHypo" -> GSupposePropHypo (fg x1)
       Just (i,[x1,x2]) | i == mkCId "VarHypo" -> GVarHypo (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "VarsHypo" -> GVarsHypo (fg x1) (fg x2)
@@ -2718,6 +2714,7 @@ instance Gf GProp where
   gf (GIffIffProp x1 x2) = mkApp (mkCId "IffIffProp") [gf x1, gf x2]
   gf (GIffProp x1 x2) = mkApp (mkCId "IffProp") [gf x1, gf x2]
   gf (GIndexedFormulaProp x1) = mkApp (mkCId "IndexedFormulaProp") [gf x1]
+  gf (GInverseIfProp x1 x2) = mkApp (mkCId "InverseIfProp") [gf x1, gf x2]
   gf (GNoArticleExistProp x1 x2) = mkApp (mkCId "NoArticleExistProp") [gf x1, gf x2]
   gf (GNoCommaAllProp x1 x2) = mkApp (mkCId "NoCommaAllProp") [gf x1, gf x2]
   gf (GNoCommaExistProp x1 x2) = mkApp (mkCId "NoCommaExistProp") [gf x1, gf x2]
@@ -2784,6 +2781,7 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "IffIffProp" -> GIffIffProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "IffProp" -> GIffProp (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "IndexedFormulaProp" -> GIndexedFormulaProp (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "InverseIfProp" -> GInverseIfProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoArticleExistProp" -> GNoArticleExistProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaAllProp" -> GNoCommaAllProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NoCommaExistProp" -> GNoCommaExistProp (fg x1) (fg x2)
@@ -3567,6 +3565,34 @@ instance Gf GProperName where
 
       _ -> error ("no ProperName " ++ show t)
 
+instance Gf GQuant where
+  gf (GAllIdentsKindQuant x1 x2) = mkApp (mkCId "AllIdentsKindQuant") [gf x1, gf x2]
+  gf (GAllKindQuant x1) = mkApp (mkCId "AllKindQuant") [gf x1]
+  gf (GEveryIdentKindQuant x1 x2) = mkApp (mkCId "EveryIdentKindQuant") [gf x1, gf x2]
+  gf (GEveryKindQuant x1) = mkApp (mkCId "EveryKindQuant") [gf x1]
+  gf (GIndefIdentKindQuant x1 x2) = mkApp (mkCId "IndefIdentKindQuant") [gf x1, gf x2]
+  gf (GIndefKindQuant x1) = mkApp (mkCId "IndefKindQuant") [gf x1]
+  gf (GNoIdentsKindQuant x1 x2) = mkApp (mkCId "NoIdentsKindQuant") [gf x1, gf x2]
+  gf (GNoKindQuant x1) = mkApp (mkCId "NoKindQuant") [gf x1]
+  gf (GSomeIdentsKindQuant x1 x2) = mkApp (mkCId "SomeIdentsKindQuant") [gf x1, gf x2]
+  gf (GSomeKindQuant x1) = mkApp (mkCId "SomeKindQuant") [gf x1]
+
+  fg t =
+    case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "AllIdentsKindQuant" -> GAllIdentsKindQuant (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "AllKindQuant" -> GAllKindQuant (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "EveryIdentKindQuant" -> GEveryIdentKindQuant (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "EveryKindQuant" -> GEveryKindQuant (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "IndefIdentKindQuant" -> GIndefIdentKindQuant (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "IndefKindQuant" -> GIndefKindQuant (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "NoIdentsKindQuant" -> GNoIdentsKindQuant (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "NoKindQuant" -> GNoKindQuant (fg x1)
+      Just (i,[x1,x2]) | i == mkCId "SomeIdentsKindQuant" -> GSomeIdentsKindQuant (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "SomeKindQuant" -> GSomeKindQuant (fg x1)
+
+
+      _ -> error ("no Quant " ++ show t)
+
 instance Gf GRule where
   gf (GNoVarRewriteRule x1 x2) = mkApp (mkCId "NoVarRewriteRule") [gf x1, gf x2]
   gf (GRewriteRule x1 x2 x3) = mkApp (mkCId "RewriteRule") [gf x1, gf x2, gf x3]
@@ -3644,11 +3670,13 @@ instance Gf GUnit where
   gf (GBeginProofMethodUnit x1 x2) = mkApp (mkCId "BeginProofMethodUnit") [gf x1, gf x2]
   gf (GCaseGoal x1 x2) = mkApp (mkCId "CaseGoal") [gf x1, gf x2]
   gf GCasesGoal = mkApp (mkCId "CasesGoal") []
+  gf (GConclusionUnit x1) = mkApp (mkCId "ConclusionUnit") [gf x1]
   gf (GEndEnvironmentUnit x1) = mkApp (mkCId "EndEnvironmentUnit") [gf x1]
   gf (GEnoughGoal x1) = mkApp (mkCId "EnoughGoal") [gf x1]
   gf (GFirstVerifyGoal x1) = mkApp (mkCId "FirstVerifyGoal") [gf x1]
   gf (GFollowsPropConclusion x1) = mkApp (mkCId "FollowsPropConclusion") [gf x1]
   gf (GHyposAssumption x1) = mkApp (mkCId "HyposAssumption") [gf x1]
+  gf (GHyposUnit x1) = mkApp (mkCId "HyposUnit") [gf x1]
   gf (GIdentExpAssumption x1 x2) = mkApp (mkCId "IdentExpAssumption") [gf x1, gf x2]
   gf (GIdentKindAssumption x1 x2) = mkApp (mkCId "IdentKindAssumption") [gf x1, gf x2]
   gf (GImportUnit x1) = mkApp (mkCId "ImportUnit") [gf x1]
@@ -3670,11 +3698,13 @@ instance Gf GUnit where
       Just (i,[x1,x2]) | i == mkCId "BeginProofMethodUnit" -> GBeginProofMethodUnit (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "CaseGoal" -> GCaseGoal (fg x1) (fg x2)
       Just (i,[]) | i == mkCId "CasesGoal" -> GCasesGoal 
+      Just (i,[x1]) | i == mkCId "ConclusionUnit" -> GConclusionUnit (fg x1)
       Just (i,[x1]) | i == mkCId "EndEnvironmentUnit" -> GEndEnvironmentUnit (fg x1)
       Just (i,[x1]) | i == mkCId "EnoughGoal" -> GEnoughGoal (fg x1)
       Just (i,[x1]) | i == mkCId "FirstVerifyGoal" -> GFirstVerifyGoal (fg x1)
       Just (i,[x1]) | i == mkCId "FollowsPropConclusion" -> GFollowsPropConclusion (fg x1)
       Just (i,[x1]) | i == mkCId "HyposAssumption" -> GHyposAssumption (fg x1)
+      Just (i,[x1]) | i == mkCId "HyposUnit" -> GHyposUnit (fg x1)
       Just (i,[x1,x2]) | i == mkCId "IdentExpAssumption" -> GIdentExpAssumption (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "IdentKindAssumption" -> GIdentKindAssumption (fg x1) (fg x2)
       Just (i,[x1]) | i == mkCId "ImportUnit" -> GImportUnit (fg x1)
@@ -3817,8 +3847,6 @@ instance Compos Tree where
     GVerbCExample x1 x2 x3 -> r GVerbCExample `a` f x1 `a` f x2 `a` f x3
     GVerbExample x1 x2 -> r GVerbExample `a` f x1 `a` f x2
     GAbsExp x1 x2 -> r GAbsExp `a` f x1 `a` f x2
-    GAllIdentsKindExp x1 x2 -> r GAllIdentsKindExp `a` f x1 `a` f x2
-    GAllKindExp x1 -> r GAllKindExp `a` f x1
     GAndExp x1 -> r GAndExp `a` f x1
     GAnnotateExp x1 x2 -> r GAnnotateExp `a` f x1 `a` f x2
     GAppExp x1 x2 -> r GAppExp `a` f x1 `a` f x2
@@ -3829,24 +3857,17 @@ instance Compos Tree where
     GCoercionExp x1 x2 -> r GCoercionExp `a` f x1 `a` f x2
     GEitherOrExp x1 x2 -> r GEitherOrExp `a` f x1 `a` f x2
     GEnumSetExp x1 -> r GEnumSetExp `a` f x1
-    GEveryIdentKindExp x1 x2 -> r GEveryIdentKindExp `a` f x1 `a` f x2
-    GEveryKindExp x1 -> r GEveryKindExp `a` f x1
     GFun2Exp x1 x2 x3 -> r GFun2Exp `a` f x1 `a` f x2 `a` f x3
     GFunCCollExp x1 x2 -> r GFunCCollExp `a` f x1 `a` f x2
     GFunCExp x1 x2 x3 -> r GFunCExp `a` f x1 `a` f x2 `a` f x3
     GFunExp x1 x2 -> r GFunExp `a` f x1 `a` f x2
-    GIndefIdentKindExp x1 x2 -> r GIndefIdentKindExp `a` f x1 `a` f x2
-    GIndefKindExp x1 -> r GIndefKindExp `a` f x1
     GIndexedTermExp x1 -> r GIndexedTermExp `a` f x1
     GKindExp x1 -> r GKindExp `a` f x1
     GNameExp x1 -> r GNameExp `a` f x1
-    GNoIdentsKindExp x1 x2 -> r GNoIdentsKindExp `a` f x1 `a` f x2
-    GNoKindExp x1 -> r GNoKindExp `a` f x1
     GOrExp x1 -> r GOrExp `a` f x1
     GPluralKindExp x1 -> r GPluralKindExp `a` f x1
     GPropExp x1 -> r GPropExp `a` f x1
-    GSomeIdentsKindExp x1 x2 -> r GSomeIdentsKindExp `a` f x1 `a` f x2
-    GSomeKindExp x1 -> r GSomeKindExp `a` f x1
+    GQuantExp x1 -> r GQuantExp `a` f x1
     GTermExp x1 -> r GTermExp `a` f x1
     GTypedExp x1 x2 -> r GTypedExp `a` f x1 `a` f x2
     GManyExps x1 -> r GManyExps `a` f x1
@@ -3874,6 +3895,7 @@ instance Compos Tree where
     GLetFormulaHypo x1 -> r GLetFormulaHypo `a` f x1
     GLocalHypo x1 -> r GLocalHypo `a` f x1
     GPropHypo x1 -> r GPropHypo `a` f x1
+    GPropVarHypo x1 x2 -> r GPropVarHypo `a` f x1 `a` f x2
     GSupposePropHypo x1 -> r GSupposePropHypo `a` f x1
     GVarHypo x1 x2 -> r GVarHypo `a` f x1 `a` f x2
     GVarsHypo x1 x2 -> r GVarsHypo `a` f x1 `a` f x2
@@ -3983,6 +4005,7 @@ instance Compos Tree where
     GIffIffProp x1 x2 -> r GIffIffProp `a` f x1 `a` f x2
     GIffProp x1 x2 -> r GIffProp `a` f x1 `a` f x2
     GIndexedFormulaProp x1 -> r GIndexedFormulaProp `a` f x1
+    GInverseIfProp x1 x2 -> r GInverseIfProp `a` f x1 `a` f x2
     GNoArticleExistProp x1 x2 -> r GNoArticleExistProp `a` f x1 `a` f x2
     GNoCommaAllProp x1 x2 -> r GNoCommaAllProp `a` f x1 `a` f x2
     GNoCommaExistProp x1 x2 -> r GNoCommaExistProp `a` f x1 `a` f x2
@@ -4010,6 +4033,16 @@ instance Compos Tree where
     GVerbCProp x1 x2 x3 -> r GVerbCProp `a` f x1 `a` f x2 `a` f x3
     GVerbProp x1 x2 -> r GVerbProp `a` f x1 `a` f x2
     GWeHaveProp x1 -> r GWeHaveProp `a` f x1
+    GAllIdentsKindQuant x1 x2 -> r GAllIdentsKindQuant `a` f x1 `a` f x2
+    GAllKindQuant x1 -> r GAllKindQuant `a` f x1
+    GEveryIdentKindQuant x1 x2 -> r GEveryIdentKindQuant `a` f x1 `a` f x2
+    GEveryKindQuant x1 -> r GEveryKindQuant `a` f x1
+    GIndefIdentKindQuant x1 x2 -> r GIndefIdentKindQuant `a` f x1 `a` f x2
+    GIndefKindQuant x1 -> r GIndefKindQuant `a` f x1
+    GNoIdentsKindQuant x1 x2 -> r GNoIdentsKindQuant `a` f x1 `a` f x2
+    GNoKindQuant x1 -> r GNoKindQuant `a` f x1
+    GSomeIdentsKindQuant x1 x2 -> r GSomeIdentsKindQuant `a` f x1 `a` f x2
+    GSomeKindQuant x1 -> r GSomeKindQuant `a` f x1
     GNoVarRewriteRule x1 x2 -> r GNoVarRewriteRule `a` f x1 `a` f x2
     GRewriteRule x1 x2 x3 -> r GRewriteRule `a` f x1 `a` f x2 `a` f x3
     GAbsTerm x1 x2 -> r GAbsTerm `a` f x1 `a` f x2
@@ -4037,11 +4070,13 @@ instance Compos Tree where
     GBeginEnvironmentUnit x1 x2 -> r GBeginEnvironmentUnit `a` f x1 `a` f x2
     GBeginProofMethodUnit x1 x2 -> r GBeginProofMethodUnit `a` f x1 `a` f x2
     GCaseGoal x1 x2 -> r GCaseGoal `a` f x1 `a` f x2
+    GConclusionUnit x1 -> r GConclusionUnit `a` f x1
     GEndEnvironmentUnit x1 -> r GEndEnvironmentUnit `a` f x1
     GEnoughGoal x1 -> r GEnoughGoal `a` f x1
     GFirstVerifyGoal x1 -> r GFirstVerifyGoal `a` f x1
     GFollowsPropConclusion x1 -> r GFollowsPropConclusion `a` f x1
     GHyposAssumption x1 -> r GHyposAssumption `a` f x1
+    GHyposUnit x1 -> r GHyposUnit `a` f x1
     GIdentExpAssumption x1 x2 -> r GIdentExpAssumption `a` f x1 `a` f x2
     GIdentKindAssumption x1 x2 -> r GIdentKindAssumption `a` f x1 `a` f x2
     GImportUnit x1 -> r GImportUnit `a` f x1
