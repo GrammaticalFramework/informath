@@ -14,7 +14,7 @@ abstract Mizar = Categories, Terms
     ApposIdentNoun : Noun -> Ident -> Noun ;
     VerbCCollProp : VerbC -> [Exp] -> Prop;
     AdjNoun2Noun2 : Adj -> Noun2 -> Noun2 ;
-    AdjNounCNoun3 : Adj -> Noun3 -> Noun3 ;
+    AdjNoun3Noun3 : Adj -> Noun3 -> Noun3 ;
     AdjNounCNounC : Adj -> NounC -> NounC ;
     Noun2ExpNoun : Noun2 -> Exp -> Noun ;
     Noun3ExpsNoun : Noun3 -> Exp -> Exp -> Noun ;

@@ -46,6 +46,7 @@ lincat
   Verb2 = Verb2T ;
   VerbC = VerbT ;
   Noun2 = {cn : CN ; prep : Syntax.Prep} ;
+  Noun3 = {cn : CN ; prep1 : Syntax.Prep ; prep2 : Syntax.Prep} ;
   NounC = CN ;
   Name = NP ;
   Fun = FunT ;

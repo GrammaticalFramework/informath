@@ -31,6 +31,7 @@ cat
   Fam2 ;    -- Kind -> Kind -> Kind -- function from reals to integers
   Noun1 ;   -- Exp -> Prop          -- (a) prime
   Noun2 ;   -- Exp -> Exp -> Prop   -- divisor of
+  Noun3 ;   -- Exp -> Exp -> Exp -> Prop  -- isomorphism between A and B
   NounC ;   -- [Exp] -> Prop        -- relative primes (collective)
   Adj ;     -- Exp -> Prop          -- even
   Adj2 ;    -- Exp -> Exp -> Prop   -- divisible by
