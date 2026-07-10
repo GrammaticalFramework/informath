@@ -139,3 +139,5 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommand{\Rational}{\mathbb{Q}}
 #MACRO \newcommand{\Real}{\mathbb{R}}
 #MACRO \newcommand{\Complex}{\mathbb{C}}
+
+

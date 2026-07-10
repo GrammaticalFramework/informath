@@ -71,7 +71,7 @@ thm thm1a : Proof (forall Nat (n => (or (even n) (odd n)))) :=
 	 (x => y => orE (even x) (odd x) (or (even (Succ x)) (odd (Succ x)))
 	                (y)
 	                (h => orIr (even (Succ x)) (odd (Succ x)) (oddSucc x (h)))
-	                (h => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (h)))).			
+	                (k => orIl (even (Succ x)) (odd (Succ x)) (evenSucc x (k)))).			
 
 thm lemma4 : (n : Elem Nat) -> Proof (if (odd (Succ n)) (even n)) :=
   n =>
