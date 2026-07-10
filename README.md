@@ -8,6 +8,10 @@
 
 #### LATEST NEWS
 
+9 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
+
+22 June 2026: macros in symbol tables now directly possible in entries of form $...$, see test/symboltest.dkgf
+
 15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
 
 9 June 2026: moved experimental and/or deprecated code to a separate repo, [informath-experiments](https://github.com/aarneranta/informath-experiments).
@@ -25,6 +29,8 @@
 ## Documentation
 
 [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). As of June 2026, the most up-to-date description on some features of Informath.
+
+[The Informath Deployment stack](https://josefurban.eu/chair26/informath-stack.pdf) slides from workshops in Gothenburg and Nancy, May and June 2026. They give examples of using Informath on different levels of adaptation, starting with just the command line and the existing binary.
 
 This README: using Informath with ready-made binaries and grammars.
 
