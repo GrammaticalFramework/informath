@@ -41,54 +41,54 @@ oper
   type_CN : CN = mkCN (mkN "tyyppi") ;
   case_N : N = mkN "tapaus" ;
   contradiction_N : N = mkN "ristiriita" ;
-  then_Adv : Adv = ParadigmsFin.mkAdv "så" ;
-  thenText_Adv : Adv = ParadigmsFin.mkAdv "då" ;
-  such_that_Subj : Subj = mkSubj "så att" ;
-  applied_to_Prep : Prep = mkPrep "applicerat på" ;
-  defined_as_Prep : Prep = mkPrep "definierat som" ;
+  then_Adv : Adv = ParadigmsFin.mkAdv "niin" ;
+  thenText_Adv : Adv = ParadigmsFin.mkAdv "silloin" ;
+  such_that_Subj : Subj = mkSubj "siten että" ;
+  applied_to_Prep : Prep = mkPrep "sovellettuna" ;
+  defined_as_Prep : Prep = mkPrep "määriteltynä" ;
   function_N : N = mkN "funktio" ;
   predicate_N : N = mkN "predikaatti" ;
   basic_type_CN : CN = mkCN (mkN "perus" (mkN "tyyppi")) ;
   map_V3 = mkV3 (mkV "kuvata") accusative for_Prep ;
   say_VS = mkVS (mkV "sanoa") ;
   hold_V2 = mkV2 (mkV "päteä") for_Prep ;
-  arbitrary_A = mkA "godtycklig" ;
+  arbitrary_A = mkA "mielivaltainen" ;
   set_N = mkN "joukko" ;
-  proposition_N = mkN "påstående" ;
-  
-  iff_Subj : Subj = mkSubj "om och endast om" ;
+  proposition_N = mkN "väittämä" ;
+
+  iff_Subj : Subj = mkSubj "jos ja vain jos" ;
   commaConj : Conj = mkConj "," ;
 
-  basic_concept_Str = "grundbegrepp" ;
-  by_cases_Str = "med fallanalys:" ;
-  proof_Str = "bevis" ;
-  axiom_Str = "axiom" ;
-  theorem_Str = "teorem" ;
-  definition_Str = "definition" ;
+  basic_concept_Str = "peruskäsite" ;
+  by_cases_Str = "tapauksittain:" ;
+  proof_Str = "todistus" ;
+  axiom_Str = "aksiooma" ;
+  theorem_Str = "lause" ;
+  definition_Str = "määritelmä" ;
 
   instance_N = mkN "instanssi" ;
   prove_VS = mkVS (mkV "todistaa") ;
   
-  as_Prep : Prep = mkPrep "som" ;
-  at_Prep : Prep = mkPrep "vid" ;
-  over_Prep : Prep = mkPrep "over" ;
+  as_Prep : Prep = mkPrep "muodossa" ;
+  at_Prep : Prep = mkPrep "kohdassa" ;
+  over_Prep : Prep = mkPrep "yli" ;
   
 
-  let_Str : Bool => Str = \\_ => "låt" ;
-  assuming_Str = "under följande antaganden:" ;
+  let_Str : Bool => Str = \\_ => "olkoon" ;
+  assuming_Str = "seuraavin oletuksin:" ;
 
   mkSubj : Str -> Subj = \s -> lin Subj {s = s} ; ---- should be in RGL
 
   imply_V2 : V2 = mkV2 (mkV "implikoida") ;
-  only_if_Subj : Subj = mkSubj "endast om" ;
+  only_if_Subj : Subj = mkSubj "vain jos" ;
 
-  number_Noun = mkCN (mkN "tal" "tal") ;
+  number_Noun = mkCN (mkN "luku") ;
   range_V3 = mkV3 (mkV "kulkea") from_Prep to_Prep ;
   sum_N = mkN "summa" ;
-  where_Subj = mkSubj "där" ;
+  where_Subj = mkSubj "missä" ;
 
   given_A2 = mkA2 (mkA "annettu") as_Prep ;
-  infinity_NP = mkNP (mkN "äärettön") ;
+  infinity_NP = mkNP (mkN "ääretön") ;
   series_N = mkN "sarja" ;
   integral_N = mkN "integraali" ;
 
