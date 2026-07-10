@@ -6,7 +6,7 @@ concrete InformathFin of Informath =
   VerbalConstantsFin,
   SymbolicConstantsLatex,
   MathExtensionsFin,
-----  WikidataWordsFin,
+  WikidataWordsFin,
   ProperNamesFin,
   UserExtensionsFin
   ;
