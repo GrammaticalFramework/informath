@@ -5,7 +5,7 @@ concrete InformathCze of Informath =
   ExamplesCze,
   VerbalConstantsCze,
   SymbolicConstantsLatex,
-----  WikidataWordsCze,
+  WikidataWordsCze,
   ProperNamesCze,
   MathExtensionsCze
 ----  UserExtensionsCze
