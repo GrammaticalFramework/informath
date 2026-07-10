@@ -50,6 +50,7 @@ oper
   applied_to_Prep : Prep = mkPrep "appliqué à" ; ----
   defined_as_Prep : Prep = mkPrep "défini comme" ; ----
   function_N : N = mkN "fonction" ;
+  predicate_N : N = mkN "prédicat" ;
   basic_type_CN : CN = mkCN type_CN (ParadigmsFre.mkAdv "de base") ;
   map_V3 = mkV3 I.envoyer_V accusative dative ; ----
   say_VS = mkVS I.dire_V ;

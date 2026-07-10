@@ -48,6 +48,7 @@ oper
   applied_to_Prep : Prep = mkPrep "applicerat på" ;
   defined_as_Prep : Prep = mkPrep "definierat som" ;
   function_N : N = mkN "funktion" "funktioner" ;
+  predicate_N : N = mkN "predikat" "predikat" ;
   basic_type_CN : CN = mkCN (mkN "grundtyp" "grundtyper") ;
   map_V3 = mkV3 (mkV "avbilda") noPrep as_Prep ;
   say_VS = mkVS I.säga_V ;

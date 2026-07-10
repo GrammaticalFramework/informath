@@ -58,6 +58,7 @@ oper
   arbitrary_A = mkA "beliebig" ;
   set_N = mkN "Menge" ;
   proposition_N = mkN "Satz" "Sätze" masculine ;
+  predicate_N = mkN "Prädikat" feminine ;
   
   iff_Subj : Subj = mkSubj "genau dann, wenn" ;
   commaConj : Conj = M.mkConj "" "," plural ;
