@@ -1,4 +1,4 @@
---# -path=.:morphodict:extraction
+--# -path=.:..:morphodict
 
 concrete InformathCze of Informath =
   MathCoreCze,

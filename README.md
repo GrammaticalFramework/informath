@@ -8,7 +8,7 @@
 
 #### LATEST NEWS
 
-9 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
+10 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
 
 22 June 2026: macros in symbol tables now directly possible in entries of form $...$, see test/symboltest.dkgf
 

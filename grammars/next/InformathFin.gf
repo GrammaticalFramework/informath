@@ -1,4 +1,4 @@
---# -path=.:morphodict:extraction
+--# -path=.:..:morphodict:../extraction
 
 concrete InformathFin of Informath =
   MathCoreFin,
