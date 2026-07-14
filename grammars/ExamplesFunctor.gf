@@ -65,7 +65,7 @@ lin
   A_KindArgument = NounKind (mkNoun "A") ;
   B_KindArgument = NounKind (mkNoun "B") ;
 
-  intArgument i = <symb (mkSymb ("#" ++ i.s)) : NP> ;
+  IntArgument i = <symb (mkSymb ("#" ++ i.s)) : NP> ;
 
 ---  NounName noun = mkNP noun ;
   DefNounName noun = mkNP the_Det noun ;

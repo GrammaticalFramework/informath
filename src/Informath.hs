@@ -235,10 +235,10 @@ data Tree :: * -> * where
   GIdentsArgKind :: GKind -> GListIdent -> Tree GArgKind_
   GIndexedDeclarationArgKind :: GInt -> Tree GArgKind_
   GKindArgKind :: GKind -> Tree GArgKind_
+  GIntArgument :: GInt -> Tree GArgument_
   GX_Argument :: Tree GArgument_
   GY_Argument :: Tree GArgument_
   GZ_Argument :: Tree GArgument_
-  GintArgument :: GInt -> Tree GArgument_
   GNounBinder :: GNoun -> Tree GBinder_
   GNounBinder1 :: GNoun -> Tree GBinder1_
   GNounBinder2 :: GNoun -> Tree GBinder2_
@@ -289,6 +289,7 @@ data Tree :: * -> * where
   GAndExp :: GListExp -> Tree GExp_
   GAnnotateExp :: GIdent -> GExp -> Tree GExp_
   GAppExp :: GExp -> GExps -> Tree GExp_
+  GApposTermExp :: GNoun -> GTerm -> Tree GExp_
   GBinder1Exp :: GBinder1 -> GKind -> GIdent -> GExp -> Tree GExp_
   GBinder2Exp :: GBinder2 -> GExp -> GExp -> GIdent -> GExp -> Tree GExp_
   GBinderExp :: GBinder -> GIdent -> GExp -> Tree GExp_
@@ -412,7 +413,9 @@ data Tree :: * -> * where
   LexName :: String -> Tree GName_
   GAdjNounNoun :: GAdj -> GNoun -> Tree GNoun_
   GApposIdentNoun :: GNoun -> GIdent -> Tree GNoun_
-  GApposTermNoun :: GNoun -> GTerm -> Tree GNoun_
+  GDep2Noun :: GDep2 -> GExp -> GExp -> Tree GNoun_
+  GDepCNoun :: GDepC -> GExp -> GExp -> Tree GNoun_
+  GDepNoun :: GDep -> GExp -> Tree GNoun_
   GNoun2ExpNoun :: GNoun2 -> GExp -> Tree GNoun_
   GNoun3ExpsNoun :: GNoun3 -> GExp -> GExp -> Tree GNoun_
   GNounNounNoun :: GNoun -> GNoun -> Tree GNoun_
@@ -509,6 +512,7 @@ data Tree :: * -> * where
   GNotAdvProp :: GAdv -> GExp -> Tree GProp_
   GNotNoun1Prop :: GNoun1 -> GExp -> Tree GProp_
   GNotNoun2Prop :: GNoun2 -> GExp -> GExp -> Tree GProp_
+  GNotNoun3Prop :: GNoun3 -> GExp -> GExp -> GExp -> Tree GProp_
   GNotNounCProp :: GNounC -> GListExp -> Tree GProp_
   GNotVerb2Prop :: GVerb2 -> GExp -> GExp -> Tree GProp_
   GNotVerbCProp :: GVerbC -> GListExp -> Tree GProp_
@@ -1010,10 +1014,10 @@ instance Eq (Tree a) where
     (GIdentsArgKind x1 x2,GIdentsArgKind y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GIndexedDeclarationArgKind x1,GIndexedDeclarationArgKind y1) -> and [ x1 == y1 ]
     (GKindArgKind x1,GKindArgKind y1) -> and [ x1 == y1 ]
+    (GIntArgument x1,GIntArgument y1) -> and [ x1 == y1 ]
     (GX_Argument,GX_Argument) -> and [ ]
     (GY_Argument,GY_Argument) -> and [ ]
     (GZ_Argument,GZ_Argument) -> and [ ]
-    (GintArgument x1,GintArgument y1) -> and [ x1 == y1 ]
     (GNounBinder x1,GNounBinder y1) -> and [ x1 == y1 ]
     (GNounBinder1 x1,GNounBinder1 y1) -> and [ x1 == y1 ]
     (GNounBinder2 x1,GNounBinder2 y1) -> and [ x1 == y1 ]
@@ -1064,6 +1068,7 @@ instance Eq (Tree a) where
     (GAndExp x1,GAndExp y1) -> and [ x1 == y1 ]
     (GAnnotateExp x1 x2,GAnnotateExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GAppExp x1 x2,GAppExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GApposTermExp x1 x2,GApposTermExp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GBinder1Exp x1 x2 x3 x4,GBinder1Exp y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GBinder2Exp x1 x2 x3 x4 x5,GBinder2Exp y1 y2 y3 y4 y5) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 , x5 == y5 ]
     (GBinderExp x1 x2 x3,GBinderExp y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
@@ -1187,7 +1192,9 @@ instance Eq (Tree a) where
     (LexName x,LexName y) -> x == y
     (GAdjNounNoun x1 x2,GAdjNounNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GApposIdentNoun x1 x2,GApposIdentNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
-    (GApposTermNoun x1 x2,GApposTermNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GDep2Noun x1 x2 x3,GDep2Noun y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepCNoun x1 x2 x3,GDepCNoun y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GDepNoun x1 x2,GDepNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun2ExpNoun x1 x2,GNoun2ExpNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun3ExpsNoun x1 x2 x3,GNoun3ExpsNoun y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNounNounNoun x1 x2,GNounNounNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1284,6 +1291,7 @@ instance Eq (Tree a) where
     (GNotAdvProp x1 x2,GNotAdvProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun1Prop x1 x2,GNotNoun1Prop y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotNoun2Prop x1 x2 x3,GNotNoun2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
+    (GNotNoun3Prop x1 x2 x3 x4,GNotNoun3Prop y1 y2 y3 y4) -> and [ x1 == y1 , x2 == y2 , x3 == y3 , x4 == y4 ]
     (GNotNounCProp x1 x2,GNotNounCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNotVerb2Prop x1 x2 x3,GNotVerb2Prop y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNotVerbCProp x1 x2,GNotVerbCProp y1 y2) -> and [ x1 == y1 , x2 == y2 ]
@@ -1890,17 +1898,17 @@ instance Gf GArgKind where
       _ -> error ("no ArgKind " ++ show t)
 
 instance Gf GArgument where
+  gf (GIntArgument x1) = mkApp (mkCId "IntArgument") [gf x1]
   gf GX_Argument = mkApp (mkCId "X_Argument") []
   gf GY_Argument = mkApp (mkCId "Y_Argument") []
   gf GZ_Argument = mkApp (mkCId "Z_Argument") []
-  gf (GintArgument x1) = mkApp (mkCId "intArgument") [gf x1]
 
   fg t =
     case unApp t of
+      Just (i,[x1]) | i == mkCId "IntArgument" -> GIntArgument (fg x1)
       Just (i,[]) | i == mkCId "X_Argument" -> GX_Argument 
       Just (i,[]) | i == mkCId "Y_Argument" -> GY_Argument 
       Just (i,[]) | i == mkCId "Z_Argument" -> GZ_Argument 
-      Just (i,[x1]) | i == mkCId "intArgument" -> GintArgument (fg x1)
 
 
       _ -> error ("no Argument " ++ show t)
@@ -2100,6 +2108,7 @@ instance Gf GExp where
   gf (GAndExp x1) = mkApp (mkCId "AndExp") [gf x1]
   gf (GAnnotateExp x1 x2) = mkApp (mkCId "AnnotateExp") [gf x1, gf x2]
   gf (GAppExp x1 x2) = mkApp (mkCId "AppExp") [gf x1, gf x2]
+  gf (GApposTermExp x1 x2) = mkApp (mkCId "ApposTermExp") [gf x1, gf x2]
   gf (GBinder1Exp x1 x2 x3 x4) = mkApp (mkCId "Binder1Exp") [gf x1, gf x2, gf x3, gf x4]
   gf (GBinder2Exp x1 x2 x3 x4 x5) = mkApp (mkCId "Binder2Exp") [gf x1, gf x2, gf x3, gf x4, gf x5]
   gf (GBinderExp x1 x2 x3) = mkApp (mkCId "BinderExp") [gf x1, gf x2, gf x3]
@@ -2127,6 +2136,7 @@ instance Gf GExp where
       Just (i,[x1]) | i == mkCId "AndExp" -> GAndExp (fg x1)
       Just (i,[x1,x2]) | i == mkCId "AnnotateExp" -> GAnnotateExp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "AppExp" -> GAppExp (fg x1) (fg x2)
+      Just (i,[x1,x2]) | i == mkCId "ApposTermExp" -> GApposTermExp (fg x1) (fg x2)
       Just (i,[x1,x2,x3,x4]) | i == mkCId "Binder1Exp" -> GBinder1Exp (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2,x3,x4,x5]) | i == mkCId "Binder2Exp" -> GBinder2Exp (fg x1) (fg x2) (fg x3) (fg x4) (fg x5)
       Just (i,[x1,x2,x3]) | i == mkCId "BinderExp" -> GBinderExp (fg x1) (fg x2) (fg x3)
@@ -2609,7 +2619,9 @@ instance Gf GName where
 instance Gf GNoun where
   gf (GAdjNounNoun x1 x2) = mkApp (mkCId "AdjNounNoun") [gf x1, gf x2]
   gf (GApposIdentNoun x1 x2) = mkApp (mkCId "ApposIdentNoun") [gf x1, gf x2]
-  gf (GApposTermNoun x1 x2) = mkApp (mkCId "ApposTermNoun") [gf x1, gf x2]
+  gf (GDep2Noun x1 x2 x3) = mkApp (mkCId "Dep2Noun") [gf x1, gf x2, gf x3]
+  gf (GDepCNoun x1 x2 x3) = mkApp (mkCId "DepCNoun") [gf x1, gf x2, gf x3]
+  gf (GDepNoun x1 x2) = mkApp (mkCId "DepNoun") [gf x1, gf x2]
   gf (GNoun2ExpNoun x1 x2) = mkApp (mkCId "Noun2ExpNoun") [gf x1, gf x2]
   gf (GNoun3ExpsNoun x1 x2 x3) = mkApp (mkCId "Noun3ExpsNoun") [gf x1, gf x2, gf x3]
   gf (GNounNounNoun x1 x2) = mkApp (mkCId "NounNounNoun") [gf x1, gf x2]
@@ -2620,7 +2632,9 @@ instance Gf GNoun where
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "AdjNounNoun" -> GAdjNounNoun (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "ApposIdentNoun" -> GApposIdentNoun (fg x1) (fg x2)
-      Just (i,[x1,x2]) | i == mkCId "ApposTermNoun" -> GApposTermNoun (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "Dep2Noun" -> GDep2Noun (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3]) | i == mkCId "DepCNoun" -> GDepCNoun (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2]) | i == mkCId "DepNoun" -> GDepNoun (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "Noun2ExpNoun" -> GNoun2ExpNoun (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Noun3ExpsNoun" -> GNoun3ExpsNoun (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "NounNounNoun" -> GNounNounNoun (fg x1) (fg x2)
@@ -2836,6 +2850,7 @@ instance Gf GProp where
   gf (GNotAdvProp x1 x2) = mkApp (mkCId "NotAdvProp") [gf x1, gf x2]
   gf (GNotNoun1Prop x1 x2) = mkApp (mkCId "NotNoun1Prop") [gf x1, gf x2]
   gf (GNotNoun2Prop x1 x2 x3) = mkApp (mkCId "NotNoun2Prop") [gf x1, gf x2, gf x3]
+  gf (GNotNoun3Prop x1 x2 x3 x4) = mkApp (mkCId "NotNoun3Prop") [gf x1, gf x2, gf x3, gf x4]
   gf (GNotNounCProp x1 x2) = mkApp (mkCId "NotNounCProp") [gf x1, gf x2]
   gf (GNotVerb2Prop x1 x2 x3) = mkApp (mkCId "NotVerb2Prop") [gf x1, gf x2, gf x3]
   gf (GNotVerbCProp x1 x2) = mkApp (mkCId "NotVerbCProp") [gf x1, gf x2]
@@ -2906,6 +2921,7 @@ instance Gf GProp where
       Just (i,[x1,x2]) | i == mkCId "NotAdvProp" -> GNotAdvProp (fg x1) (fg x2)
       Just (i,[x1,x2]) | i == mkCId "NotNoun1Prop" -> GNotNoun1Prop (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "NotNoun2Prop" -> GNotNoun2Prop (fg x1) (fg x2) (fg x3)
+      Just (i,[x1,x2,x3,x4]) | i == mkCId "NotNoun3Prop" -> GNotNoun3Prop (fg x1) (fg x2) (fg x3) (fg x4)
       Just (i,[x1,x2]) | i == mkCId "NotNounCProp" -> GNotNounCProp (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "NotVerb2Prop" -> GNotVerb2Prop (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "NotVerbCProp" -> GNotVerbCProp (fg x1) (fg x2)
@@ -3939,7 +3955,7 @@ instance Compos Tree where
     GIdentsArgKind x1 x2 -> r GIdentsArgKind `a` f x1 `a` f x2
     GIndexedDeclarationArgKind x1 -> r GIndexedDeclarationArgKind `a` f x1
     GKindArgKind x1 -> r GKindArgKind `a` f x1
-    GintArgument x1 -> r GintArgument `a` f x1
+    GIntArgument x1 -> r GIntArgument `a` f x1
     GNounBinder x1 -> r GNounBinder `a` f x1
     GNounBinder1 x1 -> r GNounBinder1 `a` f x1
     GNounBinder2 x1 -> r GNounBinder2 `a` f x1
@@ -3982,6 +3998,7 @@ instance Compos Tree where
     GAndExp x1 -> r GAndExp `a` f x1
     GAnnotateExp x1 x2 -> r GAnnotateExp `a` f x1 `a` f x2
     GAppExp x1 x2 -> r GAppExp `a` f x1 `a` f x2
+    GApposTermExp x1 x2 -> r GApposTermExp `a` f x1 `a` f x2
     GBinder1Exp x1 x2 x3 x4 -> r GBinder1Exp `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GBinder2Exp x1 x2 x3 x4 x5 -> r GBinder2Exp `a` f x1 `a` f x2 `a` f x3 `a` f x4 `a` f x5
     GBinderExp x1 x2 x3 -> r GBinderExp `a` f x1 `a` f x2 `a` f x3
@@ -4078,7 +4095,9 @@ instance Compos Tree where
     GProperNameNounName x1 x2 -> r GProperNameNounName `a` f x1 `a` f x2
     GAdjNounNoun x1 x2 -> r GAdjNounNoun `a` f x1 `a` f x2
     GApposIdentNoun x1 x2 -> r GApposIdentNoun `a` f x1 `a` f x2
-    GApposTermNoun x1 x2 -> r GApposTermNoun `a` f x1 `a` f x2
+    GDep2Noun x1 x2 x3 -> r GDep2Noun `a` f x1 `a` f x2 `a` f x3
+    GDepCNoun x1 x2 x3 -> r GDepCNoun `a` f x1 `a` f x2 `a` f x3
+    GDepNoun x1 x2 -> r GDepNoun `a` f x1 `a` f x2
     GNoun2ExpNoun x1 x2 -> r GNoun2ExpNoun `a` f x1 `a` f x2
     GNoun3ExpsNoun x1 x2 x3 -> r GNoun3ExpsNoun `a` f x1 `a` f x2 `a` f x3
     GNounNounNoun x1 x2 -> r GNounNounNoun `a` f x1 `a` f x2
@@ -4165,6 +4184,7 @@ instance Compos Tree where
     GNotAdvProp x1 x2 -> r GNotAdvProp `a` f x1 `a` f x2
     GNotNoun1Prop x1 x2 -> r GNotNoun1Prop `a` f x1 `a` f x2
     GNotNoun2Prop x1 x2 x3 -> r GNotNoun2Prop `a` f x1 `a` f x2 `a` f x3
+    GNotNoun3Prop x1 x2 x3 x4 -> r GNotNoun3Prop `a` f x1 `a` f x2 `a` f x3 `a` f x4
     GNotNounCProp x1 x2 -> r GNotNounCProp `a` f x1 `a` f x2
     GNotVerb2Prop x1 x2 x3 -> r GNotVerb2Prop `a` f x1 `a` f x2 `a` f x3
     GNotVerbCProp x1 x2 -> r GNotVerbCProp `a` f x1 `a` f x2

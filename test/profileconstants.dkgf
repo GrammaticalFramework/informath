@@ -1,0 +1,197 @@
+Set : "set"
+Type : "type"
+Prop : "proposition"
+
+#Elem : ElemKind
+
+#Proof : ProofProp
+
+
+false : FalseProp
+and : CoreAndProp
+or : CoreOrProp
+if : CoreIfProp
+forall : CoreAllProp
+exists : CoreExistProp
+not : CoreNotProp
+iff : CoreIffProp
+
+suchthat : SuchThatKind
+
+Num : "number"
+bool : "boolean"
+List : "list of As"
+Dig : "digit"
+Nat : "natural number" | $\mathbb{N}$
+Int : "integer" |  $\mathbb{Z}$
+Rat : "rational number" | $\mathbb{Q}$
+Real : "real number" |  $\mathbb{R}$
+Complex : "complex number" | $\mathbb{C}$
+Cardinal : "cardinal"
+Eq : "#1 is equal to #2" | "#1 and #2 are equal" | $#1 = #2$
+Lt : Lt_Adj2 | $#1 < #2$
+Gt : Gt_Adj2 | $#1 > #2$
+Neq : "#1 is distinct from #2" | "#1 and #2 are distinct" | $#1 \neq #2$
+Leq : Leq_Adj2 | $#1 \leq #2$
+Geq : Geq_Adj2 | $#1 \geq #2$
+positive : "#1 is positive"
+negative : "#1 is negative"
+plus : "the sum of #1 and #2" | $#1 + #2$
+minus : "the difference of #1 and #2" | $#1 - #2$
+times : "the product of #1 and #2" | $#1 \times #2$
+div : "the quotient of #1 and #2" | $\frac{#1}{#2}$
+pow : "the power of #1 to #2" | $#1^{#2}$
+neg : "the negation of #1" | $-#1$
+log : "the logarithm of #1 in #2" | $\log_{#2} #1$
+sqrt : "the square root of #1" | $\sqrt{#1}$
+succ : "the successor of #1"
+abs : "the absolute value of #1" | $\mid #1 \mid$
+factorial : "the factorial of #1" | $#1 !$
+gcd : "the greatest common divisor of #1 and #2"
+even : "#1 is even"
+odd : "#1 is odd"
+prime : "#1 is prime"
+divisible : "#1 is divisible by #2" | "#2 divides #1" | "#2 is a divisor of #1" | $#1 \mid $2$
+divisor : "#1 is a divisor of #2"
+converge : "#1 converges"
+function : "function from As to Bs"
+union : "the union of #1 and #2" | $#1 \cup #2$
+intersection : "the intersection of #1 and #2" | $#1 \cap #2$
+difference : "the difference of #1 and #2" | $#1 \setminus #2$
+cartesian : "the cartesian product of #1 and #2" | $#1 \times #2$
+powerset : "the powerset of #1" | $\wp #1$
+complement : "the complement of #1" | $$
+subset : "#1 is a proper subset of #2" | $#1 \subset #2$
+subseteq : "#1 is a subset of #2" | $#1 \subseteq #2$
+superset : "#1 is a proper superset of #2" | $#1 \supset #2$
+superseteq : "#1 is a superset of #2" | $#1 \supset #2$
+equalset : "#1 and #2 are equal sets" | "#1 is equal to #2" | $#1 = #2$
+notequalset : "#1 and #2 are distinct sets" | "#1 is distinct from #2" | $#1 \neq #2$
+element : "#1 is an element of #2" | $#1 \in #2$
+notelement : notelement_Noun2 | $#1 \notin #2$
+emptyset : "the empty set" | $\emptyset$
+universeset : "the universal set" | $U$
+congruent : "#1 is congruent to #2 modulo #3" | $#1 \equiv #2 \, \mbox{mod} \, #3$
+finite : "#1 is finite"
+infinite : "#1 is infinite"
+rational : "#1 is rational"
+irrational : "#1 is irrational"
+Polynomial : "polynomial"
+degree : "the degree of #1"
+isRoot : "#1 is a root of #2"
+cardinality : "the cardinality of #1" | $\mid #1 \mid$
+denumerable : "#1 is denumerable"
+Vector : "vector"
+length : "the length of #1" | \Norm
+norm : "the length of #1" | "the norm of #1" | $\mid #1 \mid$
+square : "the square of #1" | $#1 ^$
+legendre : "the Legendre symbol of #1 and #2" | $\left(\frac{" "}{" "}\right)$
+pi : pi_Name | $\pi$
+Circle : "circle"
+radius : "the radius of #1"
+area : "the area of #1"
+binomial : "the binomial coefficient of #1 over #2" | $\binom{#1}{#2}$
+combinations : combinations_Fun2 | $C^{#1}_{#2}$
+combinationsFromSet : combinationsFromSet_Fun2 | $C^{#1}_{#2}$
+sin : "the sin of #1" | $\sin #1$
+cos : "the cosine of #1" | $\cos #1$
+tan : "the tangent of #1" | $\tan #1$
+arcsin : "the arcsine of #1" | $\arcsin #1$
+arccos : "the arccosine of #1" | $\arccos #1$
+arctan : "the arctangent of #1" | $\arctan #1$
+orthogonal : "#1 is orthogonal to #2" | "#1 is perpendicular to #2" | "#1 and #2 are orthogonal" | "#1 and #2 are perpendicular" | $#1 \perp #2$
+angleBetween : "the angle between #1 and #2"
+dotProduct : "the dot product of #1 and #2" | "the scalar product of #1 and #2" | $#1 \cdot #2$
+vectorPlus : "the sum of #1 and #2" | "the resultant of #1 and #2" | $#1 + #2$
+sphenic : "#1 is sphenic"
+infinity : "the infinity" | $\infty$
+sigma : NounBinder2 sum_Noun | $\sum_{ #3 = #1 }^{#2}{#4}$
+integral : NounBinder2 (AdjNounNoun definite_Adj integral_Noun) | $\int_{ #1 }^{#2} #4 d #3$
+ni : "#1 contains #2" | $#1 \ni #2$
+disjoint : "#1 and #2 are disjoint" | "#1 is disjoint from #2" | $#1 \notmeets #2$
+empty : "#1 is empty" | $#1 = \emptyset$
+inhabited : "#1 is inhabited"
+sameParity : "#1 and #2 have the same parity"
+
+
+#CONV agda forall all
+
+#CONV agda Type Set
+
+#CONV lean forall All
+
+#CONV lean exists Exist
+
+#CONV rocq forall All
+
+#CONV rocq exists Exist
+
+#CONV rocq Nat nat
+
+#CONV rocq _ x_
+
+
+Equ : "#2 is equal to #3" | "#1 and #2 are equal" | $#2 = #3$
+
+
+#BUILTIN Elem Proof Enum nd nn 0 1 2 3 4 5 6 7 8 9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

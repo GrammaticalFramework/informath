@@ -21,21 +21,19 @@ type Opts = [String]
 nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [deAnnotate tree]
-  _  -> concat [map deAnnotate [ft, t, tree], sts, afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
+  _  -> concat [[dt, t, ut, ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
   ---- TODO more option combinations
  where
-   t = unparenth tree
+   dt = deAnnotate tree
+   t = unparenth dt
    ut = uncoerce t
    ft = flatten ut
-----
-   sts = map deAnnotate (synonymize env ft)
----- NEXT   sts = map deAnnotate [ft]
-   afts = map aggregate sts
+   afts = [aggregate ft]
    iafts = map insitu afts
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
    ncviafts = map negated cviafts  -- better do this at this late stage
-   vncviafts = if isFlag "-less-variants" env then [] else concatMap variations ncviafts
+   vncviafts = if isFlag "-more-variants" env then concatMap variations ncviafts else [] 
    uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
 
 deAnnotate :: Tree a -> Tree a
@@ -63,131 +61,12 @@ uncoerce t = case t of
   _ -> composOp uncoerce t
 
 
--- works on lookup with Dedukti QIdent, which annotates applicative trees
-
-synonymize :: forall a. Env -> Tree a -> [Tree a]
-synonymize env t = ---- [t] where ----
-                    symbs t where
-
-  ssyns :: GIdent -> [(PGF.Tree, PGF.Type)]
-  ssyns c = maybe [] symbolics (M.lookup (qId c) (constantTable (symbolTable env)))
-
-  qId :: GIdent -> QIdent
-  qId (GStrIdent (GString s)) = QIdent s
-
-  symbs :: forall a. Tree a -> [Tree a]
-  symbs t = case t of
-    GAnnotateProp c (GAdjProp _ x) ->
-      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
-    GAnnotateProp c (GAdj2Prop _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GAdj3Prop _ x y z) ->
-      [sympred alt [sx, sy, sz] | alt <- ssyns c, sx <- terms x, sy <- terms y, sz <- terms z]
-    GAnnotateProp c (GAdjCProp _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GAdjEProp _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GNoun1Prop _ x) ->
-      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
-    GAnnotateProp c (GNoun2Prop _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GNounCProp _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GVerbProp _ x) ->
-      [sympred alt [sx] | alt <- ssyns c, sx <- terms x]
-    GAnnotateProp c (GVerb2Prop _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateProp c (GVerbCProp _ x y) ->
-      [sympred alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-
-    GAnnotateProp c (GAppProp _ exps) ->
-      [sympred alt xs | alt <- ssyns c, xs <- sequence (map terms (exps2list exps))]
-
-    GAnnotateExp c (GNameExp _)     -> map GTermExp (terms t)
-    GAnnotateExp c (GFunExp _ _)    -> map GTermExp (terms t)
-    GAnnotateExp c (GFun2Exp _ _ _) -> map GTermExp (terms t)
-    GAnnotateExp c (GFunCExp _ _ _) -> map GTermExp (terms t)
-----    GNounKind _    -> map (GExpKind . GTermExp) (terms t)
-----    GFamKind _ _   -> map GTermKind (terms t)
-----    GFam2Kind _ _ _ -> map GTermKind (terms t)
-
-    GAndProp (GListProp props) -> [GAndProp (GListProp ps) | ps <- sequence (map tsymbs props)]
-    GOrProp (GListProp props) -> [GOrProp (GListProp ps) | ps <- sequence (map tsymbs props)]
-    GIfProp a b -> [GIfProp sa sb | sa <- tsymbs a, sb <- tsymbs b]
-    GIffProp a b -> [GIffProp sa sb | sa <- tsymbs a, sb <- tsymbs b]
-    
-    _ -> composOpM symbs t
-
-  tsymbs t = t : symbs t
-
-  terms :: GExp -> [GTerm]
-  terms t = case t of
-    GAnnotateExp c (GFunExp _ x) ->
-      [app alt [sx] | alt <- ssyns c, sx <- terms x]
-    GAnnotateExp c (GFun2Exp _ x y) ->
-      [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateExp c (GFunCExp _ x y) ->
-      [app alt [sx, sy] | alt <- ssyns c, sx <- terms x, sy <- terms y]
-    GAnnotateExp c (GBinderExp _ i x) ->
-      [app alt [GIdentTerm i, sx] | alt <- ssyns c, sx <- terms x]
-    GAnnotateExp c (GBinder1Exp _ k i z) ->
-      [app alt [sk, GIdentTerm i, sz] | alt <- ssyns c, sk <- terms (GKindExp k), sz <- terms z]
-    GAnnotateExp c (GBinder2Exp _ x y i z) ->
-      [app alt [sx, sy, GIdentTerm i, sz] | alt <- ssyns c, sx <- terms x, sy <- terms y, sz <- terms z]
-    GAnnotateExp c (GNameExp _) ->
-      [app alt [] | alt <- ssyns c]
-    GAnnotateExp c (GKindExp e) ->
-      [app alt [] | alt <- ssyns c]
-    GTermExp t -> [t]
-    _ -> []
-
-  ---- TODO: not yet reachable
-  kindterms :: GKind -> [GTerm]
-  kindterms t = case t of
-    GAnnotateKind c (GNounKind _) ->
-      [app alt [] | alt <- ssyns c]
-    GSuchThatKind kind ident prop -> 
-----      [GComprehensionTerm kterm ident pterm | kterm <- kindterms kind, pterm <- symbs prop] ++
-      [GComprehensionTextTerm kterm ident prop | kterm <- kindterms kind]
-    _ -> []
-
-  sympred :: (PGF.Expr, PGF.Type) -> [GTerm] -> GProp
-  sympred (fun, cat) xs = case (PGF.showType [] cat, xs) of
-    ("Compar", [x, y]) -> GFormulaProp (GEquationFormula (GBinaryEquation (fg fun) x y))
-    ("MACRO", []) -> GFormulaProp (GMacroFormula (macroIdent fun))
-    ("MACRO", [x]) -> GFormulaProp (GApp1MacroFormula (macroIdent fun) x)
-    ("MACRO", [x, y]) -> GFormulaProp (GApp2MacroFormula (macroIdent fun) x y)
-    ("MACRO", [x, y, z]) -> GFormulaProp (GApp3MacroFormula (macroIdent fun) x y z)
-    _ -> error $ "NOT YET sympred: " ++ show cat
-
-  app :: (PGF.Expr, PGF.Type) -> [GTerm] -> GTerm
-  app (fun, cat) xs = case (PGF.showType [] cat, xs) of
-    ("Const", []) -> GConstTerm (fg fun)
-    ("Oper", [x]) -> GOperTerm (fg fun) x
-    ("Oper2", [x, y]) -> GOper2Term (fg fun) x y
-    ("MACRO", []) -> GMacroTerm (macroIdent fun)
-    ("MACRO", [x]) -> GApp1MacroTerm (macroIdent fun) x
-    ("MACRO", [x, y]) -> GApp2MacroTerm (macroIdent fun) x y
-    ("MACRO", [x, y, z]) -> GApp3MacroTerm (macroIdent fun) x y z
-    ("MACRO", [x, y, z, u]) -> GApp4MacroTerm (macroIdent fun) x y z u
-    _ -> error $ "NOT YET app: " ++ show cat
-
-  macroIdent fun = GStringMacro (GString (init (drop 2 (PGF.showExpr [] fun))))  -- '\\foo' -> \foo
-
-{-
-gTerms :: [GTerm] -> GTerms
-gTerms terms = case terms of
-  [t] -> GOneTerms t
-  t : ts -> GAddTerms t (gTerms ts)
--}
-
 ---- also in DMC, IMC
 gExps :: [GExp] -> GExps
 gExps exps = case exps of
   [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
-  
 
 aggregate :: Tree a -> Tree a
 aggregate t = case t of

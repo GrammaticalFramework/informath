@@ -118,7 +118,7 @@ helpMsg4 = [
   just "-mathcore" "generate only the mathcore text",
   just "-variations" "show all variations",
   just "-nbest=<int>" "show <int> best NLG results",
-  just "-less-variants" "generate less NLG variants",
+  just "-more-variants" "generate some more NLG variants",
   just "-to-latex-doc" "print valid LaTeX doc with preamble",
   just "-weights=<ints>" "weights of scores, default 1,1,1,1,1,1,1",
   just "-no-ranking" "do not rank the NLG results (which can be expensive)",

@@ -35,7 +35,12 @@ filterNoUndefined js = case partition hasUndefineds js of
 -- this is where the GF identifier ambiguity is resolved
 applyLookBack ::  BackConstantTable -> Dedukti.AbsDedukti.Tree a -> [Dedukti.AbsDedukti.Tree a]
 applyLookBack mb t = case t of
-  QIdent s -> maybe [mark t] id $ M.lookup (mkTree s) mb
+  EApp fun arg -> case splitApp t of
+    (EIdent qid@(QIdent s), args) -> case M.lookup (mkTree s) mb of
+      Just fps -> [unappProfile p (foldl EApp (EIdent f) aargs) | (f, p) <- fps, aargs <- sequence (map (applyLookBack mb) args)]
+      _ -> [foldl EApp (EIdent (mark qid)) aargs | aargs <- sequence (map (applyLookBack mb) args)]
+    _ -> [EApp afun aarg | afun <- applyLookBack mb fun, aarg <- applyLookBack mb arg]
+  QIdent s -> maybe [mark t] (map fst) $ M.lookup (mkTree s) mb
   _ -> Dedukti.AbsDedukti.composOpM (applyLookBack mb) t  
  where
   mkTree s = case readExpr s of

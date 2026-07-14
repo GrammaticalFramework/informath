@@ -45,7 +45,7 @@ fun
   A_KindArgument, B_KindArgument : KindArgument ;
   x_BoundVariable, i_BoundVariable : BoundVariable ;
 
-  intArgument : Int -> Argument ;
+  IntArgument : Int -> Argument ;
 
   DefNounName : Noun -> Name ;
   ProperNameNounName : ProperName -> Noun -> Name ; --- ProperName in genitive: Euler's constant

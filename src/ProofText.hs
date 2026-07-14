@@ -1,3 +1,5 @@
+{-# LANGUAGE GADTs, KindSignatures, DataKinds, Rank2Types #-}
+
 module ProofText where
 
 import Dedukti.AbsDedukti hiding (Tree)

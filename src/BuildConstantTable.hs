@@ -22,32 +22,47 @@ import Data.Char (isDigit, isAlpha)
 
 type GFTree = PGF.Tree
 type Fun = GFTree
+type FunProfile = (Fun, Profile)
 type Cat = CId
 type Formalism = String
 
 showGFTree :: GFTree -> String
 showGFTree = showExpr []
 
+showFunProfile :: FunProfile -> String
+showFunProfile (f, p) = showGFTree f ++ showProfile p
+
 --- OK to fail, because it should stop compilation
-parseGFTree :: PGF -> Language -> String -> GFTree
-parseGFTree pgf lang s = case s of
+parseFunProfile :: PGF -> Language -> Maybe Int -> String -> FunProfile
+parseFunProfile pgf lang mdrop s = case s of
   '"':cs -> case parseExample pgf lang (init cs) of
     [] -> error $ "cannot parse example: " ++ s
-    t:_ -> t ---- TODO: if many parses?
-  _ -> readGFTree s
+    tp@(t, p):_ -> case (mdrop, p) of   ---- TODO: if many parses?
+      (Nothing, _) -> tp
+      (Just k, NoProfile) -> (t, DropProfile k)
+      _ -> error $ "conflicting profile information in " ++ s
+  _ -> (readGFTree s, maybe NoProfile DropProfile mdrop)
 
-parseExample :: PGF -> Language -> String -> [Expr]
+parseExample :: PGF -> Language -> String -> [FunProfile]
 parseExample pgf lang =
     map extract . parse pgf lang (maybe undefined id (readType "Example")) . lexex
   where
    extract t = case unApp t of
-     Just (_, ex:_) -> ex
+     Just (_, ex:args) -> case getProfile args of
+       Just p -> (ex, p)
+       _ -> (ex, NoProfile)
      _ -> error $ "cannot get example from: " ++ showGFTree t
 
    lexex s = case s of
      c:' ':cs -> c : ' ' :lextex cs  -- don't uncap first letter
      c:cs | isAlpha c -> c : lextex cs -- don't uncap first letter
      _ -> lextex s
+
+   getProfile args = do
+     let iargs = [i | Just (f, [x]) <- map unApp args, showCId f == "IntArgument", Just i <- [unInt x]]
+     if length iargs == length args
+       then return (PermProfile iargs)
+       else Nothing
 
 
 readGFTree :: String -> GFTree
@@ -75,18 +90,19 @@ type ConstantTable = M.Map QIdent ConstantTableEntry
 type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 
 -- conversions in Dk that drop a number of initial arguments
+--- redundant with profiles, except for proofs
 type DropTable = M.Map QIdent Int
 
 -- definitions of macros to be converted to \newcommand in LaTeX
 type MacroTable = M.Map String (Int, String)
 
 data ConstantTableEntry = ConstantTableEntry {
-  primary   ::  (Fun, Type),
-  symbolics :: [(Fun, Type)],
-  synonyms  :: [(Fun, Type)]
+  primary   :: (FunProfile, Type),
+  symbolics :: [(FunProfile, Type)],
+  synonyms  :: [(FunProfile, Type)]
   }
 
-allGFFuns :: ConstantTable -> QIdent -> [(Fun, Type)]
+allGFFuns :: ConstantTable -> QIdent -> [(FunProfile, Type)]
 allGFFuns table qident = maybe [] merge $ M.lookup qident table where
   merge entry = primary entry : symbolics entry ++ synonyms entry
 
@@ -96,7 +112,7 @@ showConstantTable = unlines . map prEntry . M.toList where
   prEntry :: (QIdent, ConstantTableEntry) -> String
   prEntry (QIdent q, entry) =
     unwords $ [q, ":"] ++
-    intersperse "|" (map (showGFTree . fst) (primary entry : synonyms entry ++ symbolics entry))
+    intersperse "|" (map (showFunProfile . fst) (primary entry : synonyms entry ++ symbolics entry))
 
 -- shown in a longer format; not currently used
 showConstantTableLong :: ConstantTable -> String
@@ -111,25 +127,26 @@ showConstantTableLong = concat . map prEntry . M.toList where
         "symbolics: " ++ unwords (map prTyping (symbolics entry)),
         "synonyms: " ++ unwords (map prTyping (synonyms entry))
       ]
-  prTyping (fun, typ) = showGFTree fun ++ " : " ++ showType [] typ ++ " ;"
+  prTyping (funprof, typ) = showFunProfile funprof ++ " : " ++ showType [] typ ++ " ;"
 
 
-type BackConstantTable = M.Map Fun [QIdent] -- maps GF idents to original "Dk" idents
+-- maps GF idents to original "Dk" idents; the Profile is the original one, to be applied backwards
+type BackConstantTable = M.Map Fun [(QIdent, Profile)] 
 
 type BuiltinSet = S.Set QIdent -- built-in constants not expected in ConstantTable
 
 buildBackConstantTable :: ConstantTable -> BackConstantTable
 buildBackConstantTable table = M.fromListWith (++) [
-  (fun, [qid]) | 
+  (fun, [(qid, profile)]) | 
     (qid, entry) <- M.toList table,
-    fun <- map fst (primary entry : symbolics entry ++ synonyms entry)
+    (fun, profile) <- map fst (primary entry : symbolics entry ++ synonyms entry)
   ]
 
 ---- TODO: make this accessible from RunInformath
 printBackTable ::  BackConstantTable -> String
 printBackTable = unlines . map prEntry . M.toList where
-  prEntry :: (Fun, [QIdent]) -> String
-  prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g | QIdent g <- qids]
+  prEntry :: (Fun, [(QIdent, Profile)]) -> String
+  prEntry (f, qids) = showGFTree f ++ ": " ++ unwords [g ++ showProfile prof | (QIdent g, prof) <- qids]
 
 buildSymbolTable :: PGF -> Language -> [String] -> SymbolTable
 buildSymbolTable pgf lang ls = SymbolTable {
@@ -152,7 +169,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     semanticslines = filter isSemantics entrylines
     nlglines = filter isNLG entrylines
     constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map (parseGFTree pgf lang) (gfids ++ macros))) |
+        (QIdent qid, mkConstantTableEntry pgf (map (parseFunProfile pgf lang (ifDrop (QIdent qid))) (gfids ++ macros))) |
                      qid:gids@(_:_) <- map (splitEntry . unwords) constantlines,
 		     let (latexs, gfids) = partition ((=='$') . head) gids,
 		     let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
@@ -162,6 +179,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
 	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
     backConstantTable = buildBackConstantTable constantTable
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
+    ifDrop qid = M.lookup qid dropTable --- copy dropTable entry to profile
     macroTable = M.fromList (
         [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)] ++
 	[mkMacro qid gid i |
@@ -206,10 +224,10 @@ mkMacro qid s i = (macroName qid i, (maximum (0 : args s), init (tail s)))
 macroName :: String -> Int -> String
 macroName c i = "\\" ++ filter isAlpha c ++ "MACRo" ++ replicate i 'I'
 
-mkConstantTableEntry :: PGF -> [Fun] -> ConstantTableEntry
+mkConstantTableEntry :: PGF -> [FunProfile] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
-mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
-  primary = (fun, funtype pgf fun),
+mkConstantTableEntry pgf (funp@(fun, prof) : funps) = ConstantTableEntry {
+  primary = (funp, funtype pgf fun),
   symbolics = [(f, typ) | (f, typ) <- symbs],
   synonyms = [(f, typ) | (f, typ) <- syns]
   }
@@ -217,7 +235,7 @@ mkConstantTableEntry pgf (fun : funs) = ConstantTableEntry {
  
    funtype fun = inferFunType pgf
 
-   (symbs, syns) = partition (isSymbolic . snd) [(f, funtype pgf f) | f <- funs]
+   (symbs, syns) = partition (isSymbolic . snd) [(fp, funtype pgf f) | fp@(f,_) <- funps]
    isSymbolic typ = case unType typ of
      (_, cat, _) -> S.member (showCId cat) symbolicCats
 
@@ -284,7 +302,7 @@ symbolTableErrors dk pgf st =
                       (dkfun, (hypos, valtype)) <- funs,
 		      let drops = maybe 0 id (M.lookup dkfun dt),
 		      let dktyp = (drop drops hypos, valtype),
-		      (gffun, gftyp) <- allGFFuns ct dkfun,
+		      ((gffun, profile), gftyp) <- allGFFuns ct dkfun,
 		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
@@ -308,12 +326,16 @@ type DkTree a = Dedukti.AbsDedukti.Tree a
 annotateDkIdents :: Maybe Int -> Maybe Int -> ConstantTable -> DropTable -> DkTree a -> [DkTree a]
 annotateDkIdents msyns msymbs table drops =
                                checkSymbolics .
-                               annot [] . ignoreFirstArguments drops where
-
+                               annot []
+			       ---- . ignoreFirstArguments drops -- done with profile
+ where
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
   annot bounds t = case t of
-    QIdent _ | notElem t bounds -> annotId t
+    EApp fun arg -> case splitApp t of
+      (EIdent c, args) | notElem c bounds -> [appProfile p (foldl EApp (EIdent f) aargs) | (f, p) <- annotId c, aargs <- sequence (map (annot bounds) args)]
+      _ -> [EApp afun aarg | afun <- annot bounds fun, aarg <- annot bounds arg]
+    QIdent _ | notElem t bounds -> map fst (annotId t)
     EAbs b exp -> [EAbs b2 exp2 | b2 <- annot bounds b, exp2 <- annot (bind2ident b : bounds) exp]
     EFun h exp -> [EFun h2 exp2 | h2 <- annot bounds h, exp2 <- annot (hypo2topvars h ++ bounds) exp]    
     BVar _ -> [t]
@@ -328,10 +350,10 @@ annotateDkIdents msyns msymbs table drops =
   tkSymbs = maybe id take msymbs
 
   annotId c = case M.lookup c table of
-    Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) f |
-                       f <- tkSyns  (primary entry : synonyms entry) ++
-		            tkSymbs (symbolics entry)]
-    _ -> [c]
+    Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) fpt |
+                       fpt <- tkSyns  (primary entry : synonyms entry) ++
+               	              tkSymbs (symbolics entry)]
+    _ -> [(c, NoProfile)]
 
   checkSymbolics :: [DkTree a] -> [DkTree a]
   checkSymbolics ts = [t | t <- ts, not (badSymb t)] ---- null (badSymbolics t)]
@@ -379,9 +401,9 @@ annotateDkIdents msyns msymbs table drops =
       (f, ts) -> concatMap badSymbolics (f : ts)
     _ -> composOpM badSymbolics t
 
-annotIdent :: QIdent -> Int -> (Fun, Type) -> QIdent
-annotIdent (QIdent s) d (f, t) =
-  QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [show d]
+annotIdent :: QIdent -> Int -> (FunProfile, Type) -> (QIdent, Profile)
+annotIdent (QIdent s) d ((f, p), t) =
+  (QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [show d], p)
     where
       dk c = showCId c
       dkp f = showGFTree f

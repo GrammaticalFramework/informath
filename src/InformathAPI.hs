@@ -578,7 +578,7 @@ showGFFunctions env = [unwords ([showCId f, ":", showType [] t, "\t"] ++ map sho
 
 -- | To parse an example to a tree
 parseFunExample :: Env -> String -> [String]
-parseFunExample env s = map (showExpr []) (parseExample (grammar env) (symbolTableLang env) s)
+parseFunExample env s = map showFunProfile (parseExample (grammar env) (symbolTableLang env) s)
 
 -- | lexical functions reachable from the current symbol table
 reachableGFFunctions :: BackConstantTable -> S.Set CId

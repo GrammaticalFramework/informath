@@ -328,23 +328,22 @@ deduktiTokens = map prToken . myLexer
 ----- profiles, generalizing DROP ---
 
 data Profile =
-    NoProfile
+    NoProfile 
+  | DropProfile Int    -- number of args to drop, obsolete
   | PermProfile [Int]  -- first arg is #1
-
-readProfile :: String -> Profile
-readProfile s = case split ',' s of
-  ss | all (all isDigit) ss -> PermProfile (map read ss)
-  _ -> error $ "not a valid profile: " ++ s
 
 showProfile :: Profile -> String
 showProfile prof = case prof of
   NoProfile -> ""
+  DropProfile k -> "-" ++ show k
   PermProfile ints -> show ints
 
 -- from Dk to GF
 appProfile :: Profile -> Exp -> Exp
 appProfile prof exp = case prof of
   NoProfile -> exp
+  DropProfile int -> case splitApp exp of
+    (fun, args) -> foldl EApp fun (drop int args)
   PermProfile ints -> case splitApp exp of
     (fun, args) -> foldl EApp fun [args !! (i-1) | i <- ints]
 
@@ -352,6 +351,8 @@ appProfile prof exp = case prof of
 unappProfile :: Profile -> Exp -> Exp
 unappProfile prof exp = case prof of
   NoProfile -> exp
+  DropProfile k -> case splitApp exp of
+    (fun, args) -> foldl EApp fun (replicate k metaExp ++ args)
   PermProfile ints -> case splitApp exp of
     (fun, args) -> foldl EApp fun [look i | i <- [1 .. maximum ints]]
       where
@@ -359,11 +360,9 @@ unappProfile prof exp = case prof of
 	  Just j -> args !! j
 	  _ -> metaExp
 
--- from DROP k to PermProfile [k+1 .. n]
-dropProfile :: Int -> Exp -> Profile
-dropProfile k ty = case splitType (flattenType ty) of
-  (hypos, _) -> PermProfile [k+1 .. length hypos + 1]
 
+{-
+-- not needed for the time being AR 14/7/2026
 
 flattenType :: Exp -> Exp
 flattenType typ = case splitType typ of
@@ -382,4 +381,5 @@ flattenExp exp = case splitApp exp of
    flatAbs arg = case splitAbs arg of
      (binds, val) -> map (EIdent . bind2ident) binds ++ [val]
      
+-}
 
