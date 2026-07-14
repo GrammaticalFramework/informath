@@ -14,4 +14,11 @@ abstract MizarWords = Categories ** {
   	transitive_in_Adj2 : Adj2 ;
     binary_relation_Noun : Noun ;
     field_Fun : Fun ;
+    family_of_subsets_Dep : Dep ;
+    topological_structure_Noun : Noun ;
+    topology_Fun : Fun ;
+    carrier_Fun : Fun ;
+    one_sorted_Noun : Noun ;
+    isomorphic_AdjC : AdjC ;
+    isomorphism_DepC : DepC ;
 }
