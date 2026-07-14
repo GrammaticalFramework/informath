@@ -110,7 +110,7 @@ ni : contain_Verb2 | ni_Compar
 disjoint : disjoint_AdjC | AdjPrepAdj2 disjoint_Adj from_Prep | disjoint_Compar
 empty : empty_Adj | \isempty
 inhabited : inhabited_Adj
-sameParity : VerbVerbC (VerbPrepDefNounVerb have_Verb noPrep (AdjNounNoun same_Adj parity_Noun))
+sameParity : VerbVerbC (VerbDefNounVerb have_Verb (AdjNounNoun same_Adj parity_Noun))
 
 
 #CONV agda forall all

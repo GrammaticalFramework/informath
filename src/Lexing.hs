@@ -126,6 +126,7 @@ lexText' uncap1 = uncap . lext where
     c:cs | isMajorPunct c -> [c] : uncap (lext cs)
     c:cs | isMinorPunct c -> [c] : lext cs
     c:cs | isParen c      -> [c] : lext cs
+    '#':cs                -> "#" : lext cs -- for parsing position variables in examples
     c:cs | isSpace c      ->       lext cs
     _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x) s in w : lext cs
     _ -> [s]

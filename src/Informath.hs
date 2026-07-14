@@ -238,6 +238,7 @@ data Tree :: * -> * where
   GX_Argument :: Tree GArgument_
   GY_Argument :: Tree GArgument_
   GZ_Argument :: Tree GArgument_
+  GintArgument :: GInt -> Tree GArgument_
   GNounBinder :: GNoun -> Tree GBinder_
   GNounBinder1 :: GNoun -> Tree GBinder1_
   GNounBinder2 :: GNoun -> Tree GBinder2_
@@ -961,11 +962,15 @@ data Tree :: * -> * where
   GSinceConclusion :: GProp -> GProp -> Tree GUnit_
   GSinceGoal :: GProp -> GProp -> Tree GUnit_
   GSubsectionUnit :: GTitle -> GLabel -> Tree GUnit_
+  GVerbDefNounVerb :: GVerb -> GNoun -> Tree GVerb_
+  GVerbNounVerb :: GVerb -> GNoun -> Tree GVerb_
+  GVerbPluralNounVerb :: GVerb -> GNoun -> Tree GVerb_
   GVerbPrepDefNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   GVerbPrepNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   GVerbPrepPluralNounVerb :: GVerb -> GPrep -> GNoun -> Tree GVerb_
   LexVerb :: String -> Tree GVerb_
   GVerbPrepVerb2 :: GVerb -> GPrep -> Tree GVerb2_
+  GVerbVerb2 :: GVerb -> Tree GVerb2_
   LexVerb2 :: String -> Tree GVerb2_
   GVerbVerbC :: GVerb -> Tree GVerbC_
   LexVerbC :: String -> Tree GVerbC_
@@ -1008,6 +1013,7 @@ instance Eq (Tree a) where
     (GX_Argument,GX_Argument) -> and [ ]
     (GY_Argument,GY_Argument) -> and [ ]
     (GZ_Argument,GZ_Argument) -> and [ ]
+    (GintArgument x1,GintArgument y1) -> and [ x1 == y1 ]
     (GNounBinder x1,GNounBinder y1) -> and [ x1 == y1 ]
     (GNounBinder1 x1,GNounBinder1 y1) -> and [ x1 == y1 ]
     (GNounBinder2 x1,GNounBinder2 y1) -> and [ x1 == y1 ]
@@ -1731,11 +1737,15 @@ instance Eq (Tree a) where
     (GSinceConclusion x1 x2,GSinceConclusion y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSinceGoal x1 x2,GSinceGoal y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GSubsectionUnit x1 x2,GSubsectionUnit y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbDefNounVerb x1 x2,GVerbDefNounVerb y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbNounVerb x1 x2,GVerbNounVerb y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbPluralNounVerb x1 x2,GVerbPluralNounVerb y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GVerbPrepDefNounVerb x1 x2 x3,GVerbPrepDefNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbPrepNounVerb x1 x2 x3,GVerbPrepNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GVerbPrepPluralNounVerb x1 x2 x3,GVerbPrepPluralNounVerb y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (LexVerb x,LexVerb y) -> x == y
     (GVerbPrepVerb2 x1 x2,GVerbPrepVerb2 y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GVerbVerb2 x1,GVerbVerb2 y1) -> and [ x1 == y1 ]
     (LexVerb2 x,LexVerb2 y) -> x == y
     (GVerbVerbC x1,GVerbVerbC y1) -> and [ x1 == y1 ]
     (LexVerbC x,LexVerbC y) -> x == y
@@ -1883,12 +1893,14 @@ instance Gf GArgument where
   gf GX_Argument = mkApp (mkCId "X_Argument") []
   gf GY_Argument = mkApp (mkCId "Y_Argument") []
   gf GZ_Argument = mkApp (mkCId "Z_Argument") []
+  gf (GintArgument x1) = mkApp (mkCId "intArgument") [gf x1]
 
   fg t =
     case unApp t of
       Just (i,[]) | i == mkCId "X_Argument" -> GX_Argument 
       Just (i,[]) | i == mkCId "Y_Argument" -> GY_Argument 
       Just (i,[]) | i == mkCId "Z_Argument" -> GZ_Argument 
+      Just (i,[x1]) | i == mkCId "intArgument" -> GintArgument (fg x1)
 
 
       _ -> error ("no Argument " ++ show t)
@@ -3835,6 +3847,9 @@ instance Gf GUnit where
       _ -> error ("no Unit " ++ show t)
 
 instance Gf GVerb where
+  gf (GVerbDefNounVerb x1 x2) = mkApp (mkCId "VerbDefNounVerb") [gf x1, gf x2]
+  gf (GVerbNounVerb x1 x2) = mkApp (mkCId "VerbNounVerb") [gf x1, gf x2]
+  gf (GVerbPluralNounVerb x1 x2) = mkApp (mkCId "VerbPluralNounVerb") [gf x1, gf x2]
   gf (GVerbPrepDefNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepDefNounVerb") [gf x1, gf x2, gf x3]
   gf (GVerbPrepNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepNounVerb") [gf x1, gf x2, gf x3]
   gf (GVerbPrepPluralNounVerb x1 x2 x3) = mkApp (mkCId "VerbPrepPluralNounVerb") [gf x1, gf x2, gf x3]
@@ -3842,6 +3857,9 @@ instance Gf GVerb where
 
   fg t =
     case unApp t of
+      Just (i,[x1,x2]) | i == mkCId "VerbDefNounVerb" -> GVerbDefNounVerb (fg x1) (fg x2)
+      Just (i,[x1,x2]) | i == mkCId "VerbNounVerb" -> GVerbNounVerb (fg x1) (fg x2)
+      Just (i,[x1,x2]) | i == mkCId "VerbPluralNounVerb" -> GVerbPluralNounVerb (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepDefNounVerb" -> GVerbPrepDefNounVerb (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepNounVerb" -> GVerbPrepNounVerb (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2,x3]) | i == mkCId "VerbPrepPluralNounVerb" -> GVerbPrepPluralNounVerb (fg x1) (fg x2) (fg x3)
@@ -3851,11 +3869,13 @@ instance Gf GVerb where
 
 instance Gf GVerb2 where
   gf (GVerbPrepVerb2 x1 x2) = mkApp (mkCId "VerbPrepVerb2") [gf x1, gf x2]
+  gf (GVerbVerb2 x1) = mkApp (mkCId "VerbVerb2") [gf x1]
   gf (LexVerb2 x) = mkApp (mkCId x) []
 
   fg t =
     case unApp t of
       Just (i,[x1,x2]) | i == mkCId "VerbPrepVerb2" -> GVerbPrepVerb2 (fg x1) (fg x2)
+      Just (i,[x1]) | i == mkCId "VerbVerb2" -> GVerbVerb2 (fg x1)
 
       Just (i,[]) -> LexVerb2 (showCId i)
       _ -> error ("no Verb2 " ++ show t)
@@ -3919,6 +3939,7 @@ instance Compos Tree where
     GIdentsArgKind x1 x2 -> r GIdentsArgKind `a` f x1 `a` f x2
     GIndexedDeclarationArgKind x1 -> r GIndexedDeclarationArgKind `a` f x1
     GKindArgKind x1 -> r GKindArgKind `a` f x1
+    GintArgument x1 -> r GintArgument `a` f x1
     GNounBinder x1 -> r GNounBinder `a` f x1
     GNounBinder1 x1 -> r GNounBinder1 `a` f x1
     GNounBinder2 x1 -> r GNounBinder2 `a` f x1
@@ -4222,10 +4243,14 @@ instance Compos Tree where
     GSinceConclusion x1 x2 -> r GSinceConclusion `a` f x1 `a` f x2
     GSinceGoal x1 x2 -> r GSinceGoal `a` f x1 `a` f x2
     GSubsectionUnit x1 x2 -> r GSubsectionUnit `a` f x1 `a` f x2
+    GVerbDefNounVerb x1 x2 -> r GVerbDefNounVerb `a` f x1 `a` f x2
+    GVerbNounVerb x1 x2 -> r GVerbNounVerb `a` f x1 `a` f x2
+    GVerbPluralNounVerb x1 x2 -> r GVerbPluralNounVerb `a` f x1 `a` f x2
     GVerbPrepDefNounVerb x1 x2 x3 -> r GVerbPrepDefNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepNounVerb x1 x2 x3 -> r GVerbPrepNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepPluralNounVerb x1 x2 x3 -> r GVerbPrepPluralNounVerb `a` f x1 `a` f x2 `a` f x3
     GVerbPrepVerb2 x1 x2 -> r GVerbPrepVerb2 `a` f x1 `a` f x2
+    GVerbVerb2 x1 -> r GVerbVerb2 `a` f x1
     GVerbVerbC x1 -> r GVerbVerbC `a` f x1
     GListAdj x1 -> r GListAdj `a` foldr (a . a (r (:)) . f) (r []) x1
     GListArgKind x1 -> r GListArgKind `a` foldr (a . a (r (:)) . f) (r []) x1

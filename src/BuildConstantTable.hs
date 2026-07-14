@@ -46,8 +46,8 @@ parseExample pgf lang =
 
    lexex s = case s of
      c:' ':cs -> c : ' ' :lextex cs  -- don't uncap first letter
-     c:cs -> c : lextex cs  -- don't uncap first letter
-     _ -> s
+     c:cs | isAlpha c -> c : lextex cs -- don't uncap first letter
+     _ -> lextex s
 
 
 readGFTree :: String -> GFTree

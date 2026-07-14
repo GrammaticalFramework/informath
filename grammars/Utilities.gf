@@ -286,6 +286,8 @@ oper
       = \s -> {vp = mkVP (strV s) ; prep = strPrep ""} ;
     mkVerb2 : V -> Verb2T
       = \v -> {vp = mkVP v ; prep = strPrep ""} ;
+    mkVerb2 : VP -> Verb2T
+      = \vp -> {vp = vp ; prep = strPrep ""} ;
     mkVerb2 : V -> Prep -> Verb2T
       = \v, p -> {vp = mkVP v ; prep = p} ;
     mkVerb2 : VP -> Prep -> Verb2T

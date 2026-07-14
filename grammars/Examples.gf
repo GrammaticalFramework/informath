@@ -45,6 +45,8 @@ fun
   A_KindArgument, B_KindArgument : KindArgument ;
   x_BoundVariable, i_BoundVariable : BoundVariable ;
 
+  intArgument : Int -> Argument ;
+
   DefNounName : Noun -> Name ;
   ProperNameNounName : ProperName -> Noun -> Name ; --- ProperName in genitive: Euler's constant
 
@@ -65,10 +67,14 @@ fun
   NounPrepNoun2 : Noun -> Prep -> Noun2 ;
   NounNounC : Noun -> NounC ;
 
+  VerbDefNounVerb : Verb -> Noun -> Verb ;
   VerbPrepDefNounVerb : Verb -> Prep -> Noun -> Verb ;
+  VerbPluralNounVerb : Verb -> Noun -> Verb ;
+  VerbNounVerb : Verb -> Noun -> Verb ;
   VerbPrepPluralNounVerb : Verb -> Prep -> Noun -> Verb ;
   VerbPrepNounVerb : Verb -> Prep -> Noun -> Verb ;
   VerbPrepVerb2 : Verb -> Prep -> Verb2 ;
+  VerbVerb2 : Verb -> Verb2 ;
   VerbVerbC : Verb -> VerbC ;
   
   AdjNounNoun : Adj -> Noun -> Noun ;
@@ -94,7 +100,7 @@ fun
   NounBinder1 : Noun -> Binder1 ;
   NounBinder2 : Noun -> Binder2 ;
 
-  noPrep : Prep ;
+----  noPrep : Prep ;
 
   at_Prep : Prep ;
   between_Prep : Prep ;

@@ -65,6 +65,8 @@ lin
   A_KindArgument = NounKind (mkNoun "A") ;
   B_KindArgument = NounKind (mkNoun "B") ;
 
+  intArgument i = <symb (mkSymb ("#" ++ i.s)) : NP> ;
+
 ---  NounName noun = mkNP noun ;
   DefNounName noun = mkNP the_Det noun ;
   ProperNameNounName name noun = npGenNounNP (mkNP name) noun ;
@@ -87,10 +89,14 @@ lin
   NounPrepNoun2 noun prep = {cn = noun ; prep = prep} ;
   NounNounC noun = noun ;
 
+  VerbDefNounVerb verb noun = mkVP verb (mkAdv noPrep (mkNP the_Det noun)) ;
+  VerbPluralNounVerb verb noun = mkVP verb (mkAdv noPrep (mkNP aPl_Det noun)) ;
+  VerbNounVerb verb noun = mkVP verb (mkAdv noPrep (mkNP a_Det noun)) ;
   VerbPrepDefNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP the_Det noun)) ;
   VerbPrepPluralNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP aPl_Det noun)) ;
   VerbPrepNounVerb verb prep noun = mkVP verb (mkAdv prep (mkNP a_Det noun)) ;
   VerbPrepVerb2 verb prep = mkVerb2 verb prep ;
+  VerbVerb2 verb = mkVerb2 verb ;
   VerbVerbC verb = verb ;
 
   NounPrepDep noun prep = {cn = noun ; prep = prep} ;
@@ -116,9 +122,6 @@ lin
   NounBinder1 noun = noun ;
   NounBinder2 noun = noun ;
 
-
-  noPrep = strPrep "" ;
-
   at_Prep = Utilities.at_Prep ;
   between_Prep = Syntax.between_Prep ;
   by_Prep = Syntax.by8means_Prep ;
@@ -140,6 +143,9 @@ oper
     mkExample : Exp -> Utt = \p -> mkUtt p ;
     mkExample : Utt -> Str -> Utt = \u, s -> lin Utt {s = u.s ++ s} ;
     } ;
+
+  noPrep : Prep = strPrep "" ;
+
 
 
 }
