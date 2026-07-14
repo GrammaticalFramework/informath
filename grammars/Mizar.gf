@@ -6,11 +6,12 @@ abstract Mizar = Categories, Terms
   fun
     -- non_Adverb : Adverb ;
     Noun3Prop : Noun3 -> Exp -> Exp -> Exp -> Prop ;
+    NotNoun3Prop : Noun3 -> Exp -> Exp -> Exp -> Prop ;
 
     PredicateKind : [ArgKind] -> Kind ; -- hmm peut-être un peu trop large...
     BareSuchThatKind : Kind -> Prop -> Kind ;
     DefSuchThatJmt : Label -> [Hypo] -> Exp -> Kind -> Prop -> Jmt ;
-    ApposTermNoun : Noun -> Term -> Noun ;
+    ApposTermExp : Noun -> Term -> Exp ;
     ApposIdentNoun : Noun -> Ident -> Noun ;
     VerbCCollProp : VerbC -> [Exp] -> Prop;
     AdjNoun2Noun2 : Adj -> Noun2 -> Noun2 ;
@@ -21,6 +22,9 @@ abstract Mizar = Categories, Terms
     NounPrepsNoun3 : Noun -> Prep -> Prep -> Noun3 ;
     NounCCollProp : NounC -> [Exp] -> Prop ;
     FunIdentFun : Fun -> Ident -> Fun ;
+    DepNoun : Dep -> Exp -> Noun ;
+    Dep2Noun : Dep2 -> Exp -> Exp -> Noun ;
+    DepCNoun : DepC -> Exp -> Exp -> Noun ;
 
     TupleTerm : [Term] -> Term ;
     IdentPredicate : Ident -> Predicate;
@@ -32,5 +36,6 @@ abstract Mizar = Categories, Terms
     inverse_Oper : Oper ;
     apply_Oper2 : Oper2 ;
     apply_inverse_Oper2 : Oper2 ;
+    placeholderAdj_Adj2 : Adj2 ;
 
 }

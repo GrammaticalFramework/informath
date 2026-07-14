@@ -14,6 +14,7 @@ in {
 
   lin
   Noun3Prop noun x y z = simpleProp (mkS (mkCl x (Noun3ExpsNoun noun y z))) ;
+  NotNoun3Prop noun x y z = simpleProp (mkS negPol (mkCl x (Noun3ExpsNoun noun y z))) ;
 
   PredicateKind argkinds = {
     cn = mkCN predicate_N ;
@@ -30,8 +31,8 @@ in {
       (thenText hypos 
         (mkS (mkCl exp (mkNP a_Det (useKind (BareSuchThatKind kind cond)))))) ;
 
-  ApposTermNoun noun term =
-    mkCN noun (latexNP (mkSymb term.s)) ;
+  ApposTermExp noun term =
+    mkNP (mkCN noun (latexNP (mkSymb term.s))) ;
 
   ApposIdentNoun noun ident = mkCN noun (latexNP (mkSymb ident)) ;
 
@@ -52,6 +53,10 @@ in {
   NounCCollProp noun exps = simpleProp (mkS (mkCl (mkNP and_Conj exps) noun)) ;
 
   FunIdentFun func ident = {cn = ApposIdentNoun func.cn ident ; prep = func.prep} ;
+
+  DepNoun dep x = mkCN dep.cn (Syntax.mkAdv dep.prep x) ;
+  Dep2Noun dep x y = mkCN dep.cn (ccAdv (Syntax.mkAdv dep.prep1 x) (Syntax.mkAdv dep.prep2 y)) ;
+  DepCNoun dep x y = mkCN dep.cn (Syntax.mkAdv dep.prep (mkNP and_Conj x y)) ;
 
   
   TupleTerm ts = constant ("\\langle" ++ ts.s ++ "\\rangle") ** {isNumber = False} ;

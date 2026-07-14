@@ -15,4 +15,5 @@ concrete MizarEng of Mizar = CategoriesEng, TermsLatex
 
 in {
   -- lin non_Adverb = mkAdv "non" ;
+  lin placeholderAdj_Adj2 = mkAdj2 "adjective" "";
 }
