@@ -1,6 +1,10 @@
 RUN  := RunInformath
 OPEN := open  # pdf viewer command
 
+# Some colors to improve the readability
+lightgreen='\e[1;32m'
+neutral='\e[0;m'
+
 # for binary_packages
 ARCH := macos-arm
 VERSION := 0.3
@@ -60,38 +64,38 @@ cleangrammars:
 	cd grammars && rm *.gfo *.pgf *.hs
 
 demo:
-	echo "## The first user demo, only requiring Informath and Latex"
-	echo "## converting some simple arithmetic statements to English"
+	echo "${lightgreen}## The first user demo, only requiring Informath and Latex${neutral}"
+	echo "${lightgreen}## converting some simple arithmetic statements to English${neutral}"
 	$(RUN) -to-lang=Eng test/exx.dk
-	echo "## parsing generated English with conversions back to Dedukti"
+	echo "${lightgreen}## parsing generated English with conversions back to Dedukti${neutral}"
 	$(RUN) -to-lang=Eng test/exx.dk >out/exx.txt
 	$(RUN) -from-lang=Eng out/exx.txt | grep -v UN
-	echo "## parsing examples from Chartrand et al. with conversions to Dedukti"
+	echo "${lightgreen}## parsing examples from Chartrand et al. with conversions to Dedukti${neutral}"
 	$(RUN) -from-lang=Eng test/gflean-data.txt | grep -v UN
 	cat share/BaseConstants.dk test/exx.dk >out/bexx.dk
-	echo "## converting some simple arithmetic statements to Agda"
+	echo "${lightgreen}## converting some simple arithmetic statements to Agda${neutral}"
 	$(RUN) -to-formalism=agda test/exx.dk
-	echo "## converting some simple arithmetic statements to Rocq"
+	echo "${lightgreen}## converting some simple arithmetic statements to Rocq${neutral}"
 	$(RUN) -to-formalism=rocq test/exx.dk
-	echo "## converting some simple arithmetic statements to Lean"
+	echo "${lightgreen}## converting some simple arithmetic statements to Lean${neutral}"
 	$(RUN) -to-formalism=lean test/exx.dk
-	echo "# converting some set theory statements to LaTeX"
+	echo "${lightgreen}# converting some set theory statements to LaTeX${neutral}"
 	$(RUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
-	echo "consider pdflatex out/sets.tex"
-	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
+	echo "${lightgreen}consider pdflatex out/sets.tex${neutral}"
+	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symbolics=$(symbolics) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 
 multidemo:
 	make demo
-	echo "## converting some simple arithmetic statements to French"
+	echo "${lightgreen}## converting some simple arithmetic statements to French${neutral}"
 	$(RUN) -to-lang=Fre test/exx.dk
-	echo "## converting some simple arithmetic statements to Swedish"
+	echo "${lightgreen}## converting some simple arithmetic statements to Swedish${neutral}"
 	$(RUN) -to-lang=Swe test/exx.dk
 
 fulldemo:
 	make multidemo
-	echo "## converting some simple arithmetic statements to German"
+	echo "${lightgreen}## converting some simple arithmetic statements to German${neutral}"
 	$(RUN) -to-lang=Ger test/exx.dk
 
 
@@ -109,88 +113,88 @@ devtest:
 
 
 typechecks:
-	echo "## converting some simple arithmetic statements to Agda"
+	echo "${lightgreen}## converting some simple arithmetic statements to Agda${neutral}"
 	echo "open import BaseConstants\n\n" >out/exx.agda
 	$(RUN) -to-formalism=agda test/exx.dk >>out/exx.agda
 	cp -p share/baseconstants.agda out/
-	echo "## checking the generated file in Agda"
+	echo "${lightgreen}## checking the generated file in Agda${neutral}"
 	cd out ; agda --prop exx.agda
-	echo "## converting some simple arithmetic statements to Rocq"
+	echo "${lightgreen}## converting some simple arithmetic statements to Rocq${neutral}"
 	$(RUN) -to-formalism=rocq test/exx.dk >out/exx.v
 	cat share/baseconstants.v out/exx.v >out/bexx.v
-	echo "## checking the generated file in Rocq"
-	coqc out/bexx.v
-	echo "## converting some simple arithmetic statements to Lean"
+	echo "${lightgreen}## checking the generated file in Rocq${neutral}"
+	rocq out/bexx.v
+	echo "${lightgreen}## converting some simple arithmetic statements to Lean${neutral}"
 	$(RUN) -to-formalism=lean test/exx.dk >out/exx.lean
-	echo "## checking the generated file in Lean"
+	echo "${lightgreen}## checking the generated file in Lean${neutral}"
 	cat share/baseconstants.lean out/exx.lean >out/bexx.lean
 	lean out/bexx.lean
 
 
 top100:
-	echo "## creating and displaying a LaTeX document from a sample of 100 theorems"
+	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100verbal:
-	echo "## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable"
+	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symboltables=test/verbalconstants.dkgf -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100profile:
-	echo "## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable with profiles"
+	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable with profiles${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symboltables=test/profileconstants.dkgf -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100check:
-	echo "## type-checking the theorems in Dedukti"
+	echo "${lightgreen}## type-checking the theorems in Dedukti${neutral}"
 	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 top100single:
-	echo "## generating only the best-ranked verbalizations of 100 theorems"
+	echo "${lightgreen}## generating only the best-ranked verbalizations of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 sets:
-	echo "# checking some set theory statements and generating LaTeX"
+	echo "${lightgreen}# checking some set theory statements and generating LaTeX${neutral}"
 	cat share/BaseConstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
 	$(RUN) -variations -to-latex-doc -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
 maps:
-	echo "# checking some maps theory statements and generating LaTeX"
+	echo "${lightgreen}# checking some maps theory statements and generating LaTeX${neutral}"
 	cat share/BaseConstants.dk test/maps.dk >out/mapsx.dk
 	dk check out/mapsx.dk
 	$(RUN) -to-latex-doc -to-lang=$(lang) -add-symboltables=test/maps.dkgf test/maps.dk >out/maps.tex
 	cd out ; pdflatex maps.tex ; $(OPEN) maps.pdf
 
 topo:
-	echo "# checking some topology statements and generating LaTeX"
+	echo "${lightgreen}# checking some topology statements and generating LaTeX${neutral}"
 	dk check test/topo.dk
 	$(RUN) -to-latex-doc -to-lang=$(lang) -add-symboltables=test/topo.dkgf test/topo.dk >out/topo.tex
 	cd out ; pdflatex topo.tex ; $(OPEN) topo.pdf
 
 sigma:
-	echo "# generating some expressions with sums and integrals"
+	echo "${lightgreen}# generating some expressions with sums and integrals${neutral}"
 	$(RUN) -variations -to-latex-doc test/sigma.dk >out/sigma.tex
 	cd out ; pdflatex sigma.tex ; $(OPEN) sigma.pdf
 
 embedded_sigma:
-	echo "# generating some expressions with sums and integrals in embedded tex"
+	echo "${lightgreen}# generating some expressions with sums and integrals in embedded tex${neutral}"
 	$(RUN) -variations -nbest=3 test/sigma.dktex >out/emsigma.tex
 	cd out ; pdflatex emsigma.tex ; $(OPEN) emsigma.pdf
 
 hott_demo:
-	echo "# generating Homotopy Type Theory statements"
+	echo "${lightgreen}# generating Homotopy Type Theory statements${neutral}"
 	$(RUN) -variations -nbest=10 -to-latex-doc -symboltables=test/hott_demo.dkgf test/hott_demo.dk >out/hott_demo.tex
 	cd out ; pdflatex hott_demo.tex ; $(OPEN) hott_demo.pdf
 
 symboltest:
-	echo "# testing an example-based symbol table"
+	echo "${lightgreen}# testing an example-based symbol table${neutral}"
 	dk check test/symboltest.dk
 	RunInformath -base=test/symboltest.dk test/symboltest.dkgf
 	RunInformath -add-symboltables=test/symboltest.dkgf -variations -to-latex-doc test/symboltest.dk
@@ -200,12 +204,12 @@ natural_deduction:
 	cd out ; pdflatex nd.tex ; $(OPEN) nd.pdf
 
 natural_deduction_rules:
-	echo "## generating some natural deduction proofs"
+	echo "${lightgreen}## generating some natural deduction proofs${neutral}"
 	$(RUN) -to-latex-doc -symboltables=test/natural_deduction.dkgf test/natural_deduction.dk >out/ndr.tex
 	cd out ; pdflatex ndr.tex ; $(OPEN) ndr.pdf
 
 proof_units:
-	echo "proof units have no Dedukti formalization so far"
+	echo "${lightgreen}proof units have no Dedukti formalization so far${neutral}"
 #	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
 mathcore_examples:
@@ -215,12 +219,12 @@ mathextensions_examples:
 	$(RUN) -add-symboltables=test/natural_deduction.dkgf test/mathextensions_examples.dk
 
 naproche:
-	echo "## parsing and regenerating a Naproche document without going through Dedukti"
+	echo "${lightgreen}## parsing and regenerating a Naproche document without going through Dedukti${neutral}"
 	$(RUN) -translate -to-latex-doc -variations -synonyms=$(synonyms)  -symbolics=$(symbolics) -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
 	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
 
 interpret_naproche:
-	echo "## parsing and regenerating a Naproche document going through Dedukti"
+	echo "${lightgreen}## parsing and regenerating a Naproche document going through Dedukti${neutral}"
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
 	$(RUN) -to-latex-doc -variations -synonyms=$(synonyms)  -symbolics=$(symbolics) -nbest=100 -to-lang=$(lang) tmp/napzf.dk >out/inapzf.tex
 	cd out ; pdflatex inapzf.tex ; $(OPEN) inapzf.pdf
@@ -246,7 +250,7 @@ matita:
 	$(RUN) -symboltables=test/empty.dkgf test/mini-matita.dk
 
 gflean:
-	echo "## parsing examples from Chartrand et al. with conversions to Dedukti"
+	echo "${lightgreen}## parsing examples from Chartrand et al. with conversions to Dedukti${neutral}"
 	$(RUN) test/gflean-data.txt
 
 fermat:
@@ -267,5 +271,3 @@ binary_packages:
 	cp -p share/InformathEng.pgf share/InformathFull.pgf tmp/
 	cd tmp ; strip RunInformath ; tar cvfz RunInformath-$(VERSION)-$(ARCH).tgz RunInformath ; tar cvfz Informath-grammars-$(VERSION).tgz InformathEng.pgf InformathFull.pgf
 	ls -l tmp/*.tgz
-
-
