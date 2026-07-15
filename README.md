@@ -14,7 +14,7 @@
 
 15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
 
-9 June 2026: moved experimental and/or deprecated code to a separate repo, [informath-experiments](https://github.com/aarneranta/informath-experiments).
+9 June 2026: moved experimental and/or deprecated code to a separate repository, called [informath-experiments](https://github.com/aarneranta/informath-experiments).
 
 6 May 2026: New binary release, entitled [Informath-0.3](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.3).
 
@@ -58,7 +58,7 @@ The Informath project addresses the problem of translating between formal and in
 - informal to informal (translation, via formal)
 - formal to formal (works in special cases)
 
-The formal languages included are Agda, Rocq (formerly Coq), Dedukti, and Lean. The informal languages are English, French, German, and Swedish. 
+The formal languages included are [Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/) (formerly Coq), [Dedukti](https://deducteam.github.io/), and [Lean](https://lean-lang.org/). The informal languages are English, French, German, and Swedish. 
 
 Here is an example statement involving all of the currently available languages. The Dedukti statement has been used as the source of all the other formats. 
 ```
@@ -134,20 +134,19 @@ $ RunInformath -help
 
 - If you are on a Mac, you may be blocked by a message saying that you cannot run software from untrusted source.
 There is a solution for this in security setting, described in [Mac support](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac).
-- 
 
 ### Compiling from source
 
 If you cannot use a ready-made binary, do
 ```
-  $ make
+$ make
 ```
 to build the executable `RunInformath` and all its dependencies.
 You will need to set the environment variable `INFORMATH_ROOT` to point to the directory where the `share/` directory resides (the same as where this README.md resides).
 
 After that, you can do
 ```
-  $ make demo
+$ make demo
 ```
 which illustrates different functionalities: translating between Dedukti and natural languages, as well as from Dedukti to Agda, Rocq, and Lean. 
 
@@ -163,7 +162,7 @@ Building the system from source requires the following software:
 
 ## Some test datasets
 
-The following datasets can be processed with `RunInformath <filename>` to generate text or code eveb without additional options; see `RunInformath -help` to see what can be done with various options.
+The following datasets can be processed with `RunInformath <filename>` to generate text or code even without additional options; see `RunInformath -help` to see what can be done with various options.
 
 - [test/exx.dk](./test/exx.dk) is a set of simple arithmetic statements.
 
@@ -231,7 +230,7 @@ In the root, you have
 
 The [src](./src/) directory contains
 - Haskell and other sources
-- subdirectory in [typetheory](./src/typetheory/) with generated parser and printer for the proof systems [Dedukti](https://deducteam.github.io/), Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) 
+- subdirectory in [typetheory](./src/typetheory/) with generated parser and printer for the proof systems [Dedukti](https://deducteam.github.io/), [Agda](https://wiki.portal.chalmers.se/agda/pmwiki.php), [Rocq](https://rocq-prover.org/), and [Lean](https://lean-lang.org/) 
 - a translator from MathCore to Dedukti and vice-versa
 - translations between MathCore and Informath
 
@@ -249,7 +248,7 @@ The [grammars](./grammars) directory contains
 
 - [MathCore](./grammars/MathCore.gf), the abstract syntax of a minimal CNL for mathematics
 - [MathCoreEng](./grammars/MathCoreEng.gf), Fre, Ger, Swe - concrete syntaxes of MathCore 
-- [MathExtensions(./grammars/MathExtensions.gf), an extension of MathCore with alternative expressions, and corresponding concrete syntaxes
+- [MathExtensions](./grammars/MathExtensions.gf), an extension of MathCore with alternative expressions, and corresponding concrete syntaxes
 - [WikidataWords](./grammars/WikidataWords.gf), lexicon of natural language words usable mathematical concepts
 - [ProperNames](./grammars/ProperNames.gf), a lexicon of mathematicians' names that appear in mathematical constants, such as "Hilbert space"
 - [VerbalConstants](./grammars/VerbalConstants.gf), a small lexicon of natural language mathematical concepts
@@ -295,7 +294,7 @@ Conversions from Dedukti to Agda, Coq, and Lean and back are mostly engineering 
 
 The type checking is based on the file [BaseConstants.dk](./share/baseconstants.dk), which is meant to be extended as the project grows. This file type checks in Dedukti with the command
 ```
-  $ dk check BaseConstants.dk
+$ dk check BaseConstants.dk
 ```
 The example file [test/exx.dk](./src/test/exx.dk) assumes this file. As shown in `make demo`, it must at the moment be appended to the base file to type check:
 ```
@@ -340,7 +339,7 @@ Generation from Dedukti is similar to Agda, but type checking requires at the mo
 ```
 $ RunInformath -to-formalism=rocq test/exx.dk >exx.v
 $ cat BaseConstants.v exx.v >bexx.v
-$ coqc bexx.lean
+$ rocq bexx.lean
 ```
 This should be made less cumbersome in the future.
 
@@ -371,11 +370,11 @@ $ RunInformath -symboltables=test/empty.dkgf test/mini-matita.dk
 ```
 If you don't want to replace `baseconstants.dkgf` but just add your own `.dkgf` files to it, you can use the flag `-add-symboltables`. Your own entries override the ones in `baseconstants.dkgf`.
 
-Thus the mapping between Dedukti and GF is defined in .dkgf files, by default in [baseconstants.dkgf](share/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](share/baseconstant.dk). The syntax of .dkgf files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
+Thus the mapping between Dedukti and GF is defined in `.dkgf` files, by default in [baseconstants.dkgf](share/baseconstants.dkgf), which assigns GF functions to the constants in [BaseConstants.dk](share/baseconstant.dk). The syntax of `.dkgf` files has several kinds of lines, the most important of which is the mapping of Dedukti constants to GF functions:
 ```
 <DeduktiIdent> : <GFFunction> | ... | <GFFunction>
 ```
-This line maps the Dedukti identifier to the different GF functions usable for expressing the Dedukti concept; the first one is consireded primary and the other ones are optional synonyms. 
+This line maps the Dedukti identifier to the different GF functions usable for expressing the Dedukti concept; the first one is considered primary and the other ones are optional synonyms. 
 
 The GF functions can be given explicitly as abstract syntax identifiers.
 But there is also a more natural way: by giving verbal strings that show how a function is applied to its arguments. For example, the line
@@ -410,7 +409,7 @@ The symbol table line
 ```
 #DROP <DeduktiIdent> <int>
 ```
-tells the conversion from Dedukti to GF to drop a number of initial arguments of the function application. These are typically the "hidden arguments" in some other formalism, which Dedukti has to make explicit.
+tells the conversion from Dedukti to GF to drop a number of initial arguments of the function application. These are typically the "hidden arguments" in some other formalisms, which Dedukti has to make explicit.
 
 ```
 #CONV <formalism> <DeduktiIdent> <FormalismIdent>
@@ -422,7 +421,7 @@ defines a conversion of a Dedukti identifier to another formalism, such as Lean,
 ``` 
 lists Dedukti identifiers that have built-in mappings in Informath's Haskell code. These lines are included to prevent spurious warnings when checking the symbol table. In `baseconstants.dkgf`, they include digits and a few other functions.  
 
-The coverage of Informath can thus be extended by writing a .dkgf file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+`. The flag `-add-symboltables=<file.dhf>+` includes `base_constants.dkgf` as one of the files. 
+The coverage of Informath can thus be extended by writing a `.dkgf` file that maps Dedukti identifiers to GF functions. If those GF functions are already available, nothing else is needed than the inclusion of the flag `-symboltables=<file>.dkgf+`. The flag `-add-symboltables=<file.dhf>+` includes `base_constants.dkgf` as one of the files. 
 
 How to define new GF functions is covered in the [under the hood document](./doc/informath-under-the-hood.md). But this should not always be necessary, at least for English, which has a large lexicon that supports the parsing of strings into symbol table entries.
 
@@ -441,7 +440,7 @@ ProofExp   theorem label     NP                  Theorem 1
 Term       symbolic term     TermPrec            x + 2
 Formula    symbolic formula  TermPrec            x > 2
 ```
-The "linguistic type" here refers to a type in the [GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/), which is used in the implementation of the grammar. The category `TermPrec` means term with a precedence level, where a small integer controls the use of parentheses in combinations. 
+The "linguistic type" here refers to a type in the [GF Resource Grammar Library (RGL)](https://www.grammaticalframework.org/lib/doc/synopsis/), which is used in the implementation of the grammar. The category `TermPrec` represents the set of terms with a precedence level, where a small integer controls the use of parentheses in combinations. 
 
 Unless you are willing to modify the GF grammars and the Haskell code, you will never have to write the name of a syntactic category. 
 The most intuitive way to adapt Informath to your Dedukti files is by using **example-based symbol table entries**.
@@ -504,7 +503,7 @@ ProofExp:
   | "<ProperName>'s <Noun> ."
 ```
 The variable names `X`, `Y`, `Z`, `A`, `B`, `x` used in the examples are special constants included in the grammar for parsing examples.
-Therefore, you must use some of them and no other symbols, whereas the category symbols `<Adj>`, `<Noun>`, etc range over all words included in the Informath grammar.
+Therefore, you must use some of them and no other symbols, whereas the category symbols `<Adj>`, `<Noun>`, etc. range over all words included in the Informath grammar.
 
 So, what are these placeholders `<Adj>`, `<Noun>`, `<Prep>`, `<Verb>`, `<ProperName>`, `<Ident>`, `<Int>`?  
 All but the last two are **lexical categories**, that is, categories of individual words such as "integer" and multiword phrases such as "natural number". 
@@ -586,7 +585,7 @@ The syntax of bindings definable in symbol tables is still an experimental featu
 ### Inspecting the Informath lexicon
 
 The Informath lexicon contains entries from each of the lexical categories.
-It can be inspected with RunInformath itself by using the flag `-find-gf`:
+It can be inspected with `RunInformath` itself by using the flag `-find-gf`:
 ```
 $ echo "vector orthogonal" | RunInformath -find-gf
 
@@ -612,7 +611,7 @@ stetig
 
 ### Type checking symbol tables
 
-It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may cause run-time failures. Because of this, RunInformath provides a static checker of symbol tables, invoked as follows:
+It is important that the types of Dedukti functions and GF functions match, at least in terms of arity; otherwise, informalization may cause run-time failures. Because of this, `RunInformath` provides a static checker of symbol tables, invoked as follows:
 ```
 $ RunInformath -base=<file.dk> <file>.dkgf
 ```
@@ -681,4 +680,4 @@ The following fine-grained categories are available for symbolic renderings:
   Oper        Term -> Term             \sqrt{Y}
   Oper2       Term -> Term -> Term     X + Y
 ```
-The grammar contains some antries from each category. In addition to this, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories. However, these macro definitions do not yet cover precedences and associativity, whereas GF grammar entries do. We are working on a way to enable setting them for new operators without extending the grammar.
+The grammar contains some entries from each category. In addition to this, with the possibility to define macros in the symbol table, one can extend the `Term` and `Formula` rendering facilities without adding new entries to these categories. However, these macro definitions do not yet cover precedences and associativity, whereas GF grammar entries do. We are working on a way to enable setting them for new operators without extending the grammar.
