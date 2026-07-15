@@ -5,7 +5,7 @@ module Main where
 
 import Environment
 import InformathAPI
-import Utils (showFreqs, fileSuffix)
+import Utils (showFreqs, fileSuffix, dictValues)
 
 ---- import InformathServer --- TODO-server
 
@@ -46,10 +46,16 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
     Just (file, txt) | elem txt ["tex", "txt", "md"] && elem "-unknown-words" args -> do
       s <- readFile file 
       mapM_ putStrLn (showFreqs (unknownWordsInTex env s))
+    Just (file, txt) | elem txt ["dkgf"] && elem "-unknown-words" args -> do
+      s <- readFile file 
+      mapM_ putStrLn (showFreqs (unknownWordsInTex env (unlines (dictValues s))))
     Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
       s <- readFile file 
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
+    Just (file, "dkgf") | elem "-try-symboltable" args -> do
+      ss <- readFile file >>= return . lines
+      mapM_ putStrLn (tryParseSymbolTable env ss)
     Just (file, "dkgf") -> do
       st <- readSymbolTable (grammar env) (fromLang env) [file]
       putStrLn (printSymbolTable st)
@@ -140,6 +146,7 @@ helpMsg4 = [
   just "-from-gf-trees" "treat input as GF trees (also combinable with -to-formalism=dedukti)",
   just "-all-gf-functions" "show all GF functions with their types",
   just "-parse-example" "parse example candidate lexical item (includes unreachables)",
+  just "-try-symboltable" "try to build a symbol table from a .dkgf file, report errors line by line",
   just "-failures" "show lines that fail to parse",
   "",
   "* General output options:",

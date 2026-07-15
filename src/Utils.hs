@@ -88,3 +88,8 @@ transInEnv env trans = chop where
 strip :: String -> String
 strip = unwords . words
 
+
+-- Python-like dict values from line by line from e.g. symbol tables
+dictValues :: String -> [String]
+dictValues = map (drop 1 . dropWhile (/= ':')) . lines 
+

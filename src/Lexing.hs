@@ -104,6 +104,8 @@ isMinorPunct = flip elem ",:;"
 isParen = flip elem "()[]{}"
 isOpening = flip elem "([{"
 isClosing = flip elem ")]}"
+isSpecial = flip elem "%&/#\""
+
 
 unlexCode :: [String] -> String
 unlexCode s = case s of
@@ -126,9 +128,9 @@ lexText' uncap1 = uncap . lext where
     c:cs | isMajorPunct c -> [c] : uncap (lext cs)
     c:cs | isMinorPunct c -> [c] : lext cs
     c:cs | isParen c      -> [c] : lext cs
-    '#':cs                -> "#" : lext cs -- for parsing position variables in examples
+    c:cs | isSpecial c    -> [c] : lext cs
     c:cs | isSpace c      ->       lext cs
-    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x) s in w : lext cs
+    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x || isSpecial x) s in w : lext cs
     _ -> [s]
   uncap s = case s of
     w:ws -> uncap1 w:ws

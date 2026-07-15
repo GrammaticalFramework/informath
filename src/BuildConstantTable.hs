@@ -5,6 +5,7 @@ module BuildConstantTable where
 
 import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
+import Dedukti.ErrM
 
 import CommonConcepts
 import DeduktiOperations
@@ -32,16 +33,33 @@ showGFTree = showExpr []
 showFunProfile :: FunProfile -> String
 showFunProfile (f, p) = showGFTree f ++ showProfile p
 
---- OK to fail, because it should stop compilation
+-- OK to fail, because it should stop compilation
 parseFunProfile :: PGF -> Language -> Maybe Int -> String -> FunProfile
-parseFunProfile pgf lang mdrop s = case s of
+parseFunProfile pgf lang mdrop s = case tryParseFunProfile pgf lang mdrop s of
+  Ok fp -> fp
+  Bad s -> error s
+
+-- used for parsing line by line
+tryParseFunProfile :: PGF -> Language -> Maybe Int -> String -> Err FunProfile
+tryParseFunProfile pgf lang mdrop s = case s of
   '"':cs -> case parseExample pgf lang (init cs) of
-    [] -> error $ "cannot parse example: " ++ s
+    [] -> Bad $ "cannot parse example: " ++ s
     tp@(t, p):_ -> case (mdrop, p) of   ---- TODO: if many parses?
-      (Nothing, _) -> tp
-      (Just k, NoProfile) -> (t, DropProfile k)
-      _ -> error $ "conflicting profile information in " ++ s
-  _ -> (readGFTree s, maybe NoProfile DropProfile mdrop)
+      (Nothing, _) -> return tp
+      (Just k, NoProfile) -> return (t, DropProfile k)
+      _ -> Bad $ "conflicting profile information in " ++ s
+  _ -> return (readGFTree s, maybe NoProfile DropProfile mdrop)
+
+
+-- no separate drop table assumed here; could be done by preproc in general
+tryParseConstantTableEntry :: PGF -> Language -> String -> Err (QIdent, ConstantTableEntry)
+tryParseConstantTableEntry pgf lang s = do
+  let qid:gids = splitEntry s
+  let (latexs, gfids) = partition ((=='$') . head) gids
+  let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
+  annots <- mapM (tryParseFunProfile pgf lang Nothing) (gfids ++ macros) -- Nothing as no separate drop table
+  let entry = mkConstantTableEntry pgf annots
+  return (QIdent qid, entry)
 
 parseExample :: PGF -> Language -> String -> [FunProfile]
 parseExample pgf lang =

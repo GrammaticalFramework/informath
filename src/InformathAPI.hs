@@ -542,7 +542,7 @@ unknownWordsInTex env = frequencyTable . missingWords env . lextex
 
 -- | List of missing words on a line.
 missingWords :: Env -> String -> [String]
-missingWords env = morphoMissing (morpho env) . words . lextex
+missingWords env = morphoMissing (morpho env) . tokens . lextex
  where
    tokens = ordinary [] . words
    ordinary acc ws = case ws of
@@ -586,6 +586,16 @@ reachableGFFunctions bt = S.fromList [f | t <-  M.keys bt, f <- ids t] where
   ids t = case unApp t of
     Just (f, xs) -> f : concatMap ids xs
     _ -> []
+
+
+-- | try parse a symbol table line by line (only annotations for the time being), report success or failure
+tryParseSymbolTable :: Env -> [String] -> [String]
+tryParseSymbolTable env ls = map tryParse ils
+  where
+    ils = zip [1..] ls
+    tryParse (i, s) = case tryParseConstantTableEntry (grammar env) (fromLang env) s of
+      Ok _ -> unwords ["line", show i, "OK:", s]
+      Bad m -> unwords ["line", show i, "BAD:", s, "ERROR:", m]
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
