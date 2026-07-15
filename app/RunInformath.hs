@@ -53,9 +53,10 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       s <- readFile file 
       let results = processLatex env s
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
-    Just (file, "dkgf") | elem "-try-symboltable" args -> do
+    Just (file, "dkgf") | any (flip elem args) ["-try-symboltable", "-keep-ok-entries"] -> do
       ss <- readFile file >>= return . lines
-      mapM_ putStrLn (tryParseSymbolTable env ss)
+      let rs = tryParseSymbolTable env ss
+      mapM_ putStrLn rs
     Just (file, "dkgf") -> do
       st <- readSymbolTable (grammar env) (fromLang env) [file]
       putStrLn (printSymbolTable st)
@@ -147,6 +148,7 @@ helpMsg4 = [
   just "-all-gf-functions" "show all GF functions with their types",
   just "-parse-example" "parse example candidate lexical item (includes unreachables)",
   just "-try-symboltable" "try to build a symbol table from a .dkgf file, report errors line by line",
+  just "-keep-ok-entries" "print a symbol table with just the OK entries", 
   just "-failures" "show lines that fail to parse",
   "",
   "* General output options:",

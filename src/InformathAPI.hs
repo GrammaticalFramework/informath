@@ -594,8 +594,9 @@ tryParseSymbolTable env ls = map tryParse ils
   where
     ils = zip [1..] ls
     tryParse (i, s) = case tryParseConstantTableEntry (grammar env) (fromLang env) s of
-      Ok _ -> unwords ["line", show i, "OK:", s]
-      Bad m -> unwords ["line", show i, "BAD:", s, "ERROR:", m]
+      Ok _ | isFlag "-keep-ok-entries" env -> s
+      Ok _ -> unwords ["#line", show i, "OK:", s]
+      Bad m -> unwords ["#line", show i, "BAD:", s, "ERROR:", m]
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
