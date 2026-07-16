@@ -89,7 +89,29 @@ strip :: String -> String
 strip = unwords . words
 
 
+-- like Python split();  Data.List.Split cannot be found...
+split :: Char -> String -> [String]
+split c cs = case break (==c) cs of
+  ([], []) -> []
+  (s,  []) -> [strip s]
+  (s, _:s2) -> strip s : split c s2
+ where
+  strip = unwords . words
+
+
+-- split with c outside a given lim env, such as $..$
+-- split with c outside a given lim env, such as $..$
+splitOutside lim c str = filter (not . null) (gather segments)
+  where
+    s = dropWhile isSpace str
+    startlim = if (take 1 s == [lim]) then 1 else 0
+    segments = filter (not . null) (split lim s)
+    gather segs = concatMap handle (zip segs [startlim ..])
+    handle (seg, i) = if (even i) then split c seg else [lim : seg ++ [lim]]
+
 -- Python-like dict values from line by line from e.g. symbol tables
 dictValues :: String -> [String]
-dictValues = map (drop 1 . dropWhile (/= ':')) . lines 
+dictValues = map (drop 1 . dropWhile (/= ':')) . lines
+
+
 

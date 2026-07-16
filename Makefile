@@ -144,7 +144,7 @@ top100verbal:
 
 top100profile:
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems with a parsed symboltable with profiles${neutral}"
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symboltables=test/profileconstants.dkgf -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symboltables=test/profileconstants.dkgf -symbolics=$(symbolics) -sampling=$(sampling) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100check:
