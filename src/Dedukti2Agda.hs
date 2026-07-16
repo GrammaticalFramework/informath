@@ -53,7 +53,7 @@ transExp t = case t of
     (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> A.EIdent (A.AIdent s) --- no A.EInt
-	_ -> A.EApp (transExp exp0) (transExp exp1)
+        _ -> A.EApp (transExp exp0) (transExp exp1)
     _ -> A.EApp (transExp exp0) (transExp exp1)
   EAbs bind exp -> A.EAbs (transBind bind) (transExp exp)
   EFun hypo exp -> A.EFun (transHypo hypo) (transExp exp)

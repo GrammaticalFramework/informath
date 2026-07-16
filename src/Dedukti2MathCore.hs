@@ -30,51 +30,49 @@ jmt2jmt jmt = case jmt of
   JDef ident MTNone (MEExp exp) ->
     GDefUntypedExpJmt (LexLabel "definitionLabel") (ident2exp ident) (exp2exp exp)
   JDef ident@(QIdent sident) (MTExp typ) meexp ->
-    let (hypos, kind) = splitType typ
-	cat = guessGFCat ident typ
-	vhypos = addVarsToHypos meexp hypos
-        chypos = hypos2hypos vhypos
-	ghypos = GListHypo chypos
-	hvars  = (concatMap hypo2vars vhypos)
-	shvars = case lookupConstantFull sident of
-	  Just (_, _, _, d) -> drop d hvars 
-	  _ -> hvars
-	definiendum = foldl EApp (EIdent ident) (map EIdent shvars)
+    let
+      (hypos, kind) = splitType typ
+      cat = guessGFCat ident typ
+      vhypos = addVarsToHypos meexp hypos
+      chypos = hypos2hypos vhypos
+      ghypos = GListHypo chypos
+      hvars  = (concatMap hypo2vars vhypos)
+      shvars = case lookupConstantFull sident of
+        Just (_, _, _, d) -> drop d hvars 
+        _ -> hvars
+      definiendum = foldl EApp (EIdent ident) (map EIdent shvars)
     in case cat of
-	  _ | S.member cat proofCats -> case meexp of
-	    MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
-	    _ ->         GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
-	    
-          _ | S.member cat expCats -> case meexp of
-	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
-	                                (exp2exp (stripAbs hypos exp))
-	    _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
+      _ | S.member cat proofCats -> case meexp of
+       MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
+       _ ->         GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
+       
+      _ | S.member cat expCats -> case meexp of
+       MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
+                                   (exp2exp (stripAbs hypos exp))
+       _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
 
-          _ | S.member cat kindCats -> case meexp of
-	    MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
-	    _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum)
+      _ | S.member cat kindCats -> case meexp of
+       MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
+       _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum)
 
-          _ | S.member cat propCats -> case meexp of
-	    MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
-	    _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
+      _ | S.member cat propCats -> case meexp of
+       MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
+       _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
 
-          _ | cat == "MACRO" -> case meexp of
-	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
-	                                (exp2exp (stripAbs hypos exp))
-	    _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
+      _ | cat == "MACRO" -> case meexp of
+       MEExp exp -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
+                                   (exp2exp (stripAbs hypos exp))
+       _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
 
-          _ | cat == "Compar" -> case meexp of
-	    MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
-	    _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
-	    
-          _ | S.member cat symbolicCats -> case meexp of
-	    MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
-	                                (exp2exp (stripAbs hypos exp))
-					
-	    _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
-
-
-          _ -> error ("cannot convert category " ++ cat)
+      _ | cat == "Compar" -> case meexp of
+       MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
+       _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
+       
+      _ | S.member cat symbolicCats -> case meexp of
+       MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
+                                   (exp2exp (stripAbs hypos exp))   
+       _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
+      _ -> error ("cannot convert category " ++ cat)
 
   JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
   JInj ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp)
@@ -308,12 +306,12 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
    {-
       EIdent identEnumset | length args == 1 -> case enum2list (head args) of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
-	Just [] -> GNameExp (LexName "emptyset_Name")
-	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+   Just [] -> GNameExp (LexName "emptyset_Name")
+   _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
    -}
         EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GTermExp (GNumberTerm (GInt (read s)))
-	  _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
+          _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
         EIdent ident@(QIdent f) -> funListExp ident args
         _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))      
     EAbs _ _ -> case splitAbs exp of
@@ -339,16 +337,16 @@ exp2term exp = case specialDedukti2Informath callBacks exp of
       (fun, args) -> case fun of
         EIdent ident@(QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GNumberTerm (GInt (read s))
-	  _ -> funListTerm ident args
+          _ -> funListTerm ident args
         EIdent ident@(QIdent f) -> funListTerm ident args
-	_ -> error ("not yet exp2term on application: " ++ printTree exp)
-	
+        _ -> error ("not yet exp2term on application: " ++ printTree exp)
+   
     EAbs bind body -> GAbsTerm (bind2coreIdent bind) (exp2term body)
 
     EFun h b -> case hypo2type h of
       Just a -> GFunTypeTerm (exp2term a) (exp2term b)
       _ -> error ("not argument type from exp2term: " ++ printTree exp)
-	  
+     
     _ -> error ("not yet exp2term: " ++ printTree exp)
 
 exp2terms :: Exp -> [GTerm]

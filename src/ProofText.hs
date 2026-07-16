@@ -128,7 +128,7 @@ typeAnnotate mo cont typ exp = case exp of
       let
         (hs, body) = splitType (look fun)
         vars = [case hypo2topvars h of {v:_ -> v; [] -> QIdent "_"} | h <- hs] -- one var per hypo, aligned 1:1 with args
-	apptyp = subst (zip vars args) (map fst cont) body
+        apptyp = subst (zip vars args) (map fst cont) body
         newargs = [typeAnnotate mo cont (subst (zip vars args) (map fst cont) ty) arg | (h, arg) <- zip hs args, Just ty <- [hypo2type h]]
       in ETyped (foldl EApp (EIdent fun) newargs) apptyp
   EIdent fun -> ETyped exp (look fun)
@@ -138,12 +138,12 @@ typeAnnotate mo cont typ exp = case exp of
         BTyped v ty -> ty
         BVar v -> case typ of
           EFun h _ -> case hypo2type h of
-	    Just ty -> ty
-	    _ -> error ("no type of bound var in " ++ printTree exp)
+            Just ty -> ty
+            _ -> error ("no type of bound var in " ++ printTree exp)
       bindvar = bind2var bind
       bodytyp = case typ of
         EFun h val -> subst (zip (hypo2vars h) [EIdent bindvar]) (map fst cont) val
-	_ -> error ("incorrect type of abstraction " ++ printTree exp)
+        _ -> error ("incorrect type of abstraction " ++ printTree exp)
     in EAbs (BTyped bindvar vartyp)
             (typeAnnotate mo ((bindvar, vartyp): cont) bodytyp body)
 

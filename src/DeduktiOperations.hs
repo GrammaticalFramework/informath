@@ -196,7 +196,7 @@ addVarsToHypos mexp = adds vars where
     _ -> newvars
   newvars = [QIdent s |
              s <- ["x", "y", "z", "u", "v", "w"] ++ ["X"  ++ show i | i <- [1..11]]]
-	 --- finite list so that filter works
+    --- finite list so that filter works
 
 -- strip abstraction when function type arguments are moved to hypos, as in Lean
 stripAbs :: [Hypo] -> Exp -> Exp
@@ -357,8 +357,8 @@ unappProfile prof exp = case prof of
     (fun, args) -> foldl EApp fun [look i | i <- [1 .. maximum ints]]
       where
         look i = case lookup i (zip ints [0..]) of
-	  Just j -> args !! j
-	  _ -> metaExp
+          Just j -> args !! j
+          _ -> metaExp
 
 
 {-

@@ -57,7 +57,7 @@ transExp t = case t of
     (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> C.EInt (read s) --- no C.EInt
-	_ -> C.EApp (transExp exp0) (transExp exp1)
+        _ -> C.EApp (transExp exp0) (transExp exp1)
     (EIdent c, [a, b]) | c == identConj -> C.EAnd (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identDisj -> C.EOr (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identImpl -> C.EIf (transExp a) (transExp b)
@@ -102,7 +102,7 @@ transHypos mexp hypos = compress (map transHypo vhypos)
     compress hs = case hs of
       h@(C.HVarExp vs exp) : hh -> case span ((== exp) . hypoType) hh of
         (hh1@(_:_), hh2) -> C.HVarExp (vs ++ concatMap hypoVars hh1) exp : compress hh2
-	([], _) -> h : compress hh
+        ([], _) -> h : compress hh
       [] -> []
 
     hypoType :: C.Hypo -> C.Exp

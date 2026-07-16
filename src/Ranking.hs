@@ -59,10 +59,10 @@ scoreTreeAndString env (t, s) =
   in (scores,
       sum (map (\ (w, f) -> w * (f scores))
                (zip
-	         (scoreWeights env)
-	         [tree_length, tree_depth, characters, tokens,
+            (scoreWeights env)
+            [tree_length, tree_depth, characters, tokens,
                  subsequent_dollars, initial_dollars, extra_parses])))
-		 
+       
 
 -- sorts trees from lowest to highest total score
 rankTreesAndStrings :: Env -> [(Expr, String)] -> [((Expr, String), (Scores, Int))] 
