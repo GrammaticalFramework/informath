@@ -14,6 +14,7 @@ GF_FILES := $(wildcard grammars/*.gf)
 lang=Eng
 synonyms=1
 symbolics=1
+sampling=20
 
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
 
@@ -80,10 +81,10 @@ demo:
 	echo "${lightgreen}## converting some simple arithmetic statements to Lean${neutral}"
 	$(RUN) -to-formalism=lean test/exx.dk
 	echo "${lightgreen}# converting some set theory statements to LaTeX${neutral}"
-	$(RUN) -to-latex-doc -variations test/sets.dk >out/sets.tex
+	$(RUN) -to-latex-doc -variations -sampling=10 test/sets.dk >out/sets.tex
 	echo "${lightgreen}consider pdflatex out/sets.tex${neutral}"
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symbolics=$(symbolics) test/top100.dk >out/top100.tex
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms) -symbolics=$(symbolics) -sampling=20 test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 
 multidemo:
@@ -133,7 +134,7 @@ typechecks:
 
 top100:
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
-	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
+	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -sampling=$(sampling) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex
 	cd out ; pdflatex top100$(lang).tex ; $(OPEN) top100$(lang).pdf
 
 top100verbal:

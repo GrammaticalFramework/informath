@@ -85,6 +85,7 @@ readEnv args = do
     symbolTableLang = sym,
     nbestNLG = argValueMaybeInt "-nbest" args,
     scoreWeights = commaSepInts (argValue "-weights" "1,1,1,1,1,1,1,1,1" args),
+    samplingFactor = read (argValue "-sampling" "2" args), 
     morpho = buildMorpho gr fro
     }
 

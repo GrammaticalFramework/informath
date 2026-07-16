@@ -17,7 +17,7 @@ import qualified Data.Set as S
 -- frequency map of identifiers in code, excluding bound variables
 
 identsInTypes :: Tree a -> M.Map QIdent Int
-identsInTypes t = M.fromListWith (+) [(x, 1) | x <- identsInTree t] where
+identsInTypes t = M.fromListWith (+) [(x, 1) | x <- identsInTree t]
 
 identsInTree :: Tree a -> [QIdent]
 identsInTree = ids where
