@@ -20,42 +20,44 @@ gfCatMap :: M.Map SCat (SCat, [SCat])
 gfCatMap = M.union mainCatMap (M.union verbalCatMap symbolicCatMap)
 
 mainCats :: S.Set SCat
-mainCats = S.fromList ["Exp", "Kind", "Prop", "Proof", "ProofExp", "Unit", "Term", "Formula"]
+mainCats = S.fromList ["Exp", "Prop", "Kind", "Proof", "ProofExp", "Unit", "Term", "Formula"]
 
 mainCatMap :: M.Map SCat (SCat, [SCat])
 mainCatMap = M.fromList [(c, (c, [])) | c <- S.toList mainCats]
 
--- lexical categories to value and argument cats
+-- lexical categories to value and argument cats (See file grammars/Categories.gf)
 verbalCatMap :: M.Map SCat (SCat, [SCat])
 verbalCatMap = M.fromList [
+  ("Noun", ("Kind", [])),
   ("Fam", ("Kind", ["Kind"])),
   ("Fam2", ("Kind", ["Kind", "Kind"])),
-  ("Noun", ("Kind", [])),
-  ("Dep", ("Kind", ["Exp"])),
-  ("Dep2",("Kind", ["Exp", "Exp"])),
-  ("DepC", ("Kind", ["Exp", "Exp"])),
-  ("Adj", ("Prop", ["Exp"])),
-  ("Verb", ("Prop", ["Exp"])),
   ("Noun1", ("Prop", ["Exp"])),
-  ("Adj2", ("Prop", ["Exp", "Exp"])),
-  ("AdjC", ("Prop", ["Exp", "Exp"])),
-  ("AdjE", ("Prop", ["Exp", "Exp"])),
-  ("Adv", ("Prop", ["Exp"])),
-  ("Adv2", ("Prop", ["Exp", "Exp"])),
-  ("AdvC", ("Prop", ["Exp", "Exp"])),
-  ("Verb2", ("Prop", ["Exp", "Exp"])),
   ("Noun2", ("Prop", ["Exp", "Exp"])),
-  ("Adj3", ("Prop", ["Exp", "Exp", "Exp"])),
-  ("VerbC", ("Prop", ["Exp", "Exp"])),
+  ("Noun3", ("Prop", ["Exp", "Exp", "Exp"])),
   ("NounC", ("Prop", ["Exp", "Exp"])),
+  ("Adj", ("Prop", ["Exp"])),
+  ("Adj2", ("Prop", ["Exp", "Exp"])),
+  ("Adj3", ("Prop", ["Exp", "Exp", "Exp"])),
+  ("AdjE", ("Prop", ["Exp", "Exp"])),
+  ("AdjC", ("Prop", ["Exp", "Exp"])),
+  ("Verb", ("Prop", ["Exp"])),
+  ("Verb2", ("Prop", ["Exp", "Exp"])),
+  ("VerbC", ("Prop", ["Exp", "Exp"])),
+  ("Name", ("Exp", [])),
   ("Fun", ("Exp", ["Exp"])),
   ("Fun2", ("Exp", ["Exp", "Exp"])),
   ("FunC", ("Exp", ["Exp", "Exp"])),
-  ("Name", ("Exp", [])),
-  ("Binder", ("Exp", ["Ident", "Exp"])),
+  ("Label", ("ProofExp", [])),
+  ("Dep", ("Kind", ["Exp"])),
+  ("Dep2",("Kind", ["Exp", "Exp"])),
+  ("DepC", ("Kind", ["Exp", "Exp"])),
+  ("Adv", ("Prop", ["Exp"])),
+  ("Adv2", ("Prop", ["Exp", "Exp"])),
+  ("AdvC", ("Prop", ["Exp", "Exp"])),
+
+  ("Binder",  ("Exp", ["Ident", "Exp"])),
   ("Binder1", ("Exp", ["Kind", "Ident", "Exp"])),
-  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"])),
-  ("Label", ("ProofExp", []))
+  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"]))
   ]
 
 -- symbolic categories to verbal types (for type checking with Dedukti)
@@ -123,7 +125,7 @@ identElem = QIdent "Elem"
 
 identSuchThat = QIdent "suchthat"
 
--- logical constants in base.dk
+-- logical constants in BaseConstants.dk
 propFalse = EIdent (QIdent "false")
 propAnd x y = EApp (EApp (EIdent identConj) x) y
 propOr x y = EApp (EApp (EIdent identDisj) x) y
