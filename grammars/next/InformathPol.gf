@@ -7,6 +7,6 @@ concrete InformathPol of Informath =
   SymbolicConstantsLatex,
   WikidataWordsPol,
   ProperNamesPol,
-  MathExtensionsPol
-----  UserExtensionsPol
+  MathExtensionsPol,
+  UserExtensionsPol
   ;
