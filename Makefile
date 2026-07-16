@@ -22,6 +22,10 @@ all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
 
 english_grammar: share/InformathEng.pgf
 
+my_grammar:
+	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
+
 RunInformath:
 	stack install
 
