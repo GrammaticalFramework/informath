@@ -4,6 +4,7 @@
 module CommonConcepts where
 
 import Dedukti.AbsDedukti
+import Utils
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (isSuffixOf)
@@ -184,15 +185,6 @@ stripConstant :: String -> String
 stripConstant f = case splitConstant f of
   Left _ -> f
   Right (h:_) -> h
-
---- Data.List.Split cannot be found...
-split :: Char -> String -> [String]
-split c cs = case break (==c) cs of
-  ([], []) -> []
-  (s,  []) -> [strip s]
-  (s, _:s2) -> strip s : split c s2
- where
-  strip = unwords . words
 
 -- deal with {|ident|}
 unescapeConstant :: String -> String

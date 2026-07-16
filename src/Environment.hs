@@ -27,11 +27,6 @@ data Env = Env {
   grammar :: PGF,
   baseConstantModule :: Module,
   symbolTable :: SymbolTable,
-    --constantTable :: ConstantTable,
-    --conversionTable :: ConversionTable,
-    --backConstantTable :: BackConstantTable,
-    --dropTable :: DropTable,
-    --macroTable :: MacroTable,
   reachableFunctions :: Set.Set CId,
   formalisms :: [String],
   langs :: [Language],
@@ -41,6 +36,7 @@ data Env = Env {
   toFormalism :: String,
   nbestNLG :: Maybe Int,
   scoreWeights :: [Int],
+  samplingFactor :: Int,
   morpho :: Morpho
   }
 

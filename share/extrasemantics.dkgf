@@ -1,0 +1,10 @@
+#SEMANTICS InverseIfProp a b = IfProp b a
+#SEMANTICS OnlyIfProp a b = IfProp a b
+#SEMANTICS PluralKindExp a = KindExp a
+
+#NLG IfProp a b = InverseIfProp b a
+#NLG IfProp a b = OnlyIfProp a b
+#NLG KindExp a = PluralKindExp a
+
+
+

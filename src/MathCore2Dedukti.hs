@@ -9,6 +9,7 @@ import CommonConcepts
 import DeduktiOperations
 import BuildConstantTable 
 import PGF (showExpr, readExpr, showCId, mkApp, mkCId)
+import Utils
 
 import Data.Char
 import Data.List (intersperse, nub, partition, isInfixOf)
@@ -355,7 +356,7 @@ proofexp2exp proofexp = case proofexp of
 
 ident2ident :: GIdent -> QIdent
 ident2ident ident = case ident of
-  GStrIdent (GString s) -> QIdent (escapeConstant s)
+  GStrIdent (GString s) -> QIdent (unescapeUnderscores (escapeConstant s))
 
 macro2ident :: GMacro -> QIdent
 macro2ident ident = case ident of
