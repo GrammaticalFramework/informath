@@ -55,6 +55,6 @@ executable RunInformath
                        containers,
                        mtl,
                        array,
-		       json,
+                       json,
                        gf >= 3.12
   default-language:    Haskell2010
