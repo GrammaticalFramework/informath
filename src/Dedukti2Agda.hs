@@ -9,6 +9,7 @@ import qualified Agda.AbsAgda as A
 import qualified Agda.PrintAgda as PrA
 
 import DeduktiOperations (getNumber, splitApp, isWildIdent)
+import CommonConcepts
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
@@ -49,8 +50,8 @@ transExp :: Exp -> A.Exp
 transExp t = case t of
   EIdent qident -> A.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
-    (fun@(EIdent (QIdent c)), [arg]) | elem c ["Elem", "Proof"] -> transExp arg
-    (fun@(EIdent (QIdent n)), args) | elem n ["nn", "nd"] -> case getNumber fun args of
+    (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> A.EIdent (A.AIdent s) --- no A.EInt
 	_ -> A.EApp (transExp exp0) (transExp exp1)
     _ -> A.EApp (transExp exp0) (transExp exp1)

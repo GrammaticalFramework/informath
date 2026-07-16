@@ -113,7 +113,7 @@ noIdent = QIdent "#NOIDENT" ----
 -- an object-language type Elem A (as opposed to a Proof of a proposition)
 isElemType :: Exp -> Bool
 isElemType e = case splitApp e of
-  (EIdent (QIdent "Elem"), _) -> True
+  (EIdent identElem, _) -> True
   _ -> False
 
 

@@ -284,7 +284,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of
    {-
-      EIdent (QIdent "enumset") | length args == 1 -> case enum2list (head args) of
+      EIdent identEnumset | length args == 1 -> case enum2list (head args) of
         Just exps@(_:_) -> GEnumSetExp (gExps (map exp2exp exps))
 	Just [] -> GNameExp (LexName "emptyset_Name")
 	_ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))

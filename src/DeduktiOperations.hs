@@ -147,16 +147,16 @@ peano2int t = case t of
 
 enum2list :: Exp -> Maybe [Exp]
 enum2list t = case t of
-  EApp (EApp (EIdent (QIdent "cons")) x) xs -> do
+  EApp (EApp (EIdent identCons) x) xs -> do
     exps <- enum2list xs
     return (x : exps)
-  EIdent (QIdent "nil") -> return []
+  EIdent identNil -> return []
   _ -> Nothing
 
 list2enum :: [Exp] -> Exp
 list2enum xs = case xs of
-  x:xx -> EApp (EApp (EIdent (QIdent "cons")) x) (list2enum xx)
-  _ -> EIdent (QIdent "nil")
+  x:xx -> EApp (EApp (EIdent identCons) x) (list2enum xx)
+  _ -> EIdent identNil
 
 -- to begin with, to decide how to render a hypo
 catExp :: Exp -> String
@@ -165,7 +165,7 @@ catExp e = case e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
       Just (k, _) | S.member k propCats -> "Prop"
       _ | elem f [identConj, identDisj, identImpl,
-                  identEquiv, identPi, identSigma, identNeg, identProof] -> "Prop"
+                  identEquiv, identPi, identSigma, identNot, identProof] -> "Prop"
       _ -> "Kind"
   _ -> "Kind"
 
@@ -265,8 +265,8 @@ int2exp :: Int -> Exp
 int2exp = cc . show
   where
     cc s = case s of
-      [d] -> EApp (EIdent (QIdent nd)) (EIdent (QIdent s))
-      d:ds -> EApp (EApp (EIdent (QIdent nn)) (EIdent (QIdent [d]))) (cc ds)
+      [d] -> EApp (EIdent identNd) (EIdent (QIdent s))
+      d:ds -> EApp (EApp (EIdent identNn) (EIdent (QIdent [d]))) (cc ds)
 
 unresolvedIndexIdent :: Int -> QIdent
 unresolvedIndexIdent i = QIdent ("UNRESOLVED_INDEX_" ++ show i)

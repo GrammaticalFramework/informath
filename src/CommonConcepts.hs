@@ -92,22 +92,30 @@ proofCats = S.fromList ["Label", "Proof", "ProofExp", "Unit"]
 
 -- referring to BaseConstants.dk
 
+identFalse = QIdent "false"
 identConj = QIdent "and"
 identDisj = QIdent "or"
 identImpl = QIdent "if"
-identNeg = QIdent "not"
-identEquiv = QIdent "iff"
 identPi = QIdent "forall"
 identSigma = QIdent "exists"
+identNot = QIdent "not"
+identEquiv = QIdent "iff"
 
+identDig = QIdent "Dig"
 identNat =  QIdent "Nat"
 identInt =  QIdent "Int"
 identRat =  QIdent "Rat"
 identReal =  QIdent "Real"
+identnat2int = QIdent "nat2int"
+identNat2real = QIdent "nat2real"
+identInt2real = QIdent "int2real"
+identRat2real = QIdent "rat2real"
 identPlus =  QIdent "plus"
 identMinus =  QIdent "minus"
 identTimes =  QIdent "times"
 identDiv =  QIdent "div"
+identPow = QIdent "pow"
+identNeg = QIdent "neg"
 identEq =  QIdent "Eq"
 identLt =  QIdent "Lt"
 identGt =  QIdent "Gt"
@@ -120,18 +128,20 @@ identZero = QIdent "0"
 identSucc = QIdent "succ"
 
 -- these are to be peeled away
-identProof = QIdent "Proof"
-identElem = QIdent "Elem"
+dkProof = "Proof"
+dkElem  = "Elem"
+identProof = QIdent dkProof
+identElem = QIdent dkElem
 
 identSuchThat = QIdent "suchthat"
 
 -- logical constants in BaseConstants.dk
-propFalse = EIdent (QIdent "false")
+propFalse = EIdent identFalse
 propAnd x y = EApp (EApp (EIdent identConj) x) y
 propOr x y = EApp (EApp (EIdent identDisj) x) y
 propImp x y = EApp (EApp (EIdent identImpl) x) y
 propEquiv x y = EApp (EApp (EIdent identEquiv) x) y
-propNeg x = EApp (EIdent identNeg) x
+propNot x = EApp (EIdent identNot) x
 
 propPi kind pred = EApp (EApp (EIdent identPi) kind) pred
 propSigma kind pred = EApp (EApp (EIdent identSigma) kind) pred
@@ -147,7 +157,7 @@ identType = QIdent "Type"
 
 --- needed for typing conclusions of proofs
 expTyped x t = EApp (EApp (EIdent (QIdent "typed")) x) t
-expNegated x = EApp (EIdent (QIdent "neg")) x
+expNegated x = EApp (EIdent identNeg) x
 
 -- lookup after annotation from dynamically loaded file
 lookupConstantFull :: String -> Maybe (String, String, [String], Int)  -- last arg: drop
@@ -198,9 +208,18 @@ escapeConstant s = case s of
 isIdentChar :: Char -> Bool
 isIdentChar c = or [isAlpha c, isDigit c, elem c ".'_"]
 
--- Dedukti representation of digits
+-- Dedukti representation of digits in BaseConstants.dk
 digitFuns :: [String]
 digitFuns = [nn, nd]
 nn = "nn"
 nd = "nd"
 
+identNn = QIdent nn
+identNd = QIdent nd
+
+-- Dedukti representation of lists in BaseConstants.dk
+identNil = QIdent "nil"
+identCons = QIdent "cons"
+
+-- Constants related to set in BaseConstants.dk
+identEnumset = QIdent "enumset"

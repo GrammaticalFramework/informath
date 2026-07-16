@@ -26,23 +26,23 @@ lookupCoercion env exps = maybe (Bad ("lookupCoercions " ++ show exps)) Ok (M.lo
 
 informathCoercions ::  M.Map (Exp, Exp) QIdent
 informathCoercions = M.fromList [
-  ((typeDig, typeNat), QIdent "nd"),
-  ((typeNat, typeInt), QIdent "nat2int"),
-  ((typeNat, typeReal), QIdent "nat2real"),
-  ((typeInt, typeReal), QIdent "int2real"),
-  ((typeRat, typeReal), QIdent "rat2real"),
-  ((typeSet, typeType), QIdent "Elem"),
-  ((typeProp, typeType), QIdent "Proof")
+  ((typeDig, typeNat), identNd),
+  ((typeNat, typeInt), identNat2int),
+  ((typeNat, typeReal), identNat2real),
+  ((typeInt, typeReal), identInt2real),
+  ((typeRat, typeReal), identRat2real),
+  ((typeSet, typeType), identElem),
+  ((typeProp, typeType), identProof)
   ]
 
-typeDig = EApp (EIdent (QIdent "Elem")) (EIdent (QIdent "Dig"))
-typeNat = EApp (EIdent (QIdent "Elem")) (EIdent (QIdent "Nat"))
-typeInt = EApp (EIdent (QIdent "Elem")) (EIdent (QIdent "Int"))
-typeRat = EApp (EIdent (QIdent "Elem")) (EIdent (QIdent "Rat"))
-typeReal = EApp (EIdent (QIdent "Elem")) (EIdent (QIdent "Real"))
-typeType = EIdent (QIdent "Type")
-typeSet = EIdent (QIdent "Set")
-typeProp = EIdent (QIdent "Prop")
+typeDig = EApp (EIdent identElem) (EIdent identDig)
+typeNat = EApp (EIdent identElem) (EIdent identNat)
+typeInt = EApp (EIdent identElem) (EIdent identInt)
+typeRat = EApp (EIdent identElem) (EIdent identRat)
+typeReal = EApp (EIdent identElem) (EIdent identReal)
+typeType = EIdent identType
+typeSet = EIdent identSet
+typeProp = EIdent identProp
 
 collectTypes :: Module -> M.Map QIdent Exp
 collectTypes mo@(MJmts jmts) = M.fromList (concatMap getType jmts)

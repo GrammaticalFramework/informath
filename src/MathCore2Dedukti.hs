@@ -141,13 +141,13 @@ unit2exp unit = case unit of
 prop2dedukti :: GProp -> Exp
 prop2dedukti prop = case prop of
   GExistKindProp k -> kind2dedukti k
-  GProofProp p -> EApp (EIdent (QIdent "Proof")) (prop2dedukti p)
+  GProofProp p -> EApp (EIdent identProof) (prop2dedukti p)
   GFalseProp -> propFalse
   GIdentProp ident -> EIdent (ident2ident ident)
   GCoreAndProp a b -> foldl1 propAnd (map prop2dedukti [a, b])
   GCoreOrProp a b -> foldl1 propOr (map prop2dedukti [a, b])
   GCoreIfProp a b -> propImp (prop2dedukti a) (prop2dedukti b)
-  GCoreNotProp a -> propNeg (prop2dedukti a)
+  GCoreNotProp a -> propNot (prop2dedukti a)
   GCoreIffProp a b -> propEquiv (prop2dedukti a) (prop2dedukti b)
   GCoreAllProp kind ident prop ->
     propPi (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
@@ -240,10 +240,10 @@ argkind2dedukti argkind = case argkind of
 
 kind2dedukti :: GKind -> Exp
 kind2dedukti kind = case kind of
-  GElemKind k -> EApp (EIdent (QIdent "Elem")) (kind2dedukti k)
+  GElemKind k -> EApp (EIdent identElem) (kind2dedukti k)
 
   GSuchThatKind kind ident prop ->
-    foldl EApp (EIdent (QIdent "suchthat")) [ 
+    foldl EApp (EIdent identSuchThat) [ 
       (kind2dedukti kind),
       (EAbs (BVar (ident2ident ident)) (prop2dedukti prop))]
 
@@ -284,7 +284,7 @@ exp2dedukti exp = case exp of
   GBinder2Exp f low up i x -> appIdent (showGF f) [exp2dedukti low, exp2dedukti up, EAbs (BVar (ident2ident i)) (exp2dedukti x)]
 
   GIndexedTermExp (GInt i) -> EIdent (unresolvedIndexIdent i)
-  GEnumSetExp exps -> EApp (EIdent (QIdent "enumset")) (list2enum (map exp2dedukti (exps2list exps)))
+  GEnumSetExp exps -> EApp (EIdent identEnumset) (list2enum (map exp2dedukti (exps2list exps)))
 
   GKindExp kind -> kind2dedukti kind
   
@@ -305,11 +305,11 @@ term2dedukti term = case term of
   GApp2MacroTerm macro x y -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y])
   GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z])
   GComprehensionTerm kterm x pterm ->
-    foldl EApp (EIdent (QIdent "suchthat")) [ 
+    foldl EApp (EIdent identSuchThat) [ 
       (term2dedukti kterm),
       (EAbs (BVar (ident2ident x)) (formula2dedukti pterm))]
   GComprehensionTextTerm kterm x prop ->
-    foldl EApp (EIdent (QIdent "suchthat")) [ 
+    foldl EApp (EIdent identSuchThat) [ 
       (term2dedukti kterm),
       (EAbs (BVar (ident2ident x)) (prop2dedukti prop))]
   GAbsTerm ident body -> EAbs (BVar (ident2ident ident)) (term2dedukti body)
