@@ -91,9 +91,11 @@ oper
   function_N : N = ruzeN "funkce" ;
   predicate_N : N = hradN "predikát" ;
   basic_type_CN : CN = mkCN (mkA "základní") (hradN "typ") ;
-  map_V3 = variants {} ; ---- Czech RGL has no V3
-  say_VS = variants {} ;
-  hold_V2 = variants {} ;
+  map_V3 = lin V3 (mkV3 (guessVerbForms "zobrazovat")
+    {s = [] ; c = accusative ; hasPrep = False}
+    {s = "na" ; c = accusative ; hasPrep = True}) ;
+  say_VS = mkVS "říkat" ;
+  hold_V2 = lin V2 (mkV2 (guessVerbForms "platit") {s = "pro" ; c = accusative ; hasPrep = True}) ;
   arbitrary_A = mkA "libovolný" ;
   set_N = mnozina_N ;
   proposition_N = hradN "výrok" ;
@@ -124,7 +126,9 @@ oper
   only_if_Subj : Subj = mkSubj "jen když" ;
 
   number_Noun = mkCN cislo_N ;
-  range_V3 = variants {} ;
+  range_V3 = lin V3 (mkV3 (guessVerbForms "probíhat")
+    {s = "od" ; c = genitive ; hasPrep = True}
+    {s = "do" ; c = genitive ; hasPrep = True}) ;
   sum_N = mkN "součet" "součtu" mascInanimate ;
   where_Subj = mkSubj "kde" ;
 
