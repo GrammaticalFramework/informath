@@ -216,20 +216,6 @@ variations tree = case tree of
     tree : [GExistNoProp argkinds prop]
   GIfProp a@(GFormulaProp fa) b@(GFormulaProp fb) ->
     tree : [GOnlyIfProp a b, GFormulaImpliesProp fa fb]
-  GIfProp a b ->
-    tree : [GOnlyIfProp a b ]
-  GAndProp (GListProp [a, b]) ->
-    tree : [GBothAndProp va vb | va <- variations a, vb <- variations b]
-  GAndAdj (GListAdj [a, b]) ->
-    tree : [GBothAndAdj va vb | va <- variations a, vb <- variations b]
-  GAndExp (GListExp [a, b]) ->
-    tree : [GBothAndExp va vb | va <- variations a, vb <- variations b]
-  GOrProp (GListProp [a, b]) ->
-    tree : [GEitherOrProp va vb | va <- variations a, vb <- variations b]
-  GOrAdj (GListAdj [a, b]) ->
-    tree : [GEitherOrAdj va vb | va <- variations a, vb <- variations b]
-  GOrExp (GListExp [a, b]) ->
-    tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
   GApp4MacroTerm (GStringMacro (GString "\\Summa")) m n (GIdentTerm i) f ->
     let m1s = case m of
@@ -245,7 +231,22 @@ variations tree = case tree of
   GOper2Term (LexOper2 "times_Oper2") x y ->
     tree : [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
 
-  GKindExp kind -> tree : [GPluralKindExp k | k <- kind : variations kind]
+--- moved to extrasemantics.dkgf 16/7/2026
+---  GIfProp a b ->
+---    tree : [GOnlyIfProp a b ]
+---  GKindExp kind -> tree : [GPluralKindExp k | k <- kind : variations kind]
+  GAndProp (GListProp [a, b]) ->
+    tree : [GBothAndProp va vb | va <- variations a, vb <- variations b]
+  GAndAdj (GListAdj [a, b]) ->
+    tree : [GBothAndAdj va vb | va <- variations a, vb <- variations b]
+  GAndExp (GListExp [a, b]) ->
+    tree : [GBothAndExp va vb | va <- variations a, vb <- variations b]
+  GOrProp (GListProp [a, b]) ->
+    tree : [GEitherOrProp va vb | va <- variations a, vb <- variations b]
+  GOrAdj (GListAdj [a, b]) ->
+    tree : [GEitherOrAdj va vb | va <- variations a, vb <- variations b]
+  GOrExp (GListExp [a, b]) ->
+    tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
   _ -> composOpM variations tree
 
@@ -267,13 +268,17 @@ ifNeeded given alts = case alts of
 
 allQuantVariations :: GArgKind -> [GQuant]
 allQuantVariations argkind = case argkind of
-  GIdentsArgKind kind (GListIdent [x]) -> [GEveryIdentKindQuant x kind , GAllIdentsKindQuant (GListIdent [x]) kind]
+  GIdentsArgKind kind (GListIdent [x]) -> [GEveryIdentKindQuant x kind]
+    --- , GAllIdentsKindQuant (GListIdent [x]) kind]
+    --- can give "all numbers are even or odd"
   GIdentsArgKind kind xs -> [GAllIdentsKindQuant xs kind]
   _ -> []
 
 existQuantVariations :: GArgKind -> [GQuant]
 existQuantVariations argkind = case argkind of
-  GIdentsArgKind kind (GListIdent [x]) -> [GIndefIdentKindQuant x kind, GSomeIdentsKindQuant (GListIdent [x]) kind]
+  GIdentsArgKind kind (GListIdent [x]) -> [GSomeIdentsKindQuant (GListIdent [x]) kind]
+  --- , GIndefIdentKindQuant x kind]
+  --- gives potential ambiguities with "a"
   GIdentsArgKind kind xs -> [GSomeIdentsKindQuant xs kind]
   _ -> []
 
@@ -289,9 +294,12 @@ hypoProp hypos prop = case hypos of
 insitu :: Tree a -> Tree a
 insitu t = case t of
   GAllProp (GListArgKind [argkind]) (GAdjProp adj exp) -> case subst argkind exp of
-    Just (x, kind) -> GAdjProp adj (GQuantExp (GAllIdentsKindQuant (GListIdent [x]) kind))
+    Just (x, kind) -> GAdjProp adj (GQuantExp (GEveryIdentKindQuant x kind))
     _ -> t
-  GAllProp (GListArgKind [argkind]) (GNotAdjProp adj exp) -> case subst argkind exp of
+  GAllProp (GListArgKind [argkind]) (GCoreNotProp (GAdjProp adj exp)) -> case subst argkind exp of
+    Just (x, kind) -> GAdjProp adj (GQuantExp (GNoIdentsKindQuant (GListIdent [x]) kind))
+    _ -> t
+  GCoreNotProp (GExistProp (GListArgKind [argkind]) (GAdjProp adj exp)) -> case subst argkind exp of
     Just (x, kind) -> GAdjProp adj (GQuantExp (GNoIdentsKindQuant (GListIdent [x]) kind))
     _ -> t
   GExistProp (GListArgKind [argkind]) (GAdjProp adj exp) -> case subst argkind exp of
@@ -315,7 +323,7 @@ varless t = case t of
   GAllIdentsKindQuant (GListIdent [_]) kind -> GAllKindQuant kind
   GNoIdentsKindQuant (GListIdent [_]) kind -> GNoKindQuant kind
   GSomeIdentsKindQuant (GListIdent [_]) kind -> GSomeKindQuant kind
-  GIndefIdentKindQuant _ kind -> GSomeKindQuant kind
+  GIndefIdentKindQuant _ kind -> GIndefKindQuant kind
   GPropVarHypo _ prop -> GPropHypo prop
   _ -> composOp varless t
 
