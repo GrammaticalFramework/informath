@@ -10,6 +10,7 @@ import CommonConcepts
 import DeduktiOperations
 import BuildConstantTable
 import SpecialConstants
+import Utils
 
 import Data.Char
 import qualified Data.Set as S
@@ -414,7 +415,7 @@ patt2exp = exp2exp . patt2dexp where
 
 ident2ident :: QIdent -> GIdent
 ident2ident ident = case ident of
-  QIdent s -> GStrIdent (GString s)
+  QIdent s -> GStrIdent (GString (escapeUnderscores s))
 
 ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of

@@ -84,6 +84,18 @@ transInEnv env trans = chop where
       (ds, []) -> ds
 
 
+-- for generating valid LaTeX
+escapeUnderscores :: String -> String
+escapeUnderscores = concat . map (\c -> if c=='_' then "\\_" else [c])
+
+-- for converting back to Dedukti
+unescapeUnderscores :: String -> String
+unescapeUnderscores s = case s of
+  '\\':'_':cs -> '_':unescapeUnderscores cs
+  c:cs -> c:unescapeUnderscores cs
+  _ -> s
+
+
 -- like Python strip()
 strip :: String -> String
 strip = unwords . words
