@@ -32,6 +32,7 @@ jmt2jmt jmt = case jmt of
   JDef ident@(QIdent sident) (MTExp typ) meexp ->
     let
       (hypos, kind) = splitType typ
+      kindIsProp = kind == typeProp
       cat = guessGFCat ident typ
       vhypos = addVarsToHypos meexp hypos
       chypos = hypos2hypos vhypos
@@ -60,7 +61,9 @@ jmt2jmt jmt = case jmt of
        _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
 
       _ | cat == "MACRO" -> case meexp of
-       MEExp exp -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
+       MEExp exp
+        | kindIsProp -> GDefPropJmt definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
+	| otherwise  -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))
        _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
 

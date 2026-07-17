@@ -1,6 +1,6 @@
 Set : "set"
 Type : "type"
-Prop : "proposition"
+#Prop : "proposition"
 
 #Elem : ElemKind
 
@@ -62,7 +62,7 @@ cartesian : "the cartesian product of #1 and #2" | $#1 \times #2$
 powerset : "the powerset of #1" | $\wp #1$
 complement : "the complement of #1" | $$
 subset : "#1 is a proper subset of #2" | $#1 \subset #2$
-subseteq : "#1 is a subset of #2" | $#1 \subseteq #2$
+subseteq : "#1 is a subset of #2" | "#2 includes #1" | $#1 \subseteq #2$
 superset : "#1 is a proper superset of #2" | $#1 \supset #2$
 superseteq : "#1 is a superset of #2" | $#1 \supset #2$
 equalset : "#1 and #2 are equal sets" | "#1 is equal to #2" | $#1 = #2$
