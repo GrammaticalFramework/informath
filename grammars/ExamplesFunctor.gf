@@ -106,6 +106,7 @@ lin
   AdjNounNoun adj noun = mkCN adj noun ;
   NounNounNoun noun1 noun2 = compoundCN noun1 noun2 ;
   ProperNameNounNoun name noun = nameCompoundCN name noun ;
+  NounPrepNounNoun a prep b = mkCN a (Syntax.mkAdv prep (mkNP b)) ;
 
   NounLabel noun = mkLabel (mkNP noun) ;
   DefNounLabel noun = mkLabel (mkNP the_Det noun) ;

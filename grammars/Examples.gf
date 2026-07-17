@@ -79,6 +79,7 @@ fun
   
   AdjNounNoun : Adj -> Noun -> Noun ;
   NounNounNoun : Noun -> Noun -> Noun ;
+  NounPrepNounNoun : Noun -> Prep -> Noun -> Noun ;
   ProperNameNounNoun : ProperName -> Noun -> Noun ; -- ProperName in nominative: Hilbert space
 
   NounLabel : Noun -> Label ;                          -- extensionality axiom

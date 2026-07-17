@@ -419,6 +419,7 @@ data Tree :: * -> * where
   GNoun2ExpNoun :: GNoun2 -> GExp -> Tree GNoun_
   GNoun3ExpsNoun :: GNoun3 -> GExp -> GExp -> Tree GNoun_
   GNounNounNoun :: GNoun -> GNoun -> Tree GNoun_
+  GNounPrepNounNoun :: GNoun -> GPrep -> GNoun -> Tree GNoun_
   GProperNameNounNoun :: GProperName -> GNoun -> Tree GNoun_
   LexNoun :: String -> Tree GNoun_
   GNounNoun1 :: GNoun -> Tree GNoun1_
@@ -1198,6 +1199,7 @@ instance Eq (Tree a) where
     (GNoun2ExpNoun x1 x2,GNoun2ExpNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (GNoun3ExpsNoun x1 x2 x3,GNoun3ExpsNoun y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GNounNounNoun x1 x2,GNounNounNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
+    (GNounPrepNounNoun x1 x2 x3,GNounPrepNounNoun y1 y2 y3) -> and [ x1 == y1 , x2 == y2 , x3 == y3 ]
     (GProperNameNounNoun x1 x2,GProperNameNounNoun y1 y2) -> and [ x1 == y1 , x2 == y2 ]
     (LexNoun x,LexNoun y) -> x == y
     (GNounNoun1 x1,GNounNoun1 y1) -> and [ x1 == y1 ]
@@ -2625,6 +2627,7 @@ instance Gf GNoun where
   gf (GNoun2ExpNoun x1 x2) = mkApp (mkCId "Noun2ExpNoun") [gf x1, gf x2]
   gf (GNoun3ExpsNoun x1 x2 x3) = mkApp (mkCId "Noun3ExpsNoun") [gf x1, gf x2, gf x3]
   gf (GNounNounNoun x1 x2) = mkApp (mkCId "NounNounNoun") [gf x1, gf x2]
+  gf (GNounPrepNounNoun x1 x2 x3) = mkApp (mkCId "NounPrepNounNoun") [gf x1, gf x2, gf x3]
   gf (GProperNameNounNoun x1 x2) = mkApp (mkCId "ProperNameNounNoun") [gf x1, gf x2]
   gf (LexNoun x) = mkApp (mkCId x) []
 
@@ -2638,6 +2641,7 @@ instance Gf GNoun where
       Just (i,[x1,x2]) | i == mkCId "Noun2ExpNoun" -> GNoun2ExpNoun (fg x1) (fg x2)
       Just (i,[x1,x2,x3]) | i == mkCId "Noun3ExpsNoun" -> GNoun3ExpsNoun (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "NounNounNoun" -> GNounNounNoun (fg x1) (fg x2)
+      Just (i,[x1,x2,x3]) | i == mkCId "NounPrepNounNoun" -> GNounPrepNounNoun (fg x1) (fg x2) (fg x3)
       Just (i,[x1,x2]) | i == mkCId "ProperNameNounNoun" -> GProperNameNounNoun (fg x1) (fg x2)
 
       Just (i,[]) -> LexNoun (showCId i)
@@ -4101,6 +4105,7 @@ instance Compos Tree where
     GNoun2ExpNoun x1 x2 -> r GNoun2ExpNoun `a` f x1 `a` f x2
     GNoun3ExpsNoun x1 x2 x3 -> r GNoun3ExpsNoun `a` f x1 `a` f x2 `a` f x3
     GNounNounNoun x1 x2 -> r GNounNounNoun `a` f x1 `a` f x2
+    GNounPrepNounNoun x1 x2 x3 -> r GNounPrepNounNoun `a` f x1 `a` f x2 `a` f x3
     GProperNameNounNoun x1 x2 -> r GProperNameNounNoun `a` f x1 `a` f x2
     GNounNoun1 x1 -> r GNounNoun1 `a` f x1
     GAdjNoun2Noun2 x1 x2 -> r GAdjNoun2Noun2 `a` f x1 `a` f x2
