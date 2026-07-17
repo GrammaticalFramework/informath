@@ -21,42 +21,44 @@ gfCatMap :: M.Map SCat (SCat, [SCat])
 gfCatMap = M.union mainCatMap (M.union verbalCatMap symbolicCatMap)
 
 mainCats :: S.Set SCat
-mainCats = S.fromList ["Exp", "Kind", "Prop", "Proof", "ProofExp", "Unit", "Term", "Formula"]
+mainCats = S.fromList ["Exp", "Prop", "Kind", "Proof", "ProofExp", "Unit", "Term", "Formula"]
 
 mainCatMap :: M.Map SCat (SCat, [SCat])
 mainCatMap = M.fromList [(c, (c, [])) | c <- S.toList mainCats]
 
--- lexical categories to value and argument cats
+-- lexical categories to value and argument cats (See file grammars/Categories.gf)
 verbalCatMap :: M.Map SCat (SCat, [SCat])
 verbalCatMap = M.fromList [
+  ("Noun", ("Kind", [])),
   ("Fam", ("Kind", ["Kind"])),
   ("Fam2", ("Kind", ["Kind", "Kind"])),
-  ("Noun", ("Kind", [])),
-  ("Dep", ("Kind", ["Exp"])),
-  ("Dep2",("Kind", ["Exp", "Exp"])),
-  ("DepC", ("Kind", ["Exp", "Exp"])),
-  ("Adj", ("Prop", ["Exp"])),
-  ("Verb", ("Prop", ["Exp"])),
   ("Noun1", ("Prop", ["Exp"])),
-  ("Adj2", ("Prop", ["Exp", "Exp"])),
-  ("AdjC", ("Prop", ["Exp", "Exp"])),
-  ("AdjE", ("Prop", ["Exp", "Exp"])),
-  ("Adv", ("Prop", ["Exp"])),
-  ("Adv2", ("Prop", ["Exp", "Exp"])),
-  ("AdvC", ("Prop", ["Exp", "Exp"])),
-  ("Verb2", ("Prop", ["Exp", "Exp"])),
   ("Noun2", ("Prop", ["Exp", "Exp"])),
-  ("Adj3", ("Prop", ["Exp", "Exp", "Exp"])),
-  ("VerbC", ("Prop", ["Exp", "Exp"])),
+  ("Noun3", ("Prop", ["Exp", "Exp", "Exp"])),
   ("NounC", ("Prop", ["Exp", "Exp"])),
+  ("Adj", ("Prop", ["Exp"])),
+  ("Adj2", ("Prop", ["Exp", "Exp"])),
+  ("Adj3", ("Prop", ["Exp", "Exp", "Exp"])),
+  ("AdjE", ("Prop", ["Exp", "Exp"])),
+  ("AdjC", ("Prop", ["Exp", "Exp"])),
+  ("Verb", ("Prop", ["Exp"])),
+  ("Verb2", ("Prop", ["Exp", "Exp"])),
+  ("VerbC", ("Prop", ["Exp", "Exp"])),
+  ("Name", ("Exp", [])),
   ("Fun", ("Exp", ["Exp"])),
   ("Fun2", ("Exp", ["Exp", "Exp"])),
   ("FunC", ("Exp", ["Exp", "Exp"])),
-  ("Name", ("Exp", [])),
-  ("Binder", ("Exp", ["Ident", "Exp"])),
+  ("Label", ("ProofExp", [])),
+  ("Dep", ("Kind", ["Exp"])),
+  ("Dep2",("Kind", ["Exp", "Exp"])),
+  ("DepC", ("Kind", ["Exp", "Exp"])),
+  ("Adv", ("Prop", ["Exp"])),
+  ("Adv2", ("Prop", ["Exp", "Exp"])),
+  ("AdvC", ("Prop", ["Exp", "Exp"])),
+
+  ("Binder",  ("Exp", ["Ident", "Exp"])),
   ("Binder1", ("Exp", ["Kind", "Ident", "Exp"])),
-  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"])),
-  ("Label", ("ProofExp", []))
+  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"]))
   ]
 
 -- symbolic categories to verbal types (for type checking with Dedukti)
@@ -91,22 +93,30 @@ proofCats = S.fromList ["Label", "Proof", "ProofExp", "Unit"]
 
 -- referring to BaseConstants.dk
 
+identFalse = QIdent "false"
 identConj = QIdent "and"
 identDisj = QIdent "or"
 identImpl = QIdent "if"
-identNeg = QIdent "not"
-identEquiv = QIdent "iff"
 identPi = QIdent "forall"
 identSigma = QIdent "exists"
+identNot = QIdent "not"
+identEquiv = QIdent "iff"
 
+identDig = QIdent "Dig"
 identNat =  QIdent "Nat"
 identInt =  QIdent "Int"
 identRat =  QIdent "Rat"
 identReal =  QIdent "Real"
+identnat2int = QIdent "nat2int"
+identNat2real = QIdent "nat2real"
+identInt2real = QIdent "int2real"
+identRat2real = QIdent "rat2real"
 identPlus =  QIdent "plus"
 identMinus =  QIdent "minus"
 identTimes =  QIdent "times"
 identDiv =  QIdent "div"
+identPow = QIdent "pow"
+identNeg = QIdent "neg"
 identEq =  QIdent "Eq"
 identLt =  QIdent "Lt"
 identGt =  QIdent "Gt"
@@ -119,18 +129,20 @@ identZero = QIdent "0"
 identSucc = QIdent "succ"
 
 -- these are to be peeled away
-identProof = QIdent "Proof"
-identElem = QIdent "Elem"
+dkProof = "Proof"
+dkElem  = "Elem"
+identProof = QIdent dkProof
+identElem = QIdent dkElem
 
 identSuchThat = QIdent "suchthat"
 
--- logical constants in base.dk
-propFalse = EIdent (QIdent "false")
+-- logical constants in BaseConstants.dk
+propFalse = EIdent identFalse
 propAnd x y = EApp (EApp (EIdent identConj) x) y
 propOr x y = EApp (EApp (EIdent identDisj) x) y
 propImp x y = EApp (EApp (EIdent identImpl) x) y
 propEquiv x y = EApp (EApp (EIdent identEquiv) x) y
-propNeg x = EApp (EIdent identNeg) x
+propNot x = EApp (EIdent identNot) x
 
 propPi kind pred = EApp (EApp (EIdent identPi) kind) pred
 propSigma kind pred = EApp (EApp (EIdent identSigma) kind) pred
@@ -146,7 +158,7 @@ identType = QIdent "Type"
 
 --- needed for typing conclusions of proofs
 expTyped x t = EApp (EApp (EIdent (QIdent "typed")) x) t
-expNegated x = EApp (EIdent (QIdent "neg")) x
+expNegated x = EApp (EIdent identNeg) x
 
 -- lookup after annotation from dynamically loaded file
 lookupConstantFull :: String -> Maybe (String, String, [String], Int)  -- last arg: drop
@@ -188,9 +200,18 @@ escapeConstant s = case s of
 isIdentChar :: Char -> Bool
 isIdentChar c = or [isAlpha c, isDigit c, elem c ".'_"]
 
--- Dedukti representation of digits
+-- Dedukti representation of digits in BaseConstants.dk
 digitFuns :: [String]
 digitFuns = [nn, nd]
 nn = "nn"
 nd = "nd"
 
+identNn = QIdent nn
+identNd = QIdent nd
+
+-- Dedukti representation of lists in BaseConstants.dk
+identNil = QIdent "nil"
+identCons = QIdent "cons"
+
+-- Constants related to set in BaseConstants.dk
+identEnumset = QIdent "enumset"

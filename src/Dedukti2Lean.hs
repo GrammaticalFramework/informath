@@ -55,15 +55,15 @@ transExp :: Exp -> L.Exp
 transExp t = case t of
   EIdent qident -> L.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
-    (fun@(EIdent (QIdent c)), [arg]) | elem c ["Elem", "Proof"] -> transExp arg
-    (fun@(EIdent (QIdent n)), args) | elem n ["nn", "nd"] -> case getNumber fun args of
+    (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> L.EIdent (L.LIdent s) --- no L.EInt
-	_ -> L.EApp (transExp exp0) (transExp exp1)
+        _ -> L.EApp (transExp exp0) (transExp exp1)
     (EIdent c, [a, b]) | c == identConj -> L.EAnd (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identDisj -> L.EOr (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identImpl -> L.EIf (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identEquiv -> L.EIff (transExp a) (transExp b)
-    (EIdent c, [a]) | c == identNeg -> L.ENot (transExp a)
+    (EIdent c, [a]) | c == identNot -> L.ENot (transExp a)
     (EIdent c, [a, b]) | c == identEq -> L.EEq (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identNeq -> L.ENeq (transExp a) (transExp b)
     (EIdent c, [a, b]) | c == identLt -> L.ELt (transExp a) (transExp b)
@@ -106,7 +106,7 @@ transHypos mexp hypos = compress (map transHypo vhypos)
     compress hs = case hs of
       h@(L.HVarExp vs exp) : hh -> case span ((== exp) . hypoType) hh of
         (hh1@(_:_), hh2) -> L.HVarExp (vs ++ concatMap hypoVars hh1) exp : compress hh2
-	([], _) -> h : compress hh
+        ([], _) -> h : compress hh
       [] -> []
 
     hypoType :: L.Hypo -> L.Exp

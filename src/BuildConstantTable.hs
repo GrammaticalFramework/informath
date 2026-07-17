@@ -189,20 +189,20 @@ buildSymbolTable pgf lang ls = SymbolTable {
     constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map (parseFunProfile pgf lang (ifDrop (QIdent qid))) (gfids ++ macros))) |
                      qid:gids@(_:_) <- map (splitEntry . unwords) constantlines,
-		     let (latexs, gfids) = partition ((=='$') . head) gids,
-		     let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
-		     ]
+           let (latexs, gfids) = partition ((=='$') . head) gids,
+           let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
+           ]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
-	    fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
+       fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
     backConstantTable = buildBackConstantTable constantTable
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
     ifDrop qid = M.lookup qid dropTable --- copy dropTable entry to profile
     macroTable = M.fromList (
         [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)] ++
-	[mkMacro qid gid i |
-	    qid:gids <- map (splitEntry . unwords) constantlines,
-	    (gid, i) <- zip [gid | gid@('$':_) <- gids] [0..]])
+        [mkMacro qid gid i |
+          qid:gids <- map (splitEntry . unwords) constantlines,
+          (gid, i) <- zip [gid | gid@('$':_) <- gids] [0..]])
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
     semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
     nlgTable = M.fromListWith (++) [(c, [f]) | _:ws <- nlglines, let (c, f) = readSemDef (unwords ws)]
@@ -318,10 +318,10 @@ symbolTableErrors dk pgf st =
       missing = [fun | (fun, _) <- funs, M.notMember fun ct, S.notMember fun bset]
       mismatches = [((dkfun, gffun), (e, f)) |
                       (dkfun, (hypos, valtype)) <- funs,
-		      let drops = maybe 0 id (M.lookup dkfun dt),
-		      let dktyp = (drop drops hypos, valtype),
-		      ((gffun, profile), gftyp) <- allGFFuns ct dkfun,
-		      Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
+            let drops = maybe 0 id (M.lookup dkfun dt),
+            let dktyp = (drop drops hypos, valtype),
+            ((gffun, profile), gftyp) <- allGFFuns ct dkfun,
+            Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
     [unwords ["MISMATCHING TYPES:", printTree dkfun,
@@ -345,7 +345,7 @@ annotateDkIdents :: Maybe Int -> Maybe Int -> ConstantTable -> DropTable -> DkTr
 annotateDkIdents msyns msymbs table drops =
                                checkSymbolics .
                                annot []
-			       ---- . ignoreFirstArguments drops -- done with profile
+                ---- . ignoreFirstArguments drops -- done with profile
  where
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
@@ -370,7 +370,7 @@ annotateDkIdents msyns msymbs table drops =
   annotId c = case M.lookup c table of
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) fpt |
                        fpt <- tkSyns  (primary entry : synonyms entry) ++
-               	              tkSymbs (symbolics entry)]
+                                tkSymbs (symbolics entry)]
     _ -> [(c, NoProfile)]
 
   checkSymbolics :: [DkTree a] -> [DkTree a]
@@ -383,9 +383,8 @@ annotateDkIdents msyns msymbs table drops =
       (EIdent (QIdent c), ts) -> case lookupConstant c of
         Just (cat, _) | S.member cat symbolicCats ->
           not (null
-	     [u | u <- ts, not (null [k | QIdent k <- identsInTree u,
-	         Just (kat, _) <- [lookupConstant k],
-		 S.member kat verbalCats])])
+           [u | u <- ts, not (null [k | QIdent k <- identsInTree u,
+            Just (kat, _) <- [lookupConstant k], S.member kat verbalCats])])
         _  -> any badSymb ts
       (f, ts) -> any badSymb (f : ts)
     EAbs b exp -> badSymb b || badSymb exp
@@ -413,8 +412,7 @@ annotateDkIdents msyns msymbs table drops =
       (EIdent (QIdent c), ts) -> case lookupConstant c of
         Just (cat, _) | S.member cat symbolicCats ->
           [u | u <- ts, not (null [k | QIdent k <- identsInTree u,
-	         Just (kat, _) <- [lookupConstant k],
-		 S.member kat verbalCats])]
+            Just (kat, _) <- [lookupConstant k], S.member kat verbalCats])]
         _  -> concatMap badSymbolics ts
       (f, ts) -> concatMap badSymbolics (f : ts)
     _ -> composOpM badSymbolics t

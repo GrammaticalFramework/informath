@@ -22,12 +22,11 @@ parseJmt env cat s =
   in
   case (fst (parse_ gr eng cat (Just 4) s)) of  --- Just 4 is default in PGF.parse
     ParseOk ps -> 
-         let trees = sortOn treeDepth
-	       [t | t <- take max_number ps, notspur t, checkVariables env t]
+         let trees = sortOn treeDepth [t | t <- take max_number ps, notspur t, checkVariables env t]
          in
-	 if not (null trees)
-            then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
-            else (Just [], "# FAILURE SPURIOUS OR VARCHECK")
+         if not (null trees)
+         then (Just (take max_number_taken trees), "# SUCCESS " ++ show (length trees))
+         else (Just [], "# FAILURE SPURIOUS OR VARCHECK")
     ParseFailed pos -> 
          (Nothing, "# FAILURE AT " ++ show pos)
     ParseIncomplete -> 
@@ -80,11 +79,11 @@ unindexGFTree env termindex expr = case unind expr of
         "IndexedTermExp" -> parsed "Exp" (look i)
         "IndexedFormulaProp" -> parsed "Prop" (look i)
         "IndexedLetFormulaHypo" -> do
-	   formula <- parsed "Formula" (filter (/='$') (look i))
-	   return $ mkApp (mkCId "LetFormulaHypo") [formula]
+          formula <- parsed "Formula" (filter (/='$') (look i))
+          return $ mkApp (mkCId "LetFormulaHypo") [formula]
         "IndexedDeclarationArgKind" -> do
-	   declaration <- parsed "Declaration" (filter (/='$') (look i))
-	   return $ mkApp (mkCId "DeclarationArgKind") [declaration]
+          declaration <- parsed "Declaration" (filter (/='$') (look i))
+          return $ mkApp (mkCId "DeclarationArgKind") [declaration]
         _ -> return expr
       _ -> do
         ux <- unind x

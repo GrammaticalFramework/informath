@@ -7,5 +7,7 @@
 dist*/
 out/*
 .stack-work
+stack.yaml.lock
 src/typetheory/*/
+src/typetheory/Makefile
 grammars/Informath.hs
