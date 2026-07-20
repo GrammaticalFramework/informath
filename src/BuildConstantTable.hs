@@ -14,7 +14,7 @@ import Semantics
 
 import PGF
 
-import Utils
+import Utils (split, splitOutside)
 
 import qualified Data.Map as M
 import qualified Data.Set as S

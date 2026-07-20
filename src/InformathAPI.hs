@@ -65,8 +65,8 @@ readEnv args = do
   gr <- readGFGrammar (argValue "-grammar" (root ++ "/" ++ grammarFile args) args)
   let symboltables =
         if flagHasValue "-add-symboltables" args
-	then (root ++ "/" ++ constantTableFile) : argValues "-add-symboltables" "" args
-	else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
+        then (root ++ "/" ++ constantTableFile) : argValues "-add-symboltables" "" args
+        else argValues "-symboltables" (root ++ "/" ++ constantTableFile) args
   let fro = mkLanguage gr (argValue "-from-lang" english args)
   let sym = mkLanguage gr (argValue "-symboltable-lang" english args)
   symt <- readSymbolTable gr sym symboltables
@@ -137,7 +137,7 @@ constantTableFile = "share/baseconstants.dkgf"
 grammarFile :: [Flag] -> FilePath
 grammarFile args = case (argValue "-from-lang" english args,
                          argValue "-to-lang" english args,
-			 argValue "-symboltable-lang" english args) of
+                         argValue "-symboltable-lang" english args) of
   ("Eng", "Eng", "Eng") -> engGrammarFile
   _ -> fullGrammarFile
 
@@ -302,8 +302,8 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
   fs = [f | (flag, f) <- [
           ("-peano2int", peano2int),
           ("-drop-qualifs", stripQualifiers),
-	  ("-drop-definitions", dropDefinitions),
-	  ("-hide-arguments", ignoreFirstArguments (dropTableEnv env))
+          ("-drop-definitions", dropDefinitions),
+          ("-hide-arguments", ignoreFirstArguments (dropTableEnv env))
          ], isFlag flag env
        ]
 

@@ -10,7 +10,7 @@ import CommonConcepts
 import DeduktiOperations
 import BuildConstantTable
 import SpecialConstants
-import Utils
+import Utils (escapeUnderscores)
 
 import Data.Char
 import qualified Data.Set as S
@@ -63,7 +63,7 @@ jmt2jmt jmt = case jmt of
       _ | cat == "MACRO" -> case meexp of
        MEExp exp
         | kindIsProp -> GDefPropJmt definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
-	| otherwise  -> GDefExpJmt   definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
+        | otherwise  -> GDefExpJmt  definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))
        _ ->         GAxiomExpJmt definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind) 
 

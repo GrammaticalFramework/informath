@@ -5,7 +5,6 @@ module MathCore2Informath where
 
 import Informath
 import Environment
-import Utils
 import BuildConstantTable (symbolics, synonyms, primary, constantTable, nlgTable)
 import Semantics (appNLGDefs)
 import qualified PGF
@@ -146,13 +145,13 @@ groupProps conj = groups where
     p@(GAdjProp a x) : pp ->
       case getAdjs pp x of
         Just (adjs@(_:_), ps) -> (GAdjProp (adjConj conj (GListAdj (a:adjs))) x) : groups ps
-	_ -> case getAdjArgs pp a of
+        _ -> case getAdjArgs pp a of
           Just (exps@(_:_), ps) -> (GAdjProp a (expConj conj (GListExp (x:exps)))) : groups ps
-	  _ -> p : groups pp
+          _ -> p : groups pp
     p@(GFormulaProp (GEquationFormula (GBinaryEquation lt a b))) : pp ->
       case getEquations pp b of
         Just (eqs, ps) | conj == "and" -> (GFormulaProp (GEquationFormula (GChainEquation lt a eqs))) : groups ps
-	_ -> p : groups pp
+        _ -> p : groups pp
     p : pp -> p : groups pp
     _ -> []
   adjConj conj = case conj of
@@ -202,10 +201,10 @@ variations tree = case tree of
     let splits = [splitAt i hypos | i <- [0..length hypos]]
     in tree : [GAxiomJmt label (GListHypo hypos11) hypoprop |
           (hypos1, hypos2) <- splits,
-	  hypos11 <- sequence (map variations hypos1),
-	  prop2 <- variations prop,
-	  hypoprop <- concatMap variations (hypoProp hypos2 prop2)
-	  ]
+          hypos11 <- sequence (map variations hypos1),
+          prop2 <- variations prop,
+          hypoprop <- concatMap variations (hypoProp hypos2 prop2)
+          ]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
   GAllProp (GListArgKind [argkind]) prop ->
@@ -220,8 +219,8 @@ variations tree = case tree of
   GApp4MacroTerm (GStringMacro (GString "\\Summa")) m n (GIdentTerm i) f ->
     let m1s = case m of
          GNumberTerm (GInt m) -> [GNumberTerm (GInt (m + 1))]
-	 _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]
-		     --- not to be included with GInt m 
+         _ -> [GOper2Term (LexOper2 "plus_Oper2") m (GNumberTerm (GInt 1))]
+             --- not to be included with GInt m
     in tree : [Gsum3dots_Term (substTerm i m f) (substTerm i m1 f) (substTerm i n f) | m1 <- m1s]
 
   GFormulaProp formula ->

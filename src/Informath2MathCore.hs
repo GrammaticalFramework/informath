@@ -155,7 +155,7 @@ sem env t = case t of
   GAdjProp adj (GQuantExp (GNoIdentsKindQuant (GListIdent [x]) kind)) ->
     sem env (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
               (GNotAdjProp adj (GTermExp (GIdentTerm x))))
-	      
+
   GAdjProp adj (GQuantExp (GEveryKindQuant kind)) ->
     let (x, env') = newVar env
     in sem env'
@@ -175,7 +175,7 @@ sem env t = case t of
     in sem env'
       (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
         (GNotAdjProp adj (GTermExp (GIdentTerm x))))
-	
+
   GAdjProp adj exp -> case sem env adj of
     GAndAdj (GListAdj adjs)  ->
       let sx = sem env exp

@@ -9,7 +9,7 @@ import CommonConcepts
 import DeduktiOperations
 import BuildConstantTable 
 import PGF (showExpr, readExpr, showCId, mkApp, mkCId)
-import Utils
+import Utils (unescapeUnderscores)
 
 import Data.Char
 import Data.List (intersperse, nub, partition, isInfixOf)
