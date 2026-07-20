@@ -14,6 +14,7 @@ executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
     CommonConcepts
+    AnnotateDedukti
     Dedukti2Agda
     Dedukti2Rocq
     Dedukti2Lean

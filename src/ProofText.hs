@@ -11,6 +11,7 @@ import qualified Dedukti.ErrM as DE
 import DeduktiOperations
 import BuildConstantTable
 import Environment
+import AnnotateDedukti
 
 import Informath
 import Dedukti2MathCore (exp2prop, hypos2hypos)
@@ -154,7 +155,7 @@ typeAnnotate mo cont typ exp = case exp of
         Just ty -> ty
         _ -> typ
 
-
+{- -- now in AnnotateDedukti
 subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
 subst gamma bs e = case e of
   EIdent x {- | notElem x bs -} -> case lookup x gamma of
@@ -169,7 +170,7 @@ subst gamma bs e = case e of
   EFun (HParVarExp x ty) a -> EFun (HParVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
   EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
   _ -> e
-
+-}
 
 -----------------------
 -- linear proofs

@@ -23,6 +23,7 @@ import qualified Dedukti2Lean as DL
 import Ranking
 import Environment
 import BuildConstantTable
+import AnnotateDedukti (harmonizeJmt, annotateDkIdents, DkTree)
 import qualified Dedukti2MathCore as DMC
 import qualified MathCore2Informath as MCI
 import qualified Informath2MathCore as IMC
@@ -310,7 +311,7 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
 
 -- | Annotate Dedukti with GF information.
 annotateDedukti :: Env -> Jmt -> [Jmt]
-annotateDedukti env t = annotateDkIdents msyns msymbs (constantTableEnv env) (dropTableEnv env) t
+annotateDedukti env t = annotateDkIdents msyns msymbs (constantTableEnv env) (dropTableEnv env) (harmonizeJmt t)
   where
     msyns = argValueMaybeInt "-synonyms" (flags env)
     msymbs = argValueMaybeInt "-symbolics" (flags env)
