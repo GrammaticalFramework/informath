@@ -547,8 +547,8 @@ missingWords env = morphoMissing (morpho env) . tokens . lextex
  where
    tokens = ordinary [] . words
    ordinary acc ws = case ws of
-     "$" : ww -> let (_, _:ww2) = break (=="$") ww in ordinary acc ww2
-     "$$" : ww -> let (_, _:ww2) = break (=="$$") ww in ordinary acc ww2
+     "$" : ww -> case break (=="$") ww of (_, _:ww2) -> ordinary acc ww2 ; _ -> acc
+     "$$" : ww -> case break (=="$$") ww of (_, _:ww2) -> ordinary acc ww2 ; _ -> acc
      w : ww -> ordinary (w:acc) ww
      _ -> acc
 

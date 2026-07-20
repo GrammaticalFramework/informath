@@ -43,7 +43,7 @@ isSpurious env expr = case unApp expr of
  where
    reachable f = case functionType pgf f of
      Just ty -> case unType ty of
-       (_, c, _) | Set.member (showCId c) verbalCats -> Set.member f (reachableFunctions env)
+       (_, c, _) | Set.member (showCId c) verbalCats -> Set.member f (reachableFunctions env) || ("noLabel" == showCId f)
        _ -> True
      _ -> True
    pgf = grammar env
