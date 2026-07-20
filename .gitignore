@@ -10,4 +10,4 @@ out/*
 stack.yaml.lock
 src/typetheory/*/
 src/typetheory/Makefile
-grammars/Informath.hs
+src/Informath.hs
