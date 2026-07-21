@@ -160,7 +160,7 @@ unlexText = capitInit . unlext where
 
 -- | Bind tokens separated by Prelude.BIND, i.e. &+
 bindTok :: [String] -> [String]
-bindTok ws = case ws of
+bindTok ws_arg = case ws_arg of
                w1:"&+":w2:ws -> bindTok ((w1++w2):ws)
                "&+":ws       -> bindTok ws
                "&|":(c:cs):ws-> bindTok ((toUpper c:cs) : ws)
