@@ -2,6 +2,9 @@ abstract Mizar = Categories, Terms
 ** {
   cat
     Predicate;
+    DefCases;
+    DefCase;
+    [DefCase] {1};
 
   fun
     -- non_Adverb : Adverb ;
@@ -26,11 +29,18 @@ abstract Mizar = Categories, Terms
     Dep2Noun : Dep2 -> Exp -> Exp -> Noun ;
     DepCNoun : DepC -> Exp -> Exp -> Noun ;
 
+    DefByCasesJmt : Label -> [Hypo] -> DefCases -> Jmt ;
+    PropsDefCase : Prop -> Prop -> DefCase ;
+    NoOtherwiseDefCases : [DefCase] -> DefCases ;
+    OtherwiseDefCases : [DefCase] -> Prop -> DefCases ;
+    otherwise_Adv : Adv ;
+
     TupleTerm : [Term] -> Term ;
     IdentPredicate : Ident -> Predicate;
     AppPredicateFormula : Predicate -> [Term] -> Formula;
     FraenkelComprehensionTerm : Term -> [ArgKind] -> Prop -> Term ;
     FraenkelSimpleComprehensionTerm : Term -> [ArgKind] -> Term ;
+    TextualTerm : Exp -> Term ;
 
     notsubseteq_Compar : Compar;
     inverse_Oper : Oper ;
