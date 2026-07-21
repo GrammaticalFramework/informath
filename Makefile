@@ -78,7 +78,7 @@ clean-full:
 	make clean-typetheory
 	make clean-grammars
 	rm stack.yaml.lock
-	rm .stack-work
+	rm -rf .stack-work
 
 
 demo:
