@@ -47,7 +47,8 @@ tryParseFunProfile pgf lang mdrop s = case s of
     tp@(t, p):_ -> case (mdrop, p) of   ---- TODO: if many parses?
       (Nothing, _) -> return tp
       (Just k, NoProfile) -> return (t, DropProfile k)
-      _ -> Bad $ "conflicting profile information in " ++ s
+      (Just k, DropProfile n) | k == n -> return (t, DropProfile k)
+      (Just k, _) -> Bad $ "conflicting profile information in " ++ s ++ ": Drop " ++ show k ++ " vs. " ++ showProfile p
   _ -> return (readGFTree s, maybe NoProfile DropProfile mdrop)
 
 
