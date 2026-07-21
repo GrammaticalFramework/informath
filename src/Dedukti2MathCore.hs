@@ -7,6 +7,7 @@ import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import Informath -- superset of MathCore
 import CommonConcepts
+import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable
 import SpecialConstants

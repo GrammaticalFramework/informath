@@ -9,7 +9,7 @@ import qualified Rocq.AbsRocq as C
 import qualified Rocq.PrintRocq as PrC
 
 import DeduktiOperations
-import CommonConcepts
+import DeduktiTheoryAPI
 
 import System.Environment (getArgs)
 

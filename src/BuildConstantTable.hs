@@ -8,6 +8,7 @@ import Dedukti.PrintDedukti
 import Dedukti.ErrM
 
 import CommonConcepts
+import DeduktiTheoryAPI
 import DeduktiOperations
 import Lexing (lextex)
 import Semantics

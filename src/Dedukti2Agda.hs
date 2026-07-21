@@ -9,7 +9,7 @@ import qualified Agda.AbsAgda as A
 import qualified Agda.PrintAgda as PrA
 
 import DeduktiOperations (getNumber, splitApp, isWildIdent)
-import CommonConcepts
+import DeduktiTheoryAPI
 
 -- skeleton copied from bnfc-generated SkelDedukti
 

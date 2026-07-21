@@ -9,7 +9,7 @@ import qualified Lean.AbsLean as L
 import qualified Lean.PrintLean as PrL
 
 import DeduktiOperations
-import CommonConcepts
+import DeduktiTheoryAPI
 
 import System.Environment (getArgs)
 

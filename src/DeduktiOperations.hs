@@ -7,6 +7,7 @@ import Dedukti.AbsDedukti
 import Dedukti.ParDedukti (myLexer)
 import Dedukti.LexDedukti (Token(..), prToken)
 import CommonConcepts
+import DeduktiTheoryAPI
 
 import Data.Char
 import Data.List
