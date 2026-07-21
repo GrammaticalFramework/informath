@@ -93,7 +93,8 @@ data Step a = Step {
   discharged :: [QIdent]  -- hypolabels of discharged formulas
   }
   deriving (Show, Eq)
-  
+
+mkStep :: QIdent -> a -> QIdent -> [QIdent] -> Step a
 mkStep li fo ru di = Step li fo ru di
 
 -- proof lines in Jaskowski-style notation
@@ -106,7 +107,10 @@ data Line a = Line {
   }
   deriving (Show, Eq)
 
+mkLine :: Int -> [QIdent] -> a -> QIdent -> [Int] -> [QIdent] -> Line a
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
+
+mkHypoLine :: Int -> a -> QIdent -> QIdent -> Line a
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
 noIdent = QIdent "#NOIDENT" ---- 
@@ -307,14 +311,18 @@ prlu lin ln
 prt :: Exp -> String
 prt exp = printTree exp
 
+mathdisplay :: [Char] -> [Char]
 mathdisplay s = "\\[" ++ s ++ "\\]"
 
+verbatim :: String -> [Char]
 verbatim s = "\\begin{verbatim}\n" ++ unlines (splitLines (words s)) ++ "\n\\end{verbatim}"
 
+splitLines :: [String] -> [String]
 splitLines ws = case splitAt 10 ws of
   (line, rest@(_:_)) -> unwords line : splitLines rest
   _ -> [unwords ws]
 
+prLatexFile :: String -> String
 prLatexFile string = unlines [
   "\\documentstyle[proof]{article}",
   "\\setlength{\\parskip}{2mm}",

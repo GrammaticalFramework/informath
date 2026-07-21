@@ -12,6 +12,7 @@ import Utils (showFreqs, fileSuffix, dictValues)
 import System.Environment (getArgs)
 import System.IO (stdout, hFlush)
 
+main :: IO ()
 main = do
   xx <- getArgs
 ----  if elem "-server" xx  --- TODO-server
@@ -21,6 +22,7 @@ main = do
     xs@(_:_) -> putStrLn ("invalid arguments: " ++ unwords xs ++ "; see -help")
     _ ->  main4 xx
 
+main4 :: [String] -> IO ()
 main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
   env <- readEnv args 
   let mfile = inputFileArg args
@@ -91,6 +93,7 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       
     _ -> mapM_ putStrLn helpMsg4 
 
+helpMsg4 :: [String]
 helpMsg4 = [
   "usage: RunInformath <option>* <file>.(dk|dkgf|tex|txt|md|...)*",
   "",
@@ -173,7 +176,7 @@ helpMsg4 = [
  where
    just opt expl = concat ["  ", opt, replicate (28 - length opt) ' ', expl]
 
-
+invalidArgs :: [[Char]] -> [[Char]]
 invalidArgs xx =
   [x | x@('-':_) <- xx, notElem (takeWhile (/='=') x) validOptions] ++
   [x | x <- xx, head x /= '-', notElem (fileSuffix x) validFileSuffixes]
@@ -181,6 +184,7 @@ invalidArgs xx =
   validOptions = [takeWhile (/='=') o | o:_ <- map words helpMsg4]
   validFileSuffixes = words "dk dkgf dktex gft tex txt md"
 
+loopInformath :: Env -> IO b
 loopInformath env = do
   putStr "> "
   hFlush stdout

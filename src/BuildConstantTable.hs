@@ -215,6 +215,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     isSemantics line = head line == "#SEMANTICS"
     isNLG line = head line == "#NLG"
 
+splitEntry :: [Char] -> [String]
 splitEntry s = case splitOutside '$'  '|' s of
   fg : ws -> split ':' fg ++ ws
   _ -> []

@@ -46,6 +46,7 @@ data Env = Env {
 informathPrefix = "Informath"
 english = "Eng"
 
+relevantLanguages :: PGF -> [[Char]] -> [Language]
 relevantLanguages gr args = [
   lang |
     code <- commaSep (argValue "-languages" english args),
@@ -53,26 +54,34 @@ relevantLanguages gr args = [
     elem lang (PGF.languages gr)
   ]
 
+argValue :: Eq a => [a] -> [a] -> [[a]] -> [a]
 argValue flag df args = case [f | f <- args, isPrefixOf flag f] of
   f:_ -> drop (length flag + 1) f   -- -<flag>=<value>
   _ -> df
-  
+
+argValues :: [Char] -> [Char] -> [[Char]] -> [String]
 argValues flag df args = commaSep (argValue flag df args)
-  
+
+argValueMaybeInt :: [Char] -> [[Char]] -> Maybe Int
 argValueMaybeInt flag args = case argValue flag "nothing" args of
   v | all isDigit v -> Just (read v :: Int)
   _ -> Nothing
 
+isFlag :: Flag -> Env -> Bool
 isFlag flag env = elem flag (flags env)
 
+flagHasValue :: [Char] -> [[Char]] -> Bool
 flagHasValue flag args = elem flag (map (takeWhile (/='=')) args)
 
+ifArg :: (Foldable t, Eq a) => a -> t a -> String -> IO ()
 ifArg flag args msg = if elem flag args then putStrLn msg else return ()
 
+inputFileArg :: [[Char]] -> Maybe ([Char], [Char])
 inputFileArg args = case [arg | arg <- args, head arg /= '-'] of
   [arg] -> Just (arg, fileSuffix arg)
   _ -> Nothing
 
+inputFileArgs :: [[Char]] -> Maybe ([[Char]], [Char])
 inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
   f:fs | and [fileSuffix g == fileSuffix f | g <- fs] -> Just (args, fileSuffix f)
   _ -> Nothing

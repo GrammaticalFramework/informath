@@ -37,15 +37,19 @@ commaSepInts s =
   let ws = commaSep s
   in if all (all isDigit) ws then map read ws else error ("expected digits found " ++ s)
 
+fileSuffix :: [Char] -> [Char]
 fileSuffix = reverse . takeWhile (/= '.') . reverse
 
+commaSep :: [Char] -> [String]
 commaSep s = words (map (\c -> if c==',' then ' ' else c) s)
 
 toLatexDoc :: [String] -> [String] -> [String]
 toLatexDoc ms ss = latexPreamble ++ ms ++ ss ++ [latexEndDoc]
 
+latexEndDoc :: String
 latexEndDoc = "\\end{document}"
 
+latexPreamble :: [String]
 latexPreamble = [
   "\\batchmode",
   "\\documentclass{article}",
@@ -112,7 +116,7 @@ split c cs = case break (==c) cs of
 
 
 -- split with c outside a given lim env, such as $..$
--- split with c outside a given lim env, such as $..$
+splitOutside :: Char -> Char -> [Char] -> [[Char]]
 splitOutside lim c str = filter (not . null) (gather segments)
   where
     s = dropWhile isSpace str

@@ -82,28 +82,38 @@ unlexMixed good = fixesAfterDollars . capitInit . concat . alternate False . bin
 -- * Additional lexing uitilties
 
 -- | Capitalize first letter
+capitInit :: [Char] -> [Char]
 capitInit s = case s of
   c:cs -> toUpper c : cs
   _ -> s
 
 -- | Uncapitalize first letter
+uncapitInit :: ([Char] -> Bool) -> [Char] -> [Char]
 uncapitInit good s = 
   case s of
     c:cs | not (good s) -> toLower c : cs
     _                   -> s
 
 -- | Unquote each string wrapped in double quotes
+unquote :: [[Char]] -> [[Char]]
 unquote = map unq where 
   unq s = case s of
     '"':cs@(_:_) | last cs == '"' -> init cs
     _ -> s
 
+isPunct :: Char -> Bool
 isPunct = flip elem ".?!,:;"
+isMajorPunct :: Char -> Bool
 isMajorPunct = flip elem ".?!"
+isMinorPunct :: Char -> Bool
 isMinorPunct = flip elem ",:;"
+isParen :: Char -> Bool
 isParen = flip elem "()[]{}"
+isOpening :: Char -> Bool
 isOpening = flip elem "([{"
+isClosing :: Char -> Bool
 isClosing = flip elem ")]}"
+isSpecial :: Char -> Bool
 isSpecial = flip elem "%&/#\""
 
 

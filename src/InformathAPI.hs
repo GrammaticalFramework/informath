@@ -92,13 +92,19 @@ readEnv args = do
 
 -- | direct access to parts of the symbol table
 
+constantTableEnv :: Env -> ConstantTable
 constantTableEnv = constantTable . symbolTable
+backConstantTableEnv :: Env -> BackConstantTable
 backConstantTableEnv = backConstantTable . symbolTable
+conversionTableEnv :: Env -> ConversionTable
 conversionTableEnv = conversionTable . symbolTable
+dropTableEnv :: Env -> DropTable
 dropTableEnv = dropTable . symbolTable
+macroTableEnv :: Env -> MacroTable
 macroTableEnv = macroTable . symbolTable
 semanticsTableEnv = semanticsTable . symbolTable
 nlgTableEnv = nlgTable . symbolTable
+builtinSetEnv :: Env -> S.Set QIdent
 builtinSetEnv = builtinSet . symbolTable
 
 -- ** Low-level access to data sources
