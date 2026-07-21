@@ -59,14 +59,27 @@ Lean:
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
 
-clean:
+
+clean-typetheory:
 	cd src/typetheory && \
 	for dir in Agda Rocq Dedukti Lean; do \
 		rm -rf "$$dir"/*; \
 	done
+	rm src/typetheory/Makefile
+	rm src/typetheory/Makefile.bak
 
-cleangrammars:
-	cd grammars && rm *.gfo *.pgf *.hs
+clean-grammars:
+	rm grammars/*.gfo
+	rm grammars/extraction/*.gfo
+	rm src/Informath.hs
+	rm share/*.pgf
+
+clean-full:
+	make clean-typetheory
+	make clean-grammars
+	rm stack.yaml.lock
+	rm .stack-work
+
 
 demo:
 	echo "${lightgreen}## The first user demo, only requiring Informath and Latex${neutral}"
@@ -262,10 +275,10 @@ fermat:
 	$(RUN) -add-symboltables=test/fermat.dkgf -variations test/fermat.dk
 
 cartesian:
-	$(RUN)  -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
+	$(RUN) -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
 
 bind:
-	$(RUN)  -add-symboltables=test/bind.dkgf -variations test/bind.dk
+	$(RUN) -add-symboltables=test/bind.dkgf -variations test/bind.dk
 
 prooftextdemo:
 	$(RUN) -proof-text -base=test/natdedrules.dk -add-symboltables=test/natdrop.dkgf test/natdedproofs.dk >out/prooftextdemo.tex
@@ -276,24 +289,3 @@ binary_packages:
 	cp -p share/InformathEng.pgf share/InformathFull.pgf tmp/
 	cd tmp ; strip RunInformath ; tar cvfz RunInformath-$(VERSION)-$(ARCH).tgz RunInformath ; tar cvfz Informath-grammars-$(VERSION).tgz InformathEng.pgf InformathFull.pgf
 	ls -l tmp/*.tgz
-
-clean-typetheory:
-	rm -r src/typetheory/Agda
-	rm -r src/typetheory/Dedukti
-	rm -r src/typetheory/Lean
-	rm -r src/typetheory/Rocq
-	rm src/typetheory/Makefile
-
-clean-pgf:
-	rm share/InformathEng.pgf
-	rm share/InformathFull.pgf
-
-clean-gf:
-	rm grammars/*.gfo
-	rm grammars/extraction/*.gfo
-
-clean-full:
-	make clean-typetheory
-	make clean-pgf
-	make clean-gf
-	rm stack.yaml.lock
