@@ -4,11 +4,9 @@
 module SpecialConstants where
 
 import Dedukti.AbsDedukti
-import Dedukti.PrintDedukti
 import DeduktiOperations
-import CommonConcepts
 import Informath
-import CommonConcepts (mainCats)
+import CommonConcepts (SCat, mainCats, lookupConstantFull)
 
 import PGF
 import qualified Data.Map as M

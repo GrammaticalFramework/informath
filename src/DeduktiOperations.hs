@@ -4,7 +4,6 @@
 module DeduktiOperations where
 
 import Dedukti.AbsDedukti
-import Dedukti.PrintDedukti
 import Dedukti.ParDedukti (myLexer)
 import Dedukti.LexDedukti (Token(..), prToken)
 import CommonConcepts
