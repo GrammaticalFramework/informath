@@ -64,35 +64,35 @@ jmt2jmt jment = case jment of
       (label2ident label)
       (MTExp (foldr EFun (prop2dedukti prop) (concatMap hypo2dedukti hypos)))
       (MEExp (proof2dedukti proof))
-  GDefPropJmt label_ (GListHypo hypos) prop df ->
+  GDefPropJmt _ (GListHypo hypos) prop df ->
     JDef
       (prop2deduktiIdent prop)
       (MTExp (foldr EFun typeProp (concatMap hypo2dedukti hypos)))
       (MEExp (prop2dedukti df))
-  GDefKindJmt label_ (GListHypo hypos) kind df ->
+  GDefKindJmt _ (GListHypo hypos) kind df ->
     JDef
       (kind2ident kind)
       (MTExp (foldr EFun typeType (concatMap hypo2dedukti hypos)))
       (MEExp (kind2dedukti df))
-  GDefExpJmt label_ (GListHypo hypos) exp kind df ->
+  GDefExpJmt _ (GListHypo hypos) exp kind df ->
     JDef
       (exp2ident exp)
       (MTExp (foldr EFun (kind2dedukti kind) (concatMap hypo2dedukti hypos)))
       (MEExp (exp2dedukti df))
-  GAxiomPropJmt label_ (GListHypo hypos) prop ->
+  GAxiomPropJmt _ (GListHypo hypos) prop ->
     JStatic
       (prop2deduktiIdent prop)
       (foldr EFun typeProp (concatMap hypo2dedukti hypos))
-  GAxiomKindJmt label_ (GListHypo hypos) kind ->
+  GAxiomKindJmt _ (GListHypo hypos) kind ->
     JStatic
       (kind2ident kind)
       (foldr EFun typeType (concatMap hypo2dedukti hypos))
-  GAxiomExpJmt label_ (GListHypo hypos) exp kind ->
+  GAxiomExpJmt _ (GListHypo hypos) exp kind ->
     JStatic
       (exp2ident exp)
       (foldr EFun (kind2dedukti kind) (concatMap hypo2dedukti hypos))
   GRewriteJmt (GListRule rules) -> JRules (map rule2dedukti rules)
-  GDefUntypedExpJmt label_ exp df ->
+  GDefUntypedExpJmt _ exp df ->
     JDef
       (exp2ident exp)
       MTNone
@@ -114,8 +114,8 @@ rule2dedukti rule = case rule of
 
 unit2exp :: GUnit -> Exp
 unit2exp unit = case unit of
-  GBeginEnvironmentUnit (LexEnvironment s) label -> wrap "BeginEnvironmentUnit" [EIdent (QIdent s)]
-  GBeginProofMethodUnit label method_ -> wrap "BeginProofMethodUnit" [EIdent (label2ident label)]
+  GBeginEnvironmentUnit (LexEnvironment s) _ -> wrap "BeginEnvironmentUnit" [EIdent (QIdent s)]
+  GBeginProofMethodUnit label _ -> wrap "BeginProofMethodUnit" [EIdent (label2ident label)]
   GCaseGoal prop ident -> wrap "CaseGoal" [prop2dedukti prop, EIdent (ident2ident ident)] 
   GCasesGoal -> uni "CasesGoal"
   GEndEnvironmentUnit (LexEnvironment s) -> wrap "EndAbbreviationUnit" [EIdent (QIdent s)] ;
@@ -129,8 +129,8 @@ unit2exp unit = case unit of
   GLabelConclusion label -> wrap "LabelConclution" [EIdent (label2ident label)]
   GObviousConclusion -> uni "ObviousConclusion"
   GPropAssumption prop label -> wrap "PropAssumption" [prop2dedukti prop, EIdent (label2ident label)]
-  GPropConclusion hence prop -> wrap "PropConclusion" [prop2dedukti prop]
-  GPropLabelConclusion hence prop label -> wrap "PropLabelConclusion" [prop2dedukti prop, EIdent (label2ident label)]
+  GPropConclusion _ prop -> wrap "PropConclusion" [prop2dedukti prop]
+  GPropLabelConclusion _ prop label -> wrap "PropLabelConclusion" [prop2dedukti prop, EIdent (label2ident label)]
   GSinceConclusion a b -> wrap "SinceConclusion" [prop2dedukti a, prop2dedukti b]
   GSinceGoal a b -> wrap "SinceGoal" [prop2dedukti a, prop2dedukti b]
   _ -> eUnit

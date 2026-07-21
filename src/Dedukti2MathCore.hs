@@ -197,14 +197,14 @@ funListFormula ident exps = case ident of
     
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of
-  GVarsHypo (GListIdent idents) kind_ -> idents
+  GVarsHypo (GListIdent idents) _ -> idents
   GBareVarsHypo (GListIdent idents) -> idents
   _ -> []
 
 hypos2hypos :: [Hypo] -> [GHypo]
 hypos2hypos hypos = case hypos of
   HVarExp x p : hs | catExp p == "Prop" -> GPropVarHypo (ident2ident x) (exp2prop p) : hypos2hypos hs
-  hypo@(HVarExp var kind) : hh -> case getVarsHypos kind hh of
+  (HVarExp var kind) : hh -> case getVarsHypos kind hh of
     ([], _) -> GVarsHypo (GListIdent [ident2ident var]) (exp2kind kind) : hypos2hypos hh
     (xs, hs) -> GVarsHypo (GListIdent (map ident2ident (var:xs))) (exp2kind kind) : hypos2hypos hs
   HParVarExp var kind : hh -> hypos2hypos (HVarExp var kind : hh) 
@@ -274,7 +274,7 @@ exp2prop exp = case specialDedukti2Informath callBacks exp of
       (hypos, exp) ->
         GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
     EAbs _ _ -> case splitAbs exp of
-      (binds, body) -> (exp2prop body) ---- TODO find way to express binds here
+      (_, body) -> (exp2prop body) ---- TODO find way to express binds here
 
 
 callBacks :: CallBacks
@@ -315,7 +315,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
         EIdent (QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GTermExp (GNumberTerm (GInt (read s)))
           _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))
-        EIdent ident@(QIdent f) -> funListExp ident args
+        EIdent ident@(QIdent _) -> funListExp ident args
         _ -> GAppExp (exp2exp fun) (gExps (map exp2exp args))      
     EAbs _ _ -> case splitAbs exp of
       (binds, body) -> GAbsExp (GListIdent (map bind2coreIdent binds)) (exp2exp body)
@@ -341,7 +341,7 @@ exp2term exp = case specialDedukti2Informath callBacks exp of
         EIdent ident@(QIdent n) | elem n digitFuns -> case getNumber fun args of
           Just s -> GNumberTerm (GInt (read s))
           _ -> funListTerm ident args
-        EIdent ident@(QIdent f) -> funListTerm ident args
+        EIdent ident@(QIdent _) -> funListTerm ident args
         _ -> error ("not yet exp2term on application: " ++ printTree exp)
    
     EAbs bind body -> GAbsTerm (bind2coreIdent bind) (exp2term body)

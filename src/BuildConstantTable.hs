@@ -236,7 +236,7 @@ mkMacro qid s i = (macroName qid i, (maximum (0 : args s), init (tail s)))
  where
    args s = case s of
      '#':c:cs | isDigit c -> read [c] : args cs --- only one-digit arguments
-     c:cs -> args cs
+     _:cs -> args cs
      _ -> []
 
 macroName :: String -> Int -> String
@@ -244,14 +244,14 @@ macroName c i = "\\" ++ filter isAlpha c ++ "MACRo" ++ replicate i 'I'
 
 mkConstantTableEntry :: PGF -> [FunProfile] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
-mkConstantTableEntry pgf (funp@(fun, prof) : funps) = ConstantTableEntry {
+mkConstantTableEntry pgf (funp@(fun, _) : funps) = ConstantTableEntry {
   primary = (funp, funtype pgf fun),
   symbolics = [(f, typ) | (f, typ) <- symbs],
   synonyms = [(f, typ) | (f, typ) <- syns]
   }
  where
  
-   funtype fun = inferFunType pgf
+   funtype _ = inferFunType pgf
 
    (symbs, syns) = partition (isSymbolic . snd) [(fp, funtype pgf f) | fp@(f,_) <- funps]
    isSymbolic typ = case unType typ of
@@ -309,7 +309,7 @@ mismatchingTypes mt dktyp gftyp fun = arityMismatch dktyp (unType gftyp) where
   hypoArity hypo = maybe 1 ((+1) . length . fst . splitType) (hypo2type hypo) -- for HOAS
     
 symbolTableErrors :: Module -> PGF -> SymbolTable -> [String]
-symbolTableErrors dk pgf st =
+symbolTableErrors dk _ st =
   let dt = dropTable st
       mt = macroTable st
       ct = constantTable st
@@ -320,7 +320,7 @@ symbolTableErrors dk pgf st =
                       (dkfun, (hypos, valtype)) <- funs,
             let drops = maybe 0 id (M.lookup dkfun dt),
             let dktyp = (drop drops hypos, valtype),
-            ((gffun, profile), gftyp) <- allGFFuns ct dkfun,
+            ((gffun, _), gftyp) <- allGFFuns ct dkfun,
             Just (e, f) <- [mismatchingTypes mt dktyp gftyp gffun]]
   in 
     ["MISSING IN TABLE: " ++ printTree fun | fun <- missing] ++
@@ -347,10 +347,9 @@ argCats t = case unType t of (hs, _, _) -> [valCat h | (_, _, h) <- hs]
 
 -- deciding the kind of a new constant introduced in a judgement
 guessGFCat :: QIdent -> Exp -> String
-guessGFCat ident@(QIdent c) typ =
+guessGFCat (QIdent c) typ =
   let
-    (hypos, val) = splitType typ
-    arity = length hypos
+    (_, val) = splitType typ
   in case lookupConstant c of
     Just (cat, _) -> cat
     _ -> case splitApp val of

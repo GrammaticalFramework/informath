@@ -127,7 +127,7 @@ inSituResults t = case t of
 type QEnv = (Int, [GQuant])
 initQEnv = (0, [])
 
-current (i, s) = GTermExp (GIdentTerm (newIdent i))
+current (i, _) = GTermExp (GIdentTerm (newIdent i))
 next s (i, ss) = (i + 1, s:ss)
 
 newIdent i = GStrIdent (GString ("_x_" ++ show i))

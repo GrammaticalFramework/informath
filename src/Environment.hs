@@ -74,6 +74,6 @@ inputFileArg args = case [arg | arg <- args, head arg /= '-'] of
   _ -> Nothing
 
 inputFileArgs args = case [arg | arg <- args, head arg /= '-'] of
-  arg@(f:fs) | and [fileSuffix g == fileSuffix f | g <- fs] -> Just (args, fileSuffix f)
+  f:fs | and [fileSuffix g == fileSuffix f | g <- fs] -> Just (args, fileSuffix f)
   _ -> Nothing
 

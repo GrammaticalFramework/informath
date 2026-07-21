@@ -60,7 +60,7 @@ uncoerce :: Tree a -> Tree a
 uncoerce t = case t of
   GProofProp prop -> uncoerce prop
   GElemKind kind -> uncoerce kind
-  GCoercionExp coercion_ exp -> uncoerce exp
+  GCoercionExp _ exp -> uncoerce exp
   _ -> composOp uncoerce t
 
 
@@ -94,7 +94,7 @@ aggregate t = case t of
  where
    aggregateHypos hypos = case hypos of
      GVarsHypo xs@(GListIdent [x]) kind :
-       GPropHypo (GAdjProp adj exp@(GTermExp (GIdentTerm y))) : hs | x == y ->
+       GPropHypo (GAdjProp adj (GTermExp (GIdentTerm y))) : hs | x == y ->
          GAdjKindHypo xs adj kind : aggregateHypos hs
      GPropHypo a : GPropHypo b : hs ->
        GPropHypo (aggregate (GAndProp (GListProp [a, b]))) : aggregateHypos hs
@@ -132,7 +132,7 @@ getAlls kind prop = case prop of
 
 getEquations :: [GProp] -> GTerm -> Maybe (GEquation, [GProp])
 getEquations props b = case props of
-  p@(GFormulaProp (GEquationFormula eq@(GBinaryEquation lt c d))) : pp | c == b -> do
+  (GFormulaProp (GEquationFormula eq@(GBinaryEquation lt c d))) : pp | c == b -> do
     case getEquations pp d of
       Nothing -> return (eq, pp)
       Just (eqs, ps) -> return (GChainEquation lt c eqs, ps)

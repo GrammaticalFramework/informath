@@ -54,7 +54,7 @@ transExp :: Exp -> C.Exp
 transExp t = case t of
   EIdent qident -> C.EIdent (transIdent qident)
   EApp exp0 exp1 -> case splitApp t of
-    (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> C.EInt (read s) --- no C.EInt
         _ -> C.EApp (transExp exp0) (transExp exp1)
@@ -80,7 +80,7 @@ transExp t = case t of
   EAbs bind exp -> C.EAbs [transBind bind] (transExp exp)
   EFun hypo@(HVarExp _ _) exp -> C.EFunDep (transHypo hypo) (transExp exp)
   EFun hypo@(HParVarExp _ _) exp -> C.EFunDep (transHypo hypo) (transExp exp)
-  EFun hypo@(HExp typ) exp -> C.EIf (transExp typ) (transExp exp)
+  EFun (HExp typ) exp -> C.EIf (transExp typ) (transExp exp)
 
 transExpProp :: Exp -> C.Exp
 transExpProp t = case t of
@@ -91,7 +91,7 @@ transExpProp t = case t of
 transBind :: Bind -> C.CIdent
 transBind t = case t of
   BVar var -> transIdent var
-  BTyped var exp -> transIdent var
+  BTyped var _ -> transIdent var
 
 transHypos :: MExp -> [Hypo] -> [C.Hypo]
 transHypos mexp hypos = compress (map transHypo vhypos)
@@ -122,7 +122,7 @@ transIdent t = case t of
   QIdent str -> C.CIdent str ---- not quite the same ident syntax ; reserved idents in Rocq!
 
 processDeduktiModule :: Module -> IO ()
-processDeduktiModule mo@(MJmts jmts) = do
+processDeduktiModule (MJmts jmts) = do
       flip mapM_ jmts processDeduktiJmtTree
 
 processDeduktiJmtTree :: Jmt -> IO ()

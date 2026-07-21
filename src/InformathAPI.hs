@@ -258,7 +258,6 @@ processGFTree env gft =
 processLatexLine :: Env -> String -> ParseResult
 processLatexLine env s =
   let
-    gr = grammar env
     trans = isFlag "-translate" env
     parseonly = isFlag "-parse-only" env
     ls = lextex s
@@ -414,7 +413,7 @@ dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool
-checkJmt jmt = True ----
+checkJmt _ = True ----
 
 -- ** Conversions starting from natural language
 
@@ -480,7 +479,7 @@ printDeduktiEnv env t =
 -- | to translate 
 transEmbeddedDedukti :: Env -> [String] -> [String]
 transEmbeddedDedukti env = transInEnv "dedukti" transDkEnv where
-  transDkEnv (beg : ls) = trans (unlines (init ls))
+  transDkEnv (_ : ls) = trans (unlines (init ls))
   trans = unlines . intersperse "" . concatMap (printGenResult env) . processDeduktiModule env .  parseDeduktiModule
 
 -- ** Seldom explicitly needed one-step conversion.
@@ -516,7 +515,7 @@ parseDeduktiModule s = case pModule (myLexer s) of
 -- | To parse a Dedukti file into its AST.
 parseDeduktiModuleErrorFree :: String -> Maybe Module
 parseDeduktiModuleErrorFree s = case pModule (myLexer s) of
-  Bad e -> Nothing
+  Bad _ -> Nothing
   Ok mo -> return mo
 
 -- | To linearize a GF tree.

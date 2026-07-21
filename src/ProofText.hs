@@ -114,7 +114,7 @@ noIdent = QIdent "#NOIDENT" ----
 -- an object-language type Elem A (as opposed to a Proof of a proposition)
 isElemType :: Exp -> Bool
 isElemType e = case splitApp e of
-  (EIdent identElem, _) -> True
+  (EIdent _, _) -> True
   _ -> False
 
 
@@ -136,8 +136,8 @@ typeAnnotate mo cont typ exp = case exp of
   EAbs bind body -> 
     let
       vartyp = case bind of
-        BTyped v ty -> ty
-        BVar v -> case typ of
+        BTyped _ ty -> ty
+        BVar _ -> case typ of
           EFun h _ -> case hypo2type h of
             Just ty -> ty
             _ -> error ("no type of bound var in " ++ printTree exp)
@@ -200,7 +200,7 @@ term2lines =
  -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
  -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
  psArgs :: Int -> [QIdent] -> [Exp] -> ([[Line Exp]], [Int], Int)
- psArgs n cont [] = ([], [], n)
+ psArgs n _ [] = ([], [], n)
  psArgs n cont (a:as) =
    let (ls, prem) = psArg n cont a
        (lss, prems, nf) = psArgs (nextline n ls) cont as
