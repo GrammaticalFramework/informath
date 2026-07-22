@@ -6,7 +6,7 @@ module DeduktiOperations where
 import Dedukti.AbsDedukti
 import Dedukti.ParDedukti (myLexer)
 import Dedukti.LexDedukti (Token(..), prToken)
-import CommonConcepts
+import CommonConcepts (lookupConstant, propCats)
 import DeduktiTheoryAPI
 
 import Data.Char

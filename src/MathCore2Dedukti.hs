@@ -5,7 +5,7 @@ module MathCore2Dedukti where
 
 import Dedukti.AbsDedukti
 import Informath -- superset of MathCore
-import CommonConcepts
+import CommonConcepts (escapeConstant)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable 

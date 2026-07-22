@@ -7,7 +7,7 @@ import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import Dedukti.ErrM
 
-import CommonConcepts
+import CommonConcepts (lookupConstant, mainCats, symbolicCats, gfCatMap)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import Lexing (lextex)

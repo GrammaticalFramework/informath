@@ -6,7 +6,8 @@ module Dedukti2MathCore where
 import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import Informath -- superset of MathCore
-import CommonConcepts
+import CommonConcepts (lookupConstant, lookupConstantFull, stripConstant, unescapeConstant)
+import CommonConcepts (expCats, propCats, kindCats, proofCats, symbolicCats)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable

@@ -6,7 +6,7 @@ module AnnotateDedukti where
 import BuildConstantTable
 import Dedukti.AbsDedukti
 import DeduktiOperations
-import CommonConcepts
+import CommonConcepts (lookupConstant, symbolicCats, verbalCats)
 
 import PGF hiding (Hypo)
 
