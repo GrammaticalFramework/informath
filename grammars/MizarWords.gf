@@ -21,4 +21,5 @@ abstract MizarWords = Categories ** {
     one_sorted_Noun : Noun ;
     isomorphic_AdjC : AdjC ;
     isomorphism_DepC : DepC ;
+    function_like_Adj : Adj ;
 }

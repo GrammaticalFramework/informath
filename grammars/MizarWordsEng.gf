@@ -24,6 +24,7 @@ open UtilitiesEng, MathWordsEng, SyntaxEng, NaprocheWordsEng, ExamplesEng, Wikid
     one_sorted_Noun = AdjNounNoun (mkAdj "1-sorted") structure_Noun ;
     isomorphic_AdjC = AdjAdjC (mkAdj "isomorphic") ;
     isomorphism_DepC = NounPrepDepC isomorphism_Noun between_Prep ;
+    function_like_Adj = mkAdj "function-like" ;
 
 
 }
