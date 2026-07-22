@@ -51,7 +51,7 @@ gcd : "the greatest common divisor of #1 and #2"
 even : "#1 is even"
 odd : "#1 is odd"
 prime : "#1 is prime"
-divisible : "#1 is divisible by #2" | "#2 divides #1" | "#2 is a divisor of #1" | $#2 \mid $1$
+divisible : "#1 is divisible by #2"  | $#2 \mid #1$
 divisor : "#1 is a divisor of #2"
 converge : "#1 converges"
 function : "function from As to Bs"
@@ -85,7 +85,7 @@ Vector : "vector"
 length : "the length of #1" | \Norm
 norm : "the length of #1" | "the norm of #1" | $\mid #1 \mid$
 square : "the square of #1" | $#1 ^$
-legendre : "the Legendre symbol of #1 and #2" | $\left(\frac{" "}{" "}\right)$
+legendre : "the Legendre symbol of #1 and #2" | $\left(\frac{#1}{#2}\right)$
 pi : pi_Name | $\pi$
 Circle : "circle"
 radius : "the radius of #1"

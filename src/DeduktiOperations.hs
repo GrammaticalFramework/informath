@@ -226,6 +226,10 @@ splitAbs exp = case exp of
     (binds, rest) -> (bind:binds, rest)
   _ -> ([], exp)
 
+flattenAbs :: Exp -> [Exp]
+flattenAbs exp = case splitAbs exp of
+  (binds, body) -> map (EIdent . bind2ident) binds ++ [body]
+
 splitPatt :: Patt -> (Patt, [Patt])
 splitPatt patt = case patt of
   PApp fun arg -> case splitPatt fun of
@@ -329,12 +333,23 @@ data Profile =
     NoProfile 
   | DropProfile Int    -- number of args to drop, obsolete
   | PermProfile [Int]  -- first arg is #1
+  | HoasProfile [Int]  -- like PermProfile, but treat first-level bindings as arguments
+   deriving (Eq, Show)
 
 showProfile :: Profile -> String
 showProfile prof = case prof of
   NoProfile -> ""
   DropProfile k -> "-" ++ show k
   PermProfile ints -> show ints
+  HoasProfile ints -> "HOAS" ++ show ints
+
+readProfile :: String -> Maybe Profile
+readProfile s = case s of
+  "" -> return NoProfile
+  '-':i | all isDigit i -> return $ DropProfile (read i)
+  '[':_ -> return $ PermProfile (read s)
+  'H':'O':'A':'S':'[':_ -> return $ HoasProfile (read (drop 4 s))
+  _ -> Nothing
 
 -- from Dk to GF
 appProfile :: Profile -> Exp -> Exp
@@ -344,6 +359,10 @@ appProfile prof exp = case prof of
     (fun, args) -> foldl EApp fun (drop int args)
   PermProfile ints -> case splitApp exp of
     (fun, args) -> foldl EApp fun [args !! (i-1) | i <- ints]
+  HoasProfile ints -> case splitApp exp of
+    (fun, args) ->
+        let xargs = concatMap flattenAbs args
+        in foldl EApp fun [xargs !! (i-1) | i <- ints]
 
 -- from GF to Dk
 unappProfile :: Profile -> Exp -> Exp
@@ -357,27 +376,7 @@ unappProfile prof exp = case prof of
         look i = case lookup i (zip ints [0..]) of
           Just j -> args !! j
           _ -> metaExp
+  HoasProfile ints -> case unappProfile (PermProfile ints) exp of
+    pexp -> pexp ---- TODO restore HOAS abstractions
 
-
-{-
--- not needed for the time being AR 14/7/2026
-
-flattenType :: Exp -> Exp
-flattenType typ = case splitType typ of
-  (hypos, val) -> foldr EFun val (concatMap flatHypo hypos)
- where
-   flatHypo hypo = case hypo2type hypo of
-     Just htyp -> case splitType htyp of
-       ([], val) -> [hypo]
-       (hypos, val) -> hypos ++ [HExp val] ---- add var
-     _ -> [hypo]
-     
-flattenExp :: Exp -> Exp
-flattenExp exp = case splitApp exp of
-  (fun, args) -> foldl EApp fun (concatMap flatAbs args)
- where
-   flatAbs arg = case splitAbs arg of
-     (binds, val) -> map (EIdent . bind2ident) binds ++ [val]
-     
--}
 

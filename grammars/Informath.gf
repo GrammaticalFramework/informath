@@ -6,8 +6,7 @@ abstract Informath =
   MathExtensions,
   WikidataWords,
   ProperNames,
-  UserExtensions,
-  Annotations
+  UserExtensions
   ** {
 
 flags startcat=Jmt ;

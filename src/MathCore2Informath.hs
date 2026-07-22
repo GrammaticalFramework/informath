@@ -14,12 +14,11 @@ type Opts = [String]
 
 nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
-  _ | elem "-mathcore" (flags env) -> [dt]
+  _ | elem "-mathcore" (flags env) -> [t]
   _  -> sample (concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants])
   ---- TODO more option combinations
  where
-   dt = deAnnotate tree
-   t = unparenth dt
+   t = unparenth tree
    ut = uncoerce t
    ft = flatten ut
    afts = [aggregate ft]
@@ -33,15 +32,6 @@ nlg env tree = case () of
 
    sample ts = [t | (t, i) <- zip ts [0 ..], mod i fact == 0]
    fact = samplingFactor env
-
-deAnnotate :: Tree a -> Tree a
-deAnnotate tree = case tree of
-  GAnnotateExp _ t -> deAnnotate t
-  GAnnotateKind _ t -> deAnnotate t
-  GAnnotateProp _ t -> deAnnotate t
-  GAnnotateProof _ t -> deAnnotate t
-  GAnnotateProofExp _ t -> deAnnotate t
-  _ -> composOp deAnnotate tree
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of

@@ -11,6 +11,9 @@ open
 in {
   lincat
   Predicate = Str;
+  DefCases = Text;
+  DefCase = Utt;
+  [DefCase] = Text;
 
   lin
   Noun3Prop noun x y z = simpleProp (mkS (mkCl x (Noun3ExpsNoun noun y z))) ;
@@ -58,6 +61,16 @@ in {
   Dep2Noun dep x y = mkCN dep.cn (ccAdv (Syntax.mkAdv dep.prep1 x) (Syntax.mkAdv dep.prep2 y)) ;
   DepCNoun dep x y = mkCN dep.cn (Syntax.mkAdv dep.prep (mkNP and_Conj x y)) ;
 
+  BaseDefCase defCase = prefixText item_str (mkText defCase) ;
+  ConsDefCase defCase defCases = mkText (prefixText item_str (mkText defCase)) defCase ;
+
+  DefByCasesJmt label hypos byCases =
+    labelText label
+      (thenTextfromText hypos (prefixText by_cases_Str byCases)) ;
+  PropsDefCase guard prop = mkUtt (Grammar.SSubjS (partProp prop) if_Subj (partProp guard)) ;
+  NoOtherwiseDefCases listCases = embedText begin_itemize_str end_itemize_str listCases ;
+  OtherwiseDefCases listCases otherwise = embedText begin_itemize_str end_itemize_str (mkText listCases (mkText (mkS otherwise_Adv (topProp otherwise)))) ;
+
   
   TupleTerm ts = constant ("\\langle" ++ ts.s ++ "\\rangle") ** {isNumber = False} ;
   IdentPredicate id = id ;
@@ -70,9 +83,18 @@ in {
     tconstant ("\\{" ++ top t ++ "\\text{" ++
     (mkUtt (Syntax.mkAdv for_Prep argkinds.pl)).s
      ++ "}" ++ "\\}") ;
+  TextualTerm t = tconstant ("\\text{" ++ (mkUtt t).s ++ "}");
   
   notsubseteq_Compar = "\\nsubseteq";
   inverse_Oper = mkOper "" "^{ -1 }" <2 : Prec> ;
   apply_Oper2 = mkOper2 "" "(" ")" <3 : Prec> <4 : Prec> <2 : Prec> ;
   apply_inverse_Oper2 = mkOper2 "" "^{ -1 }(" ")" <3 : Prec> <4 : Prec> <2 : Prec> ;
+
+  oper
+    thenTextfromText : {text : Text ; isEmpty : Bool} -> Text -> Text = \hypos, t ->
+      case hypos.isEmpty of {
+        True => mkText hypos.text t ;
+        False => mkText hypos.text (mkText (mkUtt thenText_Adv) t)
+        | mkText hypos.text t    ---- variants !!??
+        } ;
 }

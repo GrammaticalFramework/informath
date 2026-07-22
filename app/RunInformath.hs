@@ -159,6 +159,7 @@ helpMsg4 = [
   "",
   just "-json" "show full information in jsonl (same as -v)",
   just "-v" "show full information in jsonl (same as -json)",
+  just "-vs" "show a bit less than full information in jsonl",
   just "-no-unlex" "linearize to tokens separated by spaces",
   just "-dedukti-tokens" "print Dedukti code with tokens separated by spaces",
   just "-help" "show this help message",

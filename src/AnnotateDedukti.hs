@@ -22,7 +22,6 @@ annotateDkIdents :: Maybe Int -> Maybe Int -> ConstantTable -> DropTable -> DkTr
 annotateDkIdents msyns msymbs table drops =
                                checkSymbolics .
                                annot []
-                ---- . ignoreFirstArguments drops -- done with profile
  where
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
@@ -96,7 +95,7 @@ annotateDkIdents msyns msymbs table drops =
 
 annotIdent :: QIdent -> Int -> (FunProfile, Type) -> (QIdent, Profile)
 annotIdent (QIdent s) d ((f, p), t) =
-  (QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [show d], p)
+  (QIdent $ concat $ intersperse "#" $ [s, dk (valCat t), dkp f] ++ map dk (argCats t) ++ [showProfile p], p)
     where
       dk c = showCId c
       dkp f = showGFTree f
@@ -110,6 +109,12 @@ harmonizeJmt jmt = case jmt of
        hvars = concatMap hypo2vars ahypos
        dexp = etaAppExp exp hvars
     in JDef ident (MTExp (foldr EFun kind ahypos)) (MEExp dexp)
+  JDef ident (MTExp typ) MENone ->
+    let
+       (hypos, kind) = splitType typ
+       ahypos = unifyVars MENone hypos
+    in JDef ident (MTExp (foldr EFun kind ahypos)) MENone
+  JStatic ident typ -> harmonizeJmt (JDef ident (MTExp typ) MENone)
   JThm ident mtyp mexp -> harmonizeJmt (JDef ident mtyp mexp)
   JInj ident mtyp mexp -> harmonizeJmt (JDef ident mtyp mexp)
   _ -> jmt

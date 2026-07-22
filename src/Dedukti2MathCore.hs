@@ -36,14 +36,14 @@ jmt2jmt jmt = case jmt of
       (hypos, kind) = splitType typ
       kindIsProp = kind == typeProp
       cat = guessGFCat ident typ
-      vhypos = addVarsToHypos meexp hypos
-      chypos = hypos2hypos vhypos
-      ghypos = GListHypo chypos
-      hvars  = (concatMap hypo2vars vhypos)
-      shvars = case lookupConstantFull sident of
-        Just (_, _, _, d) -> drop d hvars 
-        _ -> hvars
-      definiendum = foldl EApp (EIdent ident) (map EIdent shvars)
+      ghypos = GListHypo (hypos2hypos hypos)
+      hvars  = concatMap hypo2vars hypos
+      approf = case lookupConstantFull sident of
+        Just (_, _, _, d) -> case readProfile d of
+          Just p -> appProfile p
+	  _ -> id
+        _ -> id
+      definiendum = approf (foldl EApp (EIdent ident) (map EIdent hvars))
     in case cat of
       _ | S.member cat proofCats -> case meexp of
        MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
@@ -77,7 +77,7 @@ jmt2jmt jmt = case jmt of
        MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))   
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
-      _ -> error ("cannot convert category " ++ cat)
+      _ -> error ("cannot convert category " ++ cat ++ " in " ++ printTree ident ++ " happened in " ++ printTree jmt)
 
   JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
   JInj ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp)
@@ -97,23 +97,8 @@ axiomUndefLabel ident = GIdentLabel (GStrIdent (GString ("Undefined_" ++ show id
 fgTree :: Gf a => String -> a
 fgTree = fg . readGFTree
 
-annotateExp :: QIdent -> GExp -> GExp
-annotateExp qid exp = GAnnotateExp (ident2ident qid) exp
-
-annotateKind :: QIdent -> GKind -> GKind
-annotateKind qid exp = GAnnotateKind (ident2ident qid) exp
-
-annotateProp :: QIdent -> GProp -> GProp
-annotateProp qid exp = GAnnotateProp (ident2ident qid) exp
-
-annotateProof :: QIdent -> GProof -> GProof
-annotateProof qid exp = GAnnotateProof (ident2ident qid) exp
-
-annotateProofExp :: QIdent -> GProofExp -> GProofExp
-annotateProofExp qid exp = GAnnotateProofExp (ident2ident qid) exp
-
 funListExp :: QIdent -> [Exp] -> GExp
-funListExp ident exps = annotateExp ident $ case ident of
+funListExp ident exps = case ident of
   QIdent s -> case (lookupConstant s, exps) of
     (Just ("Name", c), []) -> GNameExp (fgTree c)
     (Just ("Fun", c), [x]) -> GFunExp (fgTree c) (exp2exp x)
@@ -148,7 +133,7 @@ macroIdent fun = GStringMacro (GString (init (drop 2 fun)))  -- '\\foo' -> \foo
 
 
 funListKind :: QIdent -> [Exp] -> GKind
-funListKind ident exps = annotateKind ident $ case ident of
+funListKind ident exps = case ident of
   QIdent s -> case (lookupConstant s, exps) of
     (Just ("Noun", c), []) -> GNounKind (fgTree c)
     (Just ("Fam",  c), [x]) -> GFamKind (fgTree c) (exp2kind x) 
@@ -164,7 +149,7 @@ funListKind ident exps = annotateKind ident $ case ident of
 
 
 funListProp :: QIdent -> [Exp] -> GProp
-funListProp ident exps = annotateProp ident $ case ident of
+funListProp ident exps = case ident of
   QIdent s -> case (lookupConstant s, map exp2exp exps) of
     (Just ("Adj", c), [x]) -> GAdjProp (fgTree c) x
     (Just ("Adj2", c), [x, y]) -> GAdj2Prop (fgTree c) x y
@@ -253,7 +238,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
      (fun, args) -> case fun of
         EIdent ident -> funListKind ident args
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
-      Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
+      Just ("Noun", c) -> GNounKind (fgTree c)
       Just _ -> funListKind ident []
       _ -> ident2kind ident
     EFun _ _ -> case splitType exp of
@@ -302,7 +287,7 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
   Just (expr, "Prop") -> GPropExp (fg expr)
   _ -> case exp of
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level 
-      Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
+      Just ("Name", c) -> GNameExp (fgTree c)
       Just _ -> funListExp ident []
       _ -> ident2exp ident
 
@@ -424,7 +409,7 @@ ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of
   QIdent [d] | isDigit d -> GTermExp (GNumberTerm (GInt (read [d])))
   QIdent s -> case lookupConstant s of
-    Just ("Name", c) -> annotateExp ident $ GNameExp (fgTree c)
+    Just ("Name", c) -> GNameExp (fgTree c)
     _ -> GTermExp (GIdentTerm (ident2ident ident))
 
 ident2label :: QIdent -> GLabel
@@ -436,7 +421,7 @@ ident2label ident = case ident of
 ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
-    Just ("Noun", c) -> annotateKind ident $ GNounKind (fgTree c)
+    Just ("Noun", c) -> GNounKind (fgTree c)
     _ -> GExpKind (GTermExp (GIdentTerm (ident2ident ident)))
 
 bind2coreIdent :: Bind -> GIdent
