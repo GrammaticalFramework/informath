@@ -1,8 +1,6 @@
 module Lexing (lextex, unlextex, indexTex) where
 
 import Data.Char (isSpace,toUpper,toLower)
-import Data.List (intersperse)
-
 
 lextex :: String -> String
 lextex = unwords . lexMixed (const False)

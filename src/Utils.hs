@@ -1,10 +1,9 @@
 module Utils where
 
 import Data.Char
-import Data.List (intersperse)
+import Data.List (sortOn)
 import qualified Data.Set as S
 import qualified Data.Map as M
-import Data.List (sortOn)
 import Text.JSON
 
 setnub :: Ord a => [a] -> [a]

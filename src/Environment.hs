@@ -5,12 +5,12 @@ import PGF
 import BuildConstantTable
 import Utils
 
-import Data.List (intersperse, isPrefixOf)
+import Data.List (isPrefixOf)
 import Data.Char (isDigit)
 
 import qualified Data.Set as Set
 
-import Debug.Trace (traceShowId, trace)
+import Debug.Trace (trace)
 
 trac :: Show a => Env -> String -> a -> a 
 trac env s a = tracs env (s ++ show a) a

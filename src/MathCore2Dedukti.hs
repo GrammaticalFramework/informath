@@ -9,11 +9,11 @@ import CommonConcepts (escapeConstant)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable 
-import PGF (showExpr, readExpr, showCId, mkApp, mkCId)
+import PGF (showExpr, readExpr, mkApp, mkCId)
 import Utils (unescapeUnderscores)
 
 import Data.Char
-import Data.List (intersperse, nub, partition, isInfixOf)
+import Data.List (intersperse, partition, isInfixOf)
 import qualified Data.Map as M
 
 

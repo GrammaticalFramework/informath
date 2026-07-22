@@ -11,8 +11,7 @@ import qualified PGF
 
 import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM, composOpMPlus)
 
-import Data.List (nub, sortOn)
-import Data.Char (isDigit)
+import Data.List (nub)
 import qualified Data.Map as M
 
 type Opts = [String]

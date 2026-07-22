@@ -19,7 +19,7 @@ import Utils (split, splitOutside)
 
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, sortOn, sort, groupBy, intersperse)
+import Data.List (partition, sort, groupBy, intersperse)
 import Data.Char (isDigit, isAlpha)
 
 type GFTree = PGF.Tree
