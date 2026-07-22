@@ -4,9 +4,6 @@ module ProofText where
 
 import Dedukti.AbsDedukti hiding (Tree)
 import Dedukti.PrintDedukti hiding (prt)
-import Dedukti.ParDedukti
-import Dedukti.LexDedukti
-import qualified Dedukti.ErrM as DE
 
 import DeduktiOperations
 import BuildConstantTable
