@@ -9,7 +9,6 @@ import Informath
 import CommonConcepts (SCat, mainCats, lookupConstantFull)
 
 import PGF
-import qualified Data.Map as M
 import qualified Data.Set as S
 
 -- special constants that don't belong to lexical categories

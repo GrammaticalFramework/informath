@@ -5,12 +5,10 @@ module DeduktiOperations where
 
 import Dedukti.AbsDedukti
 import Dedukti.ParDedukti (myLexer)
-import Dedukti.LexDedukti (Token(..), prToken)
+import Dedukti.LexDedukti (prToken)
 import CommonConcepts (lookupConstant, propCats)
 import DeduktiTheoryAPI
 
-import Data.Char
-import Data.List
 import qualified Data.Map as M
 import qualified Data.Set as S
 

@@ -37,8 +37,8 @@ import ProofText(proofDemo)
 import Informath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, isInfixOf, intersperse, sortOn, nub)
-import Data.Char (isDigit, toUpper)
+import Data.List (intersperse, sortOn, nub)
+import Data.Char (isDigit)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import System.Environment(getEnv)

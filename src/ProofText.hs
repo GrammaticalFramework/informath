@@ -11,12 +11,13 @@ import qualified Dedukti.ErrM as DE
 import DeduktiOperations
 import BuildConstantTable
 import Environment
-import AnnotateDedukti
+import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
 import Dedukti2MathCore (exp2prop, hypos2hypos)
 
-import Data.List (intersperse, nub, nubBy, sortOn)
+
+import Data.List (intersperse, nub)
 import qualified Data.Map as M
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:

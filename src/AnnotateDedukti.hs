@@ -10,7 +10,7 @@ import CommonConcepts (lookupConstant, symbolicCats, verbalCats)
 
 import PGF hiding (Hypo)
 
-import Data.List (partition, sortOn, sort, groupBy, intersperse)
+import Data.List (intersperse)
 import qualified Data.Map as M
 import qualified Data.Set as S
 

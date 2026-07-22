@@ -5,14 +5,10 @@ module MathCore2Informath where
 
 import Informath
 import Environment
-import BuildConstantTable (symbolics, synonyms, primary, constantTable, nlgTable)
+import BuildConstantTable (nlgTable)
 import Semantics (appNLGDefs)
-import qualified PGF
-
-import Dedukti.AbsDedukti hiding (Tree, composOp, composOpM, composOpMPlus)
 
 import Data.List (nub)
-import qualified Data.Map as M
 
 type Opts = [String]
 

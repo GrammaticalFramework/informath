@@ -3,9 +3,8 @@ module ParseInformath where
 import Environment
 import CommonConcepts (verbalCats)
 import PGF
-import Data.Char(isAlpha, isAlphaNum)
-import Data.List(sortOn)
-import qualified Data.Map as Map
+import Data.Char (isAlpha, isAlphaNum)
+import Data.List (sortOn)
 import qualified Data.Set as Set
 
 max_number = 1999 -- number of trees considered with checkVariables
