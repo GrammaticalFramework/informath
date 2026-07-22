@@ -11,7 +11,7 @@ import CommonConcepts (lookupConstant, mainCats, symbolicCats, gfCatMap)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import Lexing (lextex)
-import Semantics
+import Semantics (SemDefs, NLGDefs, readSemDef)
 
 import PGF
 
