@@ -3,11 +3,11 @@
 
 module CommonConcepts where
 
-import Utils
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.List (isSuffixOf)
 import Data.Char
+import Utils (split)
 
 -- Informath category symbols with arities
 

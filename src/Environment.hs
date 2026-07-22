@@ -3,7 +3,7 @@ module Environment where
 import Dedukti.AbsDedukti
 import PGF
 import BuildConstantTable
-import Utils
+import Utils (commaSep, fileSuffix)
 
 import Data.List (isPrefixOf)
 import Data.Char (isDigit)

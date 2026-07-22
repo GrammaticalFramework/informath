@@ -28,7 +28,9 @@ import qualified Dedukti2MathCore as DMC
 import qualified MathCore2Informath as MCI
 import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
-import Utils
+import Utils (commaSepInts, setnub, unindexString)
+import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
+import Utils (toLatexDoc, transInEnv, frequencyTable)
 
 import ProofText(proofDemo)
 
