@@ -15,7 +15,7 @@ import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
 import ParseInformath (parseJmt, unindexGFTree)
-import Lexing
+import Lexing (lextex, indexTex, unlextex)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
