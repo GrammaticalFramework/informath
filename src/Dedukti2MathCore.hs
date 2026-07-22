@@ -34,14 +34,14 @@ jmt2jmt jmt = case jmt of
       (hypos, kind) = splitType typ
       kindIsProp = kind == typeProp
       cat = guessGFCat ident typ
-      vhypos = addVarsToHypos meexp hypos
-      chypos = hypos2hypos vhypos
-      ghypos = GListHypo chypos
-      hvars  = (concatMap hypo2vars vhypos)
-      shvars = case lookupConstantFull sident of
-        Just (_, _, _, d) -> drop d hvars 
-        _ -> hvars
-      definiendum = foldl EApp (EIdent ident) (map EIdent shvars)
+      ghypos = GListHypo (hypos2hypos hypos)
+      hvars  = concatMap hypo2vars hypos
+      approf = case lookupConstantFull sident of
+        Just (_, _, _, d) -> case readProfile d of
+          Just p -> appProfile p
+	  _ -> id
+        _ -> id
+      definiendum = approf (foldl EApp (EIdent ident) (map EIdent hvars))
     in case cat of
       _ | S.member cat proofCats -> case meexp of
        MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
@@ -75,7 +75,7 @@ jmt2jmt jmt = case jmt of
        MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))   
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
-      _ -> error ("cannot convert category " ++ cat)
+      _ -> error ("cannot convert category " ++ cat ++ " in " ++ printTree ident ++ " happened in " ++ printTree jmt)
 
   JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
   JInj ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp)

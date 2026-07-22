@@ -345,7 +345,7 @@ printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
     [printFormalismJmt env (toFormalism env) (originalDedukti result)]
-  _ | isFlag "-json" env || isFlag "-v" env -> [showJsonGenResult env result]
+  _ | isFlag "-json" env || any (flip isFlag env) ["-v", "-vs"] -> [showJsonGenResult env result]
   _ | isFlag "-parallel-data" env -> [showParallelData env result] 
   _ -> printNLGOutput env result
 
@@ -358,10 +358,11 @@ printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
                ". Available values: " ++ unwords (map showCId (langs env))
 
 showJsonGenResult :: Env -> GenResult -> String
-showJsonGenResult env result = encodeJSON $ mkJSONObject [
+showJsonGenResult env result = encodeJSON $ mkJSONObject $ [
     mkJSONField "originalDedukti" (stringJSON (printDeduktiEnv env (originalDedukti result))),
     mkJSONListField "annotatedDedukti" (map (stringJSON . printDeduktiEnv env) (annotatedDedukti result)),
-    mkJSONListField "coreGF" (map (stringJSON . showExpr []) (coreGF result)),
+    mkJSONListField "coreGF" (map (stringJSON . showExpr []) (coreGF result))] ++
+    if isFlag "-vs" env then [] else [
     mkJSONField "nlgResults" (mkJSONObject [
       mkJSONListField (showCId lang) (map (stringJSON . printRank) ranks) | (lang, ranks) <- nlgResults result]),
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]

@@ -331,12 +331,20 @@ data Profile =
     NoProfile 
   | DropProfile Int    -- number of args to drop, obsolete
   | PermProfile [Int]  -- first arg is #1
+   deriving (Eq, Show)
 
 showProfile :: Profile -> String
 showProfile prof = case prof of
   NoProfile -> ""
   DropProfile k -> "-" ++ show k
   PermProfile ints -> show ints
+
+readProfile :: String -> Maybe Profile
+readProfile s = case s of
+  "" -> return NoProfile
+  '-':i | all isDigit i -> return $ DropProfile (read i)
+  '[':_ -> return $ PermProfile (read s)
+  _ -> Nothing
 
 -- from Dk to GF
 appProfile :: Profile -> Exp -> Exp

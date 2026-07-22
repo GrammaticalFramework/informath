@@ -31,7 +31,7 @@ showGFTree :: GFTree -> String
 showGFTree = showExpr []
 
 showFunProfile :: FunProfile -> String
-showFunProfile (f, p) = showGFTree f ++ showProfile p
+showFunProfile (f, p) = showGFTree f ++ " " ++ showProfile p
 
 -- OK to fail, because it should stop compilation
 parseFunProfile :: PGF -> Language -> Maybe Int -> String -> FunProfile

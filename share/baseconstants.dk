@@ -2,14 +2,14 @@ Set : Type.
 Prop : Type.
 
 (; ignored in Dedukti2Core ;) 
-Elem : Set -> Type.
-Proof : Prop -> Type.
+Elem : (A : Set) -> Type.
+Proof : (A : Prop) -> Type.
 
 (; logical operators, hard-coded in MathCore ;)
 false : Prop.
 and : (A : Prop) -> (B : Prop) -> Prop.
 or : (A : Prop) -> (B : Prop) -> Prop.
-if : Prop -> Prop -> Prop.
+if : (A : Prop) -> (B : Prop) -> Prop.
 forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
 exists : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
 
@@ -76,7 +76,7 @@ succ : Elem Nat -> Elem Nat.
 
 gcd : Elem Int -> Elem Int -> Elem Int.
 
-abs : Elem Real -> Elem Real.
+abs : (r : Elem Real) -> Elem Real.
 factorial : Elem Nat -> Elem Nat.
 
 (; predicates of integers ;)
@@ -120,7 +120,7 @@ negativePart : Set -> Set.
 finite : Set -> Prop.
 def infinite : Set -> Prop := A => not (finite A).
 
-suchthat : (A : Set) -> (B : Elem A -> Prop) -> Set.
+suchthat : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Set.
 fst : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Elem (suchthat A (x => B x)) -> Elem A.
 
 def congruent : (a : Elem Int) -> (b : Elem Int) -> (m : Elem Nat) -> Prop :=
