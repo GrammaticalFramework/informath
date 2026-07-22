@@ -85,7 +85,7 @@ Vector : "vector"
 length : "the length of #1" | \Norm
 norm : "the length of #1" | "the norm of #1" | $\mid #1 \mid$
 square : "the square of #1" | $#1 ^$
-legendre : "the Legendre symbol of #1 and #2" | $\left(\frac{" "}{" "}\right)$
+legendre : "the Legendre symbol of #1 and #2" | $\left(\frac{#1}{#2}\right)$
 pi : pi_Name | $\pi$
 Circle : "circle"
 radius : "the radius of #1"
