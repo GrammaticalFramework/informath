@@ -18,7 +18,6 @@ import Dedukti2MathCore (exp2prop, hypos2hypos)
 
 import Data.List (intersperse, nub, nubBy, sortOn)
 import qualified Data.Map as M
-import System.Environment (getArgs)
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."

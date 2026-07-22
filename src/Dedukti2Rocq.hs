@@ -11,8 +11,6 @@ import qualified Rocq.PrintRocq as PrC
 import DeduktiOperations
 import DeduktiTheoryAPI
 
-import System.Environment (getArgs)
-
 -- skeleton copied from bnfc-generated SkelDedukti
 
 import Dedukti.ErrM
