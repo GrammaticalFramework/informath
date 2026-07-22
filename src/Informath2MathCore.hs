@@ -3,7 +3,7 @@
 
 module Informath2MathCore where
 
-import Semantics (SemDefs, appSemDefs, inSituResults, )
+import Semantics (SemDefs, appSemDefs, inSituResults)
 
 import Informath
 import PGF (showExpr)
