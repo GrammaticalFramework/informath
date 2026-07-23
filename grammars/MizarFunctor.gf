@@ -72,9 +72,9 @@ in {
   OtherwiseDefCases listCases otherwise = embedText begin_itemize_str end_itemize_str (mkText listCases (mkText (mkS otherwise_Adv (topProp otherwise)))) ;
 
   
-  TupleTerm ts = constant ("\\langle" ++ ts.s ++ "\\rangle") ** {isNumber = False} ;
+  TupleTerm ts = tconstant ("\\langle" ++ ts.s ++ "\\rangle") ** {isNumber = False} ;
   IdentPredicate id = id ;
-  AppPredicateFormula P xs = constant (P ++ "(" ++ xs.s ++ ")");
+  AppPredicateFormula P xs = tconstant (P ++ "(" ++ xs.s ++ ")");
   FraenkelComprehensionTerm t argkinds compr =
     tconstant ("\\{" ++ top t ++ "\\text{" ++
     (mkUtt (Syntax.mkAdv for_Prep (Syntax.mkNP argkinds.pl (Syntax.mkAdv such_that_Subj (partProp compr))))).s
