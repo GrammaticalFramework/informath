@@ -8,9 +8,11 @@
 
 #### LATEST NEWS
 
+22 July 2026: also verbal constants can now be defined with `#` variables, which enables permutations, as well as drops without the `#DROP` directive. See [the alternative symbol table](test/profiletest.dkgf) for examples.
+
 10 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
 
-22 June 2026: macros in symbol tables now directly possible in entries of form $...$, see test/symboltest.dkgf
+22 June 2026: macros in symbol tables now directly possible in entries of form `$...$`, e.g. `$#1 \mid #2$`, from which a macro is generated automatically; see test/profiletest.dkgf
 
 15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
 

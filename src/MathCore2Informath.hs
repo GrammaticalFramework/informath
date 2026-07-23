@@ -333,14 +333,16 @@ collectivize t = case t of
   -- put together instances of an equivalence relation that have common elements
   GAndProp (GListProp props) -> maybe [t] return $ do
     (adjc, expss) <- commonRel props
-    let nexps = GListExp (nub expss) 
+    let nexps = GListExp (nub expss) --- removes repetitions of intermediate terms 
     return $ GAdjECollProp adjc nexps
 
   -- put together arguments of collective functions
   GFunCExp func x y -> do
     let args = collectArgs func [x, y]
     let margs = GListExp args
-    return $ GFunCCollExp func margs
+    if length args > 2
+      then [GFunCCollExp func margs]
+      else [GFunCExp func cx cy | cx <- collectivize x, cy <- collectivize y]
 
   _ -> composOpM collectivize t
   
