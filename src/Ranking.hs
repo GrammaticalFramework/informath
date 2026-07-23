@@ -2,7 +2,7 @@ module Ranking (rankTreesAndStrings, Scores) where
 
 import PGF
 import Environment
-import Lexing
+import Lexing (lextex, indexTex)
 import ParseInformath
 import Data.List (sortOn)
 

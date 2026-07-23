@@ -3,15 +3,12 @@
 
 module Informath2MathCore where
 
-import Semantics
-
+import Semantics (SemDefs, appSemDefs, inSituResults)
 import Informath
-import PGF (showExpr)
-
-import qualified Data.Map as M
-
 
 data SEnv = SEnv {varlist :: [String]}
+
+initSEnv :: SEnv
 initSEnv = SEnv {varlist = []}
 
 -- used when no Kind is given e.g. as quantifier domain
@@ -339,4 +336,5 @@ unknownTerm :: GTerm
 unknownTerm = GIdentTerm (GStrIdent (GString "UNKNOWN"))
 
 -- used for decomposing AdjE over a list
+subsequentPairs :: [b] -> [(b, b)]
 subsequentPairs xs = [(xs !! k, xs !! (k+1)) | k <- [0..(length xs - 2)] ]

@@ -9,9 +9,7 @@ import qualified Lean.AbsLean as L
 import qualified Lean.PrintLean as PrL
 
 import DeduktiOperations
-import CommonConcepts
-
-import System.Environment (getArgs)
+import DeduktiTheoryAPI
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
@@ -55,7 +53,7 @@ transExp :: Exp -> L.Exp
 transExp t = case t of
   EIdent qident -> L.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
-    (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> L.EIdent (L.LIdent s) --- no L.EInt
         _ -> L.EApp (transExp exp0) (transExp exp1)
@@ -83,12 +81,12 @@ transExp t = case t of
   EAbs bind exp -> L.EAbs [transBind bind] (transExp exp)
   EFun hypo@(HVarExp _ _) exp -> L.EFunDep (transHypo hypo) (transExp exp)
   EFun hypo@(HParVarExp _ _) exp -> L.EFunDep (transHypo hypo) (transExp exp)
-  EFun hypo@(HExp typ) exp -> L.EFun (transExp typ) (transExp exp)
+  EFun (HExp typ) exp -> L.EFun (transExp typ) (transExp exp)
 
 transBind :: Bind -> L.LIdent
 transBind t = case t of
   BVar var -> transVar var
-  BTyped var exp -> transVar var
+  BTyped var _ -> transVar var
 
 transVar :: QIdent -> L.LIdent
 transVar t = case t of
@@ -126,7 +124,7 @@ transQIdent t = case t of
   QIdent str -> L.LIdent str ---- not quite the same ident syntax ; reserved idents in Lean!
 
 processDeduktiModule :: Module -> IO ()
-processDeduktiModule mo@(MJmts jmts) = do
+processDeduktiModule (MJmts jmts) = do
   flip mapM_ jmts processDeduktiJmtTree
 
 processDeduktiJmtTree :: Jmt -> IO ()

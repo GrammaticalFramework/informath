@@ -15,7 +15,7 @@ import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
 import ParseInformath (parseJmt, unindexGFTree)
-import Lexing
+import Lexing (lextex, indexTex, unlextex)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
@@ -28,15 +28,17 @@ import qualified Dedukti2MathCore as DMC
 import qualified MathCore2Informath as MCI
 import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
-import Utils
+import Utils (commaSepInts, setnub, unindexString)
+import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
+import Utils (toLatexDoc, transInEnv, frequencyTable)
 
 import ProofText(proofDemo)
 
 import Informath
 import PGF
 
-import Data.List (partition, isSuffixOf, isPrefixOf, isInfixOf, intersperse, sortOn, nub)
-import Data.Char (isDigit, toUpper)
+import Data.List (intersperse, sortOn, nub)
+import Data.Char (isDigit)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import System.Environment(getEnv)
@@ -92,13 +94,19 @@ readEnv args = do
 
 -- | direct access to parts of the symbol table
 
+constantTableEnv :: Env -> ConstantTable
 constantTableEnv = constantTable . symbolTable
+backConstantTableEnv :: Env -> BackConstantTable
 backConstantTableEnv = backConstantTable . symbolTable
+conversionTableEnv :: Env -> ConversionTable
 conversionTableEnv = conversionTable . symbolTable
+dropTableEnv :: Env -> DropTable
 dropTableEnv = dropTable . symbolTable
+macroTableEnv :: Env -> MacroTable
 macroTableEnv = macroTable . symbolTable
 semanticsTableEnv = semanticsTable . symbolTable
 nlgTableEnv = nlgTable . symbolTable
+builtinSetEnv :: Env -> S.Set QIdent
 builtinSetEnv = builtinSet . symbolTable
 
 -- ** Low-level access to data sources
@@ -258,7 +266,6 @@ processGFTree env gft =
 processLatexLine :: Env -> String -> ParseResult
 processLatexLine env s =
   let
-    gr = grammar env
     trans = isFlag "-translate" env
     parseonly = isFlag "-parse-only" env
     ls = lextex s
@@ -415,7 +422,7 @@ dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool
-checkJmt jmt = True ----
+checkJmt _ = True ----
 
 -- ** Conversions starting from natural language
 
@@ -481,7 +488,7 @@ printDeduktiEnv env t =
 -- | to translate 
 transEmbeddedDedukti :: Env -> [String] -> [String]
 transEmbeddedDedukti env = transInEnv "dedukti" transDkEnv where
-  transDkEnv (beg : ls) = trans (unlines (init ls))
+  transDkEnv (_ : ls) = trans (unlines (init ls))
   trans = unlines . intersperse "" . concatMap (printGenResult env) . processDeduktiModule env .  parseDeduktiModule
 
 -- ** Seldom explicitly needed one-step conversion.
@@ -517,7 +524,7 @@ parseDeduktiModule s = case pModule (myLexer s) of
 -- | To parse a Dedukti file into its AST.
 parseDeduktiModuleErrorFree :: String -> Maybe Module
 parseDeduktiModuleErrorFree s = case pModule (myLexer s) of
-  Bad e -> Nothing
+  Bad _ -> Nothing
   Ok mo -> return mo
 
 -- | To linearize a GF tree.

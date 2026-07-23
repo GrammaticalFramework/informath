@@ -4,21 +4,18 @@ module ProofText where
 
 import Dedukti.AbsDedukti hiding (Tree)
 import Dedukti.PrintDedukti hiding (prt)
-import Dedukti.ParDedukti
-import Dedukti.LexDedukti
-import qualified Dedukti.ErrM as DE
 
 import DeduktiOperations
 import BuildConstantTable
 import Environment
-import AnnotateDedukti
+import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
 import Dedukti2MathCore (exp2prop, hypos2hypos)
 
-import Data.List (intersperse, nub, nubBy, sortOn)
+
+import Data.List (intersperse, nub)
 import qualified Data.Map as M
-import System.Environment (getArgs)
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."
@@ -93,7 +90,8 @@ data Step a = Step {
   discharged :: [QIdent]  -- hypolabels of discharged formulas
   }
   deriving (Show, Eq)
-  
+
+mkStep :: QIdent -> a -> QIdent -> [QIdent] -> Step a
 mkStep li fo ru di = Step li fo ru di
 
 -- proof lines in Jaskowski-style notation
@@ -106,7 +104,10 @@ data Line a = Line {
   }
   deriving (Show, Eq)
 
+mkLine :: Int -> [QIdent] -> a -> QIdent -> [Int] -> [QIdent] -> Line a
 mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
+
+mkHypoLine :: Int -> a -> QIdent -> QIdent -> Line a
 mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
 
 noIdent = QIdent "#NOIDENT" ---- 
@@ -114,7 +115,7 @@ noIdent = QIdent "#NOIDENT" ----
 -- an object-language type Elem A (as opposed to a Proof of a proposition)
 isElemType :: Exp -> Bool
 isElemType e = case splitApp e of
-  (EIdent identElem, _) -> True
+  (EIdent _, _) -> True
   _ -> False
 
 
@@ -136,8 +137,8 @@ typeAnnotate mo cont typ exp = case exp of
   EAbs bind body -> 
     let
       vartyp = case bind of
-        BTyped v ty -> ty
-        BVar v -> case typ of
+        BTyped _ ty -> ty
+        BVar _ -> case typ of
           EFun h _ -> case hypo2type h of
             Just ty -> ty
             _ -> error ("no type of bound var in " ++ printTree exp)
@@ -200,7 +201,7 @@ term2lines =
  -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
  -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
  psArgs :: Int -> [QIdent] -> [Exp] -> ([[Line Exp]], [Int], Int)
- psArgs n cont [] = ([], [], n)
+ psArgs n _ [] = ([], [], n)
  psArgs n cont (a:as) =
    let (ls, prem) = psArg n cont a
        (lss, prems, nf) = psArgs (nextline n ls) cont as
@@ -307,14 +308,18 @@ prlu lin ln
 prt :: Exp -> String
 prt exp = printTree exp
 
+mathdisplay :: [Char] -> [Char]
 mathdisplay s = "\\[" ++ s ++ "\\]"
 
+verbatim :: String -> [Char]
 verbatim s = "\\begin{verbatim}\n" ++ unlines (splitLines (words s)) ++ "\n\\end{verbatim}"
 
+splitLines :: [String] -> [String]
 splitLines ws = case splitAt 10 ws of
   (line, rest@(_:_)) -> unwords line : splitLines rest
   _ -> [unwords ws]
 
+prLatexFile :: String -> String
 prLatexFile string = unlines [
   "\\documentstyle[proof]{article}",
   "\\setlength{\\parskip}{2mm}",

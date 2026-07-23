@@ -3,9 +3,8 @@ module ParseInformath where
 import Environment
 import CommonConcepts (verbalCats)
 import PGF
-import Data.Char(isAlpha, isAlphaNum)
-import Data.List(sortOn)
-import qualified Data.Map as Map
+import Data.Char (isAlpha, isAlphaNum)
+import Data.List (sortOn)
 import qualified Data.Set as Set
 
 max_number = 1999 -- number of trees considered with checkVariables
@@ -60,7 +59,7 @@ checkVariables env expr = case unApp expr of
   Just (_, args) -> all (checkVariables env) args
   _ -> True
  where
-  isIdent s@(c:cs) = isAlpha c && all isAlphaNum cs
+  isIdent (c:cs) = isAlpha c && all isAlphaNum cs
   isMacro s = case s of
     '\\':'\\':cs -> {- isFlag "-parseusermacros" env && -} all isAlpha cs
     _ -> False
@@ -71,8 +70,6 @@ unindexGFTree env termindex expr = case unind expr of
   t:_ -> tracs env ("FOUND " ++ showExpr [] t) t
   _ -> expr
  where
-  pgf = grammar env
-  lang = fromLang env
   unind expr = case unApp expr of
     Just (f, [x]) -> case unInt x of
       Just i -> case showCId f of
@@ -98,16 +95,16 @@ unindexGFTree env termindex expr = case unind expr of
   mkTyp c = mkType [] (mkCId c) []
 
   parsed c s = case parseJmt env (mkTyp c) s of
-      (Just (t:ts), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
+      (Just (t:_), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
       _ -> []
 
 treeLength :: Expr -> Int
 treeLength t = case unApp t of
-  Just (f, ts@(_:_)) -> 1 + sum (map treeLength ts)
+  Just (_, ts@(_:_)) -> 1 + sum (map treeLength ts)
   _ -> 1
 
 treeDepth :: Expr -> Int
 treeDepth t = case unApp t of
-  Just (f, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
+  Just (_, ts@(_:_)) -> 1 + maximum (map treeDepth ts)
   _ -> 1
 

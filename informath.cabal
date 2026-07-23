@@ -13,6 +13,7 @@ build-type:          Simple
 executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
+    DeduktiTheoryAPI
     CommonConcepts
     AnnotateDedukti
     Dedukti2Agda

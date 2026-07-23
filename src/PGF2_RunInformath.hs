@@ -12,7 +12,7 @@ import Dedukti.ErrM
 import Informath -- superset of Core
 import Core2Informath (nlg)
 import Informath2Core (semantics)
-import Lexing
+import Lexing (lextex)
 import ParseInformath (parseJmt)
 import PGF2
 

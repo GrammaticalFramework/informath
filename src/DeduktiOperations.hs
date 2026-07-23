@@ -4,13 +4,12 @@
 module DeduktiOperations where
 
 import Dedukti.AbsDedukti
-import Dedukti.PrintDedukti
 import Dedukti.ParDedukti (myLexer)
-import Dedukti.LexDedukti (Token(..), prToken)
-import CommonConcepts
+import Dedukti.LexDedukti (prToken)
+import CommonConcepts (lookupConstant, propCats)
+import DeduktiTheoryAPI
 
-import Data.Char
-import Data.List
+import Data.Char (isDigit)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -130,7 +129,7 @@ introduceLocalDefinitions tr = case tr of
 
 peano2int :: Tree a -> Tree a
 peano2int t = case t of
-  EApp f x -> case splitApp t of
+  EApp _ _ -> case splitApp t of
     (g, xs) -> case countSucc t of
       (0, _) -> foldl EApp g (map peano2int xs)
       (n, EIdent z) | z == identZero -> int2exp n
@@ -147,10 +146,10 @@ peano2int t = case t of
 
 enum2list :: Exp -> Maybe [Exp]
 enum2list t = case t of
-  EApp (EApp (EIdent identCons) x) xs -> do
+  EApp (EApp (EIdent _) x) xs -> do
     exps <- enum2list xs
     return (x : exps)
-  EIdent identNil -> return []
+  EIdent _ -> return []
   _ -> Nothing
 
 list2enum :: [Exp] -> Exp
@@ -201,7 +200,7 @@ addVarsToHypos mexp = adds vars where
 -- strip abstraction when function type arguments are moved to hypos, as in Lean
 stripAbs :: [Hypo] -> Exp -> Exp
 stripAbs hypos exp = case (hypos, exp) of
-  (h:hs, EAbs _ body) -> stripAbs hs body
+  (_:hs, EAbs _ body) -> stripAbs hs body
   _ -> exp
 
 -- get a list of idents from an abstraction expression
@@ -257,7 +256,7 @@ getNumber fun args =
       d <- getDigit x
       n <- uncurry getNumber (splitApp y)
       return (d ++ n)
-    (EIdent (QIdent n), []) -> getDigit fun -- bare 6
+    (EIdent (QIdent _), []) -> getDigit fun -- bare 6
     _ -> Nothing
  where
    getDigit :: Exp -> Maybe String
@@ -269,7 +268,7 @@ int2exp :: Int -> Exp
 int2exp = cc . show
   where
     cc s = case s of
-      [d] -> EApp (EIdent identNd) (EIdent (QIdent s))
+      [_] -> EApp (EIdent identNd) (EIdent (QIdent s))
       d:ds -> EApp (EApp (EIdent identNn) (EIdent (QIdent [d]))) (cc ds)
 
 unresolvedIndexIdent :: Int -> QIdent
@@ -298,14 +297,14 @@ hypo2topvars hypo = case hypo of
   HParVarExp v _ -> [v]
   HLetExp v _ -> [v]
   HLetTyped v _ _ -> [v]
-  HExp v -> []
+  HExp _ -> []
 
 hypo2type :: Hypo -> Maybe Exp
 hypo2type hypo = case hypo of
-  HVarExp v e -> Just e
-  HParVarExp v e -> Just e
-  HLetExp v _ -> Nothing
-  HLetTyped v e _ -> Just e
+  HVarExp _ e -> Just e
+  HParVarExp _ e -> Just e
+  HLetExp _ _ -> Nothing
+  HLetTyped _ e _ -> Just e
   HExp e -> Just e
 
 pattbindIdents :: [Pattbind] -> [QIdent]
