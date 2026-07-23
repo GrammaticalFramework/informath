@@ -453,6 +453,7 @@ oper
   contradiction_N : N = oscN "sprzeczność" ;
   then_Adv : Adv = P.mkAdv "wtedy" ;
   thenText_Adv : Adv = P.mkAdv "zatem" ;
+  otherwise_Adv : Adv = P.mkAdv "inaczej" ;
   such_that_Subj : Subj = mkSubj "taki, że" ;
   applied_to_Prep : Prep = mkPrep "zastosowany do" R.Gen ;
   defined_as_Prep : Prep = mkPrep "zdefiniowany jako" R.Nom ;

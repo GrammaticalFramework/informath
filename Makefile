@@ -7,7 +7,8 @@ neutral='\e[0;m'
 
 # for binary_packages
 ARCH := macos-arm
-VERSION := 0.3
+# ARCH := linux-x86
+VERSION := 0.4
 
 GF_FILES := $(wildcard grammars/*.gf)
 
@@ -22,8 +23,6 @@ all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
 
 english_grammar: share/InformathEng.pgf
 
-my_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 
 RunInformath:
@@ -37,11 +36,18 @@ rootlink:
 multi_grammar:
 	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
+my_grammar:
+	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
 full_grammar:
 	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 next_grammar:
 	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
+all_grammars: english_grammar
+	cd grammars ; gf --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
 
 share/InformathEng.pgf: $(GF_FILES)
 	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
@@ -275,6 +281,11 @@ binary_packages:
 	cp -p `which RunInformath` tmp/
 	cp -p share/InformathEng.pgf share/InformathFull.pgf tmp/
 	cd tmp ; strip RunInformath ; tar cvfz RunInformath-$(VERSION)-$(ARCH).tgz RunInformath ; tar cvfz Informath-grammars-$(VERSION).tgz InformathEng.pgf InformathFull.pgf
+	ls -l tmp/*.tgz
+
+just_binary:
+	cp -p `which RunInformath` tmp/
+	cd tmp ; strip RunInformath ; tar cvfz RunInformath-$(VERSION)-$(ARCH).tgz RunInformath
 	ls -l tmp/*.tgz
 
 clean-typetheory:
