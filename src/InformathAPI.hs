@@ -39,6 +39,7 @@ import Data.List (partition, isSuffixOf, isPrefixOf, isInfixOf, intersperse, sor
 import Data.Char (isDigit, toUpper)
 import qualified Data.Map as M
 import qualified Data.Set as S
+import Text.JSON (JSValue)
 import System.Environment(getEnv)
 
 
@@ -443,7 +444,7 @@ printParseResult env result = case 0 of
     mkJSONField "indexedLine" (stringJSON (indexedLine result)),
     mkJSONField "parseMessage" (stringJSON (parseMessage result)),
     mkJSONListField "unknownWords" (map stringJSON (unknownWords result)),
-    mkJSONListField "formalResults" (map (stringJSON . printFinalParseResult env) (formalResults result))
+    mkJSONListField "formalResults" (map (finalParseResult env) (formalResults result))
     ]]
   _ -> printDeduktiOutput env result
 
@@ -453,8 +454,8 @@ printDeduktiOutput env result =
   nub [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
 
 -- | Print both GF trees and resulting Dedukti, in JSON. 
-printFinalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> String
-printFinalParseResult env (t, ut, ct, jmts) = encodeJSON $ mkJSONObject [
+finalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> JSValue
+finalParseResult env (t, ut, ct, jmts) = mkJSONObject [
   mkJSONField "parseTree" (stringJSON (showExpr [] t)),
   mkJSONField "unindexedTree" (stringJSON (showExpr [] ut)),
   mkJSONField "coreTree" (stringJSON (showExpr [] ct)),
