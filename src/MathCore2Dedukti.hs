@@ -219,7 +219,7 @@ hypo2dedukti hypo = case hypo of
   GLocalHypo local ->
     [local2dedukti local]
   _ ->
-    [HExp eUndefined]
+    [HExp (eUndefinedDebug hypo)]
 
 local2dedukti :: GLocal -> Hypo
 local2dedukti local = case local of

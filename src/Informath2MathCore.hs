@@ -95,16 +95,17 @@ semHypo hypo = case hypo of
 
 sem :: SEnv -> Tree a -> Tree a
 sem env t = case t of
-{- ----
-  GLetFormulaHypo formula -> case (sem env formula) of
-    GElemFormula (GListTerm terms) (GSetTerm set) ->
-      GVarsHypo (GListIdent [x | GIdentTerm x <- terms]) (GSetKind set) ---- TODO: check that all terms are idents
 
+  GLetFormulaHypo formula -> case (sem env formula) of
+    GElemFormula (GListTerm terms) term | length xs == length terms ->
+      GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
+        where xs = [x | GIdentTerm x <- terms]
     _ -> GPropHypo (sem env (GFormulaProp (sem env formula)))
-    
+{- ----
   GLetDeclarationHypo decl -> case (sem env decl) of
-    GElemDeclaration (GListTerm terms) (GSetTerm set) ->
-      GVarsHypo (GListIdent [x | GIdentTerm x <- terms]) (GSetKind set) ---- TODO: check that all terms are idents
+    GElemDeclaration (GListTerm terms) term | length xs == length terms ->
+      GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
+        where xs = [x | GIdentTerm x <- terms]
   GIfProp cond@(GFormulaProp (GElemFormula (GListTerm terms) (GSetTerm set))) prop ->
     case getJustVarsFromTerms env terms of
       Just xs -> sem env (GAllProp (GListArgKind [GIdentsArgKind (GSetKind set) (GListIdent xs)]) prop)
