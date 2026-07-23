@@ -365,13 +365,13 @@ showJsonGenResult env result = encodeJSON $ mkJSONObject $ [
     mkJSONListField "coreGF" (map (stringJSON . showExpr []) (coreGF result))] ++
     if isFlag "-vs" env then [] else [
     mkJSONField "nlgResults" (mkJSONObject [
-      mkJSONListField (showCId lang) (map (stringJSON . printRank) ranks) | (lang, ranks) <- nlgResults result]),
+      mkJSONListField (showCId lang) (map (printRank) ranks) | (lang, ranks) <- nlgResults result]),
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]
     ]
 
 -- | The scores for each tree an string, in JSON.
-printRank :: ((GFTree, String), (Scores, Int)) -> String
-printRank ((tree, str), (scores, rank)) = encodeJSON $ mkJSONObject [
+printRank :: ((GFTree, String), (Scores, Int)) -> JSValue
+printRank ((tree, str), (scores, rank)) = mkJSONObject [
   mkJSONField "tree" (stringJSON (showExpr [] tree)),
   mkJSONField "lin" (stringJSON str),
   mkJSONField "scores" (stringJSON (show scores)),
