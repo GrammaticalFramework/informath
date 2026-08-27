@@ -15,6 +15,9 @@ data-files:
 extra-source-files:
   test/felix-cli-test.sh
 
+extra-doc-files:
+  doc/felix.md
+
 executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
