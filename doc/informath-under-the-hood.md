@@ -151,7 +151,7 @@ For more examples, we recommend to start with [BaseConstants.dk](../share/BaseCo
 
 ### Identifiers and numerals
 
-The use of **identifiers** as expressions has been applied in all example above but not been explained yet. In Dedukti, idenfifiers include both variables and constants and even numeric literals. Dedukti has no built-in type of literals, but they can be declared and/or defined as identifiers or combinations of them. In the Informath project, we have mostly (but not exclusively) used types `Dig` and `Num` with the following rules:
+The use of **identifiers** as expressions has been applied in all example above but not been explained yet. In Dedukti, identifiers include both variables and constants and even numeric literals. Dedukti has no built-in type of literals, but they can be declared and/or defined as identifiers or combinations of them. In the Informath project, we have mostly (but not exclusively) used types `Dig` and `Num` with the following rules:
 ```
   Dig : Set.
   0 : Dig.
@@ -209,7 +209,7 @@ $$\Gamma \vdash a : A$$
 
 where $\Gamma$ is a **context**, which assigns types to identifiers (i.e., variables and constants). The simplest typing rule is
 
-$$ \Gamma \vdash x : A, \text{if $x : A$ is in $\Gamma$} $$
+$$ \Gamma \vdash x : A, \text{if } x : A \text{ is in } \Gamma $$
 
 for identifier expressions $x$. Application expressions have the rule
 
@@ -297,7 +297,7 @@ Informath has been inspired by controlled natural languages (CNLs) such as ForTh
 
 - **Grammaticality**: Informath follows the agreement rules of English (and other languages) instead of allowing free variation of e.g. singular and plural forms (as ForTheL and early versions of Naproche); this makes it more usable as the target of informalization.
 - **Ambiguity**: CNLs prevent syntactic ambiguities by means of devices such as brackets and precedence rules. Informath tries to capture all syntactic ambiguities that exist in natural language, and delegates it to the logical framework to resolve them by semantic checking. This is in line with the findings of Ganesalingam's *Language of Mathematics*, showing that informal mathematics is syntactically ambiguous but disambiguated by semantic clues.
-- **LaTeX**: The original ForTheL is plain text, whereas Informath (like later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents; this is one of the
+- **LaTeX**: The original ForTheL is plain text, whereas Informath (like later versions of ForTheL and also Naproche) allows the full use of LaTeX similar to usual mathematical documents.
 - **Extensions**: Informath is open for extensions with new forms of expression when encountered in mathematical text. In ForTheL, new concepts can be defined, but the overall syntax is fixed. Because of the design of Informath, every extension is equipped with a new semantic rule that converts it to MathCore and thereby to Dedukti.
 - **Omissions**: Informath is not guaranteed to cover everything that occurs in different CNLs. In particular, constructs that differ from grammatical English are usually omitted.
 - **Multilinguality**: Informath has several concrete syntaxes sharing a common abstract syntax.
@@ -422,7 +422,7 @@ Prop ::= "for" "all" Ident "in" Set "," Prop
 In the opposite direction, the GF grammar can be seen as the result of taking apart **pure constituency** (the nonterminals) and **surface realization**. 
 This operation has several advantages.
 The most obvious one is perhaps that one can vary the concrete syntax while keeping the abstract syntax constant.
-For example, a corrsponding French grammar is obtained by changing the linearization rule of `forall` to
+For example, a corresponding French grammar is obtained by changing the linearization rule of `forall` to
 ```
 lin forall set ident prop =
   "pour" ++ "tout" ++ ident ++ "dans" ++ set ++ "," ++ prop ;
@@ -474,9 +474,9 @@ lin forall set ident prop =
   "for" + "all" ++ set ! Pl ++ ident ++ "," ++ prop ;
 ```
 with a new form of judgement for parameter type definitions, `param`. 
-They are in GF a special case of **algebraic datatypes** in languages like ML and Haskell, restricted to finite types (enumrations and their combinations).
+They is in GF a special case of **algebraic datatypes** in languages like ML and Haskell, restricted to finite types (enumerations and their combinations).
 The type `Number => Str` is a **table type**, whose objects are finite functions on parameter types, similar to *inflection tables* in traditional grammar.
-The **selection** operator `!` applies a table to an argument, selecting a valuel.
+The **selection** operator `!` applies a table to an argument, selecting a value.
 
 The above grammar is still context-free in the weak generative sense, because the `Set` category can be expanded to two non-terminals.
 But this will in general also require a duplication of rules, whole number in the worst case is the produce of the numbers of parameters in the types involved.
@@ -500,7 +500,7 @@ oper tout : Gender => Str = table {Masc => "tout" ; Fem => "toutes"} ;
 The context-free expansion of the `forall` rule would here produce four rules, for each combination of the two genders with the two moods.
 The code also shows a **record type**, combining a table with a gender in the linearization type of `Set`.
 
-The keyword `oper`introduces yet another form of judgement: **auxiliary operations**. They are functions outside the `fun`/`lin` structure usable as auxiliaries in `lin` rules. The GF compiler eliminates them by inlining, and they are therefore unnecessary for the theoretical expression powerl. But they are an important part of grammar writing productivity, as they enable refactoring and reusability.
+The keyword `oper`introduces yet another form of judgement: **auxiliary operations**. They are functions outside the `fun`/`lin` structure usable as auxiliaries in `lin` rules. The GF compiler eliminates them by inlining, and they are therefore unnecessary for the theoretical expression power. But they are an important part of grammar writing productivity, as they enable refactoring and reusability.
 
 #### Discontinuous constituents
 
@@ -525,7 +525,7 @@ We have in the above code examples used or presupposed the following:
 
 - **record types** e.g. ``{s : Number => Str ; g : Gender}``
 - **table types** e.g. ``Gender => Str``, a "finite function type" in the sense that the argument type must be a finite parameter type; the name comes from their typical usage to model **inflection tables** of words
-- **tables** (objects of table types), e.g. table {Masc => "tout" ; Fem => "toutes"} 
+- **tables** (objects of table types), e.g. ``table {Masc => "tout" ; Fem => "toutes"}``
   - a special case is the **table abstract** `\\x => b`, which just passes the parameter similarly to a lambda expression `\x -> b` but builds a table (of some table type $P \Rightarrow B$) instead of a function (of some function type $A \rightarrow B$)
 
 - **records** (objects of record types), e.g. ``{s = "ligne" ; g = Fem}``
@@ -562,7 +562,7 @@ The most important categories for Informath are the following:
 - `Text`, texts, consisting of many sentences, such as those for proofs
 - `S`, sentences, with fixed tense (in Informath, usually present ) and polarity (positive or negative)
 - `Cl`, clauses, atomic sentences consisting of a predicate (such as a verb or an adjective) with its arguments (subject, object, complements), unspecified as for tense and polarity
-- `VP`, verb prases, verbs with their argument, such as "range from $a$ to $b$"
+- `VP`, verb phrases, verbs with their arguments, such as "range from $a$ to $b$"
 - `NP`, noun phrases, nouns with determiners and modifiers, such as "every even number" or singular terms such as "$x + y$"
 - `CN`, common nouns, noun phrases without determiners, with variable number (admitting different determiners) but fixed gender, such as "natural number"
 - `AP`, adjectival phrases, such as "uniformly continuous", "even or odd"
@@ -627,7 +627,7 @@ in_Prep                         in
 ```
 The last items in the list show functions for **structural words**, which are a part of the `Syntax` modules.
 They show another naming convention of the RGL: an English word and its category, separated by an underscore.
-Despite the English name, they linearize to corresponding words in other langauges.
+Despite the English name, they linearize to corresponding words in other languages.
 For instance, `the_Det` in French becomes "la" or "le" or "l'", whereas `thePl_Det` becomes "les".
 
 Notice that the API contains, on purpose, redundancies.
@@ -663,7 +663,7 @@ This is a qualified guess based on the characters contained in the string and st
 For examples, the `mkN` function of `ParadigmsEng` covers cases such as "number-numbers", "bus-buses", "baby-babies".
 But it does not cover "man-men", "calculus-calculi": for these words, the two-argument function has to be used.
 
-The Informath grammar has an even higher level of API for defining vocabulary needed in mathematical functions and predicates. But in some cases, especially in languages other than English, the standard Paradigms API is needed in addition.
+The Informath grammar has an even higher level of API for defining vocabulary needed in mathematical functions and predicates. But in some cases, especially in other languages than English, the standard Paradigms API is needed in addition.
 
 ### Libraries for formal code
 
@@ -869,7 +869,7 @@ The GF software infrastructure consists of related functionalities:
 - the GF compiler, used for building a binary file for runtime usage,
 - GF runtime interpreters, accessing the binary grammar from different programming languages, such as Haskell, Python, and C.
 
-The runtime grammar is a single binary file, in our case `Informath.pgf`.
+The runtime grammar is a single binary file, in our case `InformathFull.pgf`.
 The Haskell runtime interpreter, which the Informath project uses, provides functions such as
 ```
 linearize :: PGF -> Language -> Tree -> String
@@ -962,7 +962,7 @@ The reader should keep in mind that
 
 #### Judgements and hypotheses
 
-Starting from top down, we MathCore has rules for expressing definitions of different types of constants, with (definition) or without (axiom, postulate) proofs or other defining terms.
+Starting from top down, MathCore has rules for expressing definitions of different types of constants, with (definition) or without (axiom, postulate) proofs or other defining terms.
 ```
 Jmt ::=
     Label "." Hypo* Prop "."
@@ -970,8 +970,8 @@ Jmt ::=
   | Label "." Hypo* Prop "if" Prop "." 
   | Label "." Hypo* "We can say that" Prop "." 
   | Label "." Hypo* "a" Kind "is a" Kind "."
-  | Label "." Hypo* Kind "is a basic type "."
-  | Label "." Hypo* Exp "is a" Kind ()"defined as" Exp)? "."
+  | Label "." Hypo* Kind "is a basic type."
+  | Label "." Hypo* Exp "is a" Kind ("defined as" Exp)? "."
 ```
 The hypotheses are either assumptions of propositions or declarations of variables.
 ```
@@ -1007,7 +1007,7 @@ The use of brackets is controlled by the flag `isComplex` in the linearization t
 lincat Prop = {s : S ; isComplex : Bool}
 ```
 
-Now, in the natural language of mathematics, syntactic ambiguities do appear, and they are tolerated as long as the ambiguity is resolved by semantical means.
+Now, in the natural language of mathematics, syntactic ambiguities can appear, and they are tolerated as long as the ambiguity is resolved by semantical means.
 For example,
 
 - for all numbers $x$, $x$ is even or $x$ is odd
@@ -1030,18 +1030,18 @@ Prop ::=
     Exp "is" Adj
   | Exp "is" Adj2 prep Exp
   | Exp "is" Adj3 prep1 Exp prep2 Exp
-  | Exp "and" Exp "are AdjC
-  | Exp "and" Exp "are AdjE
+  | Exp "and" Exp "are" AdjC
+  | Exp "and" Exp "are" AdjE
   | Exp "is a" Noun1
   | Exp "is a" Noun2 prep Exp
   | Exp Verb
   | Exp Verb2 prep Exp
 ```
 The item `prep` in these rules, with or without a numeric index, refers to the inherent preposition of the predicate.
-It can also be empty, as in the case of transitive `V2`.
+It can also be empty, as in the case of transitive `Verb2`.
 
 Recall that every rule in the context free grammars we show corresponds to a GF abstract syntax function.
-The functions associated with lexican categories as the ones above will be called **lexical application functions**.
+The functions associated with lexical categories as the ones above will be called **lexical application functions**.
 Their types can be read from the context-free rules, and their abstract syntax names are formed from the lexical category and the value type; for example,
 ```
 fun AdjProp : Adj -> Exp -> Prop
@@ -1056,7 +1056,7 @@ Users of Informath do not need to see the abstract syntax function names except 
 #### Kinds
 
 Kinds correspond to common nouns (`CN`) in the RGL.
-The can consist of several words, such as "prime number" and "element of $A$".
+They can consist of several words, such as "prime number" and "element of $A$".
 However, in the latter case, a `Kind` expression needs to be divided into two parts in some constructions, such as when a variable is declared:
 
 - for all elements $x$ of $A$, ...
@@ -1076,7 +1076,7 @@ Kind :=
   | Dep2 - prep1 Exp prep2 Exp
   | DepC - prep Exp "and" Exp
 ```
-Notice that the second rule is actually a bit more complicated, because the CN-Adv boundary may occur inside the argument `Kind`, such as in
+Notice that the first rule is actually a bit more complicated, because the CN-Adv boundary may occur inside the argument `Kind`, such as in
 
 - for all elements $x$ of $A$ such that $x$ is rational, ...
 
@@ -1233,7 +1233,7 @@ odd : odd_Adj
 plus : plus_FunC
 ```
 When generating MathCore, only the first GF function in each symbol table entry is used. 
-The remaining ones are synonyms that can be used in full Informathl.
+The remaining ones are synonyms that can be used in full Informath.
 Notice that one and the same MathCore function can be assigned to many Dedukti identifiers and therefore be ambiguous when translating natural language back to Dedukti. 
 This ambiguity should ideally resolved by type checking, which should accept only one of the translations.
 
@@ -1281,7 +1281,7 @@ Thus applications of adjectives, verbs, and nouns are all just applications of D
 These identifiers are found by applying the symbol tables in an opposite direction.
 For example, the symbol table entry
 ```
-even even_Adj
+even : even_Adj
 ```
 enables the translation of
 
@@ -1342,7 +1342,7 @@ Finally, the awkward negation of the existential can be fused into a single quan
 
 - No natural number is prime and divisible by $2 \times 3$.
 
-Negations can also be fused with atomic predications, producing "$n$ is nof odd" from "it is not the case that $n$ is odd"; notice that aggregation gives more opportunities to this trnansformation.
+Negations can also be fused with atomic predications, producing "$n$ is not odd" from "it is not the case that $n$ is odd"; notice that aggregation gives more opportunities to this transformation.
 
 In addition to the steps mentioned above, there is a growing number of syntactic structures that can produce more variants:
 
@@ -1425,7 +1425,7 @@ It would probably not be difficult to add support them, but excluding them promo
 
 ### Synonyms
 
-Symbolic notations are a special case of **synonyms**: alternative expression for one and the same Dedukti constant.
+Symbolic notations are a special case of **synonyms**: alternative expressions for one and the same Dedukti constant.
 Verbal synonyms are given in symbol table similarly to symbolic ones.
 They are used in a similar way when generating alternative expressions:
 
