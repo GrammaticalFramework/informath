@@ -18,11 +18,15 @@ synonyms=1
 symbolics=1
 sampling=20
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
+.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test
 
 all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
 
 english_grammar: share/InformathEng.pgf
+
+felix_test:
+	$(MAKE) -B english_grammar
+	stack test informath:test:felix-translation
 
 
 

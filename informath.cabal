@@ -9,6 +9,8 @@ maintainer:          aarne.ranta@gmail.com
 category:            Development
 build-type:          Simple
 
+data-files:
+  test/felix-statements.tex
 
 executable RunInformath
   main-is:             RunInformath.hs
@@ -63,3 +65,24 @@ executable RunInformath
                        felix,
                        text
   default-language:    Haskell2010
+
+
+test-suite felix-translation
+  type:                 exitcode-stdio-1.0
+  main-is:              FelixTranslationMain.hs
+  hs-source-dirs:       test src
+  other-modules:
+    Felix2Informath
+    Informath
+    Paths_informath
+  autogen-modules:
+    Paths_informath
+  build-depends:        base >=4.18 && <5,
+                        containers,
+                        directory,
+                        felix,
+                        filepath,
+                        gf >= 3.12,
+                        mtl,
+                        text
+  default-language:     Haskell2010
