@@ -1,5 +1,6 @@
 RUN  := RunInformath
 OPEN := open  # pdf viewer command
+GF   ?= gf
 
 # Some colors to improve the readability
 lightgreen='\e[1;32m'
@@ -34,23 +35,23 @@ rootlink:
 	export INFORMATH_ROOT=$(CURDIR)
 
 multi_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 my_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 full_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 next_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 all_grammars: english_grammar
-	cd grammars ; gf --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 
 share/InformathEng.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
+	cd grammars ; "$(GF)" --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
 
 
 Dedukti:
