@@ -50,12 +50,12 @@ import System.Environment(getEnv)
 {- |
 The environment, of type Env, is a large record of data and methods that affect
 the conversions and the way they are displayed. It is defined in the module Environment,
-which is not exported by the API. Most of the functions here presuppose an Env, which
+which is not exported by the API. Most of the functions here presuppose an environment, which
 is read using a list of flags. This list can empty, which results in a default environment.
 
 Flags are strings of the forms -<option> of -<flag>=<value>.
 The actual flags can be seen with RunInformath -help.
-The same flags can be written in the [Flag] list when calling readEnv as an API function.
+The same flags can be written in the [Flag] list when calling function readEnv as an API function.
 -}
 
 informathRootVar :: String
@@ -115,7 +115,7 @@ builtinSetEnv = builtinSet . symbolTable
 {- | The most important data sources are a GF grammar (file .pgf)
 and a ConstantTable (file .dkgf).
 Both of these can be customized and passed as values of flags.
-The following functions read them directly, but need hardly be called explicitly.
+The following functions read them directly, but need to be called explicitly.
 -}
 
 -- | To read the GF grammar from a .pgf file.    
@@ -128,7 +128,7 @@ readSymbolTable pgf lang dkgfs = do
   ls <- mapM readFile dkgfs >>= return . concatMap lines 
   return $ buildSymbolTable pgf lang ls
 
--- | To construct a concrete syntax name from a 3-letter language code.
+-- | To construct a concrete syntax name from a 3-letter language code (like Eng, Ger, Swe or Fre).
 mkLanguage :: PGF -> String -> Language
 mkLanguage pgf code = case readLanguage (informathPrefix ++ code) of
   Just lang | elem lang (languages pgf) -> lang
@@ -165,7 +165,7 @@ type DkJmt = Jmt
 processDeduktiModule :: Env -> Module -> [GenResult]
 processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
 
--- | The whole line of parsing latex code and converting to Dedukti.
+-- | The whole line of parsing LaTeX code and converting to Dedukti.
 -- This assumes that parsing units are single lines not starting with a backslash \ or % 
 
 processLatex :: Env -> String -> [ParseResult]
@@ -191,8 +191,8 @@ data GenResult = GenResult {
   backToDedukti    :: [Jmt]  --- | for debugging NLG and semantics
   }
 
--- | The result of conversion from informal Latex text, with intermediate phases for debugging.
----- | TODO: complete formalResults with type checking in Dedukt.
+-- | The result of conversion from informal LaTeX text, with intermediate phases for debugging.
+---- | TODO: complete formalResults with type checking in Dedukti.
 
 data ParseResult = ParseResult {
   originalLine  :: String,
@@ -234,7 +234,7 @@ processJmt env djmt =
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
 
--- | When just converting form Dk to another formalism, no GF is needed.
+-- | When just converting from Dedukti to another formalism, (GF is not needed).
 dummyGenResult :: Jmt -> GenResult
 dummyGenResult jmt = GenResult jmt [jmt] undefined [] []
 
@@ -376,7 +376,7 @@ showJsonGenResult env result = encodeJSON $ mkJSONObject $ [
     mkJSONListField "backToDedukti" [stringJSON (printDeduktiEnv env jmt) | jmt <- backToDedukti result]
     ]
 
--- | The scores for each tree an string, in JSON.
+-- | The scores for each tree in string, in JSON.
 printRank :: ((GFTree, String), (Scores, Int)) -> JSValue
 printRank ((tree, str), (scores, rank)) = mkJSONObject [
   mkJSONField "tree" (stringJSON (showExpr [] tree)),
@@ -385,7 +385,7 @@ printRank ((tree, str), (scores, rank)) = mkJSONObject [
   mkJSONField "penalty" (stringJSON (show rank))
   ]
 
--- | Parallel data, usable for extracting pairs for trainingan an LLN.
+-- | Parallel data, usable for extracting pairs for training an LLM.
 showParallelData :: Env -> GenResult -> String
 showParallelData env result = encodeJSON $ mkJSONObject $ [
     mkJSONField formalism
@@ -472,7 +472,7 @@ finalParseResult env (t, ut, ct, jmts) = mkJSONObject [
 
 -- ** General printing facilities
 
--- | Results are printed line by line, or with a Latex preamble in a document environment. 
+-- | Results are printed line by line, or with a LaTeX preamble in a document environment. 
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
   if isFlag "-to-latex-doc" env
@@ -512,7 +512,7 @@ core2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)
 
 -- * Reading input for processing
 
--- | Tp read a Dedukti module from one or more files; in translations, only from one file.
+-- | To read a Dedukti module from one or more files; in translations, only from one file.
 readDeduktiModule :: [FilePath] -> IO Module
 readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . unlines
 
@@ -532,7 +532,7 @@ parseDeduktiModuleErrorFree s = case pModule (myLexer s) of
 gftree2nat :: Env -> Language -> GFTree -> String
 gftree2nat env lang tree = linearize (grammar env) lang tree
 
--- | To unlex in a latex-like style, overridded by flag -no-unlex.
+-- | To unlex in a LaTeX-like style, overrided by flag -no-unlex.
 unlex :: Env -> String -> String
 unlex env s = if (isFlag "-no-unlex" env) then s else unlextex s
 
