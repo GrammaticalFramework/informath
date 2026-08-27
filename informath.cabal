@@ -21,6 +21,7 @@ executable RunInformath
     Dedukti2Lean
     DeduktiOperations
     Environment
+    Felix2Informath
     Informath
     Lexing
     ParseInformath
