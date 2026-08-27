@@ -42,6 +42,8 @@ main = do
   checkConnectivesAndQuantifiers
   checkRelationsAndChains
   checkNaturalVocabulary
+  checkExpressions
+  checkSingleVisitExpressionContexts
 
 withNaprapocheLibrary :: FilePath -> IO a -> IO a
 withNaprapocheLibrary library =
@@ -384,6 +386,103 @@ checkNaturalVocabulary = do
           (GDepKind (LexDep "family_of_subsets_Dep") (gExpression "X")) kind
     _ -> fail "the family-of-subsets assumption did not produce one hypothesis"
 
+checkExpressions :: IO ()
+checkExpressions = do
+  let a = rawExpression "A"
+      b = rawExpression "B"
+      targetCases =
+        [ ("empty set", rawOperation "emptyset" [],
+            GNameExp (LexName "emptyset_Name"))
+        , ("union", rawOperation "union" [a, b],
+            GFunCExp (LexFunC "union_FunC")
+              (gExpression "A") (gExpression "B"))
+        , ("intersection", rawOperation "inter" [a, b],
+            GFunCExp (LexFunC "intersection_FunC")
+              (gExpression "A") (gExpression "B"))
+        , ("difference", rawOperation "setminus" [a, b],
+            GFun2Exp (LexFun2 "difference_Fun2")
+              (gExpression "A") (gExpression "B"))
+        , ("cartesian product", rawOperation "times" [a, b],
+            GFunCExp (LexFunC "cartesian_FunC")
+              (gExpression "A") (gExpression "B"))
+        , ("pair", rawOperation "pair" [a, b],
+            GTermExp (GTupleTerm (GListTerm
+              [GIdentTerm (gIdent "A"), GIdentTerm (gIdent "B")])))
+        , ("finite set", Raw.ExprFiniteSet Nowhere (a :| [b]),
+            GEnumSetExp
+              (GManyExps (GListExp [gExpression "A", gExpression "B"])))
+        , ("surface application", Raw.ExprOp Nowhere Raw.ApplySymbol [a, b],
+            GAppExp (gExpression "A") (GOneExps (gExpression "B")))
+        , ("higher application",
+            Raw.ExprHigherApply Nowhere
+              (Raw.TypedExpressionExpr a) (Raw.TypedExpressionExpr b),
+            GAppExp (gExpression "A") (GOneExps (gExpression "B")))
+        ]
+  forM_ targetCases $ \(name, source, expected) -> do
+    actual <- translateExpressionInClaim name source
+    assertGfEqual name expected actual
+
+  unary <- translateOrFail
+    [expressionClaim "generic_unary" (rawOperation "mystery" [a])]
+  assertGfEqual "unary symbolic application"
+    (genericApplication "mystery" [gExpression "A"])
+    (leftSideOfEquality unary)
+  assert "unary fallback count"
+    (symbolicFallbackCounts (translationSummary unary)
+      == Map.singleton (rawMarker "mystery") 1)
+
+  binary <- translateOrFail
+    [expressionClaim "generic_binary" (rawOperation "mystery" [a, b])]
+  assertGfEqual "binary symbolic application"
+    (genericApplication "mystery" [gExpression "A", gExpression "B"])
+    (leftSideOfEquality binary)
+
+  assertLeftContains "known operators reserve their arity"
+    "Felix claim bad_union: unsupported Felix operator union at the wrong arity"
+    (translateBlocks [expressionClaim "bad_union" (rawOperation "union" [a])])
+  assertLeftContains "unknown nullary operators are rejected"
+    "Felix claim bad_nullary: unsupported Felix unknown nullary operator mystery"
+    (translateBlocks
+      [expressionClaim "bad_nullary" (rawOperation "mystery" [])])
+
+checkSingleVisitExpressionContexts :: IO ()
+checkSingleVisitExpressionContexts = do
+  relationAssumption <- translateOrFail
+    [claimBlockWith "relation_assumption"
+      [Raw.AsmLetRelation
+        (rawVariable "x" :| [rawVariable "y"])
+        (rawRelation "subseteq")
+        (rawOperation "scope" [rawExpression "A"])]
+      (equalityStatement "x" "y")]
+  assert "a relation-assumption target is translated once"
+    (symbolicFallbackCounts (translationSummary relationAssumption)
+      == Map.singleton (rawMarker "scope") 1)
+
+  quantified <- translateOrFail
+    [claimBlock "bounded"
+      (Raw.SymbolicQuantified Nowhere Raw.Universally
+        (rawVariable "x" :| [rawVariable "y"])
+        (Raw.Bounded Nowhere Raw.Positive (rawRelation "elem")
+          (rawOperation "bound_scope" [rawExpression "A"]))
+        Nothing
+        (equalityStatement "x" "y"))]
+  assert "a multi-variable bound is translated once"
+    (symbolicFallbackCounts (translationSummary quantified)
+      == Map.singleton (rawMarker "bound_scope") 1)
+
+  let chain = Raw.ChainCons
+        (rawExpression "x" :| []) Raw.Positive (rawRelation "eq")
+        (Raw.ChainBase
+          (rawOperation "middle" [rawExpression "A"] :| [])
+          Raw.Positive (rawRelation "elem")
+          (rawExpression "z" :| []))
+  chained <- translateOrFail
+    [claimBlock "shared_middle"
+      (Raw.StmtFormula (Raw.FormulaChain chain))]
+  assert "a relation-chain middle is translated once"
+    (symbolicFallbackCounts (translationSummary chained)
+      == Map.singleton (rawMarker "middle") 1)
+
 translateOrFail :: [Raw.Block] -> IO Translation
 translateOrFail = either fail pure . translateBlocks
 
@@ -391,10 +490,19 @@ translateProposition :: Raw.Stmt -> IO GProp
 translateProposition statement =
   onlyClaimProposition <$> translateOrFail [claimBlock "test_claim" statement]
 
+translateExpressionInClaim :: String -> Raw.Expr -> IO GExp
+translateExpressionInClaim label expression =
+  leftSideOfEquality <$> translateOrFail [expressionClaim label expression]
+
 onlyClaimProposition :: Translation -> GProp
 onlyClaimProposition translation = case translatedPresentations translation of
   [GClaimPresentationJmt _ _ proposition] -> proposition
   _ -> error "test invariant: expected one translated claim"
+
+leftSideOfEquality :: Translation -> GExp
+leftSideOfEquality translation = case onlyClaimProposition translation of
+  GAdj2Prop (LexAdj2 "Eq_Adj2") left _right -> left
+  _ -> error "test invariant: expected an equality proposition"
 
 claimBlock :: String -> Raw.Stmt -> Raw.Block
 claimBlock label = claimBlockWith label []
@@ -403,6 +511,12 @@ claimBlockWith :: String -> [Raw.Asm] -> Raw.Stmt -> Raw.Block
 claimBlockWith label assumptions statement =
   Raw.BlockClaim Raw.Proposition Nowhere Nothing (rawMarker label)
     (Raw.Claim assumptions statement)
+
+expressionClaim :: String -> Raw.Expr -> Raw.Block
+expressionClaim label expression = claimBlock label
+  (Raw.StmtFormula (Raw.FormulaChain
+    (Raw.ChainBase (expression :| []) Raw.Positive (rawRelation "eq")
+      (rawExpression "target" :| []))))
 
 adjectiveClaim
   :: String -> Raw.AdjectiveSide -> Raw.AdjectiveSurfaceKey -> Raw.Block
@@ -475,6 +589,10 @@ rawRelation marker = Raw.Relation Nowhere
     Raw.zeroParameterArity (rawMarker marker))
   []
 
+rawOperation :: String -> [Raw.Expr] -> Raw.Expr
+rawOperation marker = Raw.ExprOp Nowhere
+  (Raw.MixfixItem Raw.End (rawMarker marker) Raw.NonAssoc)
+
 rawTerm :: String -> Raw.Term
 rawTerm = Raw.TermExpr . rawExpression
 
@@ -519,6 +637,15 @@ gIdent = GStrIdent . GString
 
 gExpression :: String -> GExp
 gExpression = GTermExp . GIdentTerm . gIdent
+
+genericApplication :: String -> [GExp] -> GExp
+genericApplication marker arguments = case arguments of
+  [argument] ->
+    GAppExp (gExpression marker) (GOneExps argument)
+  first : second : rest ->
+    GAppExp (gExpression marker)
+      (GManyExps (GListExp (first : second : rest)))
+  [] -> error "test invariant: generic applications are nonempty"
 
 setKind :: GKind
 setKind = GNounKind (LexNoun "set_Noun")

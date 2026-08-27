@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE PatternSynonyms #-}
 
@@ -502,12 +503,76 @@ translateNounKind environment = \case
 translateTerm :: AdjectiveEnvironment -> Raw.Term -> TranslateM GExp
 translateTerm environment = \case
   Raw.TermExpr expression -> translateExpression environment expression
-  _ -> unsupported "term"
+  Raw.TermFun{} -> unsupported "term TermFun"
+  Raw.TermIota{} -> unsupported "term TermIota"
+  Raw.TermQuantified{} -> unsupported "term TermQuantified"
 
 translateExpression :: AdjectiveEnvironment -> Raw.Expr -> TranslateM GExp
-translateExpression _environment = \case
+translateExpression environment = \case
   Raw.ExprVar variable -> variableExpression <$> translateVariable variable
-  _ -> unsupported "expression: expected a named variable"
+  Raw.ExprFiniteSet _location expressions ->
+    GEnumSetExp . mkExps <$> traverse (translateExpression environment) expressions
+  Raw.ExprOp _location symbol arguments
+    | symbol == Raw.ApplySymbol -> case arguments of
+        [function, argument] -> do
+          function' <- translateExpression environment function
+          argument' <- translateExpression environment argument
+          pure (GAppExp function' (GOneExps argument'))
+        _ -> unsupported "apply operator at the wrong arity"
+    | otherwise -> translateOperation environment (Raw.mixfixMarker symbol) arguments
+  Raw.ExprHigherApply _location function argument -> case (function, argument) of
+    (Raw.TypedExpressionExpr functionExpression,
+      Raw.TypedExpressionExpr argumentExpression) -> do
+        function' <- translateExpression environment functionExpression
+        argument' <- translateExpression environment argumentExpression
+        pure (GAppExp function' (GOneExps argument'))
+    _ -> unsupported "formula-valued higher application"
+  Raw.ExprInteger{} -> unsupported "expression ExprInteger"
+  Raw.ExprTypedConstant{} -> unsupported "expression ExprTypedConstant"
+  Raw.ExprLambda{} -> unsupported "expression ExprLambda"
+  Raw.ExprSelect{} -> unsupported "expression ExprSelect"
+  Raw.ExprStructOp{} -> unsupported "expression ExprStructOp"
+  Raw.ExprSep{} -> unsupported "expression ExprSep"
+  Raw.ExprReplace{} -> unsupported "expression ExprReplace"
+  Raw.ExprReplacePred{} -> unsupported "expression ExprReplacePred"
+  Raw.ExprStructAggregate{} -> unsupported "expression ExprStructAggregate"
+  Raw.ExprStructReduct{} -> unsupported "expression ExprStructReduct"
+
+translateOperation
+  :: AdjectiveEnvironment -> Raw.Marker -> [Raw.Expr] -> TranslateM GExp
+translateOperation environment marker arguments = case markerText marker of
+  "emptyset" -> case arguments of
+    [] -> pure (GNameExp (LexName "emptyset_Name"))
+    _ -> wrongArity
+  "union" -> binary (GFunCExp (LexFunC "union_FunC"))
+  "inter" -> binary (GFunCExp (LexFunC "intersection_FunC"))
+  "setminus" -> binary (GFun2Exp (LexFun2 "difference_Fun2"))
+  "times" -> binary (GFunCExp (LexFunC "cartesian_FunC"))
+  "pair" -> binary pairExpression
+  _ -> case NonEmpty.nonEmpty arguments of
+    Nothing -> unsupported ("unknown nullary operator " ++ markerText marker)
+    Just nonemptyArguments -> do
+      arguments' <- traverse (translateExpression environment) nonemptyArguments
+      tell [marker]
+      pure (GAppExp (GTermExp (GIdentTerm (markerIdent marker))) (mkExps arguments'))
+ where
+  binary constructor = case arguments of
+    [left, right] -> do
+      left' <- translateExpression environment left
+      right' <- translateExpression environment right
+      pure (constructor left' right')
+    _ -> wrongArity
+  wrongArity = unsupported
+    ("operator " ++ markerText marker ++ " at the wrong arity")
+
+pairExpression :: GExp -> GExp -> GExp
+pairExpression left right =
+  GTermExp (GTupleTerm (GListTerm (map expAsTerm [left, right])))
+
+expAsTerm :: GExp -> GTerm
+expAsTerm = \case
+  GTermExp term -> term
+  expression -> GTextualTerm expression
 
 translateVariables :: NonEmpty Raw.VarSymbol -> TranslateM [GIdent]
 translateVariables = traverse translateVariable . NonEmpty.toList
