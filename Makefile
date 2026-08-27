@@ -18,7 +18,7 @@ synonyms=1
 symbolics=1
 sampling=20
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test
+.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test
 
 all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
 
@@ -26,7 +26,22 @@ english_grammar: share/InformathEng.pgf
 
 felix_test:
 	$(MAKE) -B english_grammar
-	stack test informath:test:felix-translation
+	stack build informath:exe:RunInformath
+	env -u NAPROCHE_LIB stack test informath:test:felix-translation
+	stack exec -- test/felix-cli-test.sh
+
+felix_set_test:
+	@if [ -z "$(NAPROCHE_LIB)" ]; then \
+		echo "felix_set_test requires nonempty NAPROCHE_LIB" >&2; \
+		exit 2; \
+	fi
+	@if [ ! -f "$(NAPROCHE_LIB)/set.tex" ] || [ ! -r "$(NAPROCHE_LIB)/set.tex" ]; then \
+		echo "felix_set_test requires a readable regular file at $(NAPROCHE_LIB)/set.tex" >&2; \
+		exit 2; \
+	fi
+	$(MAKE) felix_test
+	INFORMATH_ROOT="$(CURDIR)" NAPROCHE_LIB="$(NAPROCHE_LIB)" \
+		stack exec -- RunInformath -from-felix "$(NAPROCHE_LIB)/set.tex"
 
 
 

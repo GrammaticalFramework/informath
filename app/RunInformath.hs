@@ -4,7 +4,11 @@
 module Main where
 
 import Environment
-import Felix2Informath (Translation (..), translateBlocks)
+import Felix2Informath
+  ( Translation (..)
+  , renderTranslationSummary
+  , translateBlocks
+  )
 import qualified Felix.Workspace as Felix
 import InformathAPI
 import Utils (showFreqs, fileSuffix, dictValues)
@@ -14,7 +18,7 @@ import Utils (showFreqs, fileSuffix, dictValues)
 import qualified Data.Text as Text
 import System.Environment (getArgs)
 import System.Exit (die)
-import System.IO (stdout, hFlush)
+import System.IO (stderr, stdout, hFlush, hPutStrLn)
 
 main :: IO ()
 main = do
@@ -43,6 +47,8 @@ mainFelix file = do
   mapM_ putStrLn
     (concatMap (nlgPresentationJmtLines env)
       (translatedPresentations translation))
+  hPutStrLn stderr
+    (renderTranslationSummary (translationSummary translation))
 
 isFromFelixArg :: String -> Bool
 isFromFelixArg arg = takeWhile (/= '=') arg == "-from-felix"
@@ -133,7 +139,7 @@ helpMsg4 = [
   just ".dktex" "convert embedded Dedukti code in begin/end{dedukti} environments",
   just ".gft" "read GF trees line by line, informalize or -to-formalism=dedukti|...",
   just ".tex|.txt|.md" "parse line by line and convert to Dedukti or another formalism",
-  just "-from-felix <file>" "parse a narrow Felix axiom fragment and informalize it in English",
+  just "-from-felix <file>" "parse supported Felix axioms and claims and informalize them in English",
   "",
   "Output is written to standard output.",
   "Input is read line by line, except for .dk files",

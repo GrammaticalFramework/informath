@@ -12,6 +12,9 @@ build-type:          Simple
 data-files:
   test/felix-statements.tex
 
+extra-source-files:
+  test/felix-cli-test.sh
+
 executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
