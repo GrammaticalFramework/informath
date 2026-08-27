@@ -4,9 +4,8 @@
 module Main where
 
 import Environment
-import Felix2Informath (translateBlocks)
+import Felix2Informath (Translation (..), translateBlocks)
 import qualified Felix.Workspace as Felix
-import Informath (gf)
 import InformathAPI
 import Utils (showFreqs, fileSuffix, dictValues)
 
@@ -39,10 +38,11 @@ mainFelix file = do
     (die . Text.unpack . Felix.renderAuthorityFreeParseError)
     pure
     parsed
-  trees <- either die pure (translateBlocks blocks)
+  translation <- either die pure (translateBlocks blocks)
   env <- readEnv []
-  let results = map (processGFTree env . gf) trees
-  mapM_ putStrLn (printResults env (concatMap (printGenResult env) results))
+  mapM_ putStrLn
+    (concatMap (nlgPresentationJmtLines env)
+      (translatedPresentations translation))
 
 isFromFelixArg :: String -> Bool
 isFromFelixArg arg = takeWhile (/= '=') arg == "-from-felix"
