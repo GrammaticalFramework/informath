@@ -58,5 +58,7 @@ executable RunInformath
                        mtl,
                        array,
                        json,
-                       gf >= 3.12
+                       gf >= 3.12,
+                       felix,
+                       text
   default-language:    Haskell2010
