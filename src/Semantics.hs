@@ -125,11 +125,17 @@ inSituResults t = case t of
 -- STM vibe coded with Claude Code from original non-monadic in informath-experiments
 
 type QEnv = (Int, [GQuant])
+
+initQEnv :: QEnv
 initQEnv = (0, [])
 
-current (i, s) = GTermExp (GIdentTerm (newIdent i))
+current :: Show a => (a, b) -> Tree GExp_
+current (i, _) = GTermExp (GIdentTerm (newIdent i))
+
+next :: Num a1 => a2 -> (a1, [a2]) -> (a1, [a2])
 next s (i, ss) = (i + 1, s:ss)
 
+newIdent :: Show a => a -> Tree GIdent_
 newIdent i = GStrIdent (GString ("_x_" ++ show i))
 
 -- A state monad polymorphic in the state s: a function s -> (a, s).

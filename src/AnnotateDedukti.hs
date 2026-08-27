@@ -6,11 +6,11 @@ module AnnotateDedukti where
 import BuildConstantTable
 import Dedukti.AbsDedukti
 import DeduktiOperations
-import CommonConcepts
+import CommonConcepts (lookupConstant, symbolicCats, verbalCats)
 
 import PGF hiding (Hypo)
 
-import Data.List (partition, sortOn, sort, groupBy, intersperse)
+import Data.List (intersperse)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -65,11 +65,11 @@ annotateDkIdents msyns msymbs table drops =
       (f, ts) -> any badSymb (f : ts)
     EAbs b exp -> badSymb b || badSymb exp
     EFun h exp -> badSymb h || badSymb exp
-    BTyped v ty -> badSymb ty
-    HVarExp v ty -> badSymb ty
-    HParVarExp v ty -> badSymb ty
-    HLetExp v ty -> badSymb ty
-    HLetTyped v ty exp -> badSymb ty || badSymb exp
+    BTyped _ ty -> badSymb ty
+    HVarExp _ ty -> badSymb ty
+    HParVarExp _ ty -> badSymb ty
+    HLetExp _ ty -> badSymb ty
+    HLetTyped _ ty exp -> badSymb ty || badSymb exp
     JDef _ mt me -> badSymb mt || badSymb me
     JStatic _ ty -> badSymb ty
     JThm _ mt me -> badSymb mt || badSymb me
@@ -154,9 +154,9 @@ unifyVars mexp hypos = adds (zip vars hypos) where
 
   getVar :: Hypo -> Maybe QIdent
   getVar hypo = case hypo of
-    HExp exp -> Nothing
-    HVarExp x exp  -> Just x
-    HParVarExp x exp -> Just x
+    HExp _ -> Nothing
+    HVarExp x _  -> Just x
+    HParVarExp x _ -> Just x
     HLetExp x _ -> Just x
     HLetTyped x _ _ -> Just x
 

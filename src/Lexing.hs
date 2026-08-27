@@ -1,8 +1,6 @@
 module Lexing (lextex, unlextex, indexTex) where
 
 import Data.Char (isSpace,toUpper,toLower)
-import Data.List (intersperse)
-
 
 lextex :: String -> String
 lextex = unwords . lexMixed (const False)
@@ -82,28 +80,38 @@ unlexMixed good = fixesAfterDollars . capitInit . concat . alternate False . bin
 -- * Additional lexing uitilties
 
 -- | Capitalize first letter
+capitInit :: [Char] -> [Char]
 capitInit s = case s of
   c:cs -> toUpper c : cs
   _ -> s
 
 -- | Uncapitalize first letter
+uncapitInit :: ([Char] -> Bool) -> [Char] -> [Char]
 uncapitInit good s = 
   case s of
     c:cs | not (good s) -> toLower c : cs
     _                   -> s
 
 -- | Unquote each string wrapped in double quotes
+unquote :: [[Char]] -> [[Char]]
 unquote = map unq where 
   unq s = case s of
     '"':cs@(_:_) | last cs == '"' -> init cs
     _ -> s
 
+isPunct :: Char -> Bool
 isPunct = flip elem ".?!,:;"
+isMajorPunct :: Char -> Bool
 isMajorPunct = flip elem ".?!"
+isMinorPunct :: Char -> Bool
 isMinorPunct = flip elem ",:;"
+isParen :: Char -> Bool
 isParen = flip elem "()[]{}"
+isOpening :: Char -> Bool
 isOpening = flip elem "([{"
+isClosing :: Char -> Bool
 isClosing = flip elem ")]}"
+isSpecial :: Char -> Bool
 isSpecial = flip elem "%&/#\""
 
 
@@ -150,7 +158,7 @@ unlexText = capitInit . unlext where
 
 -- | Bind tokens separated by Prelude.BIND, i.e. &+
 bindTok :: [String] -> [String]
-bindTok ws = case ws of
+bindTok ws_arg = case ws_arg of
                w1:"&+":w2:ws -> bindTok ((w1++w2):ws)
                "&+":ws       -> bindTok ws
                "&|":(c:cs):ws-> bindTok ((toUpper c:cs) : ws)

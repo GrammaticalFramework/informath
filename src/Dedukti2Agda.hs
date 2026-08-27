@@ -9,7 +9,7 @@ import qualified Agda.AbsAgda as A
 import qualified Agda.PrintAgda as PrA
 
 import DeduktiOperations (getNumber, splitApp, isWildIdent)
-import CommonConcepts
+import DeduktiTheoryAPI
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
@@ -44,13 +44,13 @@ transJmt t = case t of
 
 transRule :: Rule -> A.Jmt
 transRule t = case t of
-  RRule qidents_ patt exp -> A.JDef (transPatt patt) (transExp exp)
+  RRule _ patt exp -> A.JDef (transPatt patt) (transExp exp)
 
 transExp :: Exp -> A.Exp
 transExp t = case t of
   EIdent qident -> A.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
-    (fun@(EIdent (QIdent c)), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> A.EIdent (A.AIdent s) --- no A.EInt
         _ -> A.EApp (transExp exp0) (transExp exp1)
@@ -87,7 +87,7 @@ transQIdent t = case t of
   ---- TODO avoid clashes
 
 processDeduktiModule :: Module -> IO ()
-processDeduktiModule mo@(MJmts jmts) = do
+processDeduktiModule (MJmts jmts) = do
   putStrLn ("open import " ++ baseconstants ++ "\n") 
   flip mapM_ jmts processDeduktiJmtTree
 
