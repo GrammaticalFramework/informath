@@ -5,7 +5,7 @@
 module Main (main) where
 
 import Control.Exception (bracket)
-import Control.Monad (unless)
+import Control.Monad (forM_, unless)
 import Data.List (isInfixOf)
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.Map.Strict as Map
@@ -36,8 +36,12 @@ main = do
     pure
     parsed
   translation <- either fail pure (translateBlocks blocks)
-  checkAxiomRegression (translatedPresentations translation)
+  checkParsedFixture translation
   checkBlockPolicy
+  checkAssumptions
+  checkConnectivesAndQuantifiers
+  checkRelationsAndChains
+  checkNaturalVocabulary
 
 withNaprapocheLibrary :: FilePath -> IO a -> IO a
 withNaprapocheLibrary library =
@@ -50,6 +54,40 @@ withNaprapocheLibrary library =
   restore previous = case previous of
     Nothing -> unsetEnv "NAPROCHE_LIB"
     Just value -> setEnv "NAPROCHE_LIB" value
+
+checkParsedFixture :: Translation -> IO ()
+checkParsedFixture translation = do
+  case translatedPresentations translation of
+    [ axiomForall
+      , axiomExists
+      , GClaimPresentationJmt claimLabel (GListHypo claimHypotheses)
+          claimConclusion
+      ] -> do
+        checkAxiomRegression [axiomForall, axiomExists]
+        assertLabel "felix_informath_claim" claimLabel
+        case claimHypotheses of
+          [ GVarsHypo (GListIdent [setIdentifier]) setKind'
+            , GSupposePropHypo
+                (GAppProp fallbackIdentifier (GOneExps fallbackSubject))
+            ] -> do
+              assertIdent "A" setIdentifier
+              assertSetKind setKind'
+              assertIdent "fixture_regular" fallbackIdentifier
+              assertVariableExpression "A" fallbackSubject
+          _ -> fail "the parsed claim did not retain its ordered hypotheses"
+        assertEquality "A" "A" claimConclusion
+    _ -> fail "the fixture did not produce two axioms followed by one claim"
+  let summary = translationSummary translation
+  assert "the fixture records two axioms" (emittedAxiomCount summary == 2)
+  assert "the fixture records its claim kind"
+    (emittedClaimCounts summary == Map.singleton Raw.Proposition 1)
+  assert "the fixture records its abbreviation"
+    (readAbbreviationCount summary == 1)
+  assert "the fixture has no definitions" (readDefinitionCount summary == 0)
+  assert "the fixture records its omitted proof" (omittedProofCount summary == 1)
+  assert "the fixture records its symbolic fallback"
+    (symbolicFallbackCounts summary
+      == Map.singleton (rawMarker "fixture_regular") 1)
 
 checkAxiomRegression :: [GPresentationJmt] -> IO ()
 checkAxiomRegression presentations = case presentations of
@@ -144,13 +182,227 @@ checkBlockPolicy = do
     "Felix signature unsupported_signature: unsupported top-level block"
     (translateBlocks [unsupportedSignatureBlock])
 
+checkAssumptions :: IO ()
+checkAssumptions = do
+  let assumptions =
+        [ Raw.AsmLetNoun (rawVariable "A" :| []) (nounPhrase "set" [])
+        , Raw.AsmLetIn (rawVariable "x" :| []) (rawExpression "A")
+        , Raw.AsmLetRelation
+            (rawVariable "y" :| [rawVariable "z"])
+            (rawRelation "subseteq")
+            (rawExpression "A")
+        , Raw.AsmSuppose (equalityStatement "A" "A")
+        ]
+      expected = GListHypo
+        [ GVarsHypo (GListIdent [gIdent "A"]) setKind
+        , GVarsHypo (GListIdent [gIdent "x"])
+            (GExpKind (gExpression "A"))
+        , GVarsHypo (GListIdent [gIdent "y", gIdent "z"]) setKind
+        , GPropHypo (subseteqProp (gExpression "y") (gExpression "A"))
+        , GPropHypo (subseteqProp (gExpression "z") (gExpression "A"))
+        , GSupposePropHypo (equalityProp "A" "A")
+        ]
+  translation <- translateOrFail
+    [claimBlockWith "assumptions" assumptions (equalityStatement "x" "x")]
+  case translatedPresentations translation of
+    [GClaimPresentationJmt _ actual@(GListHypo hypotheses) _] -> do
+      assert "all assumption forms retain their expanded order"
+        (length hypotheses == 6)
+      assertGfEqual "assumption translation" expected actual
+    _ -> fail "the assumption test did not produce one presentation claim"
+
+checkConnectivesAndQuantifiers :: IO ()
+checkConnectivesAndQuantifiers = do
+  let left = equalityStatement "A" "B"
+      right = equalityStatement "B" "C"
+      leftProp = equalityProp "A" "B"
+      rightProp = equalityProp "B" "C"
+      cases =
+        [ (Raw.Conjunction, GCoreAndProp leftProp rightProp)
+        , (Raw.Disjunction, GCoreOrProp leftProp rightProp)
+        , (Raw.Implication, GCoreIfProp leftProp rightProp)
+        , (Raw.Equivalence, GCoreIffProp leftProp rightProp)
+        , (Raw.ExclusiveOr,
+            GCoreAndProp
+              (GCoreOrProp leftProp rightProp)
+              (GCoreNotProp (GCoreAndProp leftProp rightProp)))
+        ]
+  forM_ cases $ \(connective, expected) -> do
+    actual <- translateProposition
+      (Raw.StmtConnected connective Nothing left right)
+    assertGfEqual ("statement connective " ++ show connective) expected actual
+
+  let formulaLeft = equalityFormula "A" "B"
+      formulaRight = equalityFormula "B" "C"
+  forM_ cases $ \(connective, expected) -> do
+    actual <- translateProposition
+      (Raw.StmtFormula
+        (Raw.Connected Nowhere connective formulaLeft formulaRight))
+    assertGfEqual ("formula connective " ++ show connective) expected actual
+
+  let suchThat = equalityStatement "Z" "Z"
+      body = equalityStatement "x" "y"
+      quantified = Raw.SymbolicQuantified
+        Nowhere Raw.Universally
+        (rawVariable "x" :| [rawVariable "y"])
+        (Raw.Bounded Nowhere Raw.Positive
+          (rawRelation "elem") (rawExpression "A"))
+        (Just suchThat)
+        body
+      guards = GCoreAndProp
+        (GCoreAndProp
+          (elementProp (gExpression "x") (gExpression "A"))
+          (elementProp (gExpression "y") (gExpression "A")))
+        (equalityProp "Z" "Z")
+      expected = GCoreAllProp setKind (gIdent "x")
+        (GCoreAllProp setKind (gIdent "y")
+          (GCoreIfProp guards (equalityProp "x" "y")))
+  actualQuantified <- translateProposition quantified
+  assertGfEqual "bounded universal guards and binders" expected actualQuantified
+
+  let typedBody = equalityFormula "x" "x"
+      typedCases =
+        [ (Raw.ConcreteSet, setKind)
+        , ( Raw.ConcreteArrow Raw.ConcreteSet Raw.ConcreteSet
+          , GFunKind (GListArgKind [GKindArgKind setKind]) setKind
+          )
+        ]
+  forM_ typedCases $ \(concreteType, expectedKind) -> do
+    actual <- translateProposition . Raw.StmtFormula $
+      Raw.FormulaTypedQuantified Nowhere Raw.Universally
+        (rawVariable "x" :| []) concreteType typedBody
+    assertGfEqual ("typed quantifier " ++ show concreteType)
+      (GCoreAllProp expectedKind (gIdent "x") (equalityProp "x" "x")) actual
+
+checkRelationsAndChains :: IO ()
+checkRelationsAndChains = do
+  let relationCases =
+        [ ("eq", equalityG (gExpression "x") (gExpression "y"))
+        , ("neq", GAdj2Prop (LexAdj2 "Neq_Adj2")
+            (gExpression "x") (gExpression "y"))
+        , ("elem", elementProp (gExpression "x") (gExpression "y"))
+        , ("notelem", GNoun2Prop (LexNoun2 "notelement_Noun2")
+            (gExpression "x") (gExpression "y"))
+        , ("subset", GNoun2Prop (LexNoun2 "subset_Noun2")
+            (gExpression "x") (gExpression "y"))
+        , ("subseteq", subseteqProp (gExpression "x") (gExpression "y"))
+        , ("supseteq", GNoun2Prop (LexNoun2 "superseteq_Noun2")
+            (gExpression "x") (gExpression "y"))
+        ]
+  forM_ relationCases $ \(marker, expected) -> do
+    actual <- translateProposition (relationStatement marker Raw.Positive
+      (rawExpression "x" :| []) (rawExpression "y" :| []))
+    assertGfEqual ("relation " ++ marker) expected actual
+
+  negative <- translateProposition (relationStatement "elem" Raw.Negative
+    (rawExpression "x" :| [rawExpression "y"])
+    (rawExpression "A" :| [rawExpression "B"]))
+  assertGfEqual "negative relations negate every cross-product atom"
+    (conjoinList
+      [ GCoreNotProp (elementProp (gExpression "x") (gExpression "A"))
+      , GCoreNotProp (elementProp (gExpression "x") (gExpression "B"))
+      , GCoreNotProp (elementProp (gExpression "y") (gExpression "A"))
+      , GCoreNotProp (elementProp (gExpression "y") (gExpression "B"))
+      ]) negative
+
+  let chain = Raw.ChainCons
+        (rawExpression "x" :| []) Raw.Positive (rawRelation "eq")
+        (Raw.ChainBase
+          (rawExpression "m" :| []) Raw.Positive (rawRelation "elem")
+          (rawExpression "z" :| []))
+      expected = GCoreAndProp
+        (equalityG (gExpression "x") (gExpression "m"))
+        (elementProp (gExpression "m") (gExpression "z"))
+  actualChain <- translateProposition
+    (Raw.StmtFormula (Raw.FormulaChain chain))
+  assertGfEqual "a relation chain reuses its middle group" expected actualChain
+
+checkNaturalVocabulary :: IO ()
+checkNaturalVocabulary = do
+  let inhabitedKey = adjectiveKey "inhabited-surface"
+      emptyKey = adjectiveKey "empty-surface"
+      disjointKey = adjectiveKey "disjoint-surface"
+      genericKey = adjectiveKey "generic-surface"
+      declaration label key arguments =
+        adjectiveAbbreviationWithArguments label Raw.LeftAdjectiveSide key arguments
+      declarations =
+        [ declaration "inhabited" inhabitedKey []
+        , declaration "empty" emptyKey []
+        , declaration "disjoint" disjointKey [rawVariable "B"]
+        , declaration "generic_predicate" genericKey []
+        ]
+      assertions =
+        [ ( "inhabited_claim"
+          , adjectiveStatement (rawTerm "A" :| []) inhabitedKey []
+          , GAdjProp (LexAdj "inhabited_Adj") (gExpression "A")
+          )
+        , ( "empty_claim"
+          , adjectiveStatement (rawTerm "A" :| []) emptyKey []
+          , GAdjProp (LexAdj "empty_Adj") (gExpression "A")
+          )
+        , ( "disjoint_claim"
+          , adjectiveStatement (rawTerm "A" :| []) disjointKey [rawTerm "B"]
+          , GAdjCProp (LexAdjC "disjoint_AdjC")
+              (gExpression "A") (gExpression "B")
+          )
+        ]
+  forM_ assertions $ \(label, statement, expected) -> do
+    translation <- translateOrFail (declarations ++ [claimBlock label statement])
+    assertGfEqual label expected (onlyClaimProposition translation)
+
+  generic <- translateOrFail
+    (declarations ++
+      [claimBlock "generic_claim"
+        (adjectiveStatement
+          (rawTerm "A" :| [rawTerm "B"]) genericKey [])])
+  assertGfEqual "a generic adjective maps over multiple subjects"
+    (GCoreAndProp
+      (GAppProp (gIdent "generic_predicate") (GOneExps (gExpression "A")))
+      (GAppProp (gIdent "generic_predicate") (GOneExps (gExpression "B"))))
+    (onlyClaimProposition generic)
+  assert "one generic adjective node records one fallback"
+    (symbolicFallbackCounts (translationSummary generic)
+      == Map.singleton (rawMarker "generic_predicate") 1)
+
+  nounAssertion <- translateProposition
+    (Raw.StmtNoun (rawTerm "A" :| []) (nounPhrase "subsingleton" []))
+  assertGfEqual "subsingleton noun assertion"
+    (GNoun1Prop (GNounNoun1 (LexNoun "subsingleton_Noun"))
+      (gExpression "A"))
+    nounAssertion
+
+  family <- translateOrFail
+    [claimBlockWith "family_kind"
+      [Raw.AsmLetNoun (rawVariable "F" :| [])
+        (nounPhrase "family_of_subsets" [rawTerm "X"])]
+      (equalityStatement "F" "F")]
+  case translatedPresentations family of
+    [GClaimPresentationJmt _
+      (GListHypo [GVarsHypo (GListIdent [identifier]) kind]) _] -> do
+        assertIdent "F" identifier
+        assertGfEqual "family_of_subsets kind"
+          (GDepKind (LexDep "family_of_subsets_Dep") (gExpression "X")) kind
+    _ -> fail "the family-of-subsets assumption did not produce one hypothesis"
+
 translateOrFail :: [Raw.Block] -> IO Translation
 translateOrFail = either fail pure . translateBlocks
 
+translateProposition :: Raw.Stmt -> IO GProp
+translateProposition statement =
+  onlyClaimProposition <$> translateOrFail [claimBlock "test_claim" statement]
+
+onlyClaimProposition :: Translation -> GProp
+onlyClaimProposition translation = case translatedPresentations translation of
+  [GClaimPresentationJmt _ _ proposition] -> proposition
+  _ -> error "test invariant: expected one translated claim"
+
 claimBlock :: String -> Raw.Stmt -> Raw.Block
-claimBlock label statement =
+claimBlock label = claimBlockWith label []
+
+claimBlockWith :: String -> [Raw.Asm] -> Raw.Stmt -> Raw.Block
+claimBlockWith label assumptions statement =
   Raw.BlockClaim Raw.Proposition Nowhere Nothing (rawMarker label)
-    (Raw.Claim [] statement)
+    (Raw.Claim assumptions statement)
 
 adjectiveClaim
   :: String -> Raw.AdjectiveSide -> Raw.AdjectiveSurfaceKey -> Raw.Block
@@ -170,10 +422,30 @@ adjectiveDefinition label side key =
 adjectiveAbbreviation
   :: String -> Raw.AdjectiveSide -> Raw.AdjectiveSurfaceKey -> Raw.Block
 adjectiveAbbreviation label side key =
+  adjectiveAbbreviationWithArguments label side key []
+
+adjectiveAbbreviationWithArguments
+  :: String
+  -> Raw.AdjectiveSide
+  -> Raw.AdjectiveSurfaceKey
+  -> [Raw.VarSymbol]
+  -> Raw.Block
+adjectiveAbbreviationWithArguments label side key arguments =
   Raw.BlockAbbr Nowhere Nothing (rawMarker label)
     (Raw.AbbreviationAdj (rawVariable "A")
-      (Raw.Adj Nowhere (userAdjective side key) [])
+      (Raw.Adj Nowhere (userAdjective side key) arguments)
       (equalityStatement "A" "A"))
+
+adjectiveStatement
+  :: NonEmpty Raw.Term
+  -> Raw.AdjectiveSurfaceKey
+  -> [Raw.Term]
+  -> Raw.Stmt
+adjectiveStatement subjects key arguments =
+  Raw.StmtVerbPhrase subjects
+    (Raw.VPAdj
+      (Raw.Adj Nowhere
+        (userAdjective Raw.LeftAdjectiveSide key) arguments :| []))
 
 userAdjective
   :: Raw.AdjectiveSide -> Raw.AdjectiveSurfaceKey -> Raw.AdjectiveLexicalItem
@@ -184,13 +456,24 @@ adjectiveKey word = Raw.AdjectiveSurfaceKey
   (Raw.TokenCons (Raw.Word (Text.pack word)) Raw.End)
 
 equalityStatement :: String -> String -> Raw.Stmt
-equalityStatement left right = Raw.StmtFormula (Raw.FormulaChain
-  (Raw.ChainBase
-    (rawExpression left :| []) Raw.Positive rawEquality
-    (rawExpression right :| [])))
+equalityStatement left right = Raw.StmtFormula (equalityFormula left right)
 
-rawEquality :: Raw.Relation
-rawEquality = Raw.Relation Nowhere Raw.EqSymbol []
+equalityFormula :: String -> String -> Raw.Formula
+equalityFormula left right = Raw.FormulaChain
+  (Raw.ChainBase
+    (rawExpression left :| []) Raw.Positive (rawRelation "eq")
+    (rawExpression right :| []))
+
+relationStatement
+  :: String -> Raw.Sign -> NonEmpty Raw.Expr -> NonEmpty Raw.Expr -> Raw.Stmt
+relationStatement marker sign left right = Raw.StmtFormula (Raw.FormulaChain
+  (Raw.ChainBase left sign (rawRelation marker) right))
+
+rawRelation :: String -> Raw.Relation
+rawRelation marker = Raw.Relation Nowhere
+  (Raw.RelationSymbol (Raw.Symbol (Text.pack marker))
+    Raw.zeroParameterArity (rawMarker marker))
+  []
 
 rawTerm :: String -> Raw.Term
 rawTerm = Raw.TermExpr . rawExpression
@@ -204,6 +487,14 @@ rawVariable = Raw.NamedVarAt Nowhere . Text.pack
 rawMarker :: String -> Raw.Marker
 rawMarker = Raw.Marker . Text.pack
 
+nounPhrase :: String -> [Raw.Term] -> Raw.NounPhrase Maybe
+nounPhrase marker arguments =
+  Raw.NounPhrase []
+    (Raw.Noun Nowhere
+      (Raw.LexicalItemSgPl (Raw.SgPl Raw.End Raw.End) (rawMarker marker))
+      arguments)
+    Nothing [] Nothing
+
 unsupportedSignatureBlock :: Raw.Block
 unsupportedSignatureBlock =
   Raw.BlockSig Nowhere Nothing (rawMarker "unsupported_signature") []
@@ -211,11 +502,34 @@ unsupportedSignatureBlock =
       (Raw.Word (Text.pack "unsupported")) Raw.ConcreteSet)
 
 equalityProp :: String -> String -> GProp
-equalityProp left right = GAdj2Prop (LexAdj2 "Eq_Adj2")
-  (variableExpression left) (variableExpression right)
+equalityProp left right = equalityG
+  (gExpression left) (gExpression right)
+
+equalityG :: GExp -> GExp -> GProp
+equalityG = GAdj2Prop (LexAdj2 "Eq_Adj2")
+
+elementProp :: GExp -> GExp -> GProp
+elementProp = GNoun2Prop (LexNoun2 "element_Noun2")
+
+subseteqProp :: GExp -> GExp -> GProp
+subseteqProp = GNoun2Prop (LexNoun2 "subseteq_Noun2")
+
+gIdent :: String -> GIdent
+gIdent = GStrIdent . GString
+
+gExpression :: String -> GExp
+gExpression = GTermExp . GIdentTerm . gIdent
+
+setKind :: GKind
+setKind = GNounKind (LexNoun "set_Noun")
 
 variableExpression :: String -> GExp
-variableExpression = GTermExp . GIdentTerm . GStrIdent . GString
+variableExpression = gExpression
+
+conjoinList :: [GProp] -> GProp
+conjoinList = \case
+  first : rest -> foldl GCoreAndProp first rest
+  [] -> error "test invariant: conjunctions are nonempty"
 
 assertApplicationMarker :: String -> GProp -> IO ()
 assertApplicationMarker expected = \case

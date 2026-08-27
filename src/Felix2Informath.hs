@@ -229,46 +229,128 @@ translateAxiom
   :: AdjectiveEnvironment -> Raw.Marker -> [Raw.Asm] -> Raw.Stmt
   -> TranslateM GPresentationJmt
 translateAxiom environment marker assumptions statement = do
-  ensureNoAssumptions assumptions
+  hypotheses <- translateAssumptions environment assumptions
   proposition <- translateStatement environment statement
   pure (GFormalPresentationJmt
-    (GAxiomJmt (markerLabel marker) (GListHypo []) proposition))
+    (GAxiomJmt (markerLabel marker) (GListHypo hypotheses) proposition))
 
 translateClaim
   :: AdjectiveEnvironment -> Raw.Marker -> [Raw.Asm] -> Raw.Stmt
   -> TranslateM GPresentationJmt
 translateClaim environment marker assumptions statement = do
-  ensureNoAssumptions assumptions
+  hypotheses <- translateAssumptions environment assumptions
   proposition <- translateStatement environment statement
   pure (GClaimPresentationJmt
-    (markerLabel marker) (GListHypo []) proposition)
+    (markerLabel marker) (GListHypo hypotheses) proposition)
 
-ensureNoAssumptions :: [Raw.Asm] -> TranslateM ()
-ensureNoAssumptions [] = pure ()
-ensureNoAssumptions _ = unsupported "assumptions"
+translateAssumptions :: AdjectiveEnvironment -> [Raw.Asm] -> TranslateM [GHypo]
+translateAssumptions environment = fmap concat . traverse translateAssumption
+ where
+  translateAssumption = \case
+    Raw.AsmSuppose statement ->
+      pure . GSupposePropHypo <$> translateStatement environment statement
+    Raw.AsmLetNoun variables nounPhrase -> do
+      identifiers <- translateVariables variables
+      kind <- translateNounKind environment nounPhrase
+      pure [GVarsHypo (GListIdent identifiers) kind]
+    Raw.AsmLetIn variables expression -> do
+      identifiers <- translateVariables variables
+      expression' <- translateExpression environment expression
+      pure [GVarsHypo (GListIdent identifiers) (GExpKind expression')]
+    Raw.AsmLetRelation variables relation expression -> do
+      relationLeaf <- translateRelation relation
+      identifiers <- translateVariables variables
+      right <- translateExpression environment expression
+      let relationPropositions =
+            [GPropHypo (relationLeaf (variableExpression identifier) right)
+            | identifier <- identifiers
+            ]
+      pure
+        (GVarsHypo (GListIdent identifiers) setKind : relationPropositions)
+    Raw.AsmLetThe{} -> unsupported "assumption AsmLetThe"
+    Raw.AsmLetEq{} -> unsupported "assumption AsmLetEq"
+    Raw.AsmLetStruct{} -> unsupported "assumption AsmLetStruct"
 
 translateStatement :: AdjectiveEnvironment -> Raw.Stmt -> TranslateM GProp
 translateStatement environment = \case
   Raw.StmtFormula formula -> translateFormula environment formula
+  Raw.StmtConnected connective _location left right -> do
+    left' <- translateStatement environment left
+    right' <- translateStatement environment right
+    combineConnective connective left' right'
+  Raw.SymbolicQuantified _location quantifier variables bound suchThat body ->
+    translateSymbolicQuantified environment quantifier variables bound suchThat body
   Raw.StmtVerbPhrase subjects verbPhrase ->
     translateVerbPhraseStatement environment subjects verbPhrase
-  _ -> unsupported "statement"
+  Raw.StmtNoun subjects nounPhrase ->
+    translateNounStatement environment subjects nounPhrase
+  Raw.StmtStruct{} -> unsupported "statement StmtStruct"
+  Raw.StmtNeg{} -> unsupported "statement StmtNeg"
+  Raw.StmtExists{} -> unsupported "statement StmtExists"
+  Raw.StmtQuantPhrase{} -> unsupported "statement StmtQuantPhrase"
+  Raw.StmtExactStruct{} -> unsupported "statement StmtExactStruct"
 
 translateFormula :: AdjectiveEnvironment -> Raw.Formula -> TranslateM GProp
 translateFormula environment = \case
   Raw.FormulaChain chain -> translateChain environment chain
-  Raw.Connected _location Raw.Conjunction left right ->
-    GCoreAndProp
-      <$> translateFormula environment left
-      <*> translateFormula environment right
-  Raw.FormulaQuantified _location quantifier variables Raw.Unbounded body -> do
+  Raw.Connected _location connective left right -> do
+    left' <- translateFormula environment left
+    right' <- translateFormula environment right
+    combineConnective connective left' right'
+  Raw.FormulaQuantified _location quantifier variables bound body -> case bound of
+    Raw.Unbounded -> do
+      binder <- translateQuantifier quantifier
+      identifiers <- translateVariables variables
+      body' <- translateFormula environment body
+      pure (foldr (binder setKind) body' identifiers)
+    Raw.Bounded{} -> unsupported "bounded FormulaQuantified"
+  Raw.FormulaTypedQuantified _location quantifier variables concreteType body -> do
     binder <- translateQuantifier quantifier
     identifiers <- translateVariables variables
+    kind <- translateConcreteType concreteType
     body' <- translateFormula environment body
-    pure (foldr (binder setKind) body' identifiers)
-  Raw.Connected{} -> unsupported "formula connective"
-  Raw.FormulaQuantified{} -> unsupported "bounded quantification"
-  _ -> unsupported "formula"
+    pure (foldr (binder kind) body' identifiers)
+  Raw.FormulaSetMap{} -> unsupported "formula FormulaSetMap"
+  Raw.FormulaExpression{} -> unsupported "formula FormulaExpression"
+  Raw.FormulaPredicate{} -> unsupported "formula FormulaPredicate"
+  Raw.FormulaNeg{} -> unsupported "formula FormulaNeg"
+  Raw.PropositionalConstant{} -> unsupported "propositional constant"
+
+translateSymbolicQuantified
+  :: AdjectiveEnvironment
+  -> Raw.Quantifier
+  -> NonEmpty Raw.VarSymbol
+  -> Raw.Bound
+  -> Maybe Raw.Stmt
+  -> Raw.Stmt
+  -> TranslateM GProp
+translateSymbolicQuantified environment quantifier variables bound suchThat body =
+  case quantifier of
+    Raw.Universally -> translateWith GCoreAllProp GCoreIfProp
+    Raw.Existentially -> translateWith GCoreExistProp GCoreAndProp
+    Raw.Nonexistentially -> unsupported "nonexistential quantifier"
+ where
+  translateWith binder combineGuards = do
+    identifiers <- translateVariables variables
+    boundGuards <- translateBound environment identifiers bound
+    suchThatGuards <- maybe (pure [])
+      (fmap pure . translateStatement environment) suchThat
+    body' <- translateStatement environment body
+    let guarded = case NonEmpty.nonEmpty (boundGuards ++ suchThatGuards) of
+          Nothing -> body'
+          Just guards -> combineGuards (conjoin guards) body'
+    pure (foldr (binder setKind) guarded identifiers)
+
+translateBound
+  :: AdjectiveEnvironment -> [GIdent] -> Raw.Bound -> TranslateM [GProp]
+translateBound _environment _identifiers Raw.Unbounded = pure []
+translateBound environment identifiers (Raw.Bounded _location sign relation expression) = do
+  relationLeaf <- translateRelation relation
+  right <- translateExpression environment expression
+  pure
+    [applySign sign (relationLeaf (variableExpression identifier) right)
+    | identifier <- identifiers
+    ]
 
 translateQuantifier
   :: Raw.Quantifier -> TranslateM (GKind -> GIdent -> GProp -> GProp)
@@ -277,19 +359,80 @@ translateQuantifier = \case
   Raw.Existentially -> pure GCoreExistProp
   Raw.Nonexistentially -> unsupported "nonexistential quantifier"
 
+translateConcreteType :: Raw.ConcreteType -> TranslateM GKind
+translateConcreteType = \case
+  Raw.ConcreteSet -> pure setKind
+  Raw.ConcreteArrow Raw.ConcreteSet Raw.ConcreteSet ->
+    pure (GFunKind (GListArgKind [GKindArgKind setKind]) setKind)
+  concreteType -> unsupported ("concrete type " ++ show concreteType)
+
+combineConnective :: Raw.Connective -> GProp -> GProp -> TranslateM GProp
+combineConnective connective left right = case connective of
+  Raw.Conjunction -> pure (GCoreAndProp left right)
+  Raw.Disjunction -> pure (GCoreOrProp left right)
+  Raw.Implication -> pure (GCoreIfProp left right)
+  Raw.Equivalence -> pure (GCoreIffProp left right)
+  Raw.ExclusiveOr -> pure
+    (GCoreAndProp
+      (GCoreOrProp left right)
+      (GCoreNotProp (GCoreAndProp left right)))
+  Raw.NegatedDisjunction -> unsupported "connective NegatedDisjunction"
+
 translateChain :: AdjectiveEnvironment -> Raw.Chain -> TranslateM GProp
-translateChain environment = \case
-  Raw.ChainBase
-      (left :| [])
-      Raw.Positive
-      (Raw.Relation _ Raw.EqSymbol [])
-      (right :| []) ->
-    GAdj2Prop (LexAdj2 "Eq_Adj2")
-      <$> translateExpression environment left
-      <*> translateExpression environment right
-  Raw.ChainBase{} ->
-    unsupported "relation: expected one positive, unparameterized equality"
-  Raw.ChainCons{} -> unsupported "relation chain"
+translateChain environment chain = conjoin . snd <$> translateChainParts environment chain
+
+translateChainParts
+  :: AdjectiveEnvironment -> Raw.Chain
+  -> TranslateM (NonEmpty GExp, NonEmpty GProp)
+translateChainParts environment = \case
+  Raw.ChainBase left sign relation right -> do
+    left' <- traverse (translateExpression environment) left
+    right' <- traverse (translateExpression environment) right
+    propositions <- translateRelationGroup sign relation left' right'
+    pure (left', propositions)
+  Raw.ChainCons left sign relation rest -> do
+    left' <- traverse (translateExpression environment) left
+    (middle, restPropositions) <- translateChainParts environment rest
+    propositions <- translateRelationGroup sign relation left' middle
+    pure (left', propositions <> restPropositions)
+
+translateRelationGroup
+  :: Raw.Sign -> Raw.Relation -> NonEmpty GExp -> NonEmpty GExp
+  -> TranslateM (NonEmpty GProp)
+translateRelationGroup sign relation (left :| leftRest) (right :| rightRest) = do
+  relationLeaf <- translateRelation relation
+  let first = applySign sign (relationLeaf left right)
+      rest =
+        map (applySign sign . relationLeaf left) rightRest
+          ++ concatMap
+            (\nextLeft ->
+              map (applySign sign . relationLeaf nextLeft) (right : rightRest))
+            leftRest
+  pure (first :| rest)
+
+translateRelation :: Raw.Relation -> TranslateM (GExp -> GExp -> GProp)
+translateRelation = \case
+  Raw.Relation _location symbol parameters
+    | not (null parameters) -> unsupported "parameterized relation occurrence"
+    | Raw.parameterArityValue (Raw.relationSymbolParameterArity symbol) /= 0 ->
+        unsupported "relation with nonzero declared parameter arity"
+    | otherwise -> relationForMarker (Raw.relationSymbolMarker symbol)
+  Raw.RelationExpr{} -> unsupported "relation expression"
+
+relationForMarker :: Raw.Marker -> TranslateM (GExp -> GExp -> GProp)
+relationForMarker marker = case markerText marker of
+  "eq" -> pure (GAdj2Prop (LexAdj2 "Eq_Adj2"))
+  "neq" -> pure (GAdj2Prop (LexAdj2 "Neq_Adj2"))
+  "elem" -> pure (GNoun2Prop (LexNoun2 "element_Noun2"))
+  "notelem" -> pure (GNoun2Prop (LexNoun2 "notelement_Noun2"))
+  "subset" -> pure (GNoun2Prop (LexNoun2 "subset_Noun2"))
+  "subseteq" -> pure (GNoun2Prop (LexNoun2 "subseteq_Noun2"))
+  "supseteq" -> pure (GNoun2Prop (LexNoun2 "superseteq_Noun2"))
+  relation -> unsupported ("relation marker " ++ relation)
+
+applySign :: Raw.Sign -> GProp -> GProp
+applySign Raw.Positive = id
+applySign Raw.Negative = GCoreNotProp
 
 translateVerbPhraseStatement
   :: AdjectiveEnvironment -> NonEmpty Raw.Term -> Raw.VerbPhrase -> TranslateM GProp
@@ -306,9 +449,18 @@ translateAdjective
 translateAdjective environment (Raw.Adj _location lexicalItem arguments) = do
   marker <- resolveAdjective environment lexicalItem
   arguments' <- traverse (translateTerm environment) arguments
-  tell [marker]
-  pure (\subject -> GAppProp (markerIdent marker)
-    (mkExps (subject :| arguments')))
+  case (markerText marker, arguments') of
+    ("inhabited", []) -> pure (GAdjProp (LexAdj "inhabited_Adj"))
+    ("empty", []) -> pure (GAdjProp (LexAdj "empty_Adj"))
+    ("disjoint", [argument]) ->
+      pure (\subject -> GAdjCProp (LexAdjC "disjoint_AdjC") subject argument)
+    ("inhabited", _) -> unsupported "adjective inhabited at the wrong arity"
+    ("empty", _) -> unsupported "adjective empty at the wrong arity"
+    ("disjoint", _) -> unsupported "adjective disjoint at the wrong arity"
+    _ -> do
+      tell [marker]
+      pure (\subject -> GAppProp (markerIdent marker)
+        (mkExps (subject :| arguments')))
 
 resolveAdjective
   :: AdjectiveEnvironment -> Raw.AdjectiveLexicalItem -> TranslateM Raw.Marker
@@ -320,6 +472,32 @@ resolveAdjective environment lexicalItem =
           (Raw.adjectiveLexicalSide lexicalItem, surfaceKey) environment of
         Just marker -> pure marker
         Nothing -> unsupported "unresolved user adjective"
+
+translateNounStatement
+  :: AdjectiveEnvironment -> NonEmpty Raw.Term -> Raw.NounPhrase Maybe
+  -> TranslateM GProp
+translateNounStatement environment (subject :| []) nounPhrase = do
+  subject' <- translateTerm environment subject
+  case nounPhrase of
+    Raw.NounPhrase [] (Raw.Noun _location item []) Nothing [] Nothing
+      | markerText (Raw.lexicalItemSgPlMarker item) == "subsingleton" ->
+          pure (GNoun1Prop (GNounNoun1 (LexNoun "subsingleton_Noun")) subject')
+    _ -> unsupported "noun assertion shape"
+translateNounStatement _environment _subjects _nounPhrase =
+  unsupported "noun assertion with multiple subjects"
+
+translateNounKind
+  :: AdjectiveEnvironment -> Raw.NounPhrase Maybe -> TranslateM GKind
+translateNounKind environment = \case
+  Raw.NounPhrase [] (Raw.Noun _location item arguments) Nothing [] Nothing ->
+    case (markerText (Raw.lexicalItemSgPlMarker item), arguments) of
+      ("set", []) -> pure setKind
+      ("family_of_subsets", [argument]) -> do
+        argument' <- translateTerm environment argument
+        pure (GDepKind (LexDep "family_of_subsets_Dep") argument')
+      ("family_of_subsets", _) -> unsupported "family_of_subsets at the wrong arity"
+      _ -> unsupported "noun kind marker"
+  _ -> unsupported "noun kind shape"
 
 translateTerm :: AdjectiveEnvironment -> Raw.Term -> TranslateM GExp
 translateTerm environment = \case
