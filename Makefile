@@ -65,14 +65,27 @@ Lean:
 Rocq:
 	cd src/typetheory ; bnfc -m -p Rocq --haskell-gadt Rocq.bnf ; make
 
-clean:
+
+clean-typetheory:
 	cd src/typetheory && \
 	for dir in Agda Rocq Dedukti Lean; do \
 		rm -rf "$$dir"/*; \
 	done
+	rm src/typetheory/Makefile
+	rm src/typetheory/Makefile.bak
 
-cleangrammars:
-	cd grammars && rm *.gfo *.pgf *.hs
+clean-grammars:
+	rm grammars/*.gfo
+	rm grammars/extraction/*.gfo
+	rm src/Informath.hs
+	rm share/*.pgf
+
+clean-full:
+	make clean-typetheory
+	make clean-grammars
+	rm stack.yaml.lock
+	rm -rf .stack-work
+
 
 demo:
 	echo "${lightgreen}## The first user demo, only requiring Informath and Latex${neutral}"
@@ -268,10 +281,10 @@ fermat:
 	$(RUN) -add-symboltables=test/fermat.dkgf -variations test/fermat.dk
 
 cartesian:
-	$(RUN)  -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
+	$(RUN) -add-symboltables=test/cartesian.dkgf -variations  test/cartesian.dk
 
 bind:
-	$(RUN)  -add-symboltables=test/bind.dkgf -variations test/bind.dk
+	$(RUN) -add-symboltables=test/bind.dkgf -variations test/bind.dk
 
 prooftextdemo:
 	$(RUN) -proof-text -base=test/natdedrules.dk -add-symboltables=test/natdrop.dkgf test/natdedproofs.dk >out/prooftextdemo.tex
