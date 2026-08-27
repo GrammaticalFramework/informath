@@ -14,11 +14,17 @@ open
 in {
 
 lincat
+  PresentationJmt = Text ;
   [Adj] = Syntax.ListAP ;
   Pred = VP ;
   Quant = NP ;
 
 lin
+  FormalPresentationJmt jmt = jmt ;
+
+  ClaimPresentationJmt label hypos prop =
+    labelText label (thenText hypos (topProp prop)) ;
+
   FormulaProp formula = simpleProp (latexS (mkSymb formula.s)) ;
   
   DisplayFormulaProp formula = simpleProp (displayLatexS (mkSymb formula.s)) ;

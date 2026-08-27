@@ -4,12 +4,16 @@ abstract MathExtensions =
   ** {
 
 cat
+  PresentationJmt ;
   [Adj] {2} ;
   Pred ;
 ----  [Pred] {2} ;
   Quant ;
 
 fun
+  FormalPresentationJmt : Jmt -> PresentationJmt ;
+  ClaimPresentationJmt : Label -> [Hypo] -> Prop -> PresentationJmt ;
+
   FormulaProp : Formula -> Prop ;
   DisplayFormulaProp : Formula -> Prop ;
   FormulaImpliesProp : Formula -> Formula -> Prop ;

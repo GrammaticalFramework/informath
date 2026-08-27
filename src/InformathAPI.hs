@@ -158,6 +158,10 @@ grammarFile args = case (argValue "-from-lang" english args,
 -- | Dedukti judgement
 type DkJmt = Jmt   
 
+-- | Ranked natural-language candidates grouped by concrete language.
+type NLGResults =
+  [(Language, [((GFTree, String), (Scores, Int))])]
+
 -- * Main conversion steps
 
 -- | The whole line of generation from Dedukti to formal and natural languages.
@@ -187,7 +191,7 @@ data GenResult = GenResult {
   originalDedukti  :: Jmt,
   annotatedDedukti :: [Jmt],
   coreGF           :: [GFTree],
-  nlgResults       :: [(Language, [((GFTree, String), (Scores, Int))])],
+  nlgResults       :: NLGResults,
   backToDedukti    :: [Jmt]  --- | for debugging NLG and semantics
   }
 
@@ -221,16 +225,11 @@ processJmt env djmt =
       jmts = annotateDedukti env (applyDeduktiConversions env djmt)
       core = map dedukti2core jmts
       exts = concatMap (core2ext env) core
-      nlgs = setnub $ map gf $ exts
-      vars = if elem "-variations" (flags env) then id else (take 1) 
-      best = maybe vars take (nbestNLG env)
-      nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
-      nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
     in GenResult {
       originalDedukti = djmt,
       annotatedDedukti = jmts,
       coreGF = map gf core,
-      nlgResults = nlgranks,
+      nlgResults = nlgCandidateResults env exts,
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
 
@@ -246,20 +245,46 @@ processGFTree env gft =
     let
       jmts = []
       core = [gft]
-      exts = concatMap (core2ext env . fg) core
-      nlgs = setnub $ map gf $ exts
-      vars = if elem "-variations" (flags env) then id else (take 1) 
-      best = maybe vars take (nbestNLG env)
-      nlglins lang = [(tree, unlex env (gftree2nat env lang tree)) | tree <- nlgs]
-      nlgranks = [(lang, best (rankGFTreesAndNat env (nlglins lang))) | lang <- langs env]
+      typed = fg gft
+      exts = core2ext env typed
       backs = setnub (concatMap (gjmt2dedukti env) exts)
     in GenResult {
-      originalDedukti = head (gjmt2dedukti env (fg gft)),
+      originalDedukti = head (gjmt2dedukti env typed),
       annotatedDedukti = jmts,
       coreGF = core,
-      nlgResults = nlgranks,
+      nlgResults = nlgCandidateResults env exts,
       backToDedukti = backs
       }
+
+
+-- | Rank already-expanded NLG alternatives for one source judgement.
+nlgCandidateResults :: Gf a => Env -> [a] -> NLGResults
+nlgCandidateResults env candidates =
+  [(lang, best (rankGFTreesAndNat env (linearizations lang))) | lang <- langs env]
+ where
+  trees = setnub (map gf candidates)
+  variations = if elem "-variations" (flags env) then id else take 1
+  best = maybe variations take (nbestNLG env)
+  linearizations lang =
+    [(tree, unlex env (gftree2nat env lang tree)) | tree <- trees]
+
+-- | Generate and rank NLG alternatives for one typed judgement.
+nlgJmtResults :: Env -> GJmt -> NLGResults
+nlgJmtResults env = nlgCandidateResults env . core2ext env
+
+-- | Select the target-language strings for one typed judgement.
+nlgJmtLines :: Env -> GJmt -> [String]
+nlgJmtLines env = selectedNlgLines env . nlgJmtResults env
+
+-- | Generate and rank NLG alternatives for a presentation judgement.
+nlgPresentationJmtResults :: Env -> GPresentationJmt -> NLGResults
+nlgPresentationJmtResults env =
+  nlgCandidateResults env . MCI.nlg env
+
+-- | Select the target-language strings for a presentation judgement.
+nlgPresentationJmtLines :: Env -> GPresentationJmt -> [String]
+nlgPresentationJmtLines env =
+  selectedNlgLines env . nlgPresentationJmtResults env
 
 
 -- | Processing a single line of LaTeX.
@@ -360,10 +385,13 @@ printGenResult env result = case 0 of
 
 -- | Just the final NLG results.
 printNLGOutput :: Env -> GenResult -> [String]
-printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
+printNLGOutput env = selectedNlgLines env . nlgResults
+
+selectedNlgLines :: Env -> NLGResults -> [String]
+selectedNlgLines env results = case lookup (toLang env) results of
   Just phrases -> map (snd . fst) phrases
   _ -> error $ "language not available: " ++ (showCId (toLang env)) ++
-               ". Available values: " ++ unwords (map showCId (langs env))
+               ". Available values: " ++ unwords (map (showCId . fst) results)
 
 showJsonGenResult :: Env -> GenResult -> String
 showJsonGenResult env result = encodeJSON $ mkJSONObject $ [
@@ -617,4 +645,3 @@ showProofDemo env base mo = proofDemo env base mo unit2nat
    unit2nat u = gftree2nat env (toLang env) (gf (best u))
 
    best u = head [u | GUnitJmt u <- core2ext env (GUnitJmt u)]
-
