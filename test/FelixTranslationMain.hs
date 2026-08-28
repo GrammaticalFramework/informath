@@ -406,6 +406,20 @@ checkExpressions = do
         , ("pair", rawOperation "pair" [a, b],
             GTermExp (GTupleTerm (GListTerm
               [GIdentTerm (gIdent "A"), GIdentTerm (gIdent "B")])))
+        , ("first projection", rawOperation "fst" [a],
+            GFunExp
+              (GNounPrepFun
+                (GAdjNounNoun
+                  (LexAdj "first_Adj") (LexNoun "projection_Noun"))
+                (LexPrep "of_Prep"))
+              (gExpression "A"))
+        , ("second projection", rawOperation "snd" [a],
+            GFunExp
+              (GNounPrepFun
+                (GAdjNounNoun
+                  (LexAdj "second_Adj") (LexNoun "projection_Noun"))
+                (LexPrep "of_Prep"))
+              (gExpression "A"))
         , ("finite set", Raw.ExprFiniteSet Nowhere (a :| [b]),
             GEnumSetExp
               (GManyExps (GListExp [gExpression "A", gExpression "B"])))

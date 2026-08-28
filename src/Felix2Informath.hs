@@ -540,6 +540,8 @@ translateOperation environment marker arguments = case markerText marker of
   "setminus" -> binary (GFun2Exp (LexFun2 "difference_Fun2"))
   "times" -> binary (GFunCExp (LexFunC "cartesian_FunC"))
   "pair" -> binary pairExpression
+  "fst" -> projection "first_Adj"
+  "snd" -> projection "second_Adj"
   _ -> case NonEmpty.nonEmpty arguments of
     Nothing -> unsupported ("unknown nullary operator " ++ markerText marker)
     Just nonemptyArguments -> do
@@ -547,6 +549,14 @@ translateOperation environment marker arguments = case markerText marker of
       tell [marker]
       pure (GAppExp (GTermExp (GIdentTerm (markerIdent marker))) (mkExps arguments'))
  where
+  projection adjective = unary
+    (GFunExp
+      (GNounPrepFun
+        (GAdjNounNoun (LexAdj adjective) (LexNoun "projection_Noun"))
+        (LexPrep "of_Prep")))
+  unary constructor = case arguments of
+    [argument] -> constructor <$> translateExpression environment argument
+    _ -> wrongArity
   binary constructor = case arguments of
     [left, right] -> do
       left' <- translateExpression environment left
