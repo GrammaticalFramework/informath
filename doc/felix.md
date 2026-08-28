@@ -14,11 +14,15 @@ NAPROCHE_LIB="$felix_library" \
   > /tmp/felix-set.gft
 
 INFORMATH_ROOT="$PWD" \
-  stack exec -- RunInformath -variations -nbest=3 /tmp/felix-set.gft
+  stack exec -- RunInformath \
+    -variations -sampling=1 -nbest=10 /tmp/felix-set.gft
 ```
 
 `felix2informath` writes trees to stdout and diagnostics to stderr. The absolute
 path above avoids Felix rejecting `..` in a searched source path.
+
+Cartesian products with term operands have both verbal and symbolic variants,
+such as “the cartesian product of X and Y” and `$X \times Y$`.
 
 The translation is lossy and experimental: proofs are omitted, claims are
 treated as axioms, and only English generation is supported. Reverse

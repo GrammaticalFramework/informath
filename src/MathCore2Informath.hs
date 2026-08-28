@@ -212,6 +212,21 @@ variations tree = case tree of
     tree : [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
     -- ifNeeded tree [GDisplayFormulaProp f | f <- variations formula, hasDisplaySize f]
 
+  GFunCExp fun@(LexFunC "cartesian_FunC")
+      (GTermExp left) (GTermExp right) ->
+    let operands =
+          [ (left', right')
+          | left' <- variations left
+          , right' <- variations right
+          ]
+    in [ GFunCExp fun (GTermExp left') (GTermExp right')
+       | (left', right') <- operands
+       ] ++
+       [ GTermExp
+           (GOper2Term (LexOper2 "cartesian_Oper2") left' right')
+       | (left', right') <- operands
+       ]
+
   GOper2Term (LexOper2 "times_Oper2") x y ->
     tree : [Gtimes_Term vx vy | vx <- variations x, vy <- variations y]
 
