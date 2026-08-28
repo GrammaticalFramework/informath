@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs, KindSignatures, DataKinds, Rank2Types #-}
 {-# LANGUAGE LambdaCase #-}
 
@@ -13,7 +12,7 @@ import Data.List (nub)
 
 type Opts = [String]
 
-nlg :: Gf (Tree a) => Env -> Tree a -> [Tree a]
+nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [t]
   _  -> sample (concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants])
@@ -184,10 +183,13 @@ getOrProps props = case props of
 variations :: Tree a -> [Tree a]
 variations tree = case tree of
   GAxiomJmt label (GListHypo hypos) prop ->
-    varyHypothesesAndProposition GAxiomJmt tree label hypos prop
-  GClaimPresentationJmt label (GListHypo hypos) prop ->
-    varyHypothesesAndProposition
-      GClaimPresentationJmt tree label hypos prop
+    let splits = [splitAt i hypos | i <- [0..length hypos]]
+    in tree : [GAxiomJmt label (GListHypo hypos11) hypoprop |
+          (hypos1, hypos2) <- splits,
+          hypos11 <- sequence (map variations hypos1),
+          prop2 <- variations prop,
+          hypoprop <- concatMap variations (hypoProp hypos2 prop2)
+          ]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
   GAllProp (GListArgKind [argkind]) prop ->
@@ -231,25 +233,6 @@ variations tree = case tree of
     tree : [GEitherOrExp va vb | va <- variations a, vb <- variations b]
 
   _ -> composOpM variations tree
-
-varyHypothesesAndProposition
-  :: (GLabel -> GListHypo -> GProp -> Tree a)
-  -> Tree a
-  -> GLabel
-  -> [GHypo]
-  -> GProp
-  -> [Tree a]
-varyHypothesesAndProposition constructor tree label hypos prop =
-  tree :
-    [ constructor label (GListHypo variedHypos) variedProp
-    | (directHypos, propositionHypos) <- splits
-    , variedHypos <- sequence (map variations directHypos)
-    , variedBody <- variations prop
-    , variedProp <- concatMap variations
-        (hypoProp propositionHypos variedBody)
-    ]
- where
-  splits = [splitAt index hypos | index <- [0 .. length hypos]]
 
 
 hasDisplaySize :: Tree a -> Bool

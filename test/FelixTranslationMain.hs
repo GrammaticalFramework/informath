@@ -59,10 +59,10 @@ withNaprapocheLibrary library =
 
 checkParsedFixture :: Translation -> IO ()
 checkParsedFixture translation = do
-  case translatedPresentations translation of
+  case translatedJudgements translation of
     [ axiomForall
       , axiomExists
-      , GClaimPresentationJmt claimLabel (GListHypo claimHypotheses)
+      , GAxiomJmt claimLabel (GListHypo claimHypotheses)
           claimConclusion
       ] -> do
         checkAxiomRegression [axiomForall, axiomExists]
@@ -91,17 +91,15 @@ checkParsedFixture translation = do
     (symbolicFallbackCounts summary
       == Map.singleton (rawMarker "fixture_regular") 1)
 
-checkAxiomRegression :: [GPresentationJmt] -> IO ()
-checkAxiomRegression presentations = case presentations of
-  [ GFormalPresentationJmt
-      (GAxiomJmt labelForall (GListHypo forallHypos)
+checkAxiomRegression :: [GJmt] -> IO ()
+checkAxiomRegression judgements = case judgements of
+  [ GAxiomJmt labelForall (GListHypo forallHypos)
       (GCoreAllProp forallKindX forallX
         (GCoreAllProp forallKindY forallY
-          (GCoreAndProp equalityX equalityY))))
-    , GFormalPresentationJmt
-      (GAxiomJmt labelExists (GListHypo existsHypos)
+          (GCoreAndProp equalityX equalityY)))
+    , GAxiomJmt labelExists (GListHypo existsHypos)
       (GCoreExistProp existsKindX existsX
-        (GCoreExistProp existsKindY existsY equalityXY)))
+        (GCoreExistProp existsKindY existsY equalityXY))
     ] -> do
       assert "the universal axiom has no hypotheses" (null forallHypos)
       assert "the existential axiom has no hypotheses" (null existsHypos)
@@ -115,18 +113,18 @@ checkAxiomRegression presentations = case presentations of
       assertEquality "x" "x" equalityX
       assertEquality "y" "y" equalityY
       assertEquality "x" "y" equalityXY
-  _ -> fail "the Felix axiom fixture did not retain its two ordered presentations"
+  _ -> fail "the Felix axiom fixture did not retain its two ordered judgements"
 
 checkBlockPolicy :: IO ()
 checkBlockPolicy = do
   basic <- translateOrFail
     [claimBlock "basic_claim" (equalityStatement "A" "A")]
-  case translatedPresentations basic of
-    [GClaimPresentationJmt label (GListHypo []) proposition] -> do
+  case translatedJudgements basic of
+    [GAxiomJmt label (GListHypo []) proposition] -> do
       assertLabel "basic_claim" label
       assertGfEqual "a basic claim retains its equality"
         (equalityProp "A" "A") proposition
-    _ -> fail "a basic Felix claim did not produce one presentation claim"
+    _ -> fail "a basic Felix claim did not produce one judgement"
   assert "the basic claim is counted by kind"
     (emittedClaimCounts (translationSummary basic)
       == Map.singleton Raw.Proposition 1)
@@ -140,8 +138,8 @@ checkBlockPolicy = do
     [ adjectiveDefinition "defined_audited" Raw.LeftAdjectiveSide key
     , adjectiveClaim "defined_use" Raw.LeftAdjectiveSide key
     ]
-  case translatedPresentations defined of
-    [GClaimPresentationJmt _ _ proposition] ->
+  case translatedJudgements defined of
+    [GAxiomJmt _ _ proposition] ->
       assertApplicationMarker "defined_audited" proposition
     _ -> fail "an adjective definition did not resolve in a later claim"
   assert "the adjective definition is counted"
@@ -169,9 +167,9 @@ checkBlockPolicy = do
     , adjectiveClaim "left_use" Raw.LeftAdjectiveSide key
     , adjectiveClaim "right_use" Raw.RightAdjectiveSide key
     ]
-  case translatedPresentations sided of
-    [ GClaimPresentationJmt _ _ leftProposition
-      , GClaimPresentationJmt _ _ rightProposition
+  case translatedJudgements sided of
+    [ GAxiomJmt _ _ leftProposition
+      , GAxiomJmt _ _ rightProposition
       ] -> do
         assertApplicationMarker "left_audited" leftProposition
         assertApplicationMarker "right_audited" rightProposition
@@ -206,12 +204,12 @@ checkAssumptions = do
         ]
   translation <- translateOrFail
     [claimBlockWith "assumptions" assumptions (equalityStatement "x" "x")]
-  case translatedPresentations translation of
-    [GClaimPresentationJmt _ actual@(GListHypo hypotheses) _] -> do
+  case translatedJudgements translation of
+    [GAxiomJmt _ actual@(GListHypo hypotheses) _] -> do
       assert "all assumption forms retain their expanded order"
         (length hypotheses == 6)
       assertGfEqual "assumption translation" expected actual
-    _ -> fail "the assumption test did not produce one presentation claim"
+    _ -> fail "the assumption test did not produce one judgement"
 
 checkConnectivesAndQuantifiers :: IO ()
 checkConnectivesAndQuantifiers = do
@@ -378,8 +376,8 @@ checkNaturalVocabulary = do
       [Raw.AsmLetNoun (rawVariable "F" :| [])
         (nounPhrase "family_of_subsets" [rawTerm "X"])]
       (equalityStatement "F" "F")]
-  case translatedPresentations family of
-    [GClaimPresentationJmt _
+  case translatedJudgements family of
+    [GAxiomJmt _
       (GListHypo [GVarsHypo (GListIdent [identifier]) kind]) _] -> do
         assertIdent "F" identifier
         assertGfEqual "family_of_subsets kind"
@@ -495,8 +493,8 @@ translateExpressionInClaim label expression =
   leftSideOfEquality <$> translateOrFail [expressionClaim label expression]
 
 onlyClaimProposition :: Translation -> GProp
-onlyClaimProposition translation = case translatedPresentations translation of
-  [GClaimPresentationJmt _ _ proposition] -> proposition
+onlyClaimProposition translation = case translatedJudgements translation of
+  [GAxiomJmt _ _ proposition] -> proposition
   _ -> error "test invariant: expected one translated claim"
 
 leftSideOfEquality :: Translation -> GExp

@@ -18,6 +18,21 @@ extra-source-files:
 extra-doc-files:
   doc/felix.md
 
+executable felix2informath
+  main-is:             Felix2InformathMain.hs
+  other-modules:
+    Felix2Informath
+    Informath
+  hs-source-dirs:      app src
+  ghc-options:         -O2
+  build-depends:       base >=4.18 && <5,
+                       containers,
+                       felix,
+                       gf >= 3.12,
+                       mtl,
+                       text
+  default-language:    Haskell2010
+
 executable RunInformath
   main-is:             RunInformath.hs
   other-modules:
@@ -29,7 +44,6 @@ executable RunInformath
     Dedukti2Lean
     DeduktiOperations
     Environment
-    Felix2Informath
     Informath
     Lexing
     ParseInformath
@@ -67,9 +81,7 @@ executable RunInformath
                        mtl,
                        array,
                        json,
-                       gf >= 3.12,
-                       felix,
-                       text
+                       gf >= 3.12
   default-language:    Haskell2010
 
 

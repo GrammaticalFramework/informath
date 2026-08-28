@@ -21,7 +21,7 @@ import qualified Felix.Syntax.Abstract as Raw
 import Informath
 
 data Translation = Translation
-  { translatedPresentations :: [GPresentationJmt]
+  { translatedJudgements :: [GJmt]
   , translationSummary :: TranslationSummary
   }
 
@@ -43,7 +43,7 @@ type AdjectiveEnvironment = Map AdjectiveKey Raw.Marker
 type TranslateM = WriterT [Raw.Marker] (Either String)
 
 data TranslationState = TranslationState
-  { reversedPresentations :: [GPresentationJmt]
+  { reversedJudgements :: [GJmt]
   , currentSummary :: TranslationSummary
   , adjectiveEnvironment :: AdjectiveEnvironment
   }
@@ -52,7 +52,7 @@ translateBlocks :: [Raw.Block] -> Either String Translation
 translateBlocks blocks = do
   final <- foldM translateBlock initialTranslationState blocks
   pure Translation
-    { translatedPresentations = reverse (reversedPresentations final)
+    { translatedJudgements = reverse (reversedJudgements final)
     , translationSummary = currentSummary final
     }
 
@@ -78,7 +78,7 @@ renderTranslationSummary summary =
 
 initialTranslationState :: TranslationState
 initialTranslationState = TranslationState
-  { reversedPresentations = []
+  { reversedJudgements = []
   , currentSummary = emptyTranslationSummary
   , adjectiveEnvironment = Map.empty
   }
@@ -96,18 +96,18 @@ emptyTranslationSummary = TranslationSummary
 translateBlock :: TranslationState -> Raw.Block -> Either String TranslationState
 translateBlock state = \case
   Raw.BlockAxiom _location _title marker (Raw.Axiom assumptions statement) -> do
-    (presentation, fallbacks) <- withBlockContext "axiom" marker
-      (translateAxiom (adjectiveEnvironment state) marker assumptions statement)
-    let recorded = recordPresentation presentation fallbacks state
+    (judgement, fallbacks) <- withBlockContext "axiom" marker
+      (translateJudgement (adjectiveEnvironment state) marker assumptions statement)
+    let recorded = recordJudgement judgement fallbacks state
         summary = currentSummary recorded
     pure recorded
       { currentSummary = summary
           { emittedAxiomCount = emittedAxiomCount summary + 1 }
       }
   Raw.BlockClaim kind _location _title marker (Raw.Claim assumptions statement) -> do
-    (presentation, fallbacks) <- withBlockContext "claim" marker
-      (translateClaim (adjectiveEnvironment state) marker assumptions statement)
-    let recorded = recordPresentation presentation fallbacks state
+    (judgement, fallbacks) <- withBlockContext "claim" marker
+      (translateJudgement (adjectiveEnvironment state) marker assumptions statement)
+    let recorded = recordJudgement judgement fallbacks state
         summary = currentSummary recorded
     pure recorded
       { currentSummary = summary
@@ -145,10 +145,10 @@ translateBlock state = \case
   Raw.BlockStruct _ _ marker _ -> unsupportedBlock "structure" marker
   Raw.BlockInstance _ _ marker _ -> unsupportedBlock "instance" marker
 
-recordPresentation
-  :: GPresentationJmt -> [Raw.Marker] -> TranslationState -> TranslationState
-recordPresentation presentation fallbacks state = state
-  { reversedPresentations = presentation : reversedPresentations state
+recordJudgement
+  :: GJmt -> [Raw.Marker] -> TranslationState -> TranslationState
+recordJudgement judgement fallbacks state = state
+  { reversedJudgements = judgement : reversedJudgements state
   , currentSummary = summary
       { symbolicFallbackCounts = foldr recordFallback
           (symbolicFallbackCounts summary) fallbacks
@@ -226,22 +226,13 @@ userAdjectiveKey lexicalItem = case Raw.adjectiveLexicalIdentity lexicalItem of
   Raw.UserAdjectiveIdentity key ->
     Just (Raw.adjectiveLexicalSide lexicalItem, key)
 
-translateAxiom
+translateJudgement
   :: AdjectiveEnvironment -> Raw.Marker -> [Raw.Asm] -> Raw.Stmt
-  -> TranslateM GPresentationJmt
-translateAxiom environment marker assumptions statement = do
+  -> TranslateM GJmt
+translateJudgement environment marker assumptions statement = do
   hypotheses <- translateAssumptions environment assumptions
   proposition <- translateStatement environment statement
-  pure (GFormalPresentationJmt
-    (GAxiomJmt (markerLabel marker) (GListHypo hypotheses) proposition))
-
-translateClaim
-  :: AdjectiveEnvironment -> Raw.Marker -> [Raw.Asm] -> Raw.Stmt
-  -> TranslateM GPresentationJmt
-translateClaim environment marker assumptions statement = do
-  hypotheses <- translateAssumptions environment assumptions
-  proposition <- translateStatement environment statement
-  pure (GClaimPresentationJmt
+  pure (GAxiomJmt
     (markerLabel marker) (GListHypo hypotheses) proposition)
 
 translateAssumptions :: AdjectiveEnvironment -> [Raw.Asm] -> TranslateM [GHypo]

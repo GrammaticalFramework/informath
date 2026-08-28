@@ -4,21 +4,13 @@
 module Main where
 
 import Environment
-import Felix2Informath
-  ( Translation (..)
-  , renderTranslationSummary
-  , translateBlocks
-  )
-import qualified Felix.Workspace as Felix
 import InformathAPI
 import Utils (showFreqs, fileSuffix, dictValues)
 
 ---- import InformathServer --- TODO-server
 
-import qualified Data.Text as Text
 import System.Environment (getArgs)
-import System.Exit (die)
-import System.IO (stderr, stdout, hFlush, hPutStrLn)
+import System.IO (stdout, hFlush)
 
 main :: IO ()
 main = do
@@ -26,32 +18,9 @@ main = do
 ----  if elem "-server" xx  --- TODO-server
 ----  then informathServer xx  --- TODO-server
 ----  else
-  case xx of
-    ["-from-felix", file] -> mainFelix file
-    _ | any isFromFelixArg xx ->
-      die "usage: RunInformath -from-felix <file>"
-    _ ->
-      case invalidArgs xx of
-        xs@(_:_) -> putStrLn ("invalid arguments: " ++ unwords xs ++ "; see -help")
-        _ -> main4 xx
-
-mainFelix :: FilePath -> IO ()
-mainFelix file = do
-  parsed <- Felix.parseWorkspace file
-  blocks <- either
-    (die . Text.unpack . Felix.renderAuthorityFreeParseError)
-    pure
-    parsed
-  translation <- either die pure (translateBlocks blocks)
-  env <- readEnv []
-  mapM_ putStrLn
-    (concatMap (nlgPresentationJmtLines env)
-      (translatedPresentations translation))
-  hPutStrLn stderr
-    (renderTranslationSummary (translationSummary translation))
-
-isFromFelixArg :: String -> Bool
-isFromFelixArg arg = takeWhile (/= '=') arg == "-from-felix"
+  case invalidArgs xx of
+    xs@(_:_) -> putStrLn ("invalid arguments: " ++ unwords xs ++ "; see -help")
+    _ -> main4 xx
 
 main4 :: [String] -> IO ()
 main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
@@ -139,7 +108,6 @@ helpMsg4 = [
   just ".dktex" "convert embedded Dedukti code in begin/end{dedukti} environments",
   just ".gft" "read GF trees line by line, informalize or -to-formalism=dedukti|...",
   just ".tex|.txt|.md" "parse line by line and convert to Dedukti or another formalism",
-  just "-from-felix <file>" "parse supported Felix axioms and claims and informalize them in English",
   "",
   "Output is written to standard output.",
   "Input is read line by line, except for .dk files",
