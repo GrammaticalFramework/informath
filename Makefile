@@ -26,7 +26,7 @@ english_grammar: share/InformathEng.pgf
 
 felix_test:
 	$(MAKE) -B english_grammar
-	stack build informath:exe:RunInformath
+	stack build informath:exe:felix2informath informath:exe:RunInformath
 	env -u NAPROCHE_LIB stack test informath:test:felix-translation
 	stack exec -- test/felix-cli-test.sh
 
@@ -39,9 +39,20 @@ felix_set_test:
 		echo "felix_set_test requires a readable regular file at $(NAPROCHE_LIB)/set.tex" >&2; \
 		exit 2; \
 	fi
-	$(MAKE) felix_test
-	INFORMATH_ROOT="$(CURDIR)" NAPROCHE_LIB="$(NAPROCHE_LIB)" \
-		stack exec -- RunInformath -from-felix "$(NAPROCHE_LIB)/set.tex"
+	$(MAKE) -B english_grammar
+	stack build informath:exe:felix2informath informath:exe:RunInformath
+	@set -eu; \
+		felix_library=$$(CDPATH= cd -- "$(NAPROCHE_LIB)" && pwd); \
+		work_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/informath-felix-set.XXXXXX"); \
+		trap 'rm -rf "$$work_dir"' EXIT HUP INT TERM; \
+		NAPROCHE_LIB="$$felix_library" \
+			stack exec -- felix2informath "$$felix_library/set.tex" \
+				>"$$work_dir/set.gft"; \
+		test -s "$$work_dir/set.gft"; \
+		INFORMATH_ROOT="$(CURDIR)" \
+			stack exec -- RunInformath -variations -nbest=3 \
+				"$$work_dir/set.gft" >"$$work_dir/set.txt"; \
+		test -s "$$work_dir/set.txt"
 
 
 

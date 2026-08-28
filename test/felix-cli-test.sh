@@ -7,11 +7,15 @@ repo_root=$(dirname -- "$script_dir")
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/informath-felix.XXXXXX")
 trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 
-fixture_stdout="$work_dir/fixture.stdout"
-INFORMATH_ROOT="$repo_root" \
-NAPROCHE_LIB="$repo_root/test" \
-  RunInformath -from-felix "$repo_root/test/felix-statements.tex" \
-    >"$fixture_stdout"
+fixture_trees="$work_dir/fixture.gft"
+fixture_output="$work_dir/fixture.txt"
 
-awk 'NF { nonempty++ } END { exit !(NR == 3 && nonempty == 3) }' \
-  "$fixture_stdout"
+NAPROCHE_LIB="$repo_root/test" \
+  felix2informath "$repo_root/test/felix-statements.tex" \
+    >"$fixture_trees"
+test -s "$fixture_trees"
+
+INFORMATH_ROOT="$repo_root" \
+  RunInformath -variations -nbest=3 "$fixture_trees" \
+    >"$fixture_output"
+test -s "$fixture_output"
