@@ -20,7 +20,7 @@ sampling=20
 
 .PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test
 
-all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
+all: Dedukti Agda Rocq Lean english_grammar multi_grammar RunInformath rootlink
 
 english_grammar: share/InformathEng.pgf
 

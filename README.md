@@ -168,7 +168,7 @@ which illustrates different functionalities: translating between Dedukti and nat
 Building the system from source requires the following software:
 
 - [GF](https://www.grammaticalframework.org/) >= 3.12 (both as executable and as the PGF library)
-- [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source)
+- [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source; also notice that you need to point `GF_LIB_PATH` to the directory where `alltenses`, `prelude` and other subdirectories are created)
 - [BNFC](https://bnfc.digitalgrammars.com/) >= 2.9 (executable)
 - [GHC](https://www.haskell.org/ghcup/) >= 9.6 (executable, with some common libraries)
 - [alex](https://www.haskell.org/alex/) (executable, tested with 3.5.4)
