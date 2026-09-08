@@ -1,5 +1,6 @@
 RUN  := RunInformath
 OPEN := open  # pdf viewer command
+GF   ?= gf
 
 # Some colors to improve the readability
 lightgreen='\e[1;32m'
@@ -17,11 +18,42 @@ synonyms=1
 symbolics=1
 sampling=20
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath
+.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test
 
-all: Dedukti Agda Rocq Lean english_grammar full_grammar RunInformath rootlink
+# by default, builds Eng Fre Swe ; use full_grammar or all_grammars for more languages
+all: Dedukti Agda Rocq Lean english_grammar multi_grammar RunInformath rootlink
 
 english_grammar: share/InformathEng.pgf
+
+felix_test:
+	$(MAKE) -B english_grammar
+	stack build informath:exe:felix2informath informath:exe:RunInformath
+	env -u NAPROCHE_LIB stack test informath:test:felix-translation
+	stack exec -- test/felix-cli-test.sh
+
+felix_set_test:
+	@if [ -z "$(NAPROCHE_LIB)" ]; then \
+		echo "felix_set_test requires nonempty NAPROCHE_LIB" >&2; \
+		exit 2; \
+	fi
+	@if [ ! -f "$(NAPROCHE_LIB)/set.tex" ] || [ ! -r "$(NAPROCHE_LIB)/set.tex" ]; then \
+		echo "felix_set_test requires a readable regular file at $(NAPROCHE_LIB)/set.tex" >&2; \
+		exit 2; \
+	fi
+	$(MAKE) -B english_grammar
+	stack build informath:exe:felix2informath informath:exe:RunInformath
+	@set -eu; \
+		felix_library=$$(CDPATH= cd -- "$(NAPROCHE_LIB)" && pwd); \
+		work_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/informath-felix-set.XXXXXX"); \
+		trap 'rm -rf "$$work_dir"' EXIT HUP INT TERM; \
+		NAPROCHE_LIB="$$felix_library" \
+			stack exec -- felix2informath "$$felix_library/set.tex" \
+				>"$$work_dir/set.gft"; \
+		test -s "$$work_dir/set.gft"; \
+		INFORMATH_ROOT="$(CURDIR)" \
+			stack exec -- RunInformath -variations -nbest=3 \
+				"$$work_dir/set.gft" >"$$work_dir/set.txt"; \
+		test -s "$$work_dir/set.txt"
 
 
 
@@ -34,23 +66,23 @@ rootlink:
 	export INFORMATH_ROOT=$(CURDIR)
 
 multi_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 my_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 full_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 next_grammar:
-	cd grammars ; gf --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 all_grammars: english_grammar
-	cd grammars ; gf --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 
 share/InformathEng.pgf: $(GF_FILES)
-	cd grammars ; gf --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
+	cd grammars ; "$(GF)" --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
 
 
 Dedukti:

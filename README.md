@@ -42,6 +42,8 @@ The [vibe directory](./doc/vibe/) containing LLM-generated documentation on LLM-
 
 [Informath Under the Hood](./doc/informath-under-the-hood.md). Recommended if you want to change the GF grammar and not just the symbol table. However, not completely up to date as of 2026-07-24.
 
+[Felix integration](./doc/felix.md). How to parse and informalize the supported Felix fragment, and how to run its hermetic and local-corpus checks.
+
 [Informalization of Advanced Mathematics: A Case Study with Homotopy Type Theory](https://types2026.cse.chalmers.se/abstracts/17.pdf). Presentation by May Ohlsson and Aarne Ranta in Types 2026.
 
 [Video from MCLP conference at Institut Pascal, Paris Saclay, September 2025](https://www.youtube.com/watch?v=9puGzYqta7Y&list=PLaT9F1eDUuN0FJAONMXxdGJrGGg2_x9Wb&index=4)
@@ -166,7 +168,7 @@ which illustrates different functionalities: translating between Dedukti and nat
 Building the system from source requires the following software:
 
 - [GF](https://www.grammaticalframework.org/) >= 3.12 (both as executable and as the PGF library)
-- [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source)
+- [GF-RGL](https://github.com/GrammaticalFramework/gf-rgl) (the Resource Grammar Library, to be compiled from its GitHub source; also notice that you need to point `GF_LIB_PATH` to the directory where `alltenses`, `prelude` and other subdirectories are created) 
 - [BNFC](https://bnfc.digitalgrammars.com/) >= 2.9 (executable)
 - [GHC](https://www.haskell.org/ghcup/) >= 9.6 (executable, with some common libraries)
 - [alex](https://www.haskell.org/alex/) (executable, tested with 3.5.4)

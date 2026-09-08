@@ -58,6 +58,9 @@ union : union_FunC | union_Oper2
 intersection : intersection_FunC | intersection_Oper2
 difference : difference_Fun2 | difference_Oper2
 cartesian : cartesian_FunC | cartesian_Oper2
+fst : NounPrepFun (AdjNounNoun first_Adj projection_Noun) of_Prep
+snd : NounPrepFun (AdjNounNoun second_Adj projection_Noun) of_Prep
+#DROP fst 2
 powerset : powerset_Fun | powerset_Oper
 complement : complement_Fun | complement_Oper
 subset : subset_Noun2 | subset_Compar
@@ -122,7 +125,7 @@ sameParity : VerbVerbC (VerbDefNounVerb have_Verb (AdjNounNoun same_Adj parity_N
 #CONV rocq Nat nat
 #CONV rocq _ x_
 
-Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
+## Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #DROP Equ 1
 
 #BUILTIN Elem Proof Enum nd nn 0 1 2 3 4 5 6 7 8 9
@@ -139,5 +142,4 @@ Equ : Eq_Adj2 | Eq_AdjE | Eq_Compar
 #MACRO \newcommand{\Rational}{\mathbb{Q}}
 #MACRO \newcommand{\Real}{\mathbb{R}}
 #MACRO \newcommand{\Complex}{\mathbb{C}}
-
 
