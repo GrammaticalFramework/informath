@@ -3,8 +3,8 @@ OPEN := open  # pdf viewer command
 GF   ?= gf
 
 # Some colors to improve the readability
-lightgreen='\e[1;32m'
-neutral='\e[0;m'
+lightgreen := \033[1;32m
+neutral    := \033[0m
 
 # for binary_packages
 ARCH := macos-arm
