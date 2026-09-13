@@ -27,7 +27,7 @@ open UtilitiesEng, MathWordsEng, SyntaxEng, NaprocheWordsEng, ExamplesEng, Wikid
     function_like_Adj = mkAdj "function-like" ;
     finer_than_Adj2 = mkAdj2 "finer" "than" ;
     coarser_than_Adj2 = mkAdj2 "coarser" "than" ;
-    well_order_Verb2 = mkVerb2 (mkVP well_Adv order_Verb);
+    well_order_Verb2 = mkVerb2 (mkVP (lin AdV well_Adv) order_Verb) ;
     well_ordering_Adj = mkAdj "well-ordering";
     compatible_Adj2 = AdjPrepAdj2 compatible_Adj with_Prep;
 

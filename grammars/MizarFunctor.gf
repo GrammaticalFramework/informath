@@ -62,7 +62,7 @@ in {
   DepCNoun dep x y = mkCN dep.cn (Syntax.mkAdv dep.prep (mkNP and_Conj x y)) ;
 
   BaseDefCase defCase = prefixText item_str (mkText defCase) ;
-  ConsDefCase defCase defCases = mkText (prefixText item_str (mkText defCase)) defCase ;
+  ConsDefCase defCase defCases = mkText (prefixText item_str (mkText defCase)) defCases ;
 
   DefByCasesJmt label hypos byCases =
     labelText label
