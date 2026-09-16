@@ -18,7 +18,7 @@ synonyms=1
 symbolics=1
 sampling=20
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test
+.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test baseconstants top100
 
 # by default, builds Eng Fre Swe ; use full_grammar or all_grammars for more languages
 all: Dedukti Agda Rocq Lean english_grammar multi_grammar RunInformath rootlink
@@ -128,7 +128,7 @@ demo:
 	$(RUN) -from-lang=Eng out/exx.txt | grep -v UN
 	echo "${lightgreen}## parsing examples from Chartrand et al. with conversions to Dedukti${neutral}"
 	$(RUN) -from-lang=Eng test/gflean-data.txt | grep -v UN
-	cat share/BaseConstants.dk test/exx.dk >out/bexx.dk
+	cat share/baseconstants.dk test/exx.dk >out/bexx.dk
 	echo "${lightgreen}## converting some simple arithmetic statements to Agda${neutral}"
 	$(RUN) -to-formalism=agda test/exx.dk
 	echo "${lightgreen}## converting some simple arithmetic statements to Rocq${neutral}"
@@ -172,18 +172,18 @@ typechecks:
 	echo "${lightgreen}## converting some simple arithmetic statements to Agda${neutral}"
 	echo "open import BaseConstants\n\n" >out/exx.agda
 	$(RUN) -to-formalism=agda test/exx.dk >>out/exx.agda
-	cp -p share/baseconstants.agda out/
+	cp -p share/BaseConstants.agda out/
 	echo "${lightgreen}## checking the generated file in Agda${neutral}"
 	cd out ; agda --prop exx.agda
 	echo "${lightgreen}## converting some simple arithmetic statements to Rocq${neutral}"
 	$(RUN) -to-formalism=rocq test/exx.dk >out/exx.v
-	cat share/baseconstants.v out/exx.v >out/bexx.v
+	cat share/BaseConstants.v out/exx.v >out/bexx.v
 	echo "${lightgreen}## checking the generated file in Rocq${neutral}"
-	rocq out/bexx.v
+	rocq compile out/bexx.v
 	echo "${lightgreen}## converting some simple arithmetic statements to Lean${neutral}"
 	$(RUN) -to-formalism=lean test/exx.dk >out/exx.lean
 	echo "${lightgreen}## checking the generated file in Lean${neutral}"
-	cat share/baseconstants.lean out/exx.lean >out/bexx.lean
+	cat share/BaseConstants.lean out/exx.lean >out/bexx.lean
 	lean out/bexx.lean
 
 
@@ -204,26 +204,26 @@ top100profile:
 
 top100check:
 	echo "${lightgreen}## type-checking the theorems in Dedukti${neutral}"
-	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 top100single:
 	echo "${lightgreen}## generating only the best-ranked verbalizations of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -to-lang=$(lang) test/top100.dk >out/top100.tex
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
-	cat share/BaseConstants.dk test/top100.dk >out/texx.dk
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
 sets:
 	echo "${lightgreen}# checking some set theory statements and generating LaTeX${neutral}"
-	cat share/BaseConstants.dk test/sets.dk >out/sexx.dk
+	cat share/baseconstants.dk test/sets.dk >out/sexx.dk
 	dk check out/sexx.dk
 	$(RUN) -variations -to-latex-doc -to-lang=$(lang) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/sets.dk >out/sets.tex
 	cd out ; pdflatex sets.tex ; $(OPEN) sets.pdf
 
 maps:
 	echo "${lightgreen}# checking some maps theory statements and generating LaTeX${neutral}"
-	cat share/BaseConstants.dk test/maps.dk >out/mapsx.dk
+	cat share/baseconstants.dk test/maps.dk >out/mapsx.dk
 	dk check out/mapsx.dk
 	$(RUN) -to-latex-doc -to-lang=$(lang) -add-symboltables=test/maps.dkgf test/maps.dk >out/maps.tex
 	cd out ; pdflatex maps.tex ; $(OPEN) maps.pdf
@@ -290,14 +290,14 @@ baseconstants:
 	cd out ; pdflatex baseconstants.tex ; $(OPEN) baseconstants.pdf
 
 parallel:
-	tail -150 share/BaseConstants.dk >tmp/parallel.dk
+	tail -150 share/baseconstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	cat test/top100.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data -variations -no-ranking tmp/parallel.dk >tmp/parallel-informath.jsonl
 
 parallel-def:
-	tail -150 share/BaseConstants.dk >tmp/parallel.dk
+	tail -150 share/baseconstants.dk >tmp/parallel.dk
 	cat test/exx.dk >>tmp/parallel.dk
 	cat test/sets.dk >>tmp/parallel.dk
 	$(RUN) -parallel-data  -variations -no-ranking -no-unlex -dedukti-tokens tmp/parallel.dk >tmp/parallel-def-train.jsonl

@@ -117,7 +117,7 @@ helpMsg4 = [
   "",
   just "-base=<file.dk>+" ("base Dedukti constants, default " ++ baseConstantFile),
   just "-symboltables=<file.dkgf>+" ("map from Dedukti to GF, replacing the default " ++ constantTableFile),
-  just "-add-symboltables=<file.dkgf>+" ("map from Dedukti to GF,  added to" ++ constantTableFile),
+  just "-add-symboltables=<file.dkgf>+" ("map from Dedukti to GF,  added to " ++ constantTableFile),
   just "-grammar=<file.pgf>" ("GF grammar used, default " ++ engGrammarFile ++ " or (if -to-lang or -for-lang or -symboltable-lang is not Eng) " ++ fullGrammarFile),
   just "-symboltable-lang=<lang>" "the language in which symbol table is parsed, default Eng",
   "",
