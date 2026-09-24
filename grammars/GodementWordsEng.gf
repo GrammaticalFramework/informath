@@ -53,6 +53,7 @@ lin eigenvalue_Adj = mkAdj "eigenvalue" ;
 lin endpoint_Adj = mkAdj "endpoint" ;  
 lin enough_Adj = mkAdj "enough" ;  
 lin equatior_Adj = mkAdj "equatior" ;  
+lin equipotent_Adj = mkAdj "equipotent" ;  
 lin evident_Adj = mkAdj "evident" ;  
 lin exponent_Adj = mkAdj "exponent" ;  
 lin expressible_Adj = mkAdj "expressible" ;  

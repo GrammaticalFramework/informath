@@ -50,6 +50,7 @@ fun eigenvalue_Adj : Adj ;
 fun endpoint_Adj : Adj ;  
 fun enough_Adj : Adj ;  
 fun equatior_Adj : Adj ;  
+fun equipotent_Adj : Adj ;  
 fun evident_Adj : Adj ;  
 fun exponent_Adj : Adj ;  
 fun expressible_Adj : Adj ;  
