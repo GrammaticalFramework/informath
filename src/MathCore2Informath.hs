@@ -15,7 +15,7 @@ type Opts = [String]
 nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [t]
-  _  -> sample (concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants])
+  _  -> sample chosenVariants
   ---- TODO more option combinations
  where
    t = unparenth tree
@@ -26,12 +26,14 @@ nlg env tree = case () of
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
    ncviafts = map negated cviafts  -- better do this at this late stage
----   vncviafts = if isFlag "-more-variants" env then concatMap variations ncviafts else []
    vncviafts = concatMap variations ncviafts
    uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
 
    sample ts = [t | (t, i) <- zip ts [0 ..], mod i fact == 0]
    fact = samplingFactor env
+   chosenVariants = if isFlag "-more-variants" env
+     then (concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants])
+     else (concat [ncviafts])
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of

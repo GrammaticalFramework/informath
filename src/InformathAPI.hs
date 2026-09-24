@@ -321,8 +321,9 @@ applyDeduktiConversions env t = foldl (flip ($)) t fs where
 annotateDedukti :: Env -> Jmt -> [Jmt]
 annotateDedukti env t = annotateDkIdents msyns msymbs (constantTableEnv env) (dropTableEnv env) (harmonizeJmt t)
   where
-    msyns = argValueMaybeInt "-synonyms" (flags env)
-    msymbs = argValueMaybeInt "-symbolics" (flags env)
+    msyns = ifvar $ argValueMaybeInt "-synonyms" (flags env)
+    msymbs = ifvar $ argValueMaybeInt "-symbolics" (flags env)
+    ifvar mi = if (isFlag "-variations" env) || (isFlag "-more-variants" env) then mi else Just 1
 
 -- | From annotated Dedukti to MathCore.
 dedukti2core :: Jmt -> GJmt
