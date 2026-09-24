@@ -470,12 +470,18 @@ congruent : congruent_Adj3 | $#1 \equiv #2 \, \text{mod} \, #3$
 also produces a macro name "under the hood". 
 This name has the format
 ```
-\congruentMACRo
+\congruentMACRoA
 ```
-which may in some cases lead to clashes.
-LaTeX will then give an error when processing the generated file.
-The remedy is to use an explicit `#MACRO` directive.
-Future work in Informath should produce guaranteedly clash-free macro names, but this is in principle impossible if the user imports unknown macro packages.
+that is, the letters of the Dedukti identifier, then `MACRo`, then an index in
+letters: `A`, `B`, ..., `Z`, `AA`, `AB`, and so on.
+A LaTeX control sequence can only contain letters, so the identifier alone
+cannot make the name unique: digits and underscores have to be dropped, and
+`card0`, `card1`, `card2` would all give `\cardMACRo`.
+The index is therefore counted over the whole symbol table, which makes the
+generated names clash-free whatever the Dedukti identifiers are.
+What remains outside Informath's control is a clash with a macro from a package
+that the user imports; the remedy for that is an explicit `#MACRO` directive,
+which names the macro itself and is never renumbered.
 
 The directive
 ```

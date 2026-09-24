@@ -19,7 +19,7 @@ import Utils (split, splitOutside)
 
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, sort, groupBy, intersperse)
+import Data.List (partition, sort, groupBy, intersperse, mapAccumL)
 import Data.Char (isDigit, isAlpha)
 
 type GFTree = PGF.Tree
@@ -188,11 +188,20 @@ buildSymbolTable pgf lang ls = SymbolTable {
     builtinlines = filter isBuiltin entrylines
     semanticslines = filter isSemantics entrylines
     nlglines = filter isNLG entrylines
+    -- every latex form of every constant line, numbered once for the whole
+    -- table, so that constantTable and macroTable give the same macro the same
+    -- name; see macroName
+    numberedlines = snd (mapAccumL numberLine 0 (map (splitEntry . unwords) constantlines))
+      where
+        numberLine n entry = case entry of
+          qid:gids -> let latexs = [gid | gid@('$':_) <- gids]
+                      in (n + length latexs,
+                          (entry, [macroName qid i | i <- [n .. n + length latexs - 1]]))
+          _ -> (n, (entry, []))
     constantTable = M.fromList [
         (QIdent qid, mkConstantTableEntry pgf (map (parseFunProfile pgf lang (ifDrop (QIdent qid))) (gfids ++ macros))) |
-                     qid:gids@(_:_) <- map (splitEntry . unwords) constantlines,
-           let (latexs, gfids) = partition ((=='$') . head) gids,
-           let macros = [macroName qid i | (_, i) <-  zip latexs [0..]]
+                     (qid:gids@(_:_), macros) <- numberedlines,
+           let gfids = [gid | gid <- gids, head gid /= '$']
            ]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
@@ -202,9 +211,9 @@ buildSymbolTable pgf lang ls = SymbolTable {
     ifDrop qid = M.lookup qid dropTable --- copy dropTable entry to profile
     macroTable = M.fromList (
         [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)] ++
-        [mkMacro qid gid i |
-          qid:gids <- map (splitEntry . unwords) constantlines,
-          (gid, i) <- zip [gid | gid@('$':_) <- gids] [0..]])
+        [mkMacro name gid |
+          (_:gids, names) <- numberedlines,
+          (gid, name) <- zip [gid | gid@('$':_) <- gids] names])
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
     semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
     nlgTable = M.fromListWith (++) [(c, [f]) | _:ws <- nlglines, let (c, f) = readSemDef (unwords ws)]
@@ -234,16 +243,33 @@ splitNewcommand s = case break (=='{') s of
   _ -> error ("expected valid newcommand, found: " ++ s)
 
 
-mkMacro :: String -> String -> Int -> (String, (Int, String))
-mkMacro qid s i = (macroName qid i, (maximum (0 : args s), init (tail s)))
+mkMacro :: String -> String -> (String, (Int, String))
+mkMacro name s = (name, (maximum (0 : args s), init (tail s)))
  where
    args s = case s of
      '#':c:cs | isDigit c -> read [c] : args cs --- only one-digit arguments
      _:cs -> args cs
      _ -> []
 
+-- | The LaTeX name of the i'th macro of the whole symbol table.  A LaTeX
+-- control sequence can only hold letters, so the constant's own name cannot
+-- make the macro unique: digits and underscores would have to be dropped, and
+-- card0, card1, card2 would all become \cardMACRo, the last \newcommand
+-- silently winning.  The alphabetic part of the name is therefore only a
+-- readable stem, and uniqueness comes from the index, spelled in letters:
+-- MACRoA, MACRoB, ..., MACRoZ, MACRoAA, MACRoAB, ...  The index is global to
+-- the symbol table, so no two macros can collide whatever the constants are
+-- called.
 macroName :: String -> Int -> String
-macroName c i = "\\" ++ filter isAlpha c ++ "MACRo" ++ replicate i 'I'
+macroName c i = "\\" ++ filter isAlpha c ++ "MACRo" ++ letterIndex i
+
+-- | 0 -> "A", 25 -> "Z", 26 -> "AA", 27 -> "AB", ... (bijective base 26)
+letterIndex :: Int -> String
+letterIndex i = go i ""
+ where
+   go n acc = case divMod n 26 of
+     (0, r) -> toEnum (fromEnum 'A' + r) : acc
+     (q, r) -> go (q - 1) (toEnum (fromEnum 'A' + r) : acc)
 
 mkConstantTableEntry :: PGF -> [FunProfile] -> ConstantTableEntry
 mkConstantTableEntry _ [] = error "constant table entry cannot be empty"
