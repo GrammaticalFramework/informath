@@ -68,6 +68,7 @@ lin fortiori_Adj = mkAdj "fortiori" ;
 lin 'fractions-over-a-principal_Adj' = mkAdj "fractions-over-a-principal" ;  
 lin frelative_Adj = mkAdj "frelative" ;  
 lin futile_Adj = mkAdj "futile" ;  
+lin generate_Verb2 = mkVerb2 (mkVerb "generate") ;  
 lin genuine_Adj = mkAdj "genuine" ;  
 lin geometrical_Adj = mkAdj "geometrical" ;  
 lin gratuitous_Adj = mkAdj "gratuitous" ;  

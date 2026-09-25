@@ -65,6 +65,7 @@ fun fortiori_Adj : Adj ;
 fun 'fractions-over-a-principal_Adj' : Adj ;  
 fun frelative_Adj : Adj ;  
 fun futile_Adj : Adj ;  
+fun generate_Verb2 : Verb2 ;  
 fun genuine_Adj : Adj ;  
 fun geometrical_Adj : Adj ;  
 fun gratuitous_Adj : Adj ;  
