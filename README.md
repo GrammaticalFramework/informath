@@ -449,6 +449,20 @@ disj : #2 is disjoint from #3
 ```
 There is no reason to use the `X`, `Y` formats other than backward compatibility and maybe ease of writing.
 
+In a proof text, what a rule shows of itself is its premisses: a Dedukti
+rule is applied to the propositions and the objects it speaks about as well,
+and those do not belong in the text. Which arguments are shown is a profile
+of the constant, given by the directive
+```
+#SHOW forallE [3,4]
+```
+which says that the third and fourth arguments of `forallE` are shown: the
+premiss and the object it is instantiated with. `#DROP c k` is read as the
+same kind of profile, "all but the first k". Without a directive the profile
+is read off the constant's type: the arguments that yield a proof, which
+covers the functions that a rule discharging hypotheses takes, such as the
+step case of induction.
+
 Instead of symbolic expressions between dollars, a symbol table can contain a macro symbol and a separate directive
 ```
 #MACRO <latex_newcommand>

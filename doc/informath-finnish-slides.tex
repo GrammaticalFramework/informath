@@ -1,0 +1,665 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usetheme{metropolis}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+
+\definecolor{gfblue}{HTML}{1F4E79}
+\definecolor{codebg}{HTML}{F4F4F2}
+\definecolor{warn}{HTML}{B03A2E}
+\definecolor{good}{HTML}{1E6B3A}
+
+\setbeamercolor{frametitle}{bg=gfblue}
+\setbeamercolor{alerted text}{fg=warn}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{codebg},
+  frame=none,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  xleftmargin=2mm,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ý}{{\'y}}1 {ú}{{\'u}}1
+    {č}{{\v{c}}}1 {ě}{{\v{e}}}1 {ň}{{\v{n}}}1 {ř}{{\v{r}}}1
+    {š}{{\v{s}}}1 {ž}{{\v{z}}}1 {ů}{{\r{u}}}1
+    {å}{{\aa}}1 {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1 {Ä}{{\"A}}1 {Ö}{{\"O}}1
+    {è}{{\`e}}1 {ê}{{\^e}}1
+}
+
+\newcommand{\bad}[1]{\textcolor{warn}{#1}}
+\newcommand{\ok}[1]{\textcolor{good}{#1}}
+
+\title{Porting Informath to a New Language}
+\subtitle{GF-RGL and Claude: a Finnish case study}
+\author{Aarne Ranta}
+\date{July 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% =====================================================================
+\section{What Informath is}
+
+\begin{frame}{The problem}
+  Mathematics exists in two registers.
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Formal}
+      \begin{itemize}
+        \item Agda, Rocq, Lean, Dedukti
+        \item machine-checkable
+        \item unreadable to most humans
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Informal}
+      \begin{itemize}
+        \item English, French, German, Swedish
+        \item readable
+        \item ambiguous, unverifiable
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  Informath translates between them --- in \emph{all} directions.
+\end{frame}
+
+\begin{frame}{Four directions}
+  \begin{itemize}
+    \item formal $\rightarrow$ informal \quad (\textbf{informalization})
+    \item informal $\rightarrow$ formal \quad (\textbf{autoformalization})
+    \item informal $\rightarrow$ informal \quad (translation, \emph{via} the formal)
+    \item formal $\rightarrow$ formal \quad (in special cases)
+  \end{itemize}
+
+  \vspace{1em}
+  Two goals:
+  \begin{enumerate}
+    \item complete informalization of anything expressible in Dedukti;
+    \item generate \emph{and analyse} informal mathematical language,
+          in all of its variation.
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \small Inspired by Ganesalingam, \emph{The Language of Mathematics} (2013).
+\end{frame}
+
+\begin{frame}[fragile]{One statement, many languages}
+\begin{lstlisting}
+Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
+  Proof (and (odd a) (odd c)) ->
+  Proof (forall Int (b => even (plus (times a b) (times b c)))).
+\end{lstlisting}
+
+\vspace{-0.2em}
+\begin{itemize}\footnotesize
+  \item \textbf{En}: Let $a$ and $c$ be integers. Assume that $a$ and $c$ are odd.
+        Then $ab + bc$ is even for all integers $b$.
+  \item \textbf{De}: Seien $a$ und $c$ ganze Zahlen. Nimm an, dass $a$ und $c$ ungerade sind.
+        Dann ist $ab + bc$ gerade für jede ganze Zahl $b$.
+  \item \textbf{Sv}: Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda.
+        Då är $ab + bc$ jämnt för alla heltal $b$.
+  \item \alert{\textbf{Fi}: \emph{--- what this talk adds}}
+  \end{itemize}
+
+  \vspace{0.2em}
+  \footnotesize All generated from the Dedukti source. Agda, Rocq and Lean too.
+\end{frame}
+
+\begin{frame}{Architecture}
+  \begin{center}
+  \begin{tabular}{c}
+    \textbf{Dedukti} --- the semantic core \\
+    $\updownarrow$ \\
+    \textbf{MathCore} --- an abstract syntax close to the logic \\
+    $\updownarrow$ \\
+    \textbf{Informath} --- adds variation, synonyms, symbolic/verbal choices \\
+    $\updownarrow$ \\
+    \textbf{Eng \quad Fre \quad Ger \quad Swe \quad \alert{Fin}} \\
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  Agda, Rocq and Lean hang off Dedukti by (partial) conversions.
+
+  The natural languages hang off \textbf{Informath} by GF concrete syntaxes.
+\end{frame}
+
+% =====================================================================
+\section{GF in five minutes}
+
+\begin{frame}[fragile]{Abstract vs.\ concrete syntax}
+  GF separates \emph{what can be said} from \emph{how it is said}.
+
+\begin{lstlisting}
+abstract MathCore = {
+  cat Prop ; Kind ; Ident ;
+  fun CoreAllProp : Kind -> Ident -> Prop -> Prop ;
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+concrete MathCoreEng of MathCore = {
+  lincat Prop = S ;
+  lin CoreAllProp kind x prop = ... "for all" ... ;
+}
+\end{lstlisting}
+
+  \vspace{0.5em}
+  One abstract syntax, $n$ concrete syntaxes $\Rightarrow$ $n^2$ translations,
+  all going through the meaning.
+\end{frame}
+
+\begin{frame}[fragile]{The RGL, and functors}
+  The Resource Grammar Library gives you, per language:
+  \begin{itemize}
+    \item a \textbf{Syntax API} --- \texttt{mkCN}, \texttt{mkNP}, \texttt{mkS} --- same names everywhere
+    \item a \textbf{Paradigms API} --- \texttt{mkN}, \texttt{mkA}, \texttt{mkV} --- language-specific
+  \end{itemize}
+
+  So you write the linearization \emph{once}, against interfaces:
+
+\begin{lstlisting}
+incomplete concrete MathCoreFunctor of MathCore = open Syntax, Utilities in { ... }
+
+concrete MathCoreFin of MathCore = MathCoreFunctor with
+  (Syntax = SyntaxFin), (Utilities = UtilitiesFin) ;
+\end{lstlisting}
+
+  \vspace{0.3em}
+  ``Functors make it maximally easy to port GF grammars into new languages.''
+  \hfill --- \emph{Informath under the Hood}
+\end{frame}
+
+\begin{frame}{What a new language needs}
+  \small
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    \texttt{UtilitiesFin} & function words, \emph{instance} of the \texttt{Utilities} interface \\
+    \texttt{CategoriesFin}, \texttt{MathCoreFin}, \dots & functor instantiations (one-liners) \\
+    \texttt{VerbalConstantsFin} & $\sim$120 mathematical words \\
+    \texttt{WikidataWordsFin} & $\sim$2000 mathematical words \\
+    \texttt{InformathFin} & glue \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  \begin{center}
+  \Large Three one-liners and two dictionaries.
+  \end{center}
+
+  \vspace{0.5em}
+  \begin{center}
+  For Finnish, this is \ok{actually true}.
+  \end{center}
+\end{frame}
+
+% =====================================================================
+\section{Finnish: the RGL is not the problem}
+
+\begin{frame}{The Finnish RGL is mature}
+  \small
+  \begin{center}
+  \begin{tabular}{lrr}
+    \toprule
+    & \textbf{Finnish} & \textbf{Czech} \\
+    \midrule
+    \texttt{Paradigms} constructors & 55 & 7 \\
+    \texttt{Paradigms} lines        & 1090 & 138 \\
+    \texttt{Sentence} lines         & 74 & 32 \\
+    \texttt{Idiom} lines            & 96 & 5 \\
+    \texttt{Question} lines         & 99 & 7 \\
+    \texttt{Structural} lines       & 334 & 31 \\
+    \midrule
+    \texttt{Missing<Lang>} stubs    & \ok{no such module} & \bad{97 \texttt{notYet}} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.8em}
+  Finnish has \texttt{mkV}, \texttt{mkVS}, \texttt{mkV3}, \texttt{mkPN},
+  \texttt{mkSubj}, \texttt{mkPredet}, \dots{}
+
+  Czech has \texttt{mkN}, \texttt{mkA}, \texttt{mkA2}, \texttt{mkV2},
+  \texttt{mkAdv}, \texttt{mkPrep}, \texttt{mkConj}. \bad{No \texttt{mkV} at all.}
+
+  \vspace{0.5em}
+  \small ``Language $X$ is in the RGL'' is not a binary fact.
+\end{frame}
+
+\begin{frame}[fragile]{And it shows}
+  Finnish morphology, for free, from a one-word paradigm:
+
+\begin{lstlisting}
+lin ring_Noun = mkNoun "rengas" ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  \begin{center}
+    \texttt{CoreAllProp (NounKind ring\_Noun) (StrIdent "R") ...} \\[0.4em]
+    $\Longrightarrow$ \quad \ok{\emph{kaikille renkaille} $R$, \dots}
+  \end{center}
+
+  \vspace{0.8em}
+  Allative plural, with consonant gradation \emph{ng} $\rightarrow$ \emph{nk}
+  and the \emph{-as} stem. Nobody wrote that down.
+
+  \vspace{0.5em}
+  \small
+  Compare Czech, where the one-argument \texttt{mkN} sends everything in
+  \texttt{-ce} --- \emph{matice}, \emph{funkce}, \emph{kružnice} --- to the
+  \emph{soudce} `judge' paradigm, and declines them as animate masculine.
+\end{frame}
+
+\begin{frame}{So the port should be easy}
+  \begin{center}
+  \Large It was. \\[1em]
+  \normalsize And that is the whole problem.
+  \end{center}
+\end{frame}
+
+% =====================================================================
+\section{When the compiler stops testing you}
+
+\begin{frame}[fragile]{Day one: it compiled}
+  The Finnish modules were created as ``compilable templates'', by copying.
+
+\begin{lstlisting}
+$ gf InformathFin.gf
+linking ... OK
+\end{lstlisting}
+
+  \vspace{0.5em}
+  What was actually in them:
+
+\begin{lstlisting}
+-- UtilitiesFin.gf                    -- Swedish
+then_Adv       = mkAdv "så" ;
+such_that_Subj = mkSubj "så att" ;
+arbitrary_A    = mkA "godtycklig" ;
+iff_Subj       = mkSubj "om och endast om" ;
+proof_Str      = "bevis" ;
+
+-- VerbalConstantsFin.gf              -- English
+lin natural_Noun = mkNoun "natural" "number" ;
+lin set_Fam      = mkFam "set" ;
+lin union_FunC   = mkFun "union" ;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{The central asymmetry}
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Czech} & \textbf{Finnish} \\
+    \midrule
+    RGL half-built & RGL mature \\
+    compiler screams & compiler silent \\
+    $\sim$20 crash-driven iterations & \texttt{linking ... OK} from the start \\
+    errors are \emph{structural} & errors are \emph{semantic} \\
+    ``does it build?'' & ``is it Finnish?'' \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1.2em}
+  \begin{center}
+  \Large A complete RGL removes your only automatic test.
+  \end{center}
+
+  \vspace{0.8em}
+  \small
+  In Czech, every mistake I made stopped the build. In Finnish, a grammar that
+  emits fluent Swedish is indistinguishable, to the compiler, from a correct one.
+\end{frame}
+
+% =====================================================================
+\section{Three layers of lexicon}
+
+\begin{frame}{Layer 1: \texttt{UtilitiesFin} --- the function words}
+  $\sim$23 strings. Swedish $\rightarrow$ Finnish, using the English \texttt{oper}
+  identifiers as the only clue to meaning.
+
+  \vspace{0.5em}
+  \small
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    identifier & was (sv) & now (fi) \\
+    \midrule
+    \texttt{then\_Adv}       & så & niin \\
+    \texttt{such\_that\_Subj} & så att & siten että \\
+    \texttt{arbitrary\_A}    & godtycklig & mielivaltainen \\
+    \texttt{iff\_Subj}       & om och endast om & jos ja vain jos \\
+    \texttt{proof\_Str}      & bevis & todistus \\
+    \texttt{theorem\_Str}    & teorem & lause \\
+    \texttt{definition\_Str} & definition & määritelmä \\
+    \texttt{infinity\_NP}    & \bad{äärettön} \emph{(a typo, in Swedish's place)} & ääretön \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5em}
+  \footnotesize
+  Some strings were \emph{already} Finnish (määritellä, olettaa, tyyppi, funktio,
+  joukko). The file was a sediment of two languages, and compiled either way.
+\end{frame}
+
+\begin{frame}{Layer 2: \texttt{VerbalConstantsFin} --- the maths words}
+  $\sim$120 strings, an English copy with two Finnish words in it.
+
+  \vspace{0.5em}
+  \begin{itemize}\small
+    \item \textbf{Types}: propositio, numero, totuusarvo, luonnollinen luku,
+          rationaaliluku, reaaliluku, joukko
+    \item \textbf{Arithmetic}: summa, erotus, tulo, osamäärä,
+          \emph{korotus $\dots$ potenssiin}, vastaluku,
+          \emph{logaritmi $\dots$ kannassa}, neliöjuuri, itseisarvo, kertoma,
+          suurin yhteinen tekijä
+    \item \textbf{Sets}: yhdiste, leikkaus, komplementti, karteesinen tulo,
+          potenssijoukko, osajoukko / aito osajoukko, ylijoukko, alkio, tyhjä joukko
+    \item \textbf{Analysis}: pinta-ala, säde, kohtisuora, pituus, normi,
+          mahtavuus, aste, sini / kosini / tangentti, pistetulo, kulma
+  \end{itemize}
+
+  \vspace{0.5em}
+  \small
+  Note \emph{luonnollinen luku}: the template had
+  \texttt{mkNoun "natural" "number"} --- two arguments, adjective plus noun.
+  The structure was right. Only the language was wrong.
+\end{frame}
+
+\begin{frame}[fragile]{Layer 3: \texttt{WikidataWordsFin} --- and the one thing that \emph{did} fail}
+  2051 lins, byte-identical to the English module.
+
+  It was the only file that did not compile --- and so it had simply been
+  \textbf{commented out} of \texttt{InformathFin}:
+
+\begin{lstlisting}
+concrete InformathFin of Informath =
+  MathCoreFin,
+  VerbalConstantsFin,
+----  WikidataWordsFin,        -- doesn't compile
+  ProperNamesFin ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  \textbf{Diagnosis.} It referenced the \emph{English morphodict}:
+
+\begin{lstlisting}
+lin 'knot_Noun'  = mkNoun knot_N ;        -- knot_N lives in ExtractEng
+lin 'abelian_Adj' = mkAdj Abelian_A ;     -- MathWordsFin is a different, smaller set
+\end{lstlisting}
+
+  \vspace{0.3em}
+  A grammar that ``worked'' by excluding 2000 of its 2100 words.
+\end{frame}
+
+\begin{frame}[fragile]{The fix: drop the morphodict}
+  Finnish has good smart paradigms. So do not reference lemmas at all ---
+  inline the strings:
+
+\begin{lstlisting}
+concrete WikidataWordsFin of WikidataWords = CategoriesFin **
+  open UtilitiesFin in {          -- no ExtractFin
+
+lin 'knot_Noun'        = mkNoun "solmu" ;
+lin 'semigroup_Noun'   = mkNoun "puoliryhmä" ;
+lin 'quasicoherent_Adj' = mkAdj "kvasikoherentti" ;
+lin 'close_Verb'       = mkVerb "sulkea" ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  \begin{itemize}
+    \item \texttt{ParadigmsFin.mkN} handles gradation, vowel harmony, stem types.
+    \item The module now needs no morphodict, and compiles standalone.
+    \item \ok{Enabled in \texttt{InformathFin}.} \texttt{linking ... OK} --- this time meaning it.
+  \end{itemize}
+
+  \vspace{0.3em}
+  \small This is exactly the move that is \bad{unsafe in Czech}, where the
+  one-argument \texttt{mkN} guesses wrong for $\sim$19\% of nouns.
+\end{frame}
+
+\begin{frame}{Translating 2036 terms with an LLM}
+  \begin{columns}[T]
+  \begin{column}{0.52\textwidth}
+  \textbf{Pipeline}
+  \begin{enumerate}\small
+    \item extract identifiers, split by category \\
+          \small 1216 nouns, 749 adjectives, 86 verbs
+    \item 7 batches, 7 subagents in parallel
+    \item each returns \texttt{english\textbackslash tfinnish} TSV
+    \item merge, check coverage
+    \item code-generate the module
+  \end{enumerate}
+  \end{column}
+  \begin{column}{0.44\textwidth}
+  \textbf{Result}
+  \begin{itemize}\small
+    \item full coverage, 0 missing
+    \item 0 malformed, 0 duplicate keys
+    \item every abstract identifier preserved
+  \end{itemize}
+  \vspace{0.5em}
+  \small Spot-checks: ryhmä, rengas, kunta, avaruus, monisto, lyhde (sheaf),
+  ydin (kernel), ominaisarvo, kohomologia, jaoton (prime).
+  \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  \begin{center}
+  Nominative singular for nouns, A-infinitive for verbs. \\
+  One column. Finnish morphology does the rest.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{It speaks Finnish}
+\begin{lstlisting}
+VarHypo (StrIdent "x") (NounKind group_Noun)
+  ==>  olkoon $ x $ ryhmä
+
+CoreAllProp (NounKind ring_Noun) (StrIdent "R") FalseProp
+  ==>  kaikille renkaille $ R $ , meillä on ristiriita
+
+CoreExistProp (NounKind matrix_Noun) (StrIdent "M") FalseProp
+  ==>  on olemassa matriisi $ M $ , siten että meillä on ristiriita
+
+CoreIfProp FalseProp FalseProp
+  ==>  jos meillä on ristiriita , niin meillä on ristiriita
+
+PropHypo FalseProp
+  ==>  oleta , että meillä on ristiriita
+\end{lstlisting}
+
+  \vspace{0.3em}
+  \ok{\emph{olkoon}} --- a real jussive, from \texttt{ImpP3} in \texttt{IdiomFin}. \\
+  \small In Czech, \texttt{IdiomCze} was empty and \texttt{ImpP3} had to be written by hand.
+\end{frame}
+
+% =====================================================================
+\section{What the compiler cannot see}
+
+\begin{frame}[fragile]{Wrongness that links cleanly, I: prepositions}
+  Finnish expresses these relations with \emph{cases}, not prepositions.
+
+\begin{lstlisting}
+applied_to_Prep : Prep = mkPrep "sovellettuna" ;
+defined_as_Prep : Prep = mkPrep "määriteltynä" ;
+as_Prep         : Prep = mkPrep "muodossa" ;
+at_Prep         : Prep = mkPrep "kohdassa" ;
+over_Prep       : Prep = mkPrep "yli" ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  These are pre-positioned words that do not govern the case of their argument.
+
+  \vspace{0.5em}
+  They \textbf{compile}. They \textbf{read acceptably}. They are \textbf{not right}.
+
+  \vspace{0.5em}
+  \small
+  No test in the repository distinguishes this from correct Finnish.
+\end{frame}
+
+\begin{frame}[fragile]{Wrongness that links cleanly, II: the lexicon}
+  \begin{itemize}
+    \item \textbf{Coinages.} $\sim$1500 terms have no established Finnish word.
+      \begin{center}\ttfamily\small
+      quiver $\longrightarrow$ nuolikko
+      \end{center}
+      Plausible. Invented. Unreviewed.
+    \item \textbf{Capitalisation.} 8 proper-name adjectives kept a capital:
+\begin{lstlisting}
+lin Abelian_Adj = mkAdj "Abelin" ;    lin Baire_Adj = mkAdj "Bairen" ;
+lin abelian_Adj = mkAdj "abelin" ;    -- the same word, twice, two ways
+\end{lstlisting}
+    \item \textbf{Irregular stems.} Inline strings rely on smart paradigms.
+      A few will mis-inflect. Nothing reports which.
+  \end{itemize}
+
+  \vspace{0.5em}
+  \begin{center}
+  \alert{Every one of these is a silent defect in a grammar that links.}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{What copying hid}
+  \texttt{WikidataWordsFin} was derived from \texttt{WikidataWordsEng}. So it
+  inherited English's bookkeeping:
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & lins & unique & \bad{not in abstract} & \bad{duplicated} \\
+    \midrule
+    \texttt{WikidataWordsEng} & 2051 & 2036 & 33 & 15 \\
+    \texttt{WikidataWordsFin} & 2051 & 2036 & 33 & 15 \\
+    \midrule
+    \texttt{WikidataWordsCze} & \ok{2003} & \ok{2003} & \ok{0} & \ok{0} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.3em}
+  The 33 orphans are exactly the symbol tokens:
+
+\begin{lstlisting}
+lin A_Noun = mkNoun "A" ;   lin C222_Noun = mkNoun "C222" ;   lin csgn_Noun = mkNoun "csgn" ;
+\end{lstlisting}
+
+  \vspace{0.2em}
+  \footnotesize
+  Seven subagents dutifully translated identifiers that the abstract syntax does
+  not contain. GF only \emph{warns}.
+  The Czech module was generated \emph{from the abstract} --- so it cannot drift.
+\end{frame}
+
+% =====================================================================
+\section{Lessons}
+
+\begin{frame}{What the LLM was good at}
+  \begin{itemize}
+    \item \textbf{Bulk lexicography.} 2036 terms, 7 agents, minutes.
+          The mathematical vocabulary is genuinely good: \emph{lyhde} for sheaf,
+          \emph{ydin} for kernel, \emph{jaoton} for prime.
+    \item \textbf{Diagnosis.} Working out that \texttt{WikidataWordsFin} failed
+          because \texttt{knot\_N} lives in \texttt{ExtractEng} and
+          \texttt{MathWordsFin} is a different, smaller extraction ---
+          then proposing to drop the morphodict entirely.
+    \item \textbf{Noticing the sediment.} That \texttt{UtilitiesFin} was
+          Swedish-with-Finnish-patches, and that \texttt{äärettön} was a typo
+          for \texttt{ääretön}.
+    \item \textbf{Mechanical faithfulness.} Every abstract identifier preserved
+          exactly, through a code-generated module.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What it was bad at}
+  \begin{itemize}
+    \item \textbf{Treating \texttt{linking ... OK} as success.} \\
+          It is, at best, evidence that the file is well-formed GF.
+    \item \textbf{Volunteering that \texttt{mkPrep "yli"} is not how Finnish works.} \\
+          It compiled, so it was reported as done. The caveat exists because
+          somebody asked afterwards.
+    \item \textbf{Questioning its input.} It translated all 2051 lins, including
+          33 that no \texttt{fun} references and 15 that were already there.
+          It was given a file and it translated the file.
+    \item \textbf{Knowing which coinages are real.} \emph{nuolikko} and
+          \emph{lyhde} are presented with identical confidence. One is standard.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lessons for the next language}
+  \begin{enumerate}
+    \item \textbf{Check the RGL first --- but for the opposite reason.} \\
+          \small A \emph{poor} RGL costs you weeks of resource-grammar work.
+          A \emph{good} RGL costs you your safety net.
+    \item \normalsize \textbf{Generate from the abstract syntax, never copy a sibling.} \\
+          \small Copying gave Finnish 33 dead lins and 15 duplicates, for free,
+          silently. Code-generating Czech from \texttt{WikidataWords.gf} made
+          ``complete'' a checkable property.
+    \item \normalsize \textbf{Build the test the compiler will not give you.} \\
+          \small Coverage, category, morphology class. Reject, do not repair.
+    \item \normalsize \textbf{Smart paradigms are a property of the RGL, not of the LLM.} \\
+          \small Trust them in Finnish. Do not trust them in Czech.
+    \item \normalsize \textbf{Separate ``the model produced it'' from ``it is right''.} \\
+          \small The 2036 Finnish terms have had no native review. That sentence
+          belongs in the commit message.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Still open}
+  \begin{itemize}
+    \item \textbf{Native review of $\sim$2036 translations}, especially the rare coinages.
+    \item Convert the \texttt{mkPrep} string relations to case-governed prepositions.
+    \item Lowercase the proper-name adjectives (\emph{Abelin} / \emph{abelin}), and
+          decide which of the two duplicates survives.
+    \item Add explicit paradigms where the smart guess mis-inflects an irregular stem.
+    \item Purge the 33 orphan lins --- in English as well as Finnish.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{center}
+  \Large
+  Czech was hard because the compiler kept stopping me.
+
+  \vspace{0.8em}
+  Finnish was hard because it never did.
+  \end{center}
+
+  \vspace{1.5em}
+  \normalsize
+  A mature RGL delivers exactly what it promises: the functor instantiates, the
+  morphology is free, and a two-thousand-word lexicon is an afternoon.
+
+  \vspace{0.5em}
+  What it also delivers is a grammar that compiles, links, and speaks Swedish ---
+  and no way to tell, except by reading it.
+
+  \vspace{1em}
+  \begin{center}
+  \small
+  \texttt{github.com/GrammaticalFramework/informath}
+  \end{center}
+\end{frame}
+
+\end{document}

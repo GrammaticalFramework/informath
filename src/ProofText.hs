@@ -68,8 +68,9 @@ oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" [
     , "\\clearpage"
     ]
   where
-    term = ignoreFirstArguments (dropTable (symbolTable env)) (typeAnnotate dkmap [] typ exp)
-    linesterm = onlyProofLines (term2lines term)
+    term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
+                    (typeAnnotate dkmap [] typ exp)
+    linesterm = term2lines term
     
 
 
@@ -132,6 +133,10 @@ isElemType e = case splitApp e of
   (EIdent _, _) -> True
   _ -> False
 
+-- the variables a lambda binds over objects, which a proof text introduces
+objectBinders :: [Bind] -> [(QIdent, Exp)]
+objectBinders binds = [(v, t) | BTyped v t <- binds, headedBy identElem t]
+
 
 -----------------------------------------
 -- type annotation
@@ -187,43 +192,53 @@ subst gamma bs e = case e of
   _ -> e
 -}
 
+--------------------------------------
+-- which subtrees of a step are shown
+--------------------------------------
+
+-- A Dedukti rule is applied to the propositions and objects it speaks about
+-- as well as to its premisses, and only the premisses belong in a proof
+-- text.  Which arguments those are is a profile of the constant, the same
+-- notion that #DROP expresses as "all but the first k": the symbol table can
+-- give one with #SHOW, and failing that it is read off the constant's type,
+-- where the premisses are the arguments that are themselves proofs.
+proofProfile :: M.Map QIdent Profile -> M.Map QIdent Exp -> QIdent -> Profile
+proofProfile given types f = case M.lookup f given of
+  Just prof -> prof
+  _ -> case M.lookup f types of
+    Just ty -> PermProfile [i | (i, h) <- zip [1 ..] (fst (splitType ty)), isProofHypo h]
+    _ -> NoProfile
+ where
+   -- a premiss is an argument that yields a proof: not only Proof A, but
+   -- also the functions that a rule discharging hypotheses takes, such as
+   -- the step case of induction, (n : Elem Nat) -> Proof (C n) -> Proof ...
+   isProofHypo h = maybe False (headedBy identProof . snd . splitType) (hypo2type h)
+
+headedBy :: QIdent -> Exp -> Bool
+headedBy f e = case splitApp e of
+  (EIdent g, _:_) -> g == f
+  _ -> False
+
+-- keep, of every application in the proof term, the arguments its profile shows
+showOnly :: (QIdent -> Profile) -> Exp -> Exp
+showOnly prof e = case e of
+  ETyped x ty -> ETyped (showOnly prof x) ty
+  EApp _ _ -> case splitApp e of
+    (EIdent f, args@(_:_)) ->
+      foldl EApp (EIdent f) (map (showOnly prof) (select (prof f) args))
+    (fun, args) -> foldl EApp (showOnly prof fun) (map (showOnly prof) args)
+  EAbs bind body -> EAbs bind (showOnly prof body)
+  _ -> e
+ where
+   select p args = case p of
+     NoProfile -> args
+     DropProfile k -> drop k args
+     PermProfile is -> [args !! (i - 1) | i <- is, i <= length args]
+     HoasProfile is -> [args !! (i - 1) | i <- is, i <= length args]
+
 -----------------------
 -- linear proofs
 ----------------------
-
--- The steps of a proof are the ones that prove something, together with the
--- variables it introduces.  A Dedukti proof term also applies its rules to
--- the propositions and the objects they speak about, and those arguments
--- become lines of their own, saying no more than "there is a proposition";
--- they are dropped here, and so are the references to them, which is what
--- makes the difference between a derivation and a text.
-onlyProofLines :: [Line Exp] -> [Line Exp]
-onlyProofLines lns = [
-  ln{line = new,
-     premisses = [p | q <- premisses ln, isPremiss q, Just p <- [lookup q renumbering]]}
-    | (ln, new) <- zip kept [1 ..]
-  ]
- where
-   kept = filter keep lns
-   renumbering = zip (map line kept) [1 ..]
-   -- a rule is applied to premisses, not to the variables they speak of
-   isPremiss q = maybe False provesSomething (lookup q byNumber)
-   byNumber = [(line ln, ln) | ln <- lns]
-
-   -- a variable is worth introducing only if a step that survives speaks of
-   -- it; the others are bound inside a proposition that has been dropped
-   keep ln = provesSomething ln || (introducesVariable ln && elem (line ln) cited)
-   cited = concatMap premisses (filter provesSomething lns)
-
-   provesSomething ln = headedBy identProof (formula (step ln))
-   introducesVariable ln =
-     null (premisses ln)
-       && elem (rule (step ln)) (context ln)     -- bound here, not a constant
-       && headedBy identElem (formula (step ln))
-
-   headedBy f e = case splitApp e of
-     (EIdent g, _:_) -> g == f
-     _ -> False
 
 term2lines :: Exp -> [Line Exp]
 term2lines =
@@ -240,8 +255,14 @@ term2lines =
          (argss, prems, lnConcl) = psArgs ln cont args
       in concat argss ++
          [mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)]
+   -- an abstraction introduces variables: the ones it binds over objects are
+   -- the "let x be an A" of the proof text, in the order the statement has them
    EAbs _ _ -> case splitAbs proof of
-     (binds, body) -> ps ln (cont ++ map bind2ident binds) body
+     (binds, body) ->
+       let cont' = cont ++ map bind2ident binds
+           eigenLines = [mkLine (ln + i) cont' t v [] []
+                          | (i, (v, t)) <- zip [0 ..] (objectBinders binds)]
+       in eigenLines ++ ps (ln + length eigenLines) cont' body
 
    _ -> error ("term2lines " ++ printTree proof)
 
@@ -260,8 +281,8 @@ term2lines =
    EAbs _ _ ->
      let (binds, body) = splitAbs arg
          cont' = cont ++ map bind2ident binds
-         elemvs = [(v, t) | BTyped v t <- binds, isElemType t]
-         eigenLines = [mkLine (n + i) cont' t v [] [] | (i, (v, t)) <- zip [0 ..] elemvs]
+         eigenLines = [mkLine (n + i) cont' t v [] []
+                        | (i, (v, t)) <- zip [0 ..] (objectBinders binds)]
          bodyLines = ps (n + length eigenLines) cont' body
      in (eigenLines ++ bodyLines,
          map line eigenLines ++ [lastline bodyLines | not (null bodyLines)])

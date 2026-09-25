@@ -97,6 +97,7 @@ data SymbolTable = SymbolTable {
   backConstantTable :: BackConstantTable,
   conversionTable :: ConversionTable,
   dropTable :: DropTable,
+  showTable :: ShowTable,
   macroTable :: MacroTable,
   semanticsTable :: SemDefs,
   nlgTable :: NLGDefs,
@@ -112,6 +113,11 @@ type ConversionTable = M.Map Formalism (M.Map QIdent QIdent)
 -- conversions in Dk that drop a number of initial arguments
 --- redundant with profiles, except for proofs
 type DropTable = M.Map QIdent Int
+
+-- which arguments of a proof-building constant are shown in a proof text:
+-- the rule's premisses, rather than the propositions and objects it is also
+-- applied to.  #DROP k is the special case "all but the first k".
+type ShowTable = M.Map QIdent Profile
 
 -- definitions of macros to be converted to \newcommand in LaTeX
 type MacroTable = M.Map String (Int, String)
@@ -174,6 +180,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
   backConstantTable = backConstantTable,
   conversionTable = conversionTable,
   dropTable = dropTable,
+  showTable = showTable,
   macroTable = macroTable,
   semanticsTable = semanticsTable,
   nlgTable = nlgTable,
@@ -184,6 +191,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     constantlines = filter isConstantEntry entrylines
     conversionlines = filter isConversion entrylines
     droplines = filter isDrop entrylines
+    showlines = filter isShow entrylines
     macrolines = filter isMacro entrylines
     builtinlines = filter isBuiltin entrylines
     semanticslines = filter isSemantics entrylines
@@ -208,6 +216,9 @@ buildSymbolTable pgf lang ls = SymbolTable {
        fids@((form:_):_) <- groupBy (\x y -> head x == head y) (sort (map tail conversionlines))]
     backConstantTable = buildBackConstantTable constantTable
     dropTable = M.fromList [(QIdent c, read n) | _:c:n:_ <- droplines]
+    showTable = M.fromList (
+        [(QIdent c, DropProfile (read n)) | _:c:n:_ <- droplines] ++
+        [(QIdent c, prof) | _:c:rest <- showlines, Just prof <- [readProfile (concat rest)]])
     ifDrop qid = M.lookup qid dropTable --- copy dropTable entry to profile
     macroTable = M.fromList (
         [(c, (read n, d)) | _:rest <- macrolines, let [c, n, d] = splitNewcommand (unwords rest)] ++
@@ -221,6 +232,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     isConstantEntry line = head (head line) /= '#'
     isConversion line = head line == "#CONV"
     isDrop line = head line == "#DROP"
+    isShow line = head line == "#SHOW"
     isMacro line = head line == "#MACRO"
     isBuiltin line = head line == "#BUILTIN"
     isSemantics line = head line == "#SEMANTICS"

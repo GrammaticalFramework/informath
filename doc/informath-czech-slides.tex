@@ -1,0 +1,700 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usetheme{metropolis}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+
+\definecolor{gfblue}{HTML}{1F4E79}
+\definecolor{codebg}{HTML}{F4F4F2}
+\definecolor{warn}{HTML}{B03A2E}
+\definecolor{good}{HTML}{1E6B3A}
+
+\setbeamercolor{frametitle}{bg=gfblue}
+\setbeamercolor{alerted text}{fg=warn}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{codebg},
+  frame=none,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  xleftmargin=2mm,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ý}{{\'y}}1 {ú}{{\'u}}1
+    {č}{{\v{c}}}1 {ď}{{\v{d}}}1 {ě}{{\v{e}}}1 {ň}{{\v{n}}}1
+    {ř}{{\v{r}}}1 {š}{{\v{s}}}1 {ť}{{\v{t}}}1 {ž}{{\v{z}}}1
+    {ů}{{\r{u}}}1 {å}{{\aa}}1 {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {ç}{{\c{c}}}1 {œ}{{oe}}2 {è}{{\`e}}1 {ê}{{\^e}}1 {ï}{{\"i}}1
+}
+
+\newcommand{\bad}[1]{\textcolor{warn}{#1}}
+\newcommand{\ok}[1]{\textcolor{good}{#1}}
+
+\title{Porting Informath to a New Language}
+\subtitle{GF-RGL and Claude: a Czech case study}
+\author{Aarne Ranta}
+\date{July 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% =====================================================================
+\section{What Informath is}
+
+\begin{frame}{The problem}
+  Mathematics exists in two registers.
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Formal}
+      \begin{itemize}
+        \item Agda, Rocq, Lean, Dedukti
+        \item machine-checkable
+        \item unreadable to most humans
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Informal}
+      \begin{itemize}
+        \item English, French, German, Swedish
+        \item readable
+        \item ambiguous, unverifiable
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  Informath translates between them --- in \emph{all} directions.
+\end{frame}
+
+\begin{frame}{Four directions}
+  \begin{itemize}
+    \item formal $\rightarrow$ informal \quad (\textbf{informalization})
+    \item informal $\rightarrow$ formal \quad (\textbf{autoformalization})
+    \item informal $\rightarrow$ informal \quad (translation, \emph{via} the formal)
+    \item formal $\rightarrow$ formal \quad (in special cases)
+  \end{itemize}
+
+  \vspace{1em}
+  Two goals:
+  \begin{enumerate}
+    \item complete informalization of anything expressible in Dedukti;
+    \item generate \emph{and analyse} informal mathematical language,
+          in all of its variation.
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \small The second goal is inspired by Ganesalingam, \emph{The Language of
+  Mathematics} (2013).
+\end{frame}
+
+\begin{frame}[fragile]{One statement, many languages}
+\begin{lstlisting}
+Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
+  Proof (and (odd a) (odd c)) ->
+  Proof (forall Int (b => even (plus (times a b) (times b c)))).
+
+Rocq:    Axiom prop110 : forall a : Int, forall c : Int,
+  (odd a /\ odd c -> forall b : Int, even (a * b + b * c)) .
+\end{lstlisting}
+
+\vspace{-0.2em}
+\begin{itemize}\footnotesize
+  \item \textbf{En}: Let $a$ and $c$ be integers. Assume that $a$ and $c$ are odd.
+        Then $ab + bc$ is even for all integers $b$.
+  \item \textbf{Fr}: Soient $a$ et $c$ des entiers. Supposons que $a$ et $c$ sont impairs.
+        Alors $ab + bc$ est pair pour tous les entiers $b$.
+  \item \textbf{De}: Seien $a$ und $c$ ganze Zahlen. Nimm an, dass $a$ und $c$ ungerade sind.
+        Dann ist $ab + bc$ gerade für jede ganze Zahl $b$.
+  \item \textbf{Sv}: Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda.
+        Då är $ab + bc$ jämnt för alla heltal $b$.
+  \end{itemize}
+
+  \vspace{0.2em}
+  \footnotesize All generated from the Dedukti source. Agda and Lean too.
+\end{frame}
+
+\begin{frame}{Architecture}
+  \begin{center}
+  \begin{tabular}{c}
+    \textbf{Dedukti} --- the semantic core \\
+    $\updownarrow$ \\
+    \textbf{MathCore} --- an abstract syntax close to the logic \\
+    $\updownarrow$ \\
+    \textbf{Informath} --- adds variation, synonyms, symbolic/verbal choices \\
+    $\updownarrow$ \\
+    \textbf{Eng \quad Fre \quad Ger \quad Swe \quad \alert{Cze}} \\
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  Agda, Rocq and Lean hang off Dedukti by (partial) conversions.
+
+  The natural languages hang off \textbf{Informath} by GF concrete syntaxes.
+\end{frame}
+
+% =====================================================================
+\section{GF in five minutes}
+
+\begin{frame}[fragile]{Abstract vs.\ concrete syntax}
+  GF separates \emph{what can be said} from \emph{how it is said}.
+
+\begin{lstlisting}
+abstract MathCore = {
+  cat Prop ; Kind ; Ident ;
+  fun CoreAllProp : Kind -> Ident -> Prop -> Prop ;
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+concrete MathCoreEng of MathCore = {
+  lincat Prop = S ;
+  lin CoreAllProp kind x prop = ... "for all" ... ;
+}
+\end{lstlisting}
+
+  \vspace{0.5em}
+  One abstract syntax, $n$ concrete syntaxes $\Rightarrow$ $n^2$ translations,
+  all going through the meaning.
+\end{frame}
+
+\begin{frame}{The Resource Grammar Library (RGL)}
+  You do not want to write morphology and word order for every language.
+
+  \vspace{0.5em}
+  The RGL gives you, per language:
+  \begin{itemize}
+    \item \textbf{Syntax API} --- \texttt{mkCN}, \texttt{mkNP}, \texttt{mkS}, \texttt{mkVP}, \dots{}
+          \\ \small the same names in every language
+    \item \textbf{Paradigms API} --- \texttt{mkN}, \texttt{mkA}, \texttt{mkV}
+          \\ \small language-specific: inflection, gender, cases
+  \end{itemize}
+
+  \vspace{1em}
+  {\large\bf 40+ languages.} \quad Czech is one of them.
+
+  \vspace{0.5em}
+  \alert{Remember that word ``one of them''. We will come back to it.}
+\end{frame}
+
+\begin{frame}[fragile]{Functors: how porting is \emph{supposed} to work}
+  Write the linearization once, against \emph{interfaces}:
+
+\begin{lstlisting}
+incomplete concrete MathCoreFunctor of MathCore =
+  open Syntax, Utilities in { ... }
+\end{lstlisting}
+
+  Instantiate per language:
+
+\begin{lstlisting}
+concrete MathCoreEng of MathCore = MathCoreFunctor with
+  (Syntax = SyntaxEng), (Utilities = UtilitiesEng) ;
+
+concrete MathCoreCze of MathCore = MathCoreFunctor with
+  (Syntax = SyntaxCze), (Utilities = UtilitiesCze) ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  ``Functors make it maximally easy to port GF grammars into new languages.''
+  \hfill --- \emph{Informath under the Hood}
+
+  \vspace{0.5em}
+  So a new language should be: \textbf{write the words, instantiate the functor.}
+\end{frame}
+
+\begin{frame}{What a new language needs, in principle}
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    \texttt{UtilitiesCze} & function words, \emph{instance} of the \texttt{Utilities} interface \\
+    \texttt{CategoriesCze} & functor instantiation \\
+    \texttt{MathCoreCze} & functor instantiation \\
+    \texttt{MathExtensionsCze} & functor instantiation \\
+    \texttt{VerbalConstantsCze} & $\sim$120 mathematical words \\
+    \texttt{WikidataWordsCze} & $\sim$2000 mathematical words \\
+    \texttt{InformathCze} & glue \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  Three of these are one-liners. Two are dictionaries. \\
+  \textbf{Nothing here says ``rewrite the resource grammar''.}
+\end{frame}
+
+% =====================================================================
+\section{Porting to Czech}
+
+\begin{frame}{The experiment}
+  \begin{itemize}
+    \item Starting point: compilable Czech \emph{templates}, generated by copying Swedish.
+    \item Tool: Claude Code (Opus 4.8), driving the GF compiler in a loop.
+    \item Preceding experiment: the same for Finnish, which went smoothly.
+    \item Question: \textbf{how far does the functor story actually carry you?}
+  \end{itemize}
+
+  \vspace{1em}
+  Spoiler: the vocabulary was the easy half.
+\end{frame}
+
+\begin{frame}[fragile]{Surprise 0: the templates were Swedish}
+  Not just Swedish \emph{words} --- Swedish \emph{morphology}:
+
+\begin{lstlisting}
+-- UtilitiesCze.gf, as found
+type_CN : CN = mkCN (mkN "typ" "typer") ;
+set_N   : N  = mkN "mängd" "mängder" ;
+arbitrary_A  = mkA "godtycklig" ;
+\end{lstlisting}
+
+  \begin{itemize}
+    \item \texttt{mkN : Str -> Str -> N} \quad exists in Swedish, \bad{not in Czech}
+    \item \texttt{mkPrep : Str -> Prep} \quad in Czech it is \texttt{Str -> Case -> Prep}
+  \end{itemize}
+
+  \vspace{0.5em}
+  A ``compilable template'' compiled only because nothing had been type-checked
+  against the Czech RGL yet.
+\end{frame}
+
+\begin{frame}[fragile]{Surprise 1: \texttt{ParadigmsCze} has no verbs}
+  The whole verb section of the Czech Paradigms API:
+
+\begin{lstlisting}
+  mkV2 = overload {
+    mkV2 : VerbForms -> VerbForms ** {c : ComplementCase} ;
+    mkV2 : VerbForms -> Case -> ... ;
+    mkV2 : VerbForms -> ComplementCase -> ... ;
+    } ;
+\end{lstlisting}
+
+  \begin{itemize}
+    \item no \texttt{mkV}
+    \item no \texttt{mkVS}, no \texttt{mkV3}
+    \item no \texttt{mkPN}
+    \item no \texttt{V3} or \texttt{Predet} \emph{lincat} at all
+  \end{itemize}
+
+  \vspace{0.5em}
+  \texttt{V3} and \texttt{Predet} silently get GF's default lincat \texttt{\{s : Str\}}.
+  Nothing warns you.
+\end{frame}
+
+\begin{frame}[fragile]{Building verbs by hand}
+  \texttt{UtilitiesCze} grew its own conjugator for the three productive classes:
+
+\begin{lstlisting}
+guessVerbForms : Str -> R.VerbForms = \v ->
+  case v of {
+    _ + "ovat"  => R.iii_kupovatVerbForms v ;   -- definovat
+    st + "ět"   => iVerbForms st v (st + "ěl") ;
+    st + "et"   => iVerbForms st v (st + "el") ;
+    st + "it"   => iVerbForms st v (st + "il") ; -- dělit
+    st + "at"   => aVerbForms st v ;             -- předpokládat
+    _           => aVerbForms v v
+    } ;
+\end{lstlisting}
+
+  \vspace{0.3em}
+  This is a \emph{Paradigms} concern that ended up in an \emph{application} grammar.
+  It is the first sign that the port is not a port.
+\end{frame}
+
+\begin{frame}[fragile]{Surprise 2: the resource grammar is a stub}
+  \texttt{SentenceCze.gf}, in full --- four linearizations:
+
+\begin{lstlisting}
+lin PredVP, UseCl, UseQCl, UseRCl
+\end{lstlisting}
+
+  \texttt{IdiomCze.gf}, in full:
+
+\begin{lstlisting}
+concrete IdiomCze of Idiom = CatCze ** open Prelude, ResCze in {
+}
+\end{lstlisting}
+
+  \vspace{0.5em}
+  Everything else is stubbed in \texttt{MissingCze} as
+
+\begin{lstlisting}
+oper ComplVS : VS -> S -> VP = notYet "ComplVS" ;
+\end{lstlisting}
+
+  which type-checks, and then explodes at PMCFG generation:
+
+\begin{lstlisting}
+gf: Internal error in GeneratePMCFG:
+    evalTerm (Predef.error "NOT YET IMPLEMENTED: ComplVS")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Why you cannot work around it}
+  The shared functor reaches these by \emph{qualified} name:
+
+\begin{lstlisting}
+-- MathCoreFunctor.gf
+VarHypo ident kind = Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind)) ;
+CoreIfProp p q     = Grammar.ExtAdvS ... ;
+DefPropJmt ...     = Grammar.SSubjS ... ;
+\end{lstlisting}
+
+  \begin{itemize}
+    \item \texttt{Grammar} $=$ \texttt{GrammarCze}. If the lin is absent, the name is absent.
+    \item You cannot shadow it from \texttt{UtilitiesCze}.
+    \item You could edit the functor --- but it is shared with Eng/Fre/Ger/Swe/Fin.
+  \end{itemize}
+
+  \vspace{0.5em}
+  \alert{The only way through the application grammar is to finish the resource grammar.}
+\end{frame}
+
+\begin{frame}{What had to be added to the Czech RGL}
+  \small
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    \texttt{CatCze} & lincat \texttt{VV} \\
+    \texttt{SentenceCze} & \texttt{AdvS ExtAdvS SSubjS EmbedS EmbedQS ImpVP} \\
+    \texttt{IdiomCze} & \texttt{ImpP3 ExistNP ImpersCl GenericCl} \\
+    \texttt{VerbCze} & \texttt{CompCN ComplVS ComplVV PassV2} \\
+    \texttt{NounCze} & \texttt{SentCN PredetNP} \\
+    \texttt{AdverbCze} & \texttt{SubjS} \\
+    \texttt{QuestionCze} & \texttt{QuestIAdv} \\
+    \texttt{PhraseCze} & \texttt{UttImpSg UttImpPl UttImpPol} \\
+    \texttt{StructuralCze} & 14 function words: \texttt{no\_Quant every\_Det can\_VV if\_Subj \dots} \\
+    \texttt{ExtendCze} & \texttt{ExistsNP} un-excluded \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5em}
+  Found one at a time, each by a compiler crash, each requiring a full RGL rebuild.
+  \\ \textbf{The loop, not the linguistics, is what a coding agent is good at.}
+\end{frame}
+
+\begin{frame}{Three honest approximations}
+  Czech \texttt{VerbForms} has no imperative and no passive participle
+  (\texttt{passpart} is commented out in \texttt{ResCze}).
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Rule} & \textbf{Should be} & \textbf{Is} \\
+    \midrule
+    \texttt{ImpVP} & imperative & 1pl present: \emph{předpokládáme, že \dots} \\
+    \texttt{PassV2} & passive participle & reflexive passive: \emph{číslo se dělí} \\
+    \texttt{ImpP3} & \emph{ať} (neutral) & \emph{nechť} (mathematical register) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  All three read well \emph{in mathematical Czech} and are wrong in general.
+
+  \vspace{0.5em}
+  \alert{An LLM will happily generate these and not tell you.} \\
+  They are in the commit message because a human asked ``is that actually an imperative?''
+\end{frame}
+
+% =====================================================================
+\section{Two thousand words}
+
+\begin{frame}{\texttt{WikidataWordsCze}: 2003 terms}
+  The lexicon: 1177 nouns, 740 adjectives, 86 verbs.
+
+  \vspace{0.5em}
+  Obvious approach --- the one used for Finnish:
+\begin{center}\ttfamily\small
+lin group\_Noun = mkNoun "grupa" ;
+\end{center}
+
+  \vspace{0.5em}
+  Let GF's smart paradigm guess the declension. \\
+  For Finnish this worked. For Czech it is a trap.
+\end{frame}
+
+\begin{frame}[fragile]{The \texttt{-ce} trap}
+\begin{lstlisting}
+-- ResCze.guessNounForms
+_ + "ost"          => declKOST s ;
+_ + #hardConsonant => declHRAD s ;
+_ + "a"            => declZENA s ;
+_ + "ce"           => declSOUDCE s ;   -- <<<< masculine ANIMATE
+_ + "e"            => declMORE s ;
+\end{lstlisting}
+
+  \vspace{0.5em}
+  \texttt{soudce} = ``judge''. So the guesser declines
+  \bad{matice}, \bad{funkce}, \bad{kružnice} --- matrix, function, circle,
+  all feminine --- as animate masculine nouns.
+
+  \vspace{0.5em}
+  \ok{Fix}: never use the one-argument form. Supply
+  \textbf{nominative + genitive + gender}:
+\begin{lstlisting}
+lin 'group_Noun'  = mkNoun (mkN "grupa" "grupy" feminine) ;
+lin 'matrix_Noun' = mkNoun (mkN "matice" "matice" feminine) ;
+\end{lstlisting}
+  The genitive selects the paradigm.
+\end{frame}
+
+\begin{frame}{Translating 2003 terms with an LLM}
+  \begin{columns}[T]
+  \begin{column}{0.52\textwidth}
+  \textbf{Pipeline}
+  \begin{enumerate}\small
+    \item extract \texttt{fun}s from the abstract syntax
+    \item attach the English lin, plus the French and German lins as hints
+    \item split into 8 batches
+    \item 8 subagents translate in parallel
+    \item \textbf{validate}
+    \item code-generate the module
+  \end{enumerate}
+  \end{column}
+  \begin{column}{0.44\textwidth}
+  \textbf{The validator is the point}
+  \begin{itemize}\small
+    \item every \texttt{fun} covered, exactly once
+    \item gender $\in$ 4 legal values
+    \item adjective ends in \texttt{-ý} or \texttt{-í}
+    \item verb ends in \texttt{-ovat/-at/-it/-et/-ět}
+  \end{itemize}
+  \vspace{0.5em}
+  \small Anything else is \alert{rejected}, not repaired.
+  \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  It caught 4 perfective verbs the grammar cannot conjugate ---
+  \emph{uzavřít, pokrýt, protáhnout, použít} --- replaced by their imperfectives.
+
+  \vspace{0.3em}
+  \small (French and German were only $\sim$25\% helpful: those grammars have 537 and 348
+  of the 2018 terms.)
+\end{frame}
+
+\begin{frame}{Then audit what you generated}
+  It compiled. It linked. \textbf{It was 19\% wrong.}
+
+  \vspace{0.5em}
+  225 of 1177 nouns fell through \texttt{declensionNounForms} to the
+  soft-declension fallback. Two causes, both in the RGL.
+\end{frame}
+
+\begin{frame}[fragile]{Bug 1: half the consonants were never matched}
+\begin{lstlisting}
+hardConsonant    : pattern Str = #("d"|"t"|"g"|"h"|"k"|"n"|"r") ;
+neutralConsonant : pattern Str = #("b"|"f"|"l"|"m"|"p"|"s"|"v") ;   -- never used!
+\end{lstlisting}
+
+  Czech \emph{neutral} consonants take the \emph{hard} endings.
+  But the paradigm selector only tested \texttt{hardConsonant}:
+
+  \vspace{0.5em}
+  \begin{center}
+  \bad{graf, atom, profil, přístup, uzel} $\;\longrightarrow\;$ soft declension
+  \end{center}
+
+  \vspace{0.5em}
+  119 nouns. Also present in \texttt{guessNounForms}: \texttt{mkN "graf"} was
+  \emph{already} wrong for every Czech RGL user.
+\end{frame}
+
+\begin{frame}[fragile]{Bug 2: the genitive was thrown away}
+  \texttt{mkN "uzel" "uzlu" mascInanimate} --- the genitive is used only to
+  \emph{pick} a paradigm, then discarded. The stem is re-guessed from the
+  nominative by \texttt{dropFleetingE}, which guesses wrong \emph{both ways}:
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    & \textbf{was} & \textbf{should be} \\
+    \midrule
+    člen (member!) & \bad{člnu}      & \ok{členu} \\
+    uzel (knot)    & \bad{uzelu}     & \ok{uzlu} \\
+    doplněk (complement) & \bad{doplněku} & \ok{doplňku} \\
+    výpočet (computation) & \bad{výpočetu} & \ok{výpočtu} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5em}
+  \ok{Fix}: give \texttt{declHRAD}, \texttt{declHRADA}, \texttt{declMUZ}
+  stem-taking variants, and pass the stem the caller already supplied.
+  One-argument \texttt{mkN} keeps its old behaviour.
+\end{frame}
+
+\begin{frame}{Seven missing paradigms}
+  \small
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    \texttt{declLATINUS} & algoritmus -- algoritmu & 35 nouns \\
+    \texttt{declLATINUM} & kontinuum -- kontinua & 14 \\
+    \texttt{declGREEKMA} & schéma -- schématu & 5 \\
+    \texttt{declHRADA}   & les -- lesa, zákon -- zákona & 6 \\
+    \texttt{declADJF}    & proměnná -- proměnné \emph{(variable!)} & 2 \\
+    \texttt{declADJM}    & nultý -- nultého & 1 \\
+    \texttt{declINVAR}   & bombé, tamari, software & 7 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  \begin{center}
+  \Large Fallbacks: \bad{225} $\;\longrightarrow\;$ \ok{1} \\
+  \normalsize (the remaining one is the acronym \emph{ADE})
+  \end{center}
+\end{frame}
+
+% =====================================================================
+\section{Results and lessons}
+
+\begin{frame}[fragile]{It speaks Czech}
+\begin{lstlisting}
+VarHypo (StrIdent "x") (NounKind group_Noun)
+  ==>  nechť $ x $ je grupa
+
+CoreAllProp (NounKind ring_Noun) (StrIdent "R") FalseProp
+  ==>  pro všechny okruhy $ R $ , máme spor
+
+CoreExistProp (NounKind matrix_Noun) (StrIdent "M") FalseProp
+  ==>  existuje matice $ M $ , takový, že máme spor
+
+CoreIfProp FalseProp FalseProp
+  ==>  jestliže máme spor , pak máme spor
+\end{lstlisting}
+
+  \vspace{0.5em}
+  Spot the bug: \bad{takový} should be \emph{taková} --- \emph{matice} is feminine.
+
+  \vspace{0.3em}
+  \small \texttt{such\_that\_Subj} is a frozen string, and the Czech
+  \texttt{Subj = \{s : Str\}} lincat cannot carry agreement. Still open.
+\end{frame}
+
+\begin{frame}{Score}
+  \begin{center}
+  \begin{tabular}{lr}
+    \toprule
+    \textbf{informath} & \\
+    \quad \texttt{UtilitiesCze}, \texttt{VerbalConstantsCze} rewritten & $\sim$250 lines \\
+    \quad \texttt{WikidataWordsCze} generated & 2003 lins \\
+    \midrule
+    \textbf{gf-rgl (unplanned)} & \\
+    \quad missing linearizations, 9 modules & 21 rules \\
+    \quad noun paradigm selector + 7 paradigms & $\sim$120 lines \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1em}
+  Roughly half the work was in the library that was supposed to already exist.
+
+  \vspace{0.5em}
+  Two of the RGL bugs affect \textbf{every} Czech GF grammar, not just Informath.
+\end{frame}
+
+\begin{frame}{What the LLM was good at}
+  \begin{itemize}
+    \item \textbf{The compile loop.} Crash $\rightarrow$ read module $\rightarrow$
+          write lin $\rightarrow$ rebuild RGL $\rightarrow$ repeat. Twenty times. Tirelessly.
+    \item \textbf{Reading an unfamiliar codebase.} Finding that \texttt{V3} has no
+          lincat, that \texttt{ExistsNP} reduces to \texttt{ExistNP}, that
+          \texttt{MissingCze} stubs explode only at PMCFG time.
+    \item \textbf{Bulk lexicography.} 2003 terms, 8 agents, a few minutes.
+    \item \textbf{Auditing its own output} --- \emph{when told to}. The 225-noun
+          bug was found by writing a script that re-implemented the paradigm
+          selector and diffed it against the generated file.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What it was bad at}
+  \begin{itemize}
+    \item \textbf{Knowing when ``it compiles'' is not ``it works''.} \\
+          \texttt{linking ... OK} with 19\% of nouns mis-declined.
+    \item \textbf{Volunteering that an approximation is an approximation.} \\
+          \texttt{ImpVP} as a present tense is a reasonable hack --- and would have
+          shipped silently.
+    \item \textbf{Knowing the register.} \emph{nechť} vs \emph{ať}; whether
+          \emph{dělitel} is grammatically animate. It guessed right often, and
+          confidently either way.
+    \item \textbf{Rare vocabulary.} $\sim$1500 of the 2003 terms have no
+          French/German gloss and no established Czech word. Those are coinages.
+          \alert{They have had no native review.}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lessons for the next language}
+  \begin{enumerate}
+    \item \textbf{Check the RGL first.} \\
+          \small \texttt{wc -l src/<lang>/SentenceCze.gf} tells you more about the cost
+          than the size of the lexicon does. ``Language $X$ is in the RGL'' is not a
+          binary fact.
+    \item \normalsize \textbf{Do not trust smart paradigms in a rich morphology.} \\
+          \small Supply nominative, genitive and gender. The extra column is cheap;
+          the guesser's mistakes are invisible.
+    \item \normalsize \textbf{Put a validator between the LLM and the file.} \\
+          \small Reject, do not repair. It caught 4 unconjugable verbs immediately,
+          and made ``complete'' a checkable claim rather than a hope.
+    \item \normalsize \textbf{Audit the generated artefact against the library,
+          not against itself.} \\
+          \small Re-implement the selector in 30 lines of Python, and diff.
+    \item \normalsize \textbf{Fix the library.} \\
+          \small The paradigm bugs were 20 years old and would have been papered over
+          by a per-word workaround.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Still open}
+  \begin{itemize}
+    \item \texttt{such\_that\_Subj} does not agree in gender --- needs an
+          agreeing \texttt{Subj} lincat in Czech.
+    \item \texttt{map\_V3}, \texttt{range\_V3} linearize to nothing (no \texttt{V3} in Czech).
+    \item Multiword nouns inflect only their head: \\
+          \emph{vlastní čísla}, not \emph{vlastního čísla}.
+    \item \texttt{ResCze.VerbForms} needs an imperative and a passive participle;
+          then \texttt{ImpVP}, \texttt{PassV2}, \texttt{ImpP3} should be revisited.
+    \item \textbf{Native review of 2003 terms.}
+    \item \texttt{UserExtensionsCze} still disabled.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{center}
+  \Large
+  The functor really does make the \emph{grammar} port easy.
+
+  \vspace{1em}
+  What it cannot do is make the \emph{resource grammar} exist.
+  \end{center}
+
+  \vspace{1.5em}
+  \normalsize
+  An LLM turns a months-long lexicography-and-debugging task into a day ---
+  provided every claim it makes is mechanically checkable, and provided somebody
+  keeps asking \emph{``is that actually an imperative?''}
+
+  \vspace{1em}
+  \begin{center}
+  \small
+  \texttt{github.com/GrammaticalFramework/informath}
+  \end{center}
+\end{frame}
+
+\end{document}
