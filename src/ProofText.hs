@@ -6,6 +6,7 @@ import Dedukti.AbsDedukti hiding (Tree)
 import Dedukti.PrintDedukti hiding (prt)
 
 import DeduktiOperations
+import DeduktiTheoryAPI (identProof, identElem)
 import BuildConstantTable
 import Environment
 import AnnotateDedukti (annotateDkIdents, subst)
@@ -36,9 +37,22 @@ import qualified Data.Map as M
 proofDemo :: Env -> Module -> Module -> (GUnit -> String) -> String
 proofDemo env base (MJmts proofs) informalize = 
   prLatexFile $ unlines $ intersperse "\n\n" [
-    oneProof env dkmap informalize t e | JThm _ (MTExp t) (MEExp e) <- proofs]
+    oneProof env dkmap informalize t e | (t, e) <- concatMap proved proofs]
  where
    dkmap = identTypes base
+
+   -- a theorem is a proof, and so is a definition whose type is a Proof:
+   -- Dedukti has no separate form for the theorems of a development
+   proved :: Jmt -> [(Exp, Exp)]
+   proved jmt = case jmt of
+     JThm _ (MTExp t) (MEExp e) -> [(t, e)]
+     JDef _ (MTExp t) (MEExp e) | provesAProposition t -> [(t, e)]
+     _ -> []
+
+   provesAProposition t = case snd (splitType t) of
+     e -> case splitApp e of
+       (EIdent f, _:_) -> f == identProof
+       _ -> False
 
 oneProof :: Env -> M.Map QIdent Exp -> (GUnit -> String) -> Exp -> Exp -> String  
 oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" [
@@ -55,7 +69,7 @@ oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" [
     ]
   where
     term = ignoreFirstArguments (dropTable (symbolTable env)) (typeAnnotate dkmap [] typ exp)
-    linesterm = term2lines term
+    linesterm = onlyProofLines (term2lines term)
     
 
 
@@ -176,6 +190,40 @@ subst gamma bs e = case e of
 -----------------------
 -- linear proofs
 ----------------------
+
+-- The steps of a proof are the ones that prove something, together with the
+-- variables it introduces.  A Dedukti proof term also applies its rules to
+-- the propositions and the objects they speak about, and those arguments
+-- become lines of their own, saying no more than "there is a proposition";
+-- they are dropped here, and so are the references to them, which is what
+-- makes the difference between a derivation and a text.
+onlyProofLines :: [Line Exp] -> [Line Exp]
+onlyProofLines lns = [
+  ln{line = new,
+     premisses = [p | q <- premisses ln, isPremiss q, Just p <- [lookup q renumbering]]}
+    | (ln, new) <- zip kept [1 ..]
+  ]
+ where
+   kept = filter keep lns
+   renumbering = zip (map line kept) [1 ..]
+   -- a rule is applied to premisses, not to the variables they speak of
+   isPremiss q = maybe False provesSomething (lookup q byNumber)
+   byNumber = [(line ln, ln) | ln <- lns]
+
+   -- a variable is worth introducing only if a step that survives speaks of
+   -- it; the others are bound inside a proposition that has been dropped
+   keep ln = provesSomething ln || (introducesVariable ln && elem (line ln) cited)
+   cited = concatMap premisses (filter provesSomething lns)
+
+   provesSomething ln = headedBy identProof (formula (step ln))
+   introducesVariable ln =
+     null (premisses ln)
+       && elem (rule (step ln)) (context ln)     -- bound here, not a constant
+       && headedBy identElem (formula (step ln))
+
+   headedBy f e = case splitApp e of
+     (EIdent g, _:_) -> g == f
+     _ -> False
 
 term2lines :: Exp -> [Line Exp]
 term2lines =
