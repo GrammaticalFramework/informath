@@ -615,7 +615,7 @@ showProofDemo :: Env -> Module -> Module -> String
 showProofDemo env base mo = proofDemo env base mo unit2nat
  where
    unit2nat :: GUnit -> String
-   unit2nat u = gftree2nat env (toLang env) (gf (best u))
+   unit2nat u = unlex env (gftree2nat env (toLang env) (gf (best u)))
 
    best u = head [u | GUnitJmt u <- core2ext env (GUnitJmt u)]
 
