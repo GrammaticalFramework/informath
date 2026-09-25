@@ -188,6 +188,7 @@ lin whole_Adj = mkAdj "whole" ;
 lin 'with-respect_Adj' = mkAdj "with-respect" ;  
 lin worth_Adj = mkAdj "worth" ;  
 lin wrong_Adj = mkAdj "wrong" ;  
+lin 'two-sided_Adj' = mkAdj "two-sided" ;  
 lin abbreviation_Noun = mkNoun "abbreviation" ;  
 lin absurdum_Noun = mkNoun "absurdum" ;  
 lin accordance_Noun = mkNoun "accordance" ;  

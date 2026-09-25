@@ -185,6 +185,7 @@ fun whole_Adj : Adj ;
 fun 'with-respect_Adj' : Adj ;  
 fun worth_Adj : Adj ;  
 fun wrong_Adj : Adj ;  
+fun 'two-sided_Adj' : Adj ;  
 fun abbreviation_Noun : Noun ;  
 fun absurdum_Noun : Noun ;  
 fun accordance_Noun : Noun ;  
