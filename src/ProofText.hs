@@ -13,6 +13,7 @@ import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
 import Dedukti2MathCore (exp2prop, hypos2hypos)
+import Utils (latexPreamble, latexEndDoc)
 
 
 import Data.List (intersperse, nub)
@@ -36,8 +37,9 @@ import qualified Data.Map as M
 
 proofDemo :: Env -> Module -> Module -> (GUnit -> String) -> String
 proofDemo env base (MJmts proofs) informalize = 
-  prLatexFile $ unlines $ intersperse "\n\n" [
-    oneProof env dkmap informalize t e | (t, e) <- concatMap proved proofs]
+  prLatexFile (macroCommands (macroTable (symbolTable env))) $
+    unlines $ intersperse "\n\n" [
+      oneProof env dkmap informalize t e | (t, e) <- concatMap proved proofs]
  where
    dkmap = identTypes base
 
@@ -55,18 +57,18 @@ proofDemo env base (MJmts proofs) informalize =
        _ -> False
 
 oneProof :: Env -> M.Map QIdent Exp -> (GUnit -> String) -> Exp -> Exp -> String  
-oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" [
-    "\\subsection*{From term to lines and back}"
-    , "Original proved theorem"
-    , verbatim (printTree typ)
-    , "Original proof exp"
-    , verbatim (printTree exp)
-    , "Generated linear proof"
-    , prls prle linesterm
-    , "Generated linear proof with informalized steps"
+oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" (
+    [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}"
     , prls (prlu lin) (map (line2unitline env dkmap) linesterm)
-    , "\\clearpage"
-    ]
+    ] ++
+    (if isFlag "-proof-terms" env
+       then [ "The proof term"
+            , verbatim (printTree exp)
+            , "The same proof in Dedukti"
+            , prls prle linesterm
+            ]
+       else []) ++
+    ["\\clearpage"])
   where
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
@@ -326,51 +328,47 @@ term2lines =
 -- printing
 -----------------------------
 
+-- a proof is a table of numbered lines: what is claimed, and why
 prls :: (Line a -> [String]) -> [Line a] -> String
 prls pr lns = unlines $
-  "\\[" :
-  "\\begin{array}{llllll}" :
-  [unwords (intersperse "&" (pr ln)) ++ "\\\\" | ln <- lns] ++
-  ["\\end{array}", "\\]"] 
+  "\\begin{tabular}{rp{0.62\\textwidth}l}" :
+  [concat (intersperse " & " (pr ln)) ++ " \\\\" | ln <- lns] ++
+  ["\\end{tabular}"] 
 
 prle :: Line Exp -> [String]
 prle ln
--- object variable assumption: "x : Elem A" on one line
----- TODO isElemType for other types than Exp; should this even be tested here?
-  | null (premisses ln) {- && isElemType (formula (step ln)) -} =  
-      [ concat (intersperse "," (map printTree (context ln))),
-        show (line ln) ++ ".",
-        "\\verb#" ++ printTree (rule (step ln)) ++ " : " ++ printTree (formula (step ln)) ++ "#",
-        "", "", "" ]
+  | null (premisses ln) = [
+      show (line ln) ++ ".",
+      "\\verb#" ++ printTree (rule (step ln)) ++ " : " ++ printTree (formula (step ln)) ++ "#",
+      "" ]
   | otherwise = [
----  concat (replicate (length (context ln)) "\\mid"),
-  concat (intersperse "," (map printTree (context ln))),
-  show (line ln) ++ ".",
-  "\\verb#" ++ printTree (formula (step ln)) ++ "#",
-  printTree (rule (step ln)),
-  concat (intersperse ", " (map show (premisses ln))),
-  let dis = discharged (step ln)
-    in if null dis then "" else "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
-  ]
+      show (line ln) ++ ".",
+      "\\verb#" ++ printTree (formula (step ln)) ++ "#",
+      justification ln
+      ]
   
 prlu :: (GUnit -> String) -> Line GUnit -> [String]
-prlu lin ln
--- object variable assumption: "x : Elem A" on one line
----- TODO isElemType for other types than Exp; should this even be tested here?
-  | null (premisses ln) =
-      [ concat (intersperse "," (map printTree (context ln))),
-        show (line ln) ++ ".",
-        "\\mbox{" ++ lin (formula (step ln)) ++"}",
-        "", "", "" ]
-  | otherwise = [
-      concat (intersperse "," (map printTree (context ln))),
-      show (line ln) ++ ".",
-      "\\mbox{" ++ lin (formula (step ln)) ++"}",
-      printTree (rule (step ln)),
-      concat (intersperse ", " (map show (premisses ln))),
-      let dis = discharged (step ln)
-        in if null dis then "" else "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
+prlu lin ln = [
+  show (line ln) ++ ".",
+  lin (formula (step ln)),
+  justification ln
   ]
+
+-- why the line holds: the rule and the lines it is applied to, and the
+-- hypotheses it closes
+justification :: Line a -> String
+justification ln
+  | null (premisses ln) = ""
+  | otherwise = unwords [
+      texttt (printTree (rule (step ln))),
+      concat (intersperse ", " (map show (premisses ln))),
+      case discharged (step ln) of
+        [] -> ""
+        dis -> "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
+      ]
+
+texttt :: String -> String
+texttt s = "\\texttt{" ++ concatMap (\c -> if c == '_' then "\\_" else [c]) s ++ "}"
   
 
 ---- TODO: pretty-printing on multiple lines
@@ -388,14 +386,32 @@ splitLines ws = case splitAt 10 ws of
   (line, rest@(_:_)) -> unwords line : splitLines rest
   _ -> [unwords ws]
 
-prLatexFile :: String -> String
-prLatexFile string = unlines [
-  "\\documentstyle[proof]{article}",
-  "\\setlength{\\parskip}{2mm}",
-  "\\setlength{\\parindent}{0mm}",
-  "\\newcommand{\\discharge}[2]{\\begin{array}[b]{c} #1 \\\\ #2 \\end{array}}",
-  "\\begin{document}",
-  string,
-  "\\end{document}"
-  ]
+-- a document of the proofs, with the macros their sentences may use
+prLatexFile :: [String] -> String -> String
+prLatexFile macros string = unlines (
+  ["\\documentclass{article}",
+   "\\usepackage{amsfonts}",
+   "\\usepackage{amssymb}",
+   "\\usepackage{amsmath}",
+   "\\usepackage[margin=2cm]{geometry}",  -- a proof line can be long
+   "\\setlength\\parindent{0pt}",
+   "\\setlength\\parskip{8pt}",
+   "\\begin{document}"] ++
+  macros ++
+  [string,
+   "\\end{document}"])
+
+verbatimInline :: String -> String
+verbatimInline s = "\\texttt{" ++ concatMap escape s ++ "}"
+  where
+    escape c = case c of
+      '_' -> "\\_"
+      '&' -> "\\&"
+      '#' -> "\\#"
+      '%' -> "\\%"
+      '$' -> "\\$"
+      '{' -> "\\{"
+      '}' -> "\\}"
+      '\\' -> "\\textbackslash{}"
+      _ -> [c]
 
