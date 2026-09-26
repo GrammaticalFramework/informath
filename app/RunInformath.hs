@@ -140,6 +140,7 @@ helpMsg4 = [
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
   just "-to-lang=<lang>" "linearize to natural language <lang>, default Eng",
   just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",
+  just "-to-symbolic-latex" "convert to standard logical notation in LaTeX, with the symbolic notations of the symbol tables",
   "",
   "* Translating from informal language (line by line):",
   "",

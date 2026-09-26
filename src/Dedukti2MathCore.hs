@@ -168,8 +168,8 @@ funListProp ident exps = case ident of
     (Just (c, _), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
     (Just (c, _), _) | S.member c symbolicCats -> GFormulaProp (funListFormula ident exps)
     _ -> case exps of
-      [] -> GIdentProp (GStrIdent (GString s))
-      _:_ -> GAppProp (GStrIdent (GString s)) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
+      [] -> GIdentProp (ident2ident ident)
+      _:_ -> GAppProp (ident2ident ident) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
       
 funListFormula :: QIdent -> [Exp] -> GFormula
 funListFormula ident exps = case ident of

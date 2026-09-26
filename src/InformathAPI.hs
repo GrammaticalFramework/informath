@@ -82,7 +82,7 @@ readEnv args = do
     reachableFunctions = reachableGFFunctions (backConstantTable symt),
     baseConstantModule = mo,
     formalisms = words "agda dedukti lean rocq",
-    langs = languages gr, ---- | relevantLanguages gr args,
+    langs = filter (/= latexLanguage) (languages gr), ---- | relevantLanguages gr args,
     toLang = mkLanguage gr (argValue "-to-lang" english args),
     toFormalism = argValue "-to-formalism" "NONE" args,
     fromLang = fro,
@@ -92,6 +92,11 @@ readEnv args = do
     samplingFactor = read (argValue "-sampling" "2" args), 
     morpho = buildMorpho gr fro
     }
+
+-- | The symbolic LaTeX concrete syntax, which is not a natural language:
+-- it linearizes only MathCore, and is used with -to-symbolic-latex.
+latexLanguage :: Language
+latexLanguage = mkCId (informathPrefix ++ "Latex")
 
 -- | direct access to parts of the symbol table
 
@@ -350,10 +355,18 @@ printGenResult :: Env -> GenResult -> [String]
 printGenResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
     [printFormalismJmt env (toFormalism env) (originalDedukti result)]
+  _ | isFlag "-to-symbolic-latex" env -> printSymbolicLatex env result
   _ | isFlag "-json" env || any (flip isFlag env) ["-v", "-vs"] -> [showJsonGenResult env result]
   _ | isFlag "-parallel-data" env -> [showParallelData env result] 
   _ -> printNLGOutput env result
 
+
+-- | Standard logical notation in LaTeX, linearized directly from MathCore.
+printSymbolicLatex :: Env -> GenResult -> [String]
+printSymbolicLatex env result = vars (nub [
+  unlex env (gftree2nat env (mkLanguage (grammar env) "Latex") tree) | tree <- coreGF result])
+ where
+   vars = if isFlag "-variations" env then id else take 1
 
 -- | Just the final NLG results.
 printNLGOutput :: Env -> GenResult -> [String]

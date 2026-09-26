@@ -66,23 +66,23 @@ rootlink:
 	export INFORMATH_ROOT=$(CURDIR)
 
 multi_grammar:
-	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 my_grammar:
-	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathFre.gf next/InformathCze.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 full_grammar:
-	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 next_grammar:
-	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 all_grammars: english_grammar
-	cd grammars ; "$(GF)" --make --probs=Informath.probs Informath???.gf next/Informath???.gf ; mv Informath.pgf ../share/InformathFull.pgf
+	cd grammars ; "$(GF)" --make --probs=Informath.probs Informath???.gf next/Informath???.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
 
 share/InformathEng.pgf: $(GF_FILES)
-	cd grammars ; "$(GF)" --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
+	cd grammars ; "$(GF)" --make -output-format=haskell -haskell=lexical --haskell=gadt -lexical=Name,Noun,Noun1,Noun2,Noun3,NounC,Fam,Fam2,Adj,Adj2,Adj3,AdjC,AdjE,Fun,Fun2,FunC,Verb,Verb2,VerbC,Label,Compar,Const,Oper,Oper2,Environment,Prep,Dep,Dep2,DepC --probs=Informath.probs InformathEng.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathEng.pgf ; mv Informath.hs ../src
 
 
 Dedukti:
@@ -220,6 +220,11 @@ top100symbolic:
 	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
 	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
+
+top100latex:
+	echo "${lightgreen}## generating 100 theorems in standard logical notation${neutral}"
+	$(RUN) -to-latex-doc -to-symbolic-latex test/top100.dk >out/top100latex.tex
+	cd out ; pdflatex top100latex.tex ; $(OPEN) top100latex.pdf
 
 sets:
 	echo "${lightgreen}# checking some set theory statements and generating LaTeX${neutral}"

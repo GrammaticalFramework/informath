@@ -6,7 +6,7 @@ module AnnotateDedukti where
 import BuildConstantTable
 import Dedukti.AbsDedukti
 import DeduktiOperations
-import CommonConcepts (lookupConstant, symbolicCats, verbalCats)
+import CommonConcepts (lookupConstant, symbolicCats, verbalCats, mainCats)
 import Environment
 
 import PGF hiding (Hypo)
@@ -21,7 +21,7 @@ type DkTree a = Dedukti.AbsDedukti.Tree a
 -- annotate Dk idents with cats and funs ; used only internally
 annotateDkIdents :: Env -> DkTree a -> [DkTree a]
 annotateDkIdents env =
-  if force_symbolic
+  if force_symbolic || symbolic_latex
   then annot []
   else checkSymbolics . annot []
   
@@ -33,6 +33,7 @@ annotateDkIdents env =
   msymbs = ifvar $ argValueMaybeInt "-symbolics" (flags env)
   ifvar mi = if (isFlag "-variations" env) || (isFlag "-more-variants" env) then mi else Just 1
   force_symbolic = isFlag "-force-symbolic" env
+  symbolic_latex = isFlag "-to-symbolic-latex" env
 
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
@@ -57,6 +58,7 @@ annotateDkIdents env =
   tkSymbs = maybe id take msymbs
 
   annotId c = case M.lookup c table of
+    Just entry | symbolic_latex -> symbolicLatexId c entry
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) fpt |
                        let symbs = tkSymbs (symbolics entry),
                        fpt <- symbs ++
@@ -65,6 +67,19 @@ annotateDkIdents env =
 			      else tkSyns (primary entry : synonyms entry)
                        ]
     _ -> [(c, NoProfile)]
+
+  -- in symbolic LaTeX, a constant is shown with its symbolic notation, or
+  -- else with its core function (such as and, forall); failing both, it is
+  -- left as it is, to be shown as \mathrm{c}, with all of its arguments but
+  -- the ones #DROP hides: the verbal entries may leave out arguments that
+  -- their wording implies, which a formula must show
+  symbolicLatexId c entry = case tkSymbs (symbolics entry) of
+    symbs@(_:_) -> [annotIdent c ndrop fpt | fpt <- symbs]
+    _ -> case primary entry of
+      fpt@(_, typ) | S.member (showCId (valCat typ)) mainCats -> [annotIdent c ndrop fpt]
+      _ -> [(c, maybe NoProfile DropProfile (M.lookup c drops))]
+   where
+     ndrop = maybe 0 id (M.lookup c drops)
 
   checkSymbolics :: [DkTree a] -> [DkTree a]
   checkSymbolics ts = [t | t <- ts, not (badSymb t)]

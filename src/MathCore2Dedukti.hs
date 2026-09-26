@@ -382,7 +382,7 @@ kind2ident kind = case kind of
 
 prop2deduktiIdent :: GProp -> QIdent
 prop2deduktiIdent prop = case prop of
-  GIdentProp (GStrIdent (GString s)) -> QIdent s
+  GIdentProp ident -> ident2ident ident
   _ -> QIdent (takeWhile isAlpha (show (gf prop))) ---- TODO
 
 eUndefined :: Exp
