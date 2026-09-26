@@ -215,6 +215,7 @@ sem env t = case t of
   GNotAdjEProp adj exps -> GCoreNotProp (sem env (GAdjECollProp adj exps))
   GNotNoun1Prop adj exp -> GCoreNotProp (sem env (GNoun1Prop adj exp))
   GNotNoun2Prop adj x y -> GCoreNotProp (sem env (GNoun2Prop adj x y))
+  GNotNoun3Prop noun x y z -> GCoreNotProp (sem env (GNoun3Prop noun x y z))
   GNotVerbProp adj exp -> GCoreNotProp (sem env (GVerbProp adj exp))
   GNotVerb2Prop adj x y -> GCoreNotProp (sem env (GVerb2Prop adj x y))
   GNotAdvProp adv exp -> GCoreNotProp (sem env (GAdvProp adv exp))

@@ -103,6 +103,7 @@ funListExp ident exps = case ident of
     (Just ("Name", c), []) -> GNameExp (fgTree c)
     (Just ("Fun", c), [x]) -> GFunExp (fgTree c) (exp2exp x)
     (Just ("Fun2", c), [x, y]) -> GFun2Exp (fgTree c) (exp2exp x) (exp2exp y)
+    (Just ("Fun3", c), [x, y, z]) -> GFun3Exp (fgTree c) (exp2exp x) (exp2exp y) (exp2exp z)
     (Just ("FunC", c), [x, y]) -> GFunCExp (fgTree c) (exp2exp x) (exp2exp y)
     (Just ("Binder", c), [EAbs b y]) -> GBinderExp (fgTree c) (bind2coreIdent b) (exp2exp y) 
     (Just ("Binder1", c), [x, EAbs b y]) -> GBinder1Exp (fgTree c) (exp2kind x) (bind2coreIdent b) (exp2exp y) 
@@ -164,6 +165,9 @@ funListProp ident exps = case ident of
     (Just ("VerbC", c), [x, y]) -> GVerbCProp (fgTree c) x y
     (Just ("Noun1", c), [x]) -> GNoun1Prop (fgTree c) x
     (Just ("Noun2", c), [x, y]) -> GNoun2Prop (fgTree c) x y
+    (Just ("Noun3", c), [x, y, z]) -> GNoun3Prop (fgTree c) x y z
+    (Just ("NegNoun2", c), [x, y]) -> GNegNoun2Prop (fgTree c) x y
+    (Just ("AdjC3", c), [x, y, z]) -> GAdjC3Prop (fgTree c) x y z
     (Just ("NounC", c), [x, y]) -> GNounCProp (fgTree c) x y
     (Just (c, _), _) | S.member c kindCats -> GExistKindProp (funListKind ident exps)
     (Just (c, _), _) | S.member c symbolicCats -> GFormulaProp (funListFormula ident exps)

@@ -24,7 +24,7 @@ oper
   whenever_Subj = mkSubj "whenever" ;
   given_Prep = mkPrep "given" ;
   so_is_Str = "so is" ;
-  exactly_AdN = mkAdN "exactly" ;
+  exactly_AdN = ParadigmsEng.mkAdN "exactly" ;
   oneG_Card = mkCard "1" ;
   twoG_Card = mkCard "2" ;
   threeG_Card = mkCard "3" ;

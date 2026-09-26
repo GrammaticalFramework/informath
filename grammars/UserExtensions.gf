@@ -8,6 +8,7 @@ abstract UserExtensions =
   ProofUnits,
   Mizar,
   MizarWords,
-  GodementSyntax
+  GodementSyntax,
+  GodementExamples
   ;
 

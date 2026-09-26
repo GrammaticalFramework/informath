@@ -116,6 +116,9 @@ inSituResults t = case t of
   GAdj3Prop _ _ _ _ -> storageResults t
   GVerb2Prop _ _ _ -> storageResults t
   GNoun2Prop _ _ _ -> storageResults t
+  GNoun3Prop _ _ _ _ -> storageResults t
+  GNegNoun2Prop _ _ _ -> storageResults t
+  GAdjC3Prop _ _ _ _ -> storageResults t
   GAdv2Prop _ _ _ -> storageResults t
   GVerbProp _ _ -> storageResults t
   GNoun1Prop _ _ -> storageResults t

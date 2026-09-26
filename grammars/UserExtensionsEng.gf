@@ -8,5 +8,6 @@ concrete UserExtensionsEng of UserExtensions =
   ProofUnitsEng,
   MizarEng,
   MizarWordsEng,
-  GodementSyntaxEng
+  GodementSyntaxEng,
+  GodementExamplesEng
   ;

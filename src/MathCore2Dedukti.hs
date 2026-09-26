@@ -187,6 +187,12 @@ prop2dedukti prop = case prop of
     EApp (EIdent (QIdent (showGF noun))) (exp2dedukti exp)
   GNoun2Prop noun x y ->
     EApp (EApp (EIdent (QIdent (showGF noun))) (exp2dedukti x)) (exp2dedukti y)
+  GNoun3Prop noun x y z ->
+    foldl EApp (EIdent (QIdent (showGF noun))) (map exp2dedukti [x, y, z])
+  GNegNoun2Prop noun x y ->
+    foldl EApp (EIdent (QIdent (showGF noun))) (map exp2dedukti [x, y])
+  GAdjC3Prop adj x y z ->
+    foldl EApp (EIdent (QIdent (showGF adj))) (map exp2dedukti [x, y, z])
   GNounCProp noun x y ->
     EApp (EApp (EIdent (QIdent (showGF noun))) (exp2dedukti x)) (exp2dedukti y)
     
@@ -279,6 +285,7 @@ exp2dedukti exp = case exp of
   GFunExp f x -> appIdent (showGF f) (map exp2dedukti [x])
 
   GFun2Exp f x y -> appIdent (showGF f) (map exp2dedukti [x, y])
+  GFun3Exp f x y z -> appIdent (showGF f) (map exp2dedukti [x, y, z])
   GFunCExp f x y -> appIdent (showGF f) (map exp2dedukti [x, y])
 
   GBinderExp f i x -> appIdent (showGF f) [EAbs (BVar (ident2ident i)) (exp2dedukti x)]

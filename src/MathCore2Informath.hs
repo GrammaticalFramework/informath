@@ -373,6 +373,7 @@ negated t = case t of
   GCoreNotProp (GAdjEProp adj x y) -> GNotAdjEProp adj (GListExp [x, y])
   GCoreNotProp (GNoun1Prop adj x) -> GNotNoun1Prop adj x
   GCoreNotProp (GNoun2Prop adj x y) -> GNotNoun2Prop adj x y
+  GCoreNotProp (GNoun3Prop noun x y z) -> GNotNoun3Prop noun x y z
   GCoreNotProp (GVerbProp adj x) -> GNotVerbProp adj x
   GCoreNotProp (GVerb2Prop adj x y) -> GNotVerb2Prop adj x y
   GCoreNotProp (GAdvProp adv x) -> GNotAdvProp adv x
