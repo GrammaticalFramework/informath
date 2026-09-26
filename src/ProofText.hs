@@ -59,13 +59,13 @@ proofDemo env base (MJmts proofs) informalize =
 oneProof :: Env -> M.Map QIdent Exp -> (GUnit -> String) -> Exp -> Exp -> String  
 oneProof env dkmap lin typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}"
-    , prls (prlu lin) (map (line2unitline env dkmap) linesterm)
+    , prls (prlu lin) (compressVarsHypos (map (line2unitline env dkmap) linesterm))
     ] ++
     (if isFlag "-proof-terms" env
        then [ "The proof term"
             , verbatim (printTree exp)
             , "The same proof in Dedukti"
-            , prls prle linesterm
+            , prls prle (compressVarsLines linesterm)
             ]
        else []) ++
     ["\\clearpage"])
@@ -87,6 +87,54 @@ line2unitline env dkmap line = line {
    fla = head (annotateDkIdents env (formula (step line)))
 
    constant h = maybe False (const True) (M.lookup h dkmap)
+
+-- merge consecutive lines introducing variables of the same kind into one,
+-- "let x, y be A", and renumber the lines and their premisses accordingly;
+-- the first argument recognizes such a line, the second builds the merged one
+compressVars :: Eq k => (Line a -> Maybe ([v], k)) -> ([v] -> k -> Line a -> Line a)
+                     -> [Line a] -> [Line a]
+compressVars varsLine merge = go 0 []
+ where
+  go gaps relines ls = case ls of
+    ln : rest | Just (xs, kind) <- varsLine ln ->
+      let (same, rest') = span (sameKind kind) rest
+          xss = xs ++ concat [ys | Just (ys, _) <- map varsLine same]
+          nln = line ln - gaps
+          relines' = [(line l, nln) | l <- ln : same] ++ relines
+      in (merge xss kind ln){line = nln} :
+         go (gaps + length same) relines' rest'
+    ln : rest ->
+      let nln = line ln - gaps
+      in ln{line = nln,
+            premisses = nub [maybe p id (lookup p relines) | p <- premisses ln]} :
+         go gaps ((line ln, nln) : relines) rest
+    [] -> []
+
+  sameKind kind ln = case varsLine ln of
+    Just (_, k) -> k == kind
+    _ -> False
+
+compressVarsHypos :: [Line GUnit] -> [Line GUnit]
+compressVarsHypos = compressVars varsHypo merge
+ where
+  varsHypo :: Line GUnit -> Maybe ([GIdent], GKind)
+  varsHypo ln = case formula (step ln) of
+    GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind]) -> Just (xs, kind)
+    _ -> Nothing
+  merge xs kind ln =
+    ln{step = (step ln){formula = GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind])}}
+
+-- in Dedukti, the merged line shows the variables as one label "x, y : A"
+compressVarsLines :: [Line Exp] -> [Line Exp]
+compressVarsLines = compressVars varsLine merge
+ where
+  varsLine ln
+    | null (premisses ln) && elem (rule (step ln)) (context ln)
+        && headedBy identElem (formula (step ln))
+      = Just ([rule (step ln)], formula (step ln))
+    | otherwise = Nothing
+  merge xs _ ln =
+    ln{step = (step ln){rule = QIdent (concat (intersperse ", " [x | QIdent x <- xs]))}}
 
 
 -------------------------------

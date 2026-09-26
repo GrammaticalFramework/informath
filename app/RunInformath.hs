@@ -137,6 +137,7 @@ helpMsg4 = [
   just "-test-ambiguity" "test ambiguity when ranking NLG results (can be very slow)",
   just "-parallel-data" "print complete parallel data in jsonl",
   just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
+  just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
   just "-to-lang=<lang>" "linearize to natural language <lang>, default Eng",
   just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",
   "",
