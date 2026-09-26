@@ -130,6 +130,7 @@ helpMsg4 = [
   just "-nbest=<int>" "show <int> best NLG results, default show all",
   just "-sampling=<int>" "sampling factor of NLG results before ranking, default 2 (take every 2nd)", 
   just "-more-variants" "generate some more NLG variants",
+  just "-force-symbolic" "use maximally symbolic variants, even if this needs verbatim Dedukti constants",
   just "-to-latex-doc" "print valid LaTeX doc with preamble",
   just "-weights=<ints>" "weights of scores, default 1,1,1,1,1,1,1",
   just "-no-ranking" "do not rank the NLG results (which can be expensive)",

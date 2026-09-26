@@ -214,6 +214,13 @@ top100single:
 	cat share/baseconstants.dk test/top100.dk >out/texx.dk
 	dk check out/texx.dk
 
+top100symbolic:
+	echo "${lightgreen}## generating the maximally symbolic verbalizations of 100 theorems${neutral}"
+	$(RUN) -to-latex-doc -to-lang=$(lang) -force-symbolic test/top100.dk >out/top100.tex
+	cd out ; pdflatex top100.tex ; $(OPEN) top100.pdf
+	cat share/baseconstants.dk test/top100.dk >out/texx.dk
+	dk check out/texx.dk
+
 sets:
 	echo "${lightgreen}# checking some set theory statements and generating LaTeX${neutral}"
 	cat share/baseconstants.dk test/sets.dk >out/sexx.dk

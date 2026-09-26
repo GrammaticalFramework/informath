@@ -12,7 +12,7 @@ import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable
 import SpecialConstants
-import Utils (escapeUnderscores)
+import Utils (mkLatexMathIdent)
 
 import Data.Char
 import qualified Data.Set as S
@@ -403,7 +403,11 @@ patt2exp = exp2exp . patt2dexp where
 
 ident2ident :: QIdent -> GIdent
 ident2ident ident = case ident of
-  QIdent s -> GStrIdent (GString (escapeUnderscores s))
+  QIdent s -> GStrIdent (GString (mkLatexMathIdent (stripConstant s)))
+  
+ident2identRaw :: QIdent -> GIdent
+ident2identRaw ident = case ident of
+  QIdent s -> GStrIdent (GString s)
 
 ident2exp :: QIdent -> GExp
 ident2exp ident = case ident of
@@ -416,7 +420,7 @@ ident2label :: QIdent -> GLabel
 ident2label ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Label", c) -> fgTree c
-    _ -> GIdentLabel (ident2ident ident)
+    _ -> GIdentLabel (ident2identRaw ident)
 
 ident2kind :: QIdent -> GKind
 ident2kind ident = case ident of

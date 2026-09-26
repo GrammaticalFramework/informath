@@ -10,7 +10,7 @@ import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable 
 import PGF (showExpr, readExpr, mkApp, mkCId)
-import Utils (unescapeUnderscores)
+import Utils (unLatexMathIdent)
 
 import Data.Char
 import Data.List (intersperse, partition, isInfixOf)
@@ -357,7 +357,7 @@ proofexp2exp proofexp = case proofexp of
 
 ident2ident :: GIdent -> QIdent
 ident2ident ident = case ident of
-  GStrIdent (GString s) -> QIdent (unescapeUnderscores (escapeConstant s))
+  GStrIdent (GString s) -> QIdent (unLatexMathIdent (escapeConstant s))
 
 macro2ident :: GMacro -> QIdent
 macro2ident ident = case ident of

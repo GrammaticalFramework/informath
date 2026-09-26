@@ -84,12 +84,7 @@ line2unitline env dkmap line = line {
    unit = case rule (step line) of
      h | constant h -> GConclusionUnit (exp2prop fla)
      h -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
-   fla = head (annotateDedukti env (formula (step line)))
-
-   annotateDedukti env t = annotateDkIdents msyns msymbs (constantTable (symbolTable env)) M.empty t  -- no dropTable again
-    where
-      msyns = argValueMaybeInt "-synonyms" (flags env)
-      msymbs = argValueMaybeInt "-symbolics" (flags env)
+   fla = head (annotateDkIdents env (formula (step line)))
 
    constant h = maybe False (const True) (M.lookup h dkmap)
 

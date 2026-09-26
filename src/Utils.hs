@@ -1,7 +1,7 @@
 module Utils where
 
 import Data.Char
-import Data.List (sortOn)
+import Data.List (sortOn, isPrefixOf)
 import qualified Data.Set as S
 import qualified Data.Map as M
 import Text.JSON
@@ -88,10 +88,21 @@ transInEnv env trans = chop where
 
 
 -- for generating valid LaTeX
+mkLatexMathIdent :: String -> String
+mkLatexMathIdent s = case s of
+    '\\':_ -> s
+    [_] -> s
+    _ -> "\\mathrm{" ++ escapeUnderscores s ++ "}"
+
 escapeUnderscores :: String -> String
-escapeUnderscores = concat . map (\c -> if c=='_' then "\\_" else [c])
+escapeUnderscores = concatMap (\c -> if c=='_' then "\\_" else [c])
 
 -- for converting back to Dedukti
+unLatexMathIdent :: String -> String
+unLatexMathIdent s = case s of
+  _ | isPrefixOf "\\mathrm{" s -> unescapeUnderscores (drop 7 (init s))
+  _ -> unescapeUnderscores s
+
 unescapeUnderscores :: String -> String
 unescapeUnderscores s = case s of
   '\\':'_':cs -> '_':unescapeUnderscores cs

@@ -7,6 +7,7 @@ import BuildConstantTable
 import Dedukti.AbsDedukti
 import DeduktiOperations
 import CommonConcepts (lookupConstant, symbolicCats, verbalCats)
+import Environment
 
 import PGF hiding (Hypo)
 
@@ -18,16 +19,28 @@ import qualified Data.Set as S
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate Dk idents with cats and funs ; used only internally
-annotateDkIdents :: Maybe Int -> Maybe Int -> ConstantTable -> DropTable -> DkTree a -> [DkTree a]
-annotateDkIdents msyns msymbs table drops =
-                               checkSymbolics .
-                               annot []
+annotateDkIdents :: Env -> DkTree a -> [DkTree a]
+annotateDkIdents env =
+  if force_symbolic
+  then annot []
+  else checkSymbolics . annot []
+  
+
  where
+  table = constantTable (symbolTable env)
+  drops = dropTable (symbolTable env)
+  msyns = ifvar $ argValueMaybeInt "-synonyms" (flags env)
+  msymbs = ifvar $ argValueMaybeInt "-symbolics" (flags env)
+  ifvar mi = if (isFlag "-variations" env) || (isFlag "-more-variants" env) then mi else Just 1
+  force_symbolic = isFlag "-force-symbolic" env
+
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
   annot bounds t = case t of
     EApp fun arg -> case splitApp t of
-      (EIdent c, args) | notElem c bounds -> [appProfile p (foldl EApp (EIdent f) aargs) | (f, p) <- annotId c, aargs <- sequence (map (annot bounds) args)]
+      (EIdent c, args) | notElem c bounds ->
+            [appProfile p (foldl EApp (EIdent f) aargs) |
+                (f, p) <- annotId c, aargs <- sequence (map (annot bounds) args)]
       _ -> [EApp afun aarg | afun <- annot bounds fun, aarg <- annot bounds arg]
     QIdent _ | notElem t bounds -> map fst (annotId t)
     EAbs b exp -> [EAbs b2 exp2 | b2 <- annot bounds b, exp2 <- annot (bind2ident b : bounds) exp]
@@ -45,12 +58,16 @@ annotateDkIdents msyns msymbs table drops =
 
   annotId c = case M.lookup c table of
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) fpt |
-                       fpt <- tkSyns  (primary entry : synonyms entry) ++
-                                tkSymbs (symbolics entry)]
+                       let symbs = tkSymbs (symbolics entry),
+                       fpt <- symbs ++
+		              if not (null symbs) && force_symbolic
+			      then []
+			      else tkSyns (primary entry : synonyms entry)
+                       ]
     _ -> [(c, NoProfile)]
 
   checkSymbolics :: [DkTree a] -> [DkTree a]
-  checkSymbolics ts = [t | t <- ts, not (badSymb t)] ---- null (badSymbolics t)]
+  checkSymbolics ts = [t | t <- ts, not (badSymb t)]
 
   -- bad symbolics are subtrees with symbolic root and at least one verbal subtree
   badSymb :: DkTree a -> Bool
