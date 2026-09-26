@@ -7,6 +7,7 @@ abstract UserExtensions =
   NaturalDeduction,
   ProofUnits,
   Mizar,
-  MizarWords
+  MizarWords,
+  GodementSyntax
   ;
 

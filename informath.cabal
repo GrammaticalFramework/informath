@@ -44,6 +44,7 @@ executable RunInformath
     Dedukti2MathCore
     MathCore2Informath
     Informath2MathCore
+    GodementSemantics
     MathCore2Dedukti
     InformathAPI
     Utils

@@ -273,6 +273,7 @@ processLatexLine :: Env -> String -> ParseResult
 processLatexLine env s =
   let
     trans = isFlag "-translate" env
+    transCore = isFlag "-translate-core" env
     parseonly = isFlag "-parse-only" env
     ls = lextex s
     (ils, tindex) = indexTex ls
@@ -280,6 +281,12 @@ processLatexLine env s =
     (mts, msg) = parseJmt env jmt ils
     ts = maybe [] id mts
     uts = map (unindexGFTree env tindex) ts
+    -- with -translate-core: the line followed by the verbalizations of its MathCore semantics
+    cores = nub [gftree2nat env (toLang env) (gf ct) | ut <- uts, ct <- ext2core env (fg ut)]
+    coreTranslations =
+      if null ts
+      then ["\\textbf{No parse:} " ++ s]
+      else s : ["$\\Rightarrow$ " ++ unlex env c | c <- cores]
   in ParseResult {
     originalLine = s,
     lexedLine = ls,
@@ -299,9 +306,10 @@ processLatexLine env s =
           let fut = tracs env ("FUT.") (fg ut),
           ct <- ext2core env fut
           ],
-    transResults = [
-      unindexString tindex
-        (unlex env (gftree2nat env (toLang env) t)) | t <- ts]
+    transResults =
+      if transCore
+      then coreTranslations
+      else [unindexString tindex (unlex env (gftree2nat env (toLang env) t)) | t <- ts]
     }
 
 
@@ -442,7 +450,7 @@ printParseResult :: Env -> ParseResult -> [String]
 printParseResult env result = case 0 of
   _ | toFormalism env /= "NONE" ->
     [printFormalismJmt env (toFormalism env) jmt | (_,_,_,jmts) <- formalResults result, jmt <- nub jmts]
-  _ | isFlag "-translate" env ->
+  _ | isFlag "-translate" env || isFlag "-translate-core" env ->
     transResults result
   _ | isFlag "-parse-only" env ->
     map (showExpr []) (unindexedResults result)

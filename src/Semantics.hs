@@ -1,6 +1,7 @@
 module Semantics where
 
 import Informath
+import GodementSemantics (numDetPrefix)
 import PGF hiding (Tree)
 
 import qualified Data.Map as M
@@ -105,6 +106,7 @@ storageResults = results . analysedT where
     GAllKindQuant kind -> GCoreAllProp kind (newIdent i)
     GSomeKindQuant kind -> GCoreExistProp kind (newIdent i)
     GIndefKindQuant kind -> GCoreExistProp kind (newIdent i)
+    GNumDetKindQuant det kind -> numDetPrefix det kind (newIdent i)
     _ -> id ---- TODO: other quantifier prefixes
 
 

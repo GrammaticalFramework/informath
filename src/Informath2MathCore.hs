@@ -5,6 +5,7 @@ module Informath2MathCore where
 
 import Semantics (SemDefs, appSemDefs, inSituResults)
 import Informath
+import GodementSemantics (godementExpand, godementSem)
 
 data SEnv = SEnv {varlist :: [String]}
 
@@ -21,7 +22,9 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   xi = GStrIdent (GString x)
   
 semantics :: SemDefs -> GJmt -> [GJmt]
-semantics defs = inSituResults . addCoercions . addParenth . sem initSEnv . removeFonts . appSemDefs defs
+semantics defs =
+  concatMap (inSituResults . addCoercions . addParenth . sem initSEnv . godementSem)
+  . godementExpand . removeFonts . appSemDefs defs
 
 addCoercions :: Tree a -> Tree a
 addCoercions t = case t of

@@ -146,6 +146,7 @@ helpMsg4 = [
   "",
   just "-from-lang=<lang>" "parse from <lang>, default Eng",
   just "-translate" "translate text without parsing parts in $...$",
+  just "-translate-core" "print each line followed by the verbalizations of its MathCore semantics",
   just "-parse-only" "return GF syntax trees, also parsing the parts in $...$",
   just "-include-unreachable" "include trees with functions unreachable from symbol table",
   just "-unknown-words" "show words in text file not in grammar",

@@ -291,6 +291,11 @@ naproche:
 	$(RUN) -translate -to-latex-doc -variations -synonyms=$(synonyms)  -symbolics=$(symbolics) -to-lang=$(lang) test/naproche-zf-set.tex >out/napzf.tex
 	cd out ; pdflatex napzf.tex ; $(OPEN) napzf.pdf
 
+godement_syntax:
+	echo "${lightgreen}## parsing Godement-style sentences and verbalizing their MathCore semantics${neutral}"
+	INFORMATH_ROOT=$(CURDIR) $(RUN) -translate-core -to-latex-doc -add-symboltables=test/godement_syntax.dkgf test/godement_syntax.tex >out/godement_syntax.tex
+	cd out ; pdflatex -interaction=nonstopmode godement_syntax.tex ; $(OPEN) godement_syntax.pdf
+
 interpret_naproche:
 	echo "${lightgreen}## parsing and regenerating a Naproche document going through Dedukti${neutral}"
 	$(RUN) test/naproche-zf-set.tex | grep -v "UN"  | grep ":" >tmp/napzf.dk
