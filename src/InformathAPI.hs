@@ -379,9 +379,17 @@ printSymbolicLatex env result = vars (nub [
 -- | Just the final NLG results.
 printNLGOutput :: Env -> GenResult -> [String]
 printNLGOutput env result = case (lookup (toLang env) (nlgResults result)) of
+  Just phrases | isFlag "-trees" env ->
+    [constant ++ "\t" ++ str ++ "\t" ++ showExpr [] tree | ((tree, str), _) <- phrases]
   Just phrases -> map (snd . fst) phrases
   _ -> error $ "language not available: " ++ (showCId (toLang env)) ++
                ". Available values: " ++ unwords (map showCId (langs env))
+ where
+   -- the name of the Dedukti constant, for -trees
+   constant = case words (printTree (originalDedukti result)) of
+     "def" : c : _ -> c
+     c : _ -> c
+     [] -> ""
 
 showJsonGenResult :: Env -> GenResult -> String
 showJsonGenResult env result = encodeJSON $ mkJSONObject $ [

@@ -3,6 +3,7 @@
 
 module MathCore2Informath where
 
+import GodementNLG (godementVariants)
 import Informath
 import Environment
 import BuildConstantTable (nlgTable)
@@ -15,6 +16,7 @@ type Opts = [String]
 nlg :: Env -> GJmt -> [GJmt] --- Tree a -> [Tree a]
 nlg env tree = case () of
   _ | elem "-mathcore" (flags env) -> [t]
+  _ | isFlag "-godement" env -> godementvariants   -- not sampled: the caller chooses among them
   _  -> sample chosenVariants
   ---- TODO more option combinations
  where
@@ -28,12 +30,14 @@ nlg env tree = case () of
    ncviafts = map negated cviafts  -- better do this at this late stage
    vncviafts = concatMap variations ncviafts
    uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
+   godementvariants = concatMap godementVariants ncviafts
 
    sample ts = [t | (t, i) <- zip ts [0 ..], mod i fact == 0]
    fact = samplingFactor env
-   chosenVariants = if isFlag "-more-variants" env
-     then (concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants])
-     else (concat [ncviafts])
+   chosenVariants = case () of
+     _ | isFlag "-more-variants" env ->
+       concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
+     _ -> ncviafts
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
