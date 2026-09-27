@@ -1,0 +1,824 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usetheme{metropolis}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+
+\definecolor{gfblue}{HTML}{1F4E79}
+\definecolor{codebg}{HTML}{F4F4F2}
+\definecolor{warn}{HTML}{B03A2E}
+\definecolor{good}{HTML}{1E6B3A}
+
+\setbeamercolor{frametitle}{bg=gfblue}
+\setbeamercolor{alerted text}{fg=warn}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{codebg},
+  frame=none,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  xleftmargin=2mm,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ý}{{\'y}}1 {ú}{{\'u}}1
+    {č}{{\v{c}}}1 {ě}{{\v{e}}}1 {ň}{{\v{n}}}1 {ř}{{\v{r}}}1
+    {š}{{\v{s}}}1 {ž}{{\v{z}}}1 {ů}{{\r{u}}}1
+    {å}{{\aa}}1 {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {è}{{\`e}}1 {ê}{{\^e}}1 {ł}{{\l}}1 {ę}{{\k{e}}}1 {ą}{{\k{a}}}1
+    {→}{{$\rightarrow$}}1 {∀}{{$\forall$}}1 {⊢}{{$\vdash$}}1 {∈}{{$\in$}}1
+}
+
+\newcommand{\bad}[1]{\textcolor{warn}{#1}}
+\newcommand{\ok}[1]{\textcolor{good}{#1}}
+\newcommand{\commit}[1]{\texttt{\footnotesize #1}}
+\newcommand{\prompt}[1]{\begin{quote}\small\itshape ``#1''\end{quote}}
+
+% the three standard slides of a task
+\newcommand{\why}{\par\textcolor{gfblue}{\textbf{Why}}\par}
+\newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
+\newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
+
+\title{Twenty-three Commits}
+\subtitle{What Claude Code has contributed to Informath, July--September 2026}
+\author{Aarne Ranta}
+\date{September 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{This talk}
+  \begin{itemize}
+    \item Informath: 899 commits since 2024, almost all by hand.
+    \item \textbf{23} of them are co-authored by Claude (Claude Code, Anthropic's
+          coding agent, working in a terminal in my checkout).
+    \item For each task: \textbf{why} it was needed, the \textbf{prompt and
+          interaction}, and the \textbf{outcome} --- including what is still wrong.
+    \item Sources: \texttt{git log}, the diffs, Claude Code session transcripts
+          (September), session logs that Claude wrote itself (July).
+  \end{itemize}
+
+  \vspace{0.5em}
+  \small
+  These slides were themselves drafted by Claude from those sources ---
+  a 24th task, not committed yet.
+\end{frame}
+
+\begin{frame}{Outline}
+  \small\tableofcontents
+\end{frame}
+
+% =====================================================================
+\section{Informath in five minutes}
+
+\begin{frame}{The problem}
+  Mathematics exists in two registers.
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Formal}
+      \begin{itemize}
+        \item Agda, Rocq, Lean, Dedukti
+        \item machine-checkable
+        \item unreadable to most humans
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{Informal}
+      \begin{itemize}
+        \item English, French, German, Swedish, \dots
+        \item readable
+        \item ambiguous, unverifiable
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  Informath translates between them in all directions:
+  \textbf{informalization} (formal $\to$ informal),
+  \textbf{autoformalization} (informal $\to$ formal),
+  and informal $\to$ informal via the formal.
+\end{frame}
+
+\begin{frame}[fragile]{One statement, many languages}
+\begin{lstlisting}
+Dedukti: prop110 : (a : Elem Int) -> (c : Elem Int) ->
+  Proof (and (odd a) (odd c)) ->
+  Proof (forall Int (b => even (plus (times a b) (times b c)))).
+\end{lstlisting}
+
+\begin{itemize}\footnotesize
+  \item \textbf{En}: Let $a$ and $c$ be integers. Assume that $a$ and $c$ are odd.
+        Then $ab + bc$ is even for all integers $b$.
+  \item \textbf{Fr}: Soient $a$ et $c$ des entiers. Supposons que $a$ et $c$ sont impairs.
+        Alors $ab+bc$ est pair pour tous les entiers $b$.
+  \item \textbf{Sv}: Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda.
+        Då är $ab + bc$ jämnt för alla heltal $b$.
+\end{itemize}
+
+\footnotesize All generated from the Dedukti source, and Agda, Rocq and Lean as well.
+\end{frame}
+
+\begin{frame}{Architecture}
+  \begin{center}
+  \begin{tabular}{c}
+    \textbf{Dedukti} --- the semantic core \\
+    $\updownarrow$ \\
+    \textbf{MathCore} --- abstract syntax close to the logic \\
+    $\updownarrow$ \quad (semantics / NLG in Haskell) \\
+    \textbf{Informath} --- variation, synonyms, symbolic vs.\ verbal \\
+    $\updownarrow$ \quad (GF concrete syntaxes, using the RGL) \\
+    \textbf{Eng \quad Fre \quad Ger \quad Swe} \quad (+ Latex, + experimental Fin Cze Pol) \\
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5em}
+  \begin{itemize}\small
+    \item GF: Grammatical Framework; RGL: its Resource Grammar Library (40+ languages).
+    \item The grammar is split into a language-independent \emph{functor}
+          and small per-language modules of words and function words.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Symbol tables: from constants to words}
+  Each Dedukti constant gets a wording and/or a notation, given \emph{by example}:
+\begin{lstlisting}
+isGroup     : "#1 is a group"
+isSubgroup  : "#1 is a subgroup of #2"
+inv         : "the inverse of #2" | $#2^{-1}$
+cosetRel    : "#3 is congruent to #4 modulo #2"
+\end{lstlisting}
+  \begin{itemize}\small
+    \item The example is \emph{parsed} with the grammar into a lexical tree
+          (\texttt{NounPrepNoun2 subgroup\_Noun of\_Prep}), which then
+          works in any statement, in any language.
+    \item \texttt{\$...\$} forms become LaTeX macros.
+    \item Only shapes the grammar can parse are allowed --- a recurring theme today.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{How Claude worked}
+  \begin{itemize}
+    \item Claude Code runs in a terminal, reads and edits the files, runs
+          \texttt{gf}, \texttt{stack}, \texttt{RunInformath}, \texttt{pdflatex}.
+    \item I give short prompts in English; Claude plans, works, reports.
+    \item Commits only when asked; I push myself.
+    \item It can spawn \emph{subagents} for parallel subtasks (e.g.\ batches of words).
+    \item Remembers preferences across sessions in a small memory file,
+          e.g.\ ``prefer symbolic expressions''.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The 23 commits as 11 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    1 & Finnish words and function words & 10 July & 2 \\
+    2 & A Czech grammar & 10, 16 July & 4 \\
+    3 & A Polish grammar & 16 July & 2 \\
+    4 & Completing the French Wikidata lexicon & 22 July & 1 \\
+    \midrule
+    5 & Words for the Godement formalization & 24--25 Sept & 5 \\
+    6 & Clash-free macro names & 24 Sept & 1 \\
+    7 & Proof texts & 25 Sept & 4 \\
+    8 & Compressing hypotheses in proof texts & 26 Sept & 1 \\
+    9 & Formulas in standard logical notation & 26 Sept & 1 \\
+    10 & GodementSyntax: the language of definitions and theorems & 26 Sept & 1 \\
+    11 & GodementExamples: richer symbol tables & 26 Sept & 1 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  Part I: new languages. \quad Part II: formalizing Godement's \emph{Algebra}.
+\end{frame}
+
+% =====================================================================
+\section{Part I: New languages}
+
+\begin{frame}{Task 1: Finnish --- why}
+  \begin{itemize}
+    \item A Finnish grammar existed as a \emph{compilable template},
+          made by copying Swedish and English.
+    \item It said \texttt{linking ... OK} --- and it said
+          \texttt{then\_Adv = mkAdv "så"}.
+    \item \texttt{VerbalConstantsFin}: an English copy with two Finnish words.
+    \item \texttt{WikidataWordsFin} (2000+ terms) was a byte-identical copy
+          of English and did not compile, so it was commented out:
+  \end{itemize}
+  \begin{quote}\small
+    a grammar that ``worked'' by excluding 2000 of its 2100 words.
+  \end{quote}
+  \begin{itemize}
+    \item The question: can an LLM complete a GF grammar for a language
+          it knows well, given the RGL?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 1: Finnish --- prompt and interaction}
+  \small Goal given (as recorded in Claude's session log):
+  \prompt{Complete the Finnish concrete grammars by replacing placeholder
+    (mostly Swedish / English-copy) content with proper Finnish mathematical
+    vocabulary.}
+  \begin{itemize}
+    \item The prompts themselves were not saved; this was the first experiment.
+    \item Three layers: $\sim$23 function words, $\sim$120 core math words,
+          2051 Wikidata terms.
+    \item The Wikidata terms went to \textbf{7 parallel subagents}, each returning
+          an English--Finnish table; a Python script generated GF.
+    \item Claude found why the lexicon did not compile, and dropped the dependency
+          on the Finnish dictionary: Finnish \emph{smart paradigms} suffice.
+    \item My interventions: asking about prepositions; not accepting
+          \texttt{linking ... OK} as proof of correctness.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 1: Finnish --- outcome}
+  \commit{9ac0431}, \commit{ab82b63} (10 July)
+  \begin{itemize}
+    \item 2051 entries: 1216 nouns, 749 adjectives, 86 verbs; all enabled; links.
+    \item \ok{\emph{lyhde}} (sheaf), \ok{\emph{ydin}} (kernel), \ok{\emph{jaoton}} (prime);
+          \emph{olkoon $x$ ryhmä}; \texttt{mkNoun "rengas"} gives
+          \emph{kaikille renkaille $R$} with consonant gradation for free.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Five prepositions are loose words (\texttt{mkPrep "yli"}) where Finnish uses cases:
+          ``They compile. They read acceptably. They are not right.''
+    \item Invented terms: \bad{quiver $\to$ \emph{nuolikko}}; capitalized
+          \emph{Abelin} next to \emph{abelin}; 33 orphans, 15 duplicates inherited from English.
+    \item No native review yet; moved to \texttt{grammars/next/}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 2: Czech --- why}
+  \begin{itemize}
+    \item Czech: a new Informath language, and a test of a \emph{weak} RGL.
+    \item The template was Swedish down to the morphology:
+          \texttt{mkN "typ" "typer"}.
+    \item The Czech RGL was a stub: \texttt{SentenceCze} had 4 rules,
+          no \texttt{mkV}, no \texttt{V3}; missing rules crashed only late:
+          \texttt{NOT YET IMPLEMENTED: ComplVS}.
+    \item Informath's functor calls the RGL by qualified names, so the gaps
+          could not be worked around inside Informath.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 2: Czech --- prompt and interaction}
+  \prompt{Make \texttt{InformathCze.gf} compile, link, and produce Czech.}
+  \begin{itemize}
+    \item A loop: crash, write the missing RGL rule, rebuild the library ---
+          about 20 times. ``Tirelessly.''
+    \item Half of the session was spent in the RGL (commits there too).
+    \item 2003 terms by \textbf{8 subagents}, with French and German as hints.
+    \item Asked to audit itself, Claude re-implemented the RGL's paradigm
+          selector in Python and compared: \bad{225 of 1177 nouns (19\%)}
+          fell back to a wrong declension --- two RGL bugs, affecting every Czech grammar.
+    \item A human question: ``is that actually an imperative?''
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 2: Czech --- outcome}
+  \commit{e81159b}, \commit{f756218} (10 July), \commit{114fbd4}, \commit{ab7e423} (16 July)
+  \begin{itemize}\small
+    \item InformathCze compiles and links; its own verb conjugator for
+          \emph{-ovat, -at, -it/-et/-ět}.
+    \item 2003 terms, nouns with nominative, genitive and gender; wrong
+          fallbacks from 225 to 1 after 7 new paradigms.
+    \item 789 words in Godement's register; three-place verbs after an RGL fix.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item \bad{\emph{existuje matice M, takový, že}} --- should be \emph{taková}:
+          ``such that'' cannot agree in gender.
+    \item Multi-word nouns decline only the head; ``imperatives'' are present tense.
+    \item UserExtensionsCze still disabled; $\sim$1500 terms unreviewed.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 3: Polish --- why}
+  \begin{itemize}
+    \item The second Slavic language, now with Czech as the model.
+    \item The Polish RGL was in good shape (only 6 missing rules) ---
+          the problem turned out to be \emph{nouns}.
+    \item A test of whether the lessons of Czech generalize.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 3: Polish --- prompt and interaction}
+  \prompt{Create the Polish concrete syntax modules, following the Cze
+    structure, so that InformathPol.gf compiles.}
+  and then, on request, Mizar words and user extensions.
+  \begin{itemize}\small
+    \item Three dead ends with nouns:
+      \begin{itemize}\footnotesize
+        \item \texttt{mkN} guessed \bad{\emph{zbióra, elementowie, przypadeka}};
+        \item the two-argument \texttt{mkN} dropped the genitive; fixing it gave
+              \bad{\emph{liczbaa}} --- reverted and documented;
+        \item the 1057 SGJP tables bake in an example word:
+              \emph{samolot} turns \emph{wektor} into \bad{\emph{wektot}}.
+      \end{itemize}
+    \item So Claude wrote its own declensions, taking the stem from the genitive.
+    \item 12 subagents; they \emph{refused} to fake genitives for adjectival nouns,
+          which led to a new paradigm.
+    \item Random generation found \bad{\emph{dla wszystkich płytki}}; a test of
+          \texttt{meet\_Verb2} found a word-order bug in the RGL.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 3: Polish --- outcome}
+  \commit{6ee105f}, \commit{c735985} (16 July)
+  \begin{itemize}\small
+    \item InformathPol links: 2003 terms, 0 rejects;
+          \ok{\emph{niech $x$ będzie grupą}}.
+    \item Mizar words reuse Wikidata terms where the sense matches:
+          \emph{pole relacji}, not \emph{ciało}.
+    \item The session log ends with six lessons ``for the next language''.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item \bad{\emph{istnieje macierz M, taki, że}} --- the same agreement problem as Czech.
+    \item \bad{\emph{koł}} for \emph{kół}; weak terms (\emph{pushforwardowy}).
+    \item Needs a hand-compiled \texttt{MarkupPol}: \texttt{make next\_grammar} fails
+          on a fresh machine.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 4: French Wikidata --- why and interaction}
+  \why
+  \begin{itemize}\small
+    \item French was an official language, but \texttt{WikidataWordsFre} was
+          hand-curated: 537 of 2003 terms, no verbs.
+  \end{itemize}
+  \how
+  \prompt{Complete \texttt{WikidataWordsFre.gf} so that every abstract
+    WikidataWords fun has a French linearization.}
+  \begin{itemize}\small
+    \item A diff: 1481 missing (1008 nouns, 387 adjectives, 86 verbs).
+    \item \textbf{15 parallel agents}, $\sim$100 terms each; 15 name collisions dropped.
+    \item A second pass on multi-word plurals: \emph{trous spectraux},
+          \emph{chemins de fer}.
+    \item One smooth session.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Task 4: French Wikidata --- outcome}
+  \commit{9699638} (22 July): 2003/2003 terms, compiles.
+\begin{lstlisting}
+lin close_Verb = mkVerb (mkV "fermer") ; ---Claude
+\end{lstlisting}
+  \begin{itemize}\small
+    \item Every new line is marked \texttt{-{}-{}-Claude} (1466 of them):
+          \texttt{grep -v} gives a lexicon without them until they are checked.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Uncertain senses: \emph{stack} $\to$ \emph{champ}, \emph{net} $\to$ \emph{filet},
+          \bad{\emph{quiver} $\to$ \emph{carquois}} (a quiver for arrows).
+    \item $\sim$21 invariant multi-word adjectives; source typos carried over
+          (\texttt{minmum\_Noun}).
+    \item All unreviewed. Next candidates: German ($\sim$1650 missing),
+          Swedish ($\sim$1850).
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part II: Godement's \emph{Algebra}}
+
+\begin{frame}{The Godement project}
+  \begin{itemize}
+    \item Roger Godement, \emph{Algebra} (1968): a classic textbook,
+          Part I (sets) and Part II (groups, rings, modules, linear algebra).
+    \item Since 18 September, a companion repository \texttt{godement-index}:
+      \begin{itemize}\small
+        \item the whole book as a UD treebank: 10\,413 sentences;
+        \item a Dedukti formalization of Part I and §§ 6--24, with Claude,
+              each constant linked to Godement's own sentence;
+        \item symbol tables, English readings, formulas, and an HTML index.
+      \end{itemize}
+    \item The Informath commits of Part II were \emph{needed by} this work:
+          missing words, bugs found, new outputs, new grammar.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 5: Words for Godement --- why and interaction}
+  \why
+  \begin{itemize}\small
+    \item Every symbol-table entry must parse. Godement's wordings needed words
+          the lexicon lacked: ``$R$ is \emph{undecidable}'', ``$X$ is
+          \emph{equipotent} to $Y$'', ``a \emph{two-sided} ideal'',
+          ``a \emph{Cramer} system''.
+  \end{itemize}
+  \how
+  \prompt{let us continue from PARTI-FORMALIZATION.md to complete the Godement
+    book till the end of chapter 5}
+  \begin{itemize}\small
+    \item Claude added a word whenever a table entry failed to parse, and
+          committed it with the formalization (\emph{``make a commit if ready for it; I will push''}).
+    \item It deliberately did \emph{not} add \texttt{countable\_Adj}: already in
+          WikidataWords, and a second declaration breaks the build.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Task 5: Words for Godement --- outcome}
+  \commit{583e0e5}, \commit{a4427ce} (24 Sept), \commit{bc4d431}, \commit{00c01cb},
+  \commit{6509853} (25 Sept)
+\begin{lstlisting}
+fun 'two-sided_Adj' : Adj ;
+lin 'two-sided_Adj' = mkAdj "two-sided" ;
+\end{lstlisting}
+  \begin{itemize}\small
+    \item 9 words: \emph{undecidable, contradictory, equipotent, generate,
+          two-sided, finite-dimensional, alternating, increasing, Cramer}.
+    \item Symbol tables for Part I and §§ 6--24 build.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Words were the easy part: the \emph{shapes} of entries were limited
+          --- no three-place nouns, no ``into'', no negation (see Task 11).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 6: Clash-free macro names --- why}
+  \begin{itemize}
+    \item A LaTeX form \texttt{\$...\$} in a symbol table becomes a macro.
+    \item Its name was the letters of the constant + \texttt{MACRo}:
+          digits and underscores were dropped.
+    \item \texttt{card0}, \texttt{card1}, \texttt{card2} all became
+          \texttt{\textbackslash cardMACRo}; the last definition silently won.
+    \item Nothing warned. The document compiled and said
+      \begin{center}
+        \bad{$2 \cdot x = 2$} \quad for \quad $0 \cdot x = 0$, \qquad
+        \bad{$x^2 = x$} \quad for \quad $x^1 = x$.
+      \end{center}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 6: Clash-free macro names --- prompt and interaction}
+  \begin{itemize}\small
+    \item Found while reading Part I back. First: \emph{``what are you doing?''}
+          and \emph{``I see that it stalls. Can you just jump over that?''}
+    \item Claude proposed two fixes: spell digits as words
+          (\texttt{\textbackslash cardZeroMACRo}), or rename the constants.
+  \end{itemize}
+  \prompt{I know these fixes. They would not solve everything, because there
+    can be names that already contain Zero etc. It would be better to generate
+    all macro names with an algorithm that guarantees uniqueness. For instance,
+    suffixes MACRoA, MACRoB, \dots{} MACRoAA, MACRoAB, \dots}
+  \begin{itemize}\small
+    \item Implemented as a bijective base-26 index over the whole table;
+          \emph{``this sounds good''}.
+    \item Claude corrected its own diagnosis twice after measuring
+          (the stall was one oversized theorem, not the flags).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 6: Clash-free macro names --- outcome}
+  \commit{f445edd} (24 Sept)
+  \begin{center}\small
+  \begin{tabular}{lll}
+    \toprule
+    & \textbf{before} & \textbf{after} \\
+    \midrule
+    macros & \texttt{\textbackslash cardMACRo} (3 constants)
+           & \texttt{\textbackslash cardMACRoY, ...Z, ...AA} \\
+    \texttt{mulCard\_zero} & \bad{$2 \cdot x = 2$} & \ok{$0 \cdot x = 0$} \\
+    \texttt{powCard\_one} & \bad{$x^2 = x$} & \ok{$x^1 = x$} \\
+    \texttt{projections} & \bad{$\mathrm{pr}_2(x,y) = x$} & \ok{$\mathrm{pr}_1(x,y) = x$} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Names depend on position: adding a LaTeX form renames later macros,
+          so derived files must be rebuilt together.
+    \item Informath has no regression test suite; checking is by comparing outputs.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 7: Proof texts --- why}
+  \begin{itemize}
+    \item Godement's theorems now had real Dedukti \emph{proofs} (§ 6 onwards).
+    \item Informath could print a proof as numbered lines, but:
+      \begin{itemize}\small
+        \item every argument of a rule became a line, mostly
+              ``there is a proposition'': § 6 Theorem 1 gave 46 lines, 14 of them steps;
+        \item the output was a LaTeX 2.09 demo (\texttt{\textbackslash documentstyle})
+              that did not compile;
+        \item lines were raw token lists: \texttt{\$ y \$ is equal to \$ x \$ .}
+      \end{itemize}
+    \item Goal: proofs that a mathematician can read, as PDF.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 7: Proof texts --- prompt and interaction}
+  \begin{itemize}
+    \item No transcript survives for this day; the story is in four commits
+          made within half an hour:
+      \begin{enumerate}\small
+        \item show the steps, not the arguments (a heuristic filter);
+        \item replace the heuristic by \emph{profiles}:
+              \texttt{\#SHOW forallE [3,4]} in the symbol table, or read the
+              premisses off the rule's type;
+        \item a document that can be read and compiled;
+        \item unlex the lines.
+      \end{enumerate}
+    \item Each was committed together with the regenerated proofs in
+          \texttt{godement-index}.
+    \item A slip: commit 2 swept in unrelated files (slides, logs,
+          \texttt{*.gf\textasciitilde} backups).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Task 7: Proof texts --- outcome}
+  \commit{0623e2b}, \commit{dabdd50}, \commit{d183036}, \commit{2ef5f55} (25 Sept)
+\begin{lstlisting}
+5. Assume that x is equal to y.
+6. Assume that y is equal to z.
+7. x is equal to y and y is equal to z.        andI 5, 6
+8. x is equal to z.                            ifE 4, 7
+\end{lstlisting}
+  \begin{itemize}\small
+    \item PDFs of the proofs for §§ 6--10, 12--17, 22 (27 pages for § 6).
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Each proof is headed by its raw Dedukti type, not an English theorem.
+    \item \bad{§ 6 Theorem 1 prints two lines}: the declaration, then its
+          \emph{conclusion} as an assumption; the steps are lost.
+    \item Proof labels leak into formulas (``the value of $f$ at \texttt{hy}'').
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 8: Compressing hypotheses --- why and interaction}
+  \why
+  \begin{itemize}\small
+    \item Every variable had its own line: ``Let $x$ be \dots{} Let $y$ be \dots{}
+          Let $z$ be \dots'' --- long and unlike mathematical prose.
+  \end{itemize}
+  \how
+  \prompt{I want to improve src/ProofText.hs by compressing hypotheses. If
+    there are consecutive proof lines introducing a variable with the same type,
+    they should be compressed to one line using the abstract syntax function
+    GVarsHypo on the list of those variables. The lines should of course be
+    renumbered to reflect this.}
+  \begin{itemize}\small
+    \item Claude also found that the Dedukti table (\texttt{-proof-terms})
+          would no longer match, and that the flag had never been accepted at all.
+    \item \emph{``Do compress the Dedukti table. But where in the code are the wrong
+          variable names created?''} --- diagnosed (beta reduction under the rule's
+          binder), fix proposed, not made.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Task 8: Compressing hypotheses --- outcome}
+  \commit{c391de6} (26 Sept)
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \textbf{Before} (8 lines)
+\begin{lstlisting}
+1. Let x be a mathematical object.
+2. Let y be a mathematical object.
+3. Let z be a mathematical object.
+4. If x is equal to y and ...
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \textbf{After} (6 lines)
+\begin{lstlisting}
+1. Let x, y and z be mathematical
+   objects.
+2. If x = y and y = z, then x = z.
+3. Assume that x = y.
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+  \begin{itemize}\small
+    \item The symbolic $x = y$ came from another change; asked about it:
+          \emph{``Yes, I did want to increase the usage of symbolic expressions
+          instead of verbal ones.''} --- saved as a lasting preference.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Wrong bound-variable names (``for all elements $x$ and $m$ of $\mathbb{N}$'')
+          are still there.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 9: Standard logical notation --- why and interaction}
+  \why
+  \begin{itemize}\small
+    \item Readers want each statement also as a compact formula
+          ($\forall$, $\land$, $\to$, $\vdash$), next to the English.
+    \item Informath had symbolic notations for constants, but not for the logic.
+  \end{itemize}
+  \how
+  \prompt{I would like to have grammars/MathCoreLatex.gf and InformathLatex that
+    generates formulas with standard logical notation and uses the symbolic
+    notations defined in SymbolicConstantsLatex and in .dkgf files. In
+    RunInformath, the flag -to-symbolic-latex should translate Dedukti to this
+    notation. [\dots] Use the precedences in the same way as in TermsLatex.}
+  \begin{itemize}\small
+    \item Claude chose conventions itself and offered to change them: sequents
+          $\Gamma \vdash A$, $:\Leftrightarrow$ for definitions, no proofs shown.
+    \item \emph{``Also update godement-index.html with these formulas.''}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 9: Standard logical notation --- outcome}
+  \commit{f87c660} (26 Sept): three new GF modules, a flag, a Makefile target.
+  \begin{itemize}\small
+    \item English: ``Let $f$ be a function from mathematical objects to mathematical
+          objects. Let $u$ and $v$ be mathematical objects. Assume that $u = v$.
+          Then $f(u) = f(v)$.''
+    \item Formula: \quad $f \in \mathrm{Obj} \to \mathrm{Obj},\ u, v \in \mathrm{Obj},\ u = v
+          \ \vdash\ f(u) = f(v)$
+    \item All 1138 declarations in 5 seconds; a ``Formula'' fold in the index.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Constants without notation print as $\mathrm{isGroup}(g)$.
+    \item Conjunctions nest with explicit brackets: $A \land (B \land (C \land \dots))$.
+    \item Claude's conventions not yet confirmed; long formulas only scroll.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 10: GodementSyntax --- why}
+  \begin{itemize}
+    \item Informath's grammar covers the statements that come \emph{out} of Dedukti.
+    \item Godement \emph{writes} differently. Counted in the 599 formalized sentences
+          (UD trees, regex + dependency patterns):
+  \end{itemize}
+  \begin{center}\footnotesize
+  \begin{tabular}{lrl}
+    \toprule
+    \textbf{Construction} & \textbf{sentences} & \textbf{in the grammar?} \\
+    \midrule
+    ``$x$ is said to be $A$ if \dots'' & 53 & \bad{no} \\
+    ``$x$ is called the $N$ of $y$'' & 65 & \bad{no} \\
+    ``for $x$ to be $A$ it is necessary and sufficient that'' & 24 & \bad{no} \\
+    ``the following conditions are equivalent: a) \dots{} b) \dots'' & 33 & \bad{no} \\
+    ``there exists a unique $x$ such that'' & 22 & \bad{no} \\
+    ``subgroup of $G$ which contains $B$'' (relative clause) & 105 & \bad{no} \\
+    ``if $P$ then $Q$'', ``for all $x$'', ``there exists'' & 180+ & \ok{yes} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Task 10: GodementSyntax --- prompt and interaction}
+  \prompt{Let us investigate the linguistic structures used in definitions and
+    theorem statements in Godement. [\dots] Can you make a list of the structures
+    of statements in Godement by using the Informath categories Prop, Kind, Exp,
+    Adj, etc? [\dots] Do not try to run GF in parsing mode yet, because it can be slow.}
+  \prompt{Excellent! Can you suggest GF abstract syntax functions,
+    linearizations using RGL, and mappings to MathCore}
+  \prompt{You can add GodementSyntax to UserExtensions and a test case [\dots]
+    and a Makefile entry for godement\_syntax that produces a pdf and opens it.}
+  \begin{itemize}\small
+    \item Parsing real sentences revealed what linearizing did not:
+          \texttt{\$...\$} is indexed before parsing, a hidden argument crashes the
+          parser, a comma too many blocks a parse.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 10: GodementSyntax --- outcome}
+  \commit{865eae0} (26 Sept): about 50 functions; semantics in Haskell;
+  a flag \texttt{-translate-core}; \texttt{make godement\_syntax} $\to$ PDF.
+  \begin{itemize}\small
+    \item \emph{For an element $x$ of $G$ to be reflexible, it is necessary and
+          sufficient that $x$ has a left reflection.}\\
+          $\Rightarrow$ for all elements $x$ of $G$, ($x$ is reflexible, if and only if
+          there is a left reflection of $x$).
+    \item \emph{There exists a unique element $x$ of $G$ such that $x$ is invertible.}\\
+          $\Rightarrow$ there exists $x$ \dots{} and for all $y$ \dots, if $y$ is
+          invertible, then $y = x$.
+    \item 38 of 38 test sentences parse; no regressions on the old tests.
+  \end{itemize}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item Ambiguity: several readings per sentence; ugly fresh variables \texttt{\_g0}.
+    \item English only; ``$x$ is a $K$'' has no Dedukti translation when $K$ is a type.
+    \item Not yet run on Godement's actual 10\,413 sentences.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 11: GodementExamples --- why}
+  \begin{itemize}
+    \item Symbol tables speak Godement only as far as \texttt{Examples.gf} lets them.
+    \item The formalization notes (written with Claude) listed the gaps:
+      \begin{itemize}\small
+        \item no three-place noun: ``a homomorphism of $G$ into $H$'' became
+              \bad{``$f$ is a homomorphism''};
+        \item no ``into'', ``onto'', ``generated by'';
+        \item no negation: ``$x$ is not an element of $y$'';
+        \item ``zero'' and ``one'' but no ``two''.
+      \end{itemize}
+    \item 216 table entries showed fewer arguments than their constants had.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 11: GodementExamples --- prompt and interaction}
+  \prompt{We noticed that some syntactic forms that should be usable in .dkgf
+    entries are missing from the grammar. [\dots] I would like to start with a new
+    module GodementExamples [\dots] You can try to rebuild the dkgf files by using
+    these new functions where necessary. If this means that you need some new
+    categories, add them and their application functions also to GodementExamples.}
+  \begin{itemize}\small
+    \item New categories need more than grammar: the Dedukti $\leftrightarrow$ MathCore
+          conversions in Haskell had to learn them.
+    \item Verified by reading chapters back with old and new tables and diffing.
+    \item \emph{``go on''}: a second round of rewordings, and the whole index rebuilt.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 11: GodementExamples --- outcome}
+  \commit{35184d0} (26 Sept): 3 new categories, 5 example forms, 12 prepositions.
+  \begin{center}\small
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{before} & \textbf{after} \\
+    \midrule
+    \texttt{"\#1 is a homomorphism"} & \texttt{"\#1 is a homomorphism of \#2 into \#3"} \\
+    (not worded) & \texttt{"the subgroup of \#1 generated by \#2"} \\
+    \texttt{"the class of \#3 under \#2"} & \texttt{"the class of \#3 modulo \#2 in \#1"} \\
+    \texttt{\$\#1 \textbackslash notin \#2\$} only & \texttt{"\#1 is not an element of \#2"} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \textbf{Remaining problems}
+  \begin{itemize}\small
+    \item ``the set of all subsets of $X$ with $n$ elements'' still does not parse.
+    \item Negated definitions read as tautologies: ``$x \notin y$ if $x \notin y$''.
+    \item The next morning: English readings of §§ 10--24 had never been possible;
+          21 declarations are too big to word in 30 seconds.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Observations and the future}
+
+\begin{frame}{What we observed}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \ok{\textbf{Worked well}}
+      \begin{itemize}\small
+        \item Bulk lexical work with parallel subagents (2000 terms in minutes).
+        \item Tireless crash-driven iteration (Czech RGL).
+        \item Self-audits \emph{when asked}: the Czech paradigm check.
+        \item Grounding claims in measurements and diffs.
+        \item Code in the style of the surrounding code.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \bad{\textbf{Needed a human}}
+      \begin{itemize}\small
+        \item Design decisions: unique macro names, symbolic preference,
+              ``just time out and move on''.
+        \item \texttt{linking ... OK} $\neq$ correct.
+        \item Careless moments: files swept into a commit, an installed binary
+              overwritten mid-comparison.
+        \item Native-speaker judgement: none of the new words is reviewed.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.5em}
+  \centering\small
+  The division of labour: I set direction and judge; Claude explores, builds, measures.
+\end{frame}
+
+\begin{frame}{Speculation: what would be good to do next}
+  \begin{itemize}\small
+    \item \textbf{Review}: native checking of the Finnish, Czech, Polish and French
+          words; gender agreement of ``such that'' in Slavic languages.
+    \item \textbf{Tests}: a regression suite and CI --- today regressions are found
+          by diffing outputs by hand.
+    \item \textbf{Scale}: faster or incremental search for wordings, so that
+          big statements (determinants of order 3) get English too.
+    \item \textbf{Proofs}: repair truncated proofs, English theorem headings,
+          proper bound-variable names.
+    \item \textbf{Coverage}: run GodementSyntax on all 10\,413 sentences and measure
+          how much of the book parses; port it to French, German, Swedish.
+    \item \textbf{Autoformalization}: parse Godement's own text into Dedukti and
+          type-check it against the hand-made formalization.
+    \item \textbf{Hybrid}: an LLM proposes symbol-table entries and grammar rules,
+          the grammar and the type checker verify them.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  Thank you!
+
+  \vspace{1em}
+  \normalsize
+  \texttt{github.com/GrammaticalFramework/informath}
+\end{frame}
+
+\end{document}
