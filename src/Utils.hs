@@ -88,11 +88,32 @@ transInEnv env trans = chop where
 
 
 -- for generating valid LaTeX
+-- the names of Greek letters are shown as the letters (lambda -> \\lambda),
+-- and trailing digits as a subscript (P0 -> P_{0}, lambda1 -> \\lambda_{1}),
+-- as mathematicians write them; other names of several letters are \\mathrm{}
 mkLatexMathIdent :: String -> String
 mkLatexMathIdent s = case s of
     '\\':_ -> s
     [_] -> s
+    _ | Just g <- greekOrLetter base, not (null digits) -> g ++ "_{" ++ digits ++ "}"
+    _ | elem s greekLetters -> "\\" ++ s
     _ -> "\\mathrm{" ++ escapeUnderscores s ++ "}"
+  where
+    (base, digits) = splitDigits s
+    greekOrLetter b = case b of
+      [c] | isAlpha c -> Just [c]
+      _ | elem b greekLetters -> Just ("\\" ++ b)
+      _ -> Nothing
+
+splitDigits :: String -> (String, String)
+splitDigits s = let (ds, rb) = span isDigit (reverse s) in (reverse rb, reverse ds)
+
+greekLetters :: [String]
+greekLetters = [
+  "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa",
+  "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega",
+  "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma", "Upsilon", "Phi", "Psi", "Omega"
+  ]
 
 escapeUnderscores :: String -> String
 escapeUnderscores = concatMap (\c -> if c=='_' then "\\_" else [c])
@@ -101,6 +122,9 @@ escapeUnderscores = concatMap (\c -> if c=='_' then "\\_" else [c])
 unLatexMathIdent :: String -> String
 unLatexMathIdent s = case s of
   _ | isPrefixOf "\\mathrm{" s -> unescapeUnderscores (drop 7 (init s))
+  _ | (b, '_':'{':rest) <- break (=='_') s, not (null rest), last rest == '}',
+      all isDigit (init rest) -> unLatexMathIdent b ++ init rest
+  '\\':g | elem g greekLetters -> g
   _ -> unescapeUnderscores s
 
 unescapeUnderscores :: String -> String

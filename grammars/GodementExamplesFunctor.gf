@@ -52,6 +52,14 @@ lin
   indexed_by_Prep = strPrep "indexed by" ;
   with_respect_to_Prep = strPrep "with respect to" ;
   relative_to_Prep = strPrep "relative to" ;
+  associated_with_Prep = strPrep "associated with" ;
+  joining_Prep = strPrep "joining" ;
+  with_coefficients_in_Prep = strPrep "with coefficients in" ;
+  with_coefficients_Prep = strPrep "with coefficients" ;
+  with_exponents_Prep = strPrep "with exponents" ;
+  with_masses_Prep = strPrep "with masses" ;
+  of_degree_Prep = strPrep "of degree" ;
+  of_order_Prep = strPrep "of order" ;
 
   two_Name = mkName "two" ;
   three_Name = mkName "three" ;

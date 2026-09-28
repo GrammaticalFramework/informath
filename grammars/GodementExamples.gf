@@ -31,6 +31,9 @@ fun
   into_Prep, onto_Prep, and_Prep, as_Prep, among_Prep : Prep ;
   generated_by_Prep, spanned_by_Prep, defined_by_Prep, induced_by_Prep, indexed_by_Prep : Prep ;
   with_respect_to_Prep, relative_to_Prep : Prep ;
+  associated_with_Prep, joining_Prep : Prep ;
+  with_coefficients_in_Prep, with_coefficients_Prep, with_exponents_Prep, with_masses_Prep : Prep ;
+  of_degree_Prep, of_order_Prep : Prep ;
 
 -- numbers used as names
   two_Name, three_Name : Name ;
