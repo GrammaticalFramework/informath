@@ -1,8 +1,8 @@
 prop10 : Proof (even (nd 0)) .
-prop20 : n : Nat -> Proof (even n) -> Proof (odd (vectorPlus n (nd 1))) .
-prop20 : n : Nat -> Proof (even n) -> Proof (odd (plus n (nd 1))) .
-prop30 : n : Nat -> Proof (odd n) -> Proof (even (vectorPlus n (nd 1))) .
-prop30 : n : Nat -> Proof (odd n) -> Proof (even (plus n (nd 1))) .
+prop20 : n : Elem Nat -> Proof (even n) -> Proof (odd (vectorPlus n (nd 1))) .
+prop20 : n : Elem Nat -> Proof (even n) -> Proof (odd (plus n (nd 1))) .
+prop30 : n : Elem Nat -> Proof (odd n) -> Proof (even (vectorPlus n (nd 1))) .
+prop30 : n : Elem Nat -> Proof (odd n) -> Proof (even (plus n (nd 1))) .
 prop40 : Proof (forall Nat (_h0 => or (even _h0) (odd _h0))) .
 prop50 : Proof (forall Nat (n => not (and (even n) (odd n)))) .
 prop60 : Proof (forall Nat (n => equalset (vectorPlus n (nd 0)) n)) .
@@ -11,21 +11,21 @@ prop60 : Proof (forall Nat (n => Eq (vectorPlus n (nd 0)) n)) .
 prop60 : Proof (forall Nat (n => Eq (plus n (nd 0)) n)) .
 prop70 : Proof (odd (nd 1)) .
 prop80 : Proof (even (nd 2)) .
-prop90 : n : Nat -> Proof (if (and (even n) (prime n)) (equalset n (nd 2))) .
-prop90 : n : Nat -> Proof (if (and (even n) (prime n)) (Eq n (nd 2))) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-prop120 : a : Int -> b : Int -> Proof (or (iff (even (cartesian a b)) a) (even b)) .
-prop120 : a : Int -> b : Int -> Proof (iff (even (cartesian a b)) (or (even a) (even b))) .
-prop120 : a : Int -> b : Int -> Proof (iff (even (cartesian a b)) (or a (even b))) .
-prop130 : x : Int -> y : Int -> Proof (if (odd (cartesian x y)) (and (odd x) (odd y))) .
-prop140 : x : Int -> y : Int -> Proof (iff (sameParity x y) (even (vectorPlus x y))) .
-prop140 : x : Int -> y : Int -> Proof (iff (sameParity x y) (even (plus x y))) .
-prop150 : n : Nat -> Proof (even (minus (pow n (nd 3)) n)) .
+prop90 : n : Elem Nat -> Proof (if (and (even n) (prime n)) (equalset n (nd 2))) .
+prop90 : n : Elem Nat -> Proof (if (and (even n) (prime n)) (Eq n (nd 2))) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop120 : a : Elem Int -> b : Elem Int -> Proof (or (iff (even (cartesian a b)) a) (even b)) .
+prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (cartesian a b)) (or (even a) (even b))) .
+prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (cartesian a b)) (or a (even b))) .
+prop130 : x : Elem Int -> y : Elem Int -> Proof (if (odd (cartesian x y)) (and (odd x) (odd y))) .
+prop140 : x : Elem Int -> y : Elem Int -> Proof (iff (sameParity x y) (even (vectorPlus x y))) .
+prop140 : x : Elem Int -> y : Elem Int -> Proof (iff (sameParity x y) (even (plus x y))) .
+prop150 : n : Elem Nat -> Proof (even (minus (pow n (nd 3)) n)) .
 prop170 : Proof (forall Nat (x => not (and (even x) (odd x)))) .

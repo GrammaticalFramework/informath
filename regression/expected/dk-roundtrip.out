@@ -1,24 +1,19 @@
-ill-typed: prop20 : n : Nat -> Proof (even n) -> Proof (odd (vectorPlus n (nd 1))) .
-ill-typed: prop20 : n : Nat -> Proof (even n) -> Proof (odd (plus n (nd 1))) .
-ill-typed: prop30 : n : Nat -> Proof (odd n) -> Proof (even (vectorPlus n (nd 1))) .
-ill-typed: prop30 : n : Nat -> Proof (odd n) -> Proof (even (plus n (nd 1))) .
+ill-typed: prop20 : n : Elem Nat -> Proof (even n) -> Proof (odd (vectorPlus n (nd 1))) .
+ill-typed: prop30 : n : Elem Nat -> Proof (odd n) -> Proof (even (vectorPlus n (nd 1))) .
 ill-typed: prop60 : Proof (forall Nat (n => equalset (vectorPlus n (nd 0)) n)) .
 ill-typed: prop60 : Proof (forall Nat (n => equalset (plus n (nd 0)) n)) .
 ill-typed: prop60 : Proof (forall Nat (n => Eq (vectorPlus n (nd 0)) n)) .
-ill-typed: prop90 : n : Nat -> Proof (if (and (even n) (prime n)) (equalset n (nd 2))) .
-ill-typed: prop90 : n : Nat -> Proof (if (and (even n) (prime n)) (Eq n (nd 2))) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (equalset (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop100 : a : Int -> b : Int -> c : Int -> Proof (Eq (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
-ill-typed: prop120 : a : Int -> b : Int -> Proof (or (iff (even (cartesian a b)) a) (even b)) .
-ill-typed: prop120 : a : Int -> b : Int -> Proof (iff (even (cartesian a b)) (or (even a) (even b))) .
-ill-typed: prop120 : a : Int -> b : Int -> Proof (iff (even (cartesian a b)) (or a (even b))) .
-ill-typed: prop130 : x : Int -> y : Int -> Proof (if (odd (cartesian x y)) (and (odd x) (odd y))) .
-ill-typed: prop140 : x : Int -> y : Int -> Proof (iff (sameParity x y) (even (vectorPlus x y))) .
-ill-typed: prop140 : x : Int -> y : Int -> Proof (iff (sameParity x y) (even (plus x y))) .
-ill-typed: prop150 : n : Nat -> Proof (even (minus (pow n (nd 3)) n)) .
+ill-typed: prop90 : n : Elem Nat -> Proof (if (and (even n) (prime n)) (equalset n (nd 2))) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (equalset (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (vectorPlus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (or (iff (even (cartesian a b)) a) (even b)) .
+ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (cartesian a b)) (or (even a) (even b))) .
+ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (cartesian a b)) (or a (even b))) .
+ill-typed: prop130 : x : Elem Int -> y : Elem Int -> Proof (if (odd (cartesian x y)) (and (odd x) (odd y))) .
+ill-typed: prop140 : x : Elem Int -> y : Elem Int -> Proof (iff (sameParity x y) (even (vectorPlus x y))) .
+ill-typed: prop140 : x : Elem Int -> y : Elem Int -> Proof (iff (sameParity x y) (even (plus x y))) .

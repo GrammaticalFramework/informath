@@ -49,7 +49,7 @@ addCoercions t = case t of
      GProofProp _ -> prop
      _ -> GProofProp prop
    elemKind kind = case kind of
-     GElemKind kind -> kind
+     GElemKind _ -> kind      -- already coerced: semantics may be applied twice
      _ -> GElemKind kind
 
 removeFonts :: Tree a -> Tree a

@@ -22,12 +22,12 @@
   "seconds": 0.1
  },
  "dk-gflean": {
-  "lines": 19,
+  "lines": 7,
   "undefined": 0,
   "seconds": 5.4
  },
  "dk-roundtrip": {
-  "lines": 24,
+  "lines": 19,
   "undefined": 0,
   "seconds": 2.1
  },
@@ -104,7 +104,7 @@
  "gflean-parse": {
   "lines": 19,
   "undefined": 0,
-  "seconds": 5.8
+  "seconds": 5.3
  },
  "godement-syntax": {
   "lines": 138,

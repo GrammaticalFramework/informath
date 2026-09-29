@@ -86,20 +86,22 @@ The expected outputs are the behaviour of commit `7a0a687`, with its known
 problems recorded as the baseline, so that they cannot get worse unnoticed.
 These are the problems:
 
-1. **Dedukti parsed back from English does not type-check.** The parser prints
-   hypotheses as `n : Nat ->` where Dedukti needs `(n : Elem Nat) ->`:
-
-       prop20 : n : Nat -> Proof (even n) -> Proof (odd (plus n (nd 1))) .
-       ERROR: Error while typing 'Nat'. Expected: Type. Inferred: Set
-
-   Only 7 of the 31 readings of the round trip of `exx.dk` pass `dk check`, and
-   none of the 19 readings of the Chartrand et al. examples (`dk-roundtrip`,
-   `dk-gflean`). `make demo` does not show this, as it never checks the parsed
-   Dedukti. Once it is fixed, these cases will report their failure lines as
-   gone.
+1. **Dedukti parsed back from English did not type-check** (fixed after the
+   first run). Hypotheses came out as `n : Nat ->` where Dedukti needs
+   `n : Elem Nat ->`. `addCoercions` in `src/Informath2MathCore.hs` toggled
+   the `Elem` coercion instead of adding it once, and the parser applies the
+   semantics twice (`processLatexLine` gives the core tree to `gjmt2dedukti`,
+   which runs `ext2core` again). With the fix, 12 of the 15 statements of the
+   `exx.dk` round trip have a well-typed reading, against 7 before, and 12 of the
+   19 readings of the Chartrand et al. examples type-check, against none. The
+   rest are spurious readings, see 2, except `prop120` and `prop130`, where
+   "$a b$" is parsed only as the cartesian product `cartesian a b` and not as
+   multiplication, and `prop140`, whose `sameParity` reading does not type-check.
 2. **Spurious readings:** "$n + 1$" is parsed both as `plus` and as
-   `vectorPlus`, whose notation is also `+` (`share/baseconstants.dkgf`). The
-   type check would rule out `vectorPlus`, but see 1.
+   `vectorPlus`, whose notation is also `+` (`share/baseconstants.dkgf`), and
+   "$=$" also as `equalset`. The type check rules them out (`dk-roundtrip`,
+   `dk-gflean`), but `make demo` shows them all; filtering the parser's readings
+   with `dk check` would remove them.
 3. **`make fermat` stops** with *conflicting profile information in "Fermat's
    theorem ."* (XFAIL `fermat`).
 4. **`make bind` stops**: `test/bind.dk` does not parse, *syntax error at line

@@ -1,19 +1,7 @@
-ill-typed: ex : x : Real -> Proof (if (Lt x (nd 0)) (Gt (vectorPlus (pow x (nd 2)) (nd 1)) (nd 0))) .
-ill-typed: ex : x : Real -> Proof (if (Lt x (nd 0)) (Gt (plus (pow x (nd 2)) (nd 1)) (nd 0))) .
-ill-typed: ex : x : Int -> Proof (if (even (minus (times (nd 5) x) (nd 7))) (odd x)) .
-ill-typed: ex : x : Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even x)) .
-ill-typed: ex : x : Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even (vectorPlus (times (nd 9) x) (nd 2)))) .
-ill-typed: ex : x : Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even (plus (times (nd 9) x) (nd 2)))) .
-ill-typed: ex : x : Int -> Proof (if (odd (vectorPlus (times (nd 7) x) (nd 5))) (even x)) .
-ill-typed: ex : x : Int -> Proof (if (odd (plus (times (nd 7) x) (nd 5))) (even x)) .
-ill-typed: ex : n : Int -> Proof (if (even (times (nn 1 (nd 5)) n)) (even (times (nd 9) n))) .
-ill-typed: ex : x : Int -> Proof (if (even (vectorPlus (times (nd 7) x) (nd 4))) (odd (minus (times (nd 3) x) (nn 1 (nd 1))))) .
-ill-typed: ex : x : Int -> Proof (if (even (plus (times (nd 7) x) (nd 4))) (odd (minus (times (nd 3) x) (nn 1 (nd 1))))) .
+ill-typed: ex : x : Elem Real -> Proof (if (Lt x (nd 0)) (Gt (vectorPlus (pow x (nd 2)) (nd 1)) (nd 0))) .
+ill-typed: ex : x : Elem Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even (vectorPlus (times (nd 9) x) (nd 2)))) .
+ill-typed: ex : x : Elem Int -> Proof (if (odd (vectorPlus (times (nd 7) x) (nd 5))) (even x)) .
+ill-typed: ex : x : Elem Int -> Proof (if (even (vectorPlus (times (nd 7) x) (nd 4))) (odd (minus (times (nd 3) x) (nn 1 (nd 1))))) .
 ill-typed: ex : Proof (if (element n Int) (even (minus (pow n (nd 3)) n))) .
-ill-typed: ex : x : Int -> y : Int -> Proof (if (odd (times x y)) (and (odd x) (odd y))) .
-ill-typed: ex : a : Int -> b : Int -> Proof (if (or (even a) (even b)) (even (times a b))) .
-ill-typed: ex : n : Int -> Proof (if (odd (minus (times (nd 3) n) (nd 8))) (odd n)) .
-ill-typed: ex : x : Int -> y : Int -> Proof (if (or (even x) (even y)) (even (times x (pow y (nd 2))))) .
-ill-typed: ex : x : Int -> y : Int -> Proof (if (or x (even y)) (even (times x (pow y (nd 2))))) .
-ill-typed: ex : x : Int -> Proof (if (even (minus (times (nd 7) x) (nd 3))) (odd (vectorPlus (times (nd 3) x) (nd 8)))) .
-ill-typed: ex : x : Int -> Proof (if (even (minus (times (nd 7) x) (nd 3))) (odd (plus (times (nd 3) x) (nd 8)))) .
+ill-typed: ex : x : Elem Int -> y : Elem Int -> Proof (if (or x (even y)) (even (times x (pow y (nd 2))))) .
+ill-typed: ex : x : Elem Int -> Proof (if (even (minus (times (nd 7) x) (nd 3))) (odd (vectorPlus (times (nd 3) x) (nd 8)))) .
