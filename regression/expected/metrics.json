@@ -22,12 +22,12 @@
   "seconds": 0.1
  },
  "dk-gflean": {
-  "lines": 7,
+  "lines": 21,
   "undefined": 0,
-  "seconds": 5.4
+  "seconds": 5.1
  },
  "dk-roundtrip": {
-  "lines": 19,
+  "lines": 37,
   "undefined": 0,
   "seconds": 2.1
  },
@@ -77,9 +77,9 @@
   "seconds": 0.1
  },
  "exx-roundtrip": {
-  "lines": 31,
+  "lines": 51,
   "undefined": 0,
-  "seconds": 1.9
+  "seconds": 1.8
  },
  "exx-roundtrip-failures": {
   "lines": 1,
@@ -102,14 +102,14 @@
   "seconds": 1.2
  },
  "gflean-parse": {
-  "lines": 19,
+  "lines": 33,
   "undefined": 0,
-  "seconds": 5.3
+  "seconds": 5.1
  },
  "godement-syntax": {
-  "lines": 138,
+  "lines": 140,
   "undefined": 0,
-  "seconds": 1.1,
+  "seconds": 1.2,
   "latex_pages": 6,
   "latex_errors": 16
  },
@@ -158,10 +158,10 @@
   "seconds": 1.6
  },
  "naproche-interpret": {
-  "lines": 949,
+  "lines": 2107,
   "undefined": 0,
-  "seconds": 7.9,
-  "latex_pages": 55,
+  "seconds": 8.4,
+  "latex_pages": 130,
   "latex_errors": 0
  },
  "naproche-translate": {

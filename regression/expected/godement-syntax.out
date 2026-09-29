@@ -36,7 +36,11 @@ $G$ and $H$ are said to be isomorphic if $f(G) = H$.
 
 $\Rightarrow$ $G$ and $H$ are isomorphic, if $f (G)= H$.
 
+$\Rightarrow$ $G$ and $H$ are isomorphic, if $f \times G = H$.
+
 $\Rightarrow$ ( $G$ is isomorphic and $H$ is isomorphic) , if $f (G)= H$.
+
+$\Rightarrow$ ( $G$ is isomorphic and $H$ is isomorphic) , if $f \times G = H$.
 
 $x$ is called a unit if $x y = 1$.
 

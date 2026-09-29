@@ -14,7 +14,7 @@ import Dedukti.ParDedukti
 import Dedukti.AbsDedukti
 import Dedukti.ErrM
 import DeduktiOperations
-import ParseInformath (parseJmt, unindexGFTree)
+import ParseInformath (parseJmt, unindexGFTrees)
 import Lexing (lextex, indexTex, unlextex)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
@@ -280,7 +280,9 @@ processLatexLine env s =
     Just jmt = readType "Jmt"
     (mts, msg) = parseJmt env jmt ils
     ts = maybe [] id mts
-    uts = map (unindexGFTree env tindex) ts
+    -- each parse with the trees of its $...$ parts, in all their readings
+    tuts = [(t, ut) | t <- ts, ut <- unindexGFTrees env tindex t]
+    uts = nub (map snd tuts)
     -- with -translate-core: the line followed by the verbalizations of its MathCore semantics
     cores = nub [gftree2nat env (toLang env) (gf ct) | ut <- uts, ct <- ext2core env (fg ut)]
     coreTranslations =
@@ -301,8 +303,7 @@ processLatexLine env s =
       then []
       else [
         (t, ut, gf ct, gjmt2dedukti env ct) |
-          t <- ts,
-          ut <- uts,
+          (t, ut) <- tuts,
           let fut = tracs env ("FUT.") (fg ut),
           ct <- ext2core env fut
           ],

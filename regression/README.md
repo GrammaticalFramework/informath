@@ -94,14 +94,23 @@ These are the problems:
    which runs `ext2core` again). With the fix, 12 of the 15 statements of the
    `exx.dk` round trip have a well-typed reading, against 7 before, and 12 of the
    19 readings of the Chartrand et al. examples type-check, against none. The
-   rest are spurious readings, see 2, except `prop120` and `prop130`, where
-   "$a b$" is parsed only as the cartesian product `cartesian a b` and not as
-   multiplication, and `prop140`, whose `sameParity` reading does not type-check.
+   rest were spurious readings (see 2) and `prop120`, `prop130`, whose
+   "$a \times b$" was read only as the cartesian product.
+   That was fixed next: the formulas in `$...$`, parsed apart from the text,
+   kept only their first parse, which for `\times` was `cartesian`. Now all
+   their readings are kept (at most 50 combinations per sentence), and a
+   grammar symbol like `\times` is no longer accepted as a user macro. Every
+   statement of the `exx.dk` round trip now has its correct reading; the one
+   that `dk-roundtrip` still lists for `prop140` is only ill-typed because
+   `sameParity` is defined in `test/exx.dk` and not in the base constants.
 2. **Spurious readings:** "$n + 1$" is parsed both as `plus` and as
    `vectorPlus`, whose notation is also `+` (`share/baseconstants.dkgf`), and
    "$=$" also as `equalset`. The type check rules them out (`dk-roundtrip`,
-   `dk-gflean`), but `make demo` shows them all; filtering the parser's readings
-   with `dk check` would remove them.
+   `dk-gflean`), but `make demo` shows them all. Since all readings of the
+   formulas are kept, they multiply: `prop100` has 24 readings, of which one
+   type-checks, and the Naproche round trip (`naproche-interpret`) grew from 55
+   to 130 pages. Filtering the parser's readings by type-checking them would
+   remove the spurious ones.
 3. **`make fermat` stops** with *conflicting profile information in "Fermat's
    theorem ."* (XFAIL `fermat`).
 4. **`make bind` stops**: `test/bind.dk` does not parse, *syntax error at line

@@ -9,6 +9,7 @@ import qualified Data.Set as Set
 
 max_number = 1999 -- number of trees considered with checkVariables
 max_number_taken = 19 -- number of trees considered for semantics
+max_number_unindexed = 50 -- number of combinations of parsed $...$ parts considered
 
 -- these are the functions to be exported to other modules
 
@@ -54,21 +55,25 @@ checkVariables :: Env -> Expr -> Bool
 checkVariables env expr = case unApp expr of
   Just (f, [x]) | showCId f == "StrIdent" -> case showExpr [] x of
     c -> trac env "IDENT? " (isIdent (tracs env c (init (tail c))))
-  Just (f, [x]) | showCId f == "StringMacro" -> case showExpr [] x of
-    c -> trac env "MACRO? " (isMacro (tracs env c (init (tail c))))
+  -- a user macro: \name, and not a symbol of the grammar itself such as \times
+  Just (f, [x]) | showCId f == "StringMacro" -> case unStr x of
+    Just m -> trac env "MACRO? " (isMacroName m && null (lookupMorpho (morpho env) m))
+    _ -> False
   Just (_, args) -> all (checkVariables env) args
   _ -> True
  where
   isIdent (c:cs) = isAlpha c && all isAlphaNum cs
-  isMacro s = case s of
-    '\\':'\\':cs -> {- isFlag "-parseusermacros" env && -} all isAlpha cs
+  isMacroName s = case s of
+    '\\':cs@(_:_) -> all isAlpha cs
     _ -> False
 
 
-unindexGFTree :: Env -> [String] -> Expr -> Expr
-unindexGFTree env termindex expr = case unind expr of
-  t:_ -> tracs env ("FOUND " ++ showExpr [] t) t
-  _ -> expr
+-- all the trees obtained by parsing the indexed $...$ parts, in all combinations
+-- (e.g. $a \times b$ as both times and cartesian); the tree itself if none parses
+unindexGFTrees :: Env -> [String] -> Expr -> [Expr]
+unindexGFTrees env termindex expr = case take max_number_unindexed (unind expr) of
+  [] -> [expr]
+  ts -> [tracs env ("FOUND " ++ showExpr [] t) t | t <- ts]
  where
   unind expr = case unApp expr of
     Just (f, [x]) -> case unInt x of
@@ -95,8 +100,12 @@ unindexGFTree env termindex expr = case unind expr of
   mkTyp c = mkType [] (mkCId c) []
 
   parsed c s = case parseJmt env (mkTyp c) s of
-      (Just (t:_), _) -> return (tracs env ("PARSED " ++ showExpr [] t) t) ---- todo: ambiguity if ts
+      (Just ts, _) -> [tracs env ("PARSED " ++ showExpr [] t) t | t <- ts]
       _ -> []
+
+-- the first of them, as before
+unindexGFTree :: Env -> [String] -> Expr -> Expr
+unindexGFTree env termindex = head . unindexGFTrees env termindex
 
 treeLength :: Expr -> Int
 treeLength t = case unApp t of
