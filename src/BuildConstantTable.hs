@@ -207,9 +207,12 @@ buildSymbolTable pgf lang ls = SymbolTable {
                           (entry, [macroName qid i | i <- [n .. n + length latexs - 1]]))
           _ -> (n, (entry, []))
     constantTable = M.fromList [
-        (QIdent qid, mkConstantTableEntry pgf (map (parseFunProfile pgf lang (ifDrop (QIdent qid))) (gfids ++ macros))) |
+        (QIdent qid, mkConstantTableEntry pgf
+           (map (parseFunProfile pgf lang (ifDrop (QIdent qid))) gfids ++
+            [macroProfile (ifDrop (QIdent qid)) latex macro | (latex, macro) <- zip latexs macros])) |
                      (qid:gids@(_:_), macros) <- numberedlines,
-           let gfids = [gid | gid <- gids, head gid /= '$']
+           let gfids = [gid | gid <- gids, head gid /= '$'],
+           let latexs = [gid | gid@('$':_) <- gids]
            ]
     conversionTable = M.fromList [
         (form, M.fromList [(QIdent d, QIdent f) | _:d:f:_ <- fids]) |
@@ -255,13 +258,45 @@ splitNewcommand s = case break (=='{') s of
   _ -> error ("expected valid newcommand, found: " ++ s)
 
 
+-- | The macro of an inline LaTeX form such as $#4 \\circ #5$ takes only the
+-- arguments the form uses, renumbered from #1 in increasing order, so that
+-- the macro of a constant with many arguments (the implicit types of type
+-- theory, say) stays within the four that the grammar can apply a macro to,
+-- and so that arguments the form leaves out are not printed after it.  The
+-- constant gets the matching profile, see macroProfile.
 mkMacro :: String -> String -> (String, (Int, String))
-mkMacro name s = (name, (maximum (0 : args s), init (tail s)))
+mkMacro name s = (name, (length used, renumberLatexArgs used body))
  where
-   args s = case s of
-     '#':c:cs | isDigit c -> read [c] : args cs --- only one-digit arguments
-     _:cs -> args cs
+   body = init (tail s)
+   used = latexArgs body
+
+-- | The distinct arguments #k of a LaTeX form, in increasing order.
+latexArgs :: String -> [Int]
+latexArgs = S.toList . S.fromList . go
+ where
+   go s = case s of
+     '#':c:cs | isDigit c -> read [c] : go cs --- only one-digit arguments
+     _:cs -> go cs
      _ -> []
+
+-- | #k becomes #i where k is the i'th of the used arguments.
+renumberLatexArgs :: [Int] -> String -> String
+renumberLatexArgs used s = case s of
+  '#':c:cs | isDigit c -> '#' : show (position (read [c])) ++ renumberLatexArgs used cs
+  c:cs -> c : renumberLatexArgs used cs
+  [] -> []
+ where
+   position k = length (takeWhile (/= k) used) + 1
+
+-- | The profile of a constant shown by the macro of an inline LaTeX form:
+-- the arguments that the form uses, unless they are all of #1, ..., #n, or
+-- unless a #DROP line already says which arguments to show.
+macroProfile :: Maybe Int -> String -> String -> FunProfile
+macroProfile mdrop latex macro = case mdrop of
+  Just k -> (readGFTree macro, DropProfile k)
+  Nothing -> (readGFTree macro, if null used then NoProfile else PermProfile used)
+ where
+   used = latexArgs (init (tail latex))
 
 -- | The LaTeX name of the i'th macro of the whole symbol table.  A LaTeX
 -- control sequence can only hold letters, so the constant's own name cannot
@@ -294,7 +329,11 @@ mkConstantTableEntry pgf (funp@(fun, _) : funps) = ConstantTableEntry {
  
    funtype _ = inferFunType pgf
 
-   (symbs, syns) = partition (isSymbolic . snd) [(fp, funtype pgf f) | fp@(f,_) <- funps]
+   -- the symbolic forms are the $...$ ones, the first form included; the
+   -- verbal ones are the "..." ones and GF functions, the primary among them
+   symbs = [fpt | fpt <- (funp, funtype pgf fun) : allfuns, isSymbolic (snd fpt)]
+   syns = [fpt | fpt <- allfuns, not (isSymbolic (snd fpt))]
+   allfuns = [(fp, funtype pgf f) | fp@(f,_) <- funps]
    isSymbolic typ = case unType typ of
      (_, cat, _) -> S.member (showCId cat) symbolicCats
 

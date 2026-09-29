@@ -56,5 +56,5 @@ Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Assume th
 
 InvInverse. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Assume that $f$ is bijective. Then $\inv {f}{p}$ is an inverse of $f$.
 
-By cases: \begin{itemize} \item for $X$ and $x$, $\app {X}{X}{\id {X}}{x}$ is $x$. \item for $X$, $Y$, $Z$, $f$, $g$ and $x$, $\app {X}{Z}{\mathrm{comp} (X , Y , Z , g , f)}{x}$ is $\app {g}{(\app {f}{x})}$. \end{itemize}
+By cases: \begin{itemize} \item for $X$ and $x$, $\app {\id {X}}{x}$ is $x$. \item for $X$, $Y$, $Z$, $f$, $g$ and $x$, $\app {(\comp {g}{f})}{x}$ is $\app {g}{(\app {f}{x})}$. \end{itemize}
 \end{document}

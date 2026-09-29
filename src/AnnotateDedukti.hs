@@ -43,6 +43,12 @@ annotateDkIdents env =
             [appProfile p (foldl EApp (EIdent f) aargs) |
                 (f, p) <- annotId c, aargs <- sequence (map (annot bounds) args)]
       _ -> [EApp afun aarg | afun <- annot bounds fun, aarg <- annot bounds arg]
+    -- a pattern in a rewrite rule shows the arguments an expression shows
+    PApp _ _ -> case splitPatt t of
+      (PVar c, args) | notElem c bounds ->
+            [appPattProfile p (foldl PApp (PVar f) aargs) |
+                (f, p) <- annotId c, aargs <- sequence (map (annot bounds) args)]
+      _ -> composOpM (annot bounds) t
     QIdent _ | notElem t bounds -> map fst (annotId t)
     EAbs b exp -> [EAbs b2 exp2 | b2 <- annot bounds b, exp2 <- annot (bind2ident b : bounds) exp]
     EFun h exp -> [EFun h2 exp2 | h2 <- annot bounds h, exp2 <- annot (hypo2topvars h ++ bounds) exp]    

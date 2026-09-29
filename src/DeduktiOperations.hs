@@ -359,11 +359,20 @@ appProfile prof exp = case prof of
   DropProfile int -> case splitApp exp of
     (fun, args) -> foldl EApp fun (drop int args)
   PermProfile ints -> case splitApp exp of
-    (fun, args) -> foldl EApp fun [args !! (i-1) | i <- ints]
+    (fun, args) | all (<= length args) ints -> foldl EApp fun [args !! (i-1) | i <- ints]
+    _ -> exp  -- a partial application keeps all of its arguments
   HoasProfile ints -> case splitApp exp of
     (fun, args) ->
         let xargs = concatMap flattenAbs args
         in foldl EApp fun [xargs !! (i-1) | i <- ints]
+
+-- the same for the left-hand side of a rewrite rule
+appPattProfile :: Profile -> Patt -> Patt
+appPattProfile prof patt = case (prof, splitPatt patt) of
+  (DropProfile int, (fun, args)) -> foldl PApp fun (drop int args)
+  (PermProfile ints, (fun, args)) | all (<= length args) ints ->
+    foldl PApp fun [args !! (i-1) | i <- ints]
+  _ -> patt
 
 -- from GF to Dk
 unappProfile :: Profile -> Exp -> Exp
