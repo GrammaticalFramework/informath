@@ -1,0 +1,110 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\F}[2]{\mathcal{F}(#1, #2)}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\elemFam}[2]{#1_#2}
+\newcommand{\eqq}[2]{#1 = #2}
+\newcommand{\famCup}[2]{\bigcup_{i \in #1} #2_{i}}
+\newcommand{\family}[3]{(#3_{#2})_{#2 \in #1}}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+\newcommand{\toposet}[2]{(#1,\mathcal{#2})}
+Definition. The sets are a basic type.
+
+Definition. A proposition is a set.
+
+Definition. Let $x$ be a set. Then the elements of $x$ are a basic type.
+
+Definition. Let $x$ be a proposition. Then we can say that $x$.
+
+Definition. We can say that we have a contradiction.
+
+Definition. Let $A$ and $B$ be propositions. Then we can say that $A$ and $B$.
+
+Definition. Let $A$ and $B$ be propositions. Then we can say that $A$ or $B$.
+
+Definition. Let $x$ and $y$ be propositions. Then we can say that if $x$, then $y$.
+
+Definition. Let $A$ and $B$ be propositions. Then $A$, if and only if $B$, if if $A$, then $B$ and if $B$, then $A$.
+
+Definition. Let $A$ be a proposition. Then it is not the case that $A$, if if $A$, then we have a contradiction.
+
+Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Then we can say that for all elements $x$ of $A$, $B$.
+
+Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Then we can say that there exists an element $x$ of $A$, such that $B$.
+
+Definition. Let $x$ and $y$ be sets. Then $x \cup y$ is a set.
+
+Definition. Let $x$ and $y$ be sets. Then $x \cap y$ is a set.
+
+Definition. Let $x$ and $y$ be sets. Then $x \setminus y$ is a set.
+
+Definition. Let $x$ be a set. Then $\wp x$ is a set.
+
+Definition. The empty set is a set.
+
+Definition. The universal set is a set.
+
+Definition. Let $x$ and $y$ be sets. Then we can say that $x \subset y$.
+
+Definition. Let $x$ and $y$ be sets. Then we can say that $x \subseteq y$.
+
+Definition. Let $x$ and $y$ be sets. Then we can say that $x = y$.
+
+Definition. Let $A$ be a set. Let $y$ and $z$ be elements of $A$. Then we can say that $\mathrm{Equ}$ holds for $A$, $y$ and $z$.
+
+Definition. Let $x$ and $y$ be sets. Then we can say that $x \in y$.
+
+Definition. Let $X$ be a set. Let $y$ be an element of $X$. Let $z$ be an element of $\wp X$. Then we can say that $y \in z$.
+
+Definition. Let $x$ and $y$ be sets. Then $\F {x}{y}$ is a set.
+
+Definition. Let $X$ and $I$ be sets. Then the elements of $\mathrm{Family}$ applied to $X$ and $I$ are a basic type.
+
+By cases: \begin{itemize} \item for $X$ and $I$, the set of elements of $\mathrm{Family}$ applied to $X$ and $I$ is the set of elements of $\F {I}{(\wp X)}$. \end{itemize}
+
+Definition. Let $X$ and $I$ be sets. Let $U$ be a function from elements $i$ of $I$ to elements of $\wp X$. Then $\family {I}{i}{U}$ is an element of $\mathrm{Family}$ applied to $X$ and $I$.
+
+Definition. Let $X$ and $I$ be sets. Let $U$ be an element of $\mathrm{Family}$ applied to $X$ and $I$. Let $i$ be an element of $I$. Then $\elemFam {U}{i}$ is a set.
+
+Definition. Let $X$ and $I$ be sets. Let $U$ be an element of $\mathrm{Family}$ applied to $X$ and $I$. Then $\famCup {I}{U}$ is a set.
+
+By cases: \begin{itemize} \item for $X$, the set of elements of $\wp X$ is the set of sets. \item for $X$ and $Y$, the set of elements of $\F {X}{Y}$ is the set of functions from elements of $X$ to elements of $Y$. \end{itemize}
+
+Definition. Let $X$ and $T$ be sets. Then $T$ is closed under finite intersection, if for all elements $A$ and $B$ of $\wp X$, if $A \in T$ and $B \in T$, then $A \cap B \in T$.
+
+Definition. Let $X$ and $T$ be sets. Then $T$ is closed under arbitrary union, if for all elements $I$ of $\wp \mathbb{ U}$, for all elements $U$ of $\mathrm{Family}$ applied to $X$ and $I$, if for all elements $i$ of $I$, $\elemFam {U}{i}\in T$, then $\famCup {I}{U}\in T$.
+
+Definition. Let $X$ and $T$ be sets. Then $T$ is a topology, if $\emptyset \in T$, $X \in T$ and $T$ is closed under finite intersection and closed under arbitrary union.
+
+Definition. Let $X$ and $T$ be sets. Then $\toposet {X}{T}$ is a set.
+
+Definition. Let $x$ be a set. Then we can say that $x$ is a topological space.
+
+By cases: \begin{itemize} \item for $X$ and $T$, the proposition that $\toposet {X}{T}$ is a topological space is the proposition that $T$ is a topology. \end{itemize}
+
+Definition. Let $X$ and $T$ be sets. Assume that $\toposet {X}{T}$ is a topological space. Let $U$ be a set. Then $U$ is open, if $U \in T$.
+
+Definition. Let $X$ and $T$ be sets. Assume that $\toposet {X}{T}$ is a topological space. Let $F$ be a set. Then $F$ is close, if $X \setminus F$ is open.
+
+Definition. Let $X$ and $T$ be sets. Assume that $\toposet {X}{T}$ is a topological space. Then $p$ is a Hausdorff space, if for all elements $x$ and $y$ of $X$, if it is not the case that $\mathrm{Equ}$ holds for $X$, $x$ and $y$, then there exist elements $\mathrm{U\_x}$ and $\mathrm{U\_y}$ of $\wp X$, such that $\mathrm{U\_x} \in T$, $\mathrm{U\_y} \in T$, $x \in \mathrm{U\_x}$, $y \in \mathrm{U\_y}$ and $\mathrm{U\_x} \cap \mathrm{U\_y} = \emptyset$.
+
+Definition. Let $X$ and $T$ be sets. Assume that $\toposet {X}{T}$ is a topological space. Let $N$ be an element of $\wp X$. Let $x$ be an element of $X$. Then $N$ is a neighborhood of $x$, if there exists an element $U$ of $\wp X$, such that $U \in T$ and $x \in U \subset N$.
+\end{document}

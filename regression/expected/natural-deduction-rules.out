@@ -1,0 +1,122 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+Definition. The sets are a basic type.
+
+Definition. The propositions are a basic type.
+
+Definition. Let $A$ be a set. Then the elements of $A$ are a basic type.
+
+Definition. Let $A$ be a proposition. Then the elements of $\mathrm{Proof}$ applied to $A$ are a basic type.
+
+Definition. We can say that we have a contradiction.
+
+Definition. Let $A$ and $B$ be propositions. Then we can say that $A$ and $B$.
+
+Definition. Let $A$ and $B$ be propositions. Then we can say that $A$ or $B$.
+
+Definition. Let $A$ and $B$ be propositions. Then we can say that if $A$, then $B$.
+
+Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Then we can say that for all elements $x$ of $A$, $B$.
+
+Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Then we can say that there exists an element $x$ of $A$, such that $B$.
+
+Definition. Let $A$ be a proposition. Then it is not the case that $A$, if if $A$, then we have a contradiction.
+
+Definition. Let $A$ and $B$ be propositions. Then $A$, if and only if $B$, if if $A$, then $B$ and if $B$, then $A$.
+
+FalseE. Let $C$ be a proposition. Assume that we have a contradiction. Then $C$.
+
+AndI. Let $A$ and $B$ be propositions. Assume that $A$. Assume that $B$. Then $A$ and $B$.
+
+AndEl. Let $A$ and $B$ be propositions. Assume that $A$ and $B$. Then $A$.
+
+By cases: \begin{itemize} \item for $A$, $B$ and $a$, $\mathrm{andEl}$ applied to $_$, $_$ and $\mathrm{andI}$ applied to $A$, $B$, $a$ and $_$ is $a$. \end{itemize}
+
+AndEr. Let $A$ and $B$ be propositions. Assume that $A$ and $B$. Then $B$.
+
+By cases: \begin{itemize} \item for $A$, $B$ and $b$, $\mathrm{andEr}$ applied to $_$, $_$ and $\mathrm{andI}$ applied to $A$, $B$, $_$ and $b$ is $b$. \end{itemize}
+
+OrIl. Let $A$ and $B$ be propositions. Assume that $A$. Then $A$ or $B$.
+
+OrIr. Let $A$ and $B$ be propositions. Assume that $B$. Then $A$ or $B$.
+
+OrE. Let $A$, $B$ and $C$ be propositions. Assume that $A$ or $B$. Let $d$ be a function from elements $x$ of $\mathrm{Proof}$ applied to $A$ to elements of $\mathrm{Proof}$ applied to $C$. Let $e$ be a function from elements $y$ of $\mathrm{Proof}$ applied to $B$ to elements of $\mathrm{Proof}$ applied to $C$. Then $C$.
+
+By cases: \begin{itemize} \item for $a$ and $d$, $\mathrm{orE}$ applied to $_$, $_$, $_$, $\mathrm{orIl}$ applied to $_$, $_$ and $a$, $d$ and $_$ is $d$ applied to $a$. \item for $b$ and $e$, $\mathrm{orE}$ applied to $_$, $_$, $_$, $\mathrm{orIr}$ applied to $_$, $_$ and $b$, $_$ and $e$ is $e$ applied to $b$. \end{itemize}
+
+IfI. Let $A$ and $B$ be propositions. Let $b$ be a function from elements $x$ of $\mathrm{Proof}$ applied to $A$ to elements of $\mathrm{Proof}$ applied to $B$. Then if $A$, then $B$.
+
+IfE. Let $A$ and $B$ be propositions. Assume that if $A$, then $B$. Assume that $A$. Then $B$.
+
+By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{ifE}$ applied to $_$, $_$, $\mathrm{ifI}$ applied to $_$, $_$ and $c$ and $a$ is $c$ applied to $a$. \end{itemize}
+
+ForallI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $b$ be a function from elements $x$ of $A$ to elements of $\mathrm{Proof}$ applied to $B$ applied to $x$. Then for all elements $x$ of $A$, $B$ holds for $x$.
+
+ForallE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Assume that for all elements $x$ of $A$, $B$ holds for $x$. Let $a$ be an element of $A$. Then $B$ holds for $a$.
+
+By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{forallE}$ applied to $_$, $_$, $\mathrm{forallI}$ applied to $_$, $_$ and $c$ and $a$ is $c$ applied to $a$. \end{itemize}
+
+ExistsI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $a$ be an element of $A$. Assume that $B$ holds for $a$. Then there exists an element $x$ of $A$, such that $B$ holds for $x$.
+
+ExistsE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $C$ be a proposition. Assume that there exists an element $x$ of $A$, such that $B$ holds for $x$. Let $d$ be a function from elements $x$ of $A$ and elements $y$ of $\mathrm{Proof}$ applied to $B$ applied to $x$ to elements of $\mathrm{Proof}$ applied to $C$. Then $C$.
+
+By cases: \begin{itemize} \item for $a$, $b$ and $c$, $\mathrm{existsE}$ applied to $_$, $_$, $_$, $\mathrm{existsI}$ applied to $_$, $_$, $a$ and $b$ and $c$ is $c$ applied to $a$ and $b$. \end{itemize}
+
+Hypo. Let $A$ be a proposition. Assume that $A$. Then $A$. Proof. Let $A$ be arbitrary. Let $a$ be arbitrary. By a.
+
+Definition. Let $A$ be a set. Let $y$ and $z$ be elements of $A$. Then we can say that $NOTYETEq#Compar#Eq_Compar#$.
+
+Refl. Let $A$ be a set. Let $a$ be an element of $A$. Then $NOTYETEq#Compar#Eq_Compar#$.
+
+Nd1. Let $A$ and $B$ be propositions. Then if $A$, then if $B$, then $A$. Proof. Let $A$ be arbitrary. Let $B$ be arbitrary. Assume that $A$. (h) assume that $B$. (k) by h, $A$. Hence if $B$, then $A$. Hence if $A$, then if $B$, then $A$.
+
+Definition. $N$ is a set.
+
+Definition. $0$ is a natural number.
+
+Definition. Let $x$ be a natural number. Then the successor of $x$ is a natural number.
+
+NatE. Let $n$ be a natural number. Let $C$ be a function from natural numbers $x$ to propositions. Assume that $C$ holds for $0$. Let $e$ be a function from natural numbers $n$ and elements $h$ of $\mathrm{Proof}$ applied to $C$ applied to $n$ to elements of $\mathrm{Proof}$ applied to $C$ applied to the successor of $n$. Then $C$ holds for $n$.
+
+By cases: \begin{itemize} \item for $d$, $\mathrm{NatE}$ applied to $0$, $_$, $d$ and $_$ is $d$. \item for $n$, $C$, $d$ and $e$, $\mathrm{NatE}$ applied to the successor of $n$, $C$, $d$ and $e$ is $e$ applied to $n$ and $\mathrm{NatE}$ applied to $n$, $C$, $d$ and $e$. \end{itemize}
+
+NatInd. Let $C$ be a function from natural numbers $x$ to propositions. Assume that $C$ holds for $0$. Let $e$ be a function from natural numbers $n$ and elements $h$ of $\mathrm{Proof}$ applied to $C$ applied to $n$ to elements of $\mathrm{Proof}$ applied to $C$ applied to the successor of $n$. Then for all natural numbers $n$, $C$ holds for $n$. Proof. Let $C$ be arbitrary. Let $d$ be arbitrary. Let $e$ be arbitrary. Let $n$ be arbitrary. Let $h$ be arbitrary. Let $e$ be arbitrary. Let $x$ be a natural number. By n. By x. By C. By d. By NatE. Hence for all natural numbers $x$, $x$ holds for $x$.
+
+Definition. Let $x$ and $y$ be natural numbers. Then $x + y$ is a natural number.
+
+By cases: \begin{itemize} \item for $m$, $m + 0$ is $m$. \item for $m$ and $n$, $m + \mathrm{Succ} (n)$ is the successor of $m + n$. \end{itemize}
+
+Definition. Let $x$ and $y$ be natural numbers. Then $x \times y$ is a natural number.
+
+By cases: \begin{itemize} \item for $m$, $m \times 0$ is $0$. \item for $m$ and $n$, $m \times \mathrm{Succ} (n)$ is $m \times n + m$. \end{itemize}
+
+Definition. Let $n$ and $m$ be natural numbers. Then $n$ is divisible by $m$, if there exists a natural number $k$, such that $NOTYETEq#Compar#Eq_Compar#$.
+
+Definition. $1$ is a natural number defined as the successor of $0$.
+
+Definition. $2$ is a natural number defined as the successor of $1$.
+
+Definition. Let $x$ be a natural number. Then we can say that $x$ is even.
+
+Definition. Let $x$ be a natural number. Then we can say that $x$ is odd.
+
+Even0. $0$ is even.
+
+EvenSucc. Let $n$ be a natural number. Assume that $n$ is odd. Then the successor of $n$ is even.
+
+OddSucc. Let $n$ be a natural number. Assume that $n$ is even. Then the successor of $n$ is odd.
+
+Prop1. $1$ is odd. Proof. By even0. By the third axiom of parity, the successor of $0$ is odd.
+
+Prop2. Let $n$ be a natural number. Then $n$ is even, if and only if $n$ is divisible by $2$.
+
+Prop3. Every natural number is even or odd. Proof. We reason by induction: let $x$ be $0$. By even0. A fortiori $0$ is even or $0$ is odd. Let $x$ be a natural number. Assume that $x$ is even or odd. ( y) by y, $x$ is even or odd. We reason by cases: \item assume that $x$ is even. ( h) by h, $x$ is even. By the third axiom of parity, the successor of $x$ is odd. A fortiori the successor of $x$ is even or the successor of $x$ is odd. \item assume that $x$ is odd. ( h) by h, $x$ is odd. By the second axiom of parity, the successor of $x$ is even. A fortiori the successor of $x$ is even or the successor of $x$ is odd. Hence the successor of $x$ is even or odd. We conclude that for all natural numbers $x$, $x$ is even or odd.
+\end{document}

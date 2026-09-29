@@ -1,0 +1,76 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+Thm01. Let $m$ and $n$ be elements of $\Natural$. Assume that $n \neq 0$. Then $(\frac{ m}{n})^ {2}\neq 2$.
+
+Thm01a. Let $m$ and $n$ be elements of $\Natural$. Then $(\frac{ m}{n + 1})^ {2}\neq 2$.
+
+Thm01b. Let $q$ be an element of $\Rational$. Then $q ^ {2}\neq 2$.
+
+Thm01c. Let $q$ be an element of $\Rational$. Then $\sqrt{ 2}\neq q$.
+
+Thm01d. $\sqrt{ 2}$ is not rational.
+
+Thm01e. $\sqrt{ 2}$ is irrational.
+
+Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+
+Thm02. Let $P$ be a polynomial. Assume that $\mathrm{degree} (P)> 0$. Then there exists an element $c$ of $\Complex$, such that $c$ is a root of $P$.
+
+Thm03. $\Rational$ is denumerable.
+
+Thm03a. $| \Natural | = | \Rational |$.
+
+Thm04. Let $u$ and $v$ be vectors. Assume that $u \perp v$. Then $\| u + v \| = \sqrt{ \| u \| ^{ 2}+ \| v \| ^{ 2}}$.
+
+Thm07. Let $p$ and $q$ be elements of $\Natural$. Assume that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+
+Thm09. Let $c$ be a circle. Let $r$ be an element of $\Real$. Assume that $r = \mathrm{radius} (c)$. Then $\mathrm{area} (c)= \pi \times r ^ {2}$.
+
+Thm10FermatLittle. Let $p$ be an element of $\Natural$. Assume that $p$ is prime. Let $a$ be an element of $\Integer$. Then there exists an element $q$ of $\Integer$, such that $a ^ {p}- a = p \times q$.
+
+Thm11. Let $n$ be an element of $\Natural$. Then there exists an element $p$ of $\Natural$, such that $p \geq n$ and $p$ is prime.
+
+Thm19. Let $n$ be an element of $\Natural$. Then there exist elements $a$, $b$, $c$ and $d$ of $\Natural$, such that $n = a ^{ 2}+ b ^{ 2}+ c ^{ 2}+ d ^{ 2}$.
+
+Thm20a. Let $p$ be an element of $\Natural$. Assume that $p$ is prime. Let $k$ be an element of $\Natural$. Assume that $p = 4 \times k + 1$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
+
+Thm20b. Let $p$ be an element of $\Natural$. Assume that $p$ is prime. Assume that $\congruent {p}{1}{4}$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
+
+Thm22. $\Real$ is not denumerable.
+
+Thm51wilson. Let $n$ be an element of $\Natural$. Then $n$ is prime, if and only if $\congruent {(n - 1)!}{- 1}{n}$.
+
+Thm51b. Let $n$ be an element of $\Natural$. Then $n$ is prime, if and only if $\divisible {(n - 1)! + 1}{n}$.
+
+Thm52. Let $A$ be a set. Assume that $A$ is finite. Then $| \wp A | = 2 ^ {| A |}$.
+
+Thm58. Let $A$ be a set. Let $n$ be an element of $\Natural$. Assume that $| A | = n$. Let $k$ be an element of $\Natural$. Assume that $k \leq n$. Then $| C^{ A }_{ k}| = \binom{ n }{ k}$.
+
+Thm78. Let $u$ and $v$ be vectors. Then $u \cdot v \leq \| u \| \times \| v \|$.
+
+Thm78a. Let $u$ and $v$ be vectors. Then if $u \perp v$, then $u \cdot v = 0$.
+
+Thm91. Let $u$ and $v$ be vectors. Then $\| u + v \| \leq \| u \| + \| v \|$.
+
+Thm98. Let $n$ be an element of $\Natural$. Then if $n > 1$, then there exists an element $p$ of $\Natural$, such that $p$ is prime and $n < p < 2 \times n$.
+\end{document}

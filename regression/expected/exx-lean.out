@@ -1,0 +1,35 @@
+axiom prop10 : even 0
+
+axiom prop20 (n : Nat) (_ : even n) : odd (n + 1)
+
+axiom prop30 (n : Nat) (_ : odd n) : even (n + 1)
+
+axiom prop40 : All Nat (λ n => even n ∨ odd n)
+
+axiom prop50 : All Nat (λ n => ¬ (even n ∧ odd n))
+
+axiom prop60 : All Nat (λ n => n + 0 = n)
+
+axiom prop70 : odd 1
+
+axiom prop80 : even 2
+
+axiom prop90 (n : Nat) : even n ∧ prime n → n = 2
+
+axiom prop100 (a b c : Int) (_ : a + b + c = 0) : a * b * c < 0
+
+axiom prop110 (a c : Int) (_ : odd a ∧ odd c) : All Int (λ b => even (a * b + b * c))
+
+axiom prop120 (a b : Int) : even (a * b) ↔ even a ∨ even b
+
+axiom prop130 (x y : Int) : odd (x * y) → odd x ∧ odd y
+
+def sameParity (x y : Int) : Prop := even x ∧ even y ∨ (odd x ∧ odd y)
+
+axiom prop140 (x y : Int) : sameParity x y ↔ even (x + y)
+
+axiom prop150 (n : Nat) : even (pow n 3 - n)
+
+axiom prop160 (a b : Int) : sameParity (a + b) (a * b) → even a ∧ even b
+
+axiom prop170 : All Nat (λ x => ¬ (even x ∧ odd x))

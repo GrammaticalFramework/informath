@@ -1,0 +1,49 @@
+\documentclass{report}
+\usepackage{amsmath, amsfonts}
+\begin{document}
+Thm01. If $m \in \mathbb{N}$ and $n \in \mathbb{N}^+$ then $(m/n)^2 \neq 2$.
+Thm01. There are no pairs $(m, n) \in \mathbb{N}\times\mathbb{N}$ such that $n > 0$ and $(m/n)^2 = 2$.
+Thm01a. The equation $(m/(n+1))^2 = 2$ has no solution in the natural numbers.
+Thm01b. The equation $q^2 = 2$ has no solution in the rationals.
+Thm01b. There is no rational number whose square is $2$.
+Thm01b. If $q \in \mathbb{Q}$ then $q^2 \neq 2$.
+Thm01f. The equation $p^2 = 2q^2$ has no solution in the rationals.
+Thm01f. There are no rational numbers $p$ and $q$ such that $p^2 = 2q^2$.
+Thm02. Every polynomial of degree greater than zero has at least one complex root.
+Thm02. Every polynomial of non-zero degree has at least one complex root.
+Thm02. Every polynomial of non-zero degree has a complex root.
+Thm03. The set of rational numbers is countable.
+Thm03. $\mathbb{R}$ is countable.
+Thm03a. $\mathbb{R}$ and $\mathbb{N}$ have equal cardinality.
+Thm04. If $u$ and $v$ are vectors such that $u \perp v$, then $\lvert u + v \rvert = \sqrt{\lvert u \rvert^2 + \lvert v \rvert^2}$.
+Thm07. Suppose that $p$ and $q$ are prime numbers. Then $\left(\frac{p}{q}\right) \left(\frac{q}{p}\right) = (-1)^{\frac{p-1}{2} \cdot \frac{q-1}{2}}$.
+Thm09. Any circle of radius $r$ has area $\pi r^2$.
+Thm09. If a circle has radius $r$ then its area is $\pi r^2$.
+Thm09. The area of a circle is $\pi r^2$, where $r$ is the radius of the circle.
+Thm10FermatLittle. Suppose that $p$ is a prime number and $a$ is an integer. Then $a^p - a = pq$ for some integer $q$.
+Thm11. For every $n \in \mathbb{N}$, there is a prime $p \geq n$.
+Thm11. There is no natural number which is greater than every prime number.
+Thm19. Every natural number can be written as the sum of four squares.
+Thm19. Every natural number can be written in the form $a^2+b^2+c^2+d^2$ where $a, b, c, d \in \mathbb{N}$.
+Thm20a. Every prime number of the form $4k+1$ can be written as the sum of two squares.
+Thm20a. If $p=4k+1$ is a prime number then $p$ can be written as the sum of two squares.
+Thm20b. Every prime number congruent to $1$ modulo $4$ can be written as the sum of two squares.
+Thm20b. Suppose $p$ is a prime such that $p \equiv 1$ (mod 4). Then $p$ can be written as the sum of two squares.
+Thm22. The set of real numbers is uncountable.
+Thm22. There are uncountably many reals.
+Thm22. $\mathbb{R}$ is uncountable.
+Thm51wilson. A natural number $n$ is prime iff $(n-1)! \equiv -1$ (mod $n$).
+Thm52. If $A$ is a finite set, then its powerset has cardinality $2^{\lvert A \rvert}$.
+Thm58. There are $\binom{n}{k}$ ways to choose $k$ items from a set of $n$ items, where $0 \leq k \leq n$.
+Thm58. A finite set of cardinality $n$ has $\binom{n}{k}$ subsets of cardinality $k$, where $0 \leq k \leq n$.
+Thm58. Let $A$ be a finite set of cardinality $n$ and $0 \leq k \leq n$. Then $A$ has $\binom{n}{k}$ subsets of cardinality $k$.
+Thm78a. If two vectors are orthogonal then their dot product is $0$.
+Thm78a. The dot product of any two orthogonal vectors is $0$.
+Thm78a. If $u \perp v$ then $u \cdot v = 0$.
+Thm78a. Let $u$ and $v$ be vectors. If $u \perp v$ then $u \cdot v = 0$.
+Thm78a. If $u$ and $v$ are orthogonal vectors then $u \cdot v = 0$.
+Thm98. For all $n \in \mathbb{N}$, there exists a prime between $n$ and $2n$ exclusive.
+Thm98. For all $n \in \mathbb{N}$, there exists a prime between $n+1$ and $2n-1$.
+Thm98. For all $n \in \mathbb{N}$, the interval $(n, 2n)$ contains a prime.
+Thm98. For all $n \in \mathbb{N}$, there exists a prime $p$ such that $n < p < 2n$.
+\end{document}

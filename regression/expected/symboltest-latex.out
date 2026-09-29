@@ -1,0 +1,159 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\contradictionMACRoA}{\bot}
+\newcommand{\disjMACRoB}[2]{#1 \mathrel{\not\meets} #2}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\empsetMACRoC}{\emptyset}
+\newcommand{\eulerconstantMACRoE}{e}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+\newcommand{\singMACRoD}[1]{\{ #1 \}}
+Definition. The sets are a basic type.
+
+Definition. Let $A$ be a set. Then the elements of $A$ are a basic type.
+
+Definition. The propositions are a basic type.
+
+Definition. Let $A$ be a proposition. Then we can say that $A$.
+
+Definition. The objects are a basic type.
+
+Definition. We can say that we have a contradiction.
+
+Definition. $\contradictionMACRoA$ is a proposition.
+
+Definition. The empty set is an object.
+
+Definition. $\empsetMACRoC$ is an object.
+
+Definition. Let $x$ be an object. Then $\singMACRoD {x}$ is an object.
+
+Definition. Let $x$ be an object. Then the singleton of $x$ is an object.
+
+Definition. Let $x$ be an object. Then we can say that $x$ is empty.
+
+Definition. Let $x$ be an object. Then we can say that $x$ is a prime number.
+
+Definition. Let $x$ and $y$ be objects. Then $\disjMACRoB {x}{y}$ is a proposition.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ and $y$ are disjoint.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ is disjoint from $y$.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ converges to $y$.
+
+Definition. Let $x$ be an object. Then the maximal element of $x$ is an object.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ and $y$ are isomorphic.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ crosses $y$.
+
+Definition. Let $x$, $y$ and $z$ be objects. Then we can say that $x$ is similar to $y$ in $z$.
+
+Definition. Let $x$ and $y$ be objects. Then we can say that $x$ is a root of $y$.
+
+Definition. Let $x$ and $y$ be objects. Then the greatest common divisor of $x$ and $y$ is an object.
+
+Definition. Let $x$ be an object. Then we can say that $x$ is uniformly continuous.
+
+Definition. The vector spaces are a basic type.
+
+Definition. The Hilbert spaces are a basic type.
+
+Definition. Euler's constant is an object.
+
+Definition. $\eulerconstantMACRoE$ is an object.
+
+Definition. Let $x$ be an object. Then the Lebesgue measure of $x$ is an object.
+
+Definition. $0$ is an object.
+
+Definition. $1$ is an object.
+
+Definition. $2$ is an object.
+
+Definition. $3$ is an object.
+
+Definition. $6$ is an object.
+
+Definition. $9$ is an object.
+
+Definition. $A$ is an object.
+
+Definition. $B$ is an object.
+
+Definition. $E$ is an object.
+
+Definition. $F$ is an object.
+
+A. The empty set is empty.
+
+A. $\empsetMACRoC$ is empty.
+
+B. $2$ is a prime number.
+
+C. $\disjMACRoB {2}{3}$.
+
+C. $2$ and $3$ are disjoint.
+
+C. $2$ is disjoint from $3$.
+
+D. $F$ converges to $0$.
+
+E. The maximal element of $A$ is a prime number.
+
+F. $A$ and $B$ are isomorphic.
+
+G. $A$ crosses $B$.
+
+H. $A$ is similar to $B$ in $F$.
+
+I. $3$ is a root of $E$.
+
+J. The greatest common divisor of $6$ and $9$ is a prime number.
+
+K. $F$ is uniformly continuous.
+
+L. $\disjMACRoB {\singMACRoD {\empsetMACRoC}}{\empsetMACRoC}$.
+
+L. $\singMACRoD {\empsetMACRoC}$ and the empty set are disjoint.
+
+L. $\singMACRoD {\empsetMACRoC}$ is disjoint from the empty set.
+
+L. $\singMACRoD {\empsetMACRoC}$ and $\empsetMACRoC$ are disjoint.
+
+L. $\singMACRoD {\empsetMACRoC}$ is disjoint from $\empsetMACRoC$.
+
+L. The singleton of the empty set and the empty set are disjoint.
+
+L. The singleton of the empty set is disjoint from the empty set.
+
+L. The singleton of the empty set and $\empsetMACRoC$ are disjoint.
+
+L. The singleton of $\empsetMACRoC$ and the empty set are disjoint.
+
+L. The singleton of the empty set is disjoint from $\empsetMACRoC$.
+
+L. The singleton of $\empsetMACRoC$ is disjoint from the empty set.
+
+L. The singleton of $\empsetMACRoC$ and $\empsetMACRoC$ are disjoint.
+
+L. The singleton of $\empsetMACRoC$ is disjoint from $\empsetMACRoC$.
+\end{document}

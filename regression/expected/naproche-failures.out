@@ -1,0 +1,76 @@
+ from https://github.com/adelon/naproche-zf/blob/main/library/set.tex, with data/extract_naproche_zf.py
+Proof. Suppose not. Then $A = B$ by set extensionality. Contradiction.
+DefinitionSubseteq. $A \subseteq B$ iff for all $a \in A$ we have $a \in B$.
+Proof. Follows by set extensionality.
+PropositionSubsetWitness. Suppose $A \subset B$. Then there exists $b \in B$ such that $b \notin A$.
+AbbreviationFamilyOfSubsets. $F$ is a family of subsets of $X$ iff for all $A \in F$ we have $A \subseteq X$.
+DefinitionDisjoint. $A$ is disjoint from $B$ iff there exists no $a$ such that $a \in A, B$.
+AbbreviationSubsingleton. $A$ is a subsingleton iff for all $a, b \in A$ we have $a = b$.
+PropositionSingletonIffInhabitedSubsingleton. Let $A$ be a subsingleton. Let $a \in A$. Then $A = \{a \}$.
+Proof. Follows by set extensionality.
+AxiomUnionsIff. $z \in \unions{X}$ iff there exists $Y \in X$ such that $z \in Y$.
+Proof. There exists $B \in C$ such that $A \in B$.
+PropositionUnionsFamily. Let $F$ be a family of subsets of $X$. Then $ \unions{F} \subseteq X$.
+AbbreviationClosedunderunions. $T$ is closed under arbitrary unions iff for every subset $M$ of $T$ we have $ \unions{M} \in T$.
+DefinitionInters. $ \inters{A} = \{ x \in \unions{A} \mid \text{for all $a \in A$ we have $x \in a$} \}$.
+PropositionIntersIffForall. $z \in \inters{X}$ iff $X$ is inhabited and for all $Y \in X$ we have $z \in Y$.
+PropositionIntersIntro. Suppose $C$ is inhabited. Suppose for all $B \in C$ we have $A \in B$. Then $A \in \inters{C}$.
+PropositionIntersGreatest. Suppose $A$ is inhabited. Suppose for all $a \in A$ we have $C \subseteq a$. Then $C \subseteq \inters{A}$.
+PropositionSubseteqIntersIff. Suppose $A$ is inhabited. Then $C \subseteq \inters{A}$ iff for all $a \in A$ we have $C \subseteq a$.
+Proof. Every element of $a$ is an element of $ \inters{ \{a \}}$ by \cref{inters_iff_forall,singleton_iff,singleton_inhabited}. Follows by set extensionality.
+Proof. Follows by set extensionality.
+AxiomUnionIff. Let $A, B$ be sets. $a \in A \union B$ iff $a \in A$ or $a \in B$.
+Align*. z \in \unions{ \{x,y \}} \iff \exists Z \in \{x,y \}. z \in Z \iff z \in x \lor z \in y \iff z \in x \union y. Follows by \cref{setext}. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. We have $A \subseteq \emptyset$ by \cref{union_upper_left}. Follows by \cref{subseteq_emptyset_iff}.
+Proof. We have $B \subseteq \emptyset$ by \cref{union_upper_right}. Follows by \cref{subseteq_emptyset_iff}.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+AbbreviationClosedunderunion. $T$ is closed under binary unions iff for every $U,V \in T$ we have $U \union V \in T$.
+Proof. $ \{A,B \}$ is inhabited. Thus for all $c$ we have $c \in \inters{ \{A,B \}}$ iff $c \in A \inter B$ by \cref{inters_iff_forall,inter,upair_iff}. Thus $ \inters{ \{A,B \}} = A \inter B$ by \hyperref[setext]{extensionality}. Follows by \hyperref[setext]{extensionality}.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+AbbreviationClosedunderinter. $T$ is closed under binary intersections iff for every $U,V \in T$ we have $U \inter V \in T$.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Align*. A \inter (B \union C) &= (A \inter B) \union (A \inter C) \explanation{by \cref{inter_distrib_union}} \ \ = (A \inter B) \union C \explanation{by \cref{inter_absorb_supseteq_left}}
+Proof. Follows by \cref{union_upper_right,union_upper_left,subseteq_union_iff,subseteq_antisymmetric,subseteq_inter_iff}.
+Proof. Follows by set extensionality.
+Proof. $A \union B$ is inhabited. Thus for all $c$ we have $c \in \inters{A \union B}$ iff $c \in( \inters{A}) \inter \inters{B}$ by \cref{inter,union_iff,inters_iff_forall}. Follows by \hyperref[setext]{set extensionality}.  We only need the actual setext axiom here, not the tactic.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by \cref{setminus_setminus,inter_absorb_supseteq_left}.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+PropositionDifferenceWithProperSubsetIsInhabited. Let $A, B$ be sets. Suppose $A \subset B$. Then $B \setminus A$ is inhabited.
+Proof. Take $b$ such that $b \in B$ and $b \notin A$. Then $b \in B \setminus A$.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+PropositionDoubleComplementUnion. Then $(A \union B) \setminus (B \setminus A) = A$.
+Proof. Follows by set extensionality.
+Proof. Follows by set extensionality.
+Proof. Take $x', y'$ such that $x' \in X \land y' \in Y \land (x, y) = (x', y')$ by \cref{times}. Then $x = x'$ and $y = y'$ by \cref{pair_eq_iff}.
+Proof. Follows by \cref{times}.
+Proof. Take $a, b$ such that $c = (a, b)$ and $a \in A$ by \cref{times}. Follows by \cref{fst_eq}. $a = \fst{c}$ by \cref{fst_eq}.
+Proof. Take $a, b$ such that $c = (a, b)$ and $b \in B$ by \cref{times}. Follows by \cref{snd_eq}. $b = \snd{c}$ by \cref{snd_eq}.
+PropositionTimesElemIsTuple. Suppose $p \in X \times Y$. Then there exist $x, y$ such that $x \in X$ and $y \in Y$ and $p = (x, y)$.

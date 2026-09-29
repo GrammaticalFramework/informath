@@ -1,0 +1,76 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+\textbf{Axiom} \texttt{\detokenize{Thm01}}. $m , n \in \Natural , n \neq 0 \vdash (\frac{ m}{n})^ {2}\neq 2$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01a}}. $m , n \in \Natural \vdash (\frac{ m}{n + 1})^ {2}\neq 2$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01b}}. $q \in \Rational \vdash q ^ {2}\neq 2$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01c}}. $q \in \Rational \vdash \sqrt{ 2}\neq q$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01d}}. $\neg \mathrm{rational} (\sqrt{ 2})$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01e}}. $\mathrm{irrational} (\sqrt{ 2})$
+
+\textbf{Axiom} \texttt{\detokenize{Thm01f}}. $\neg (\exists p \in \Natural . \exists q \in \Natural . q > 0 \wedge p ^{ 2}= 2 \times (q ^{ 2}))$
+
+\textbf{Axiom} \texttt{\detokenize{Thm02}}. $P \in \mathrm{Polynomial} , \mathrm{degree} (P)> 0 \vdash \exists c \in \Complex . \mathrm{isRoot} (c , P)$
+
+\textbf{Axiom} \texttt{\detokenize{Thm03}}. $\mathrm{denumerable} (\Rational)$
+
+\textbf{Axiom} \texttt{\detokenize{Thm03a}}. $| \Natural | = | \Rational |$
+
+\textbf{Axiom} \texttt{\detokenize{Thm04}}. $u , v \in \mathrm{Vector} , u \perp v \vdash \| u + v \| = \sqrt{ \| u \| ^{ 2}+ \| v \| ^{ 2}}$
+
+\textbf{Axiom} \texttt{\detokenize{thm07}}. $p , q \in \Natural , \mathrm{prime} (p)\wedge \mathrm{prime} (q)\vdash \left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$
+
+\textbf{Axiom} \texttt{\detokenize{thm09}}. $c \in \mathrm{Circle} , r \in \Real , r = \mathrm{radius} (c)\vdash \mathrm{area} (c)= \pi \times r ^ {2}$
+
+\textbf{Axiom} \texttt{\detokenize{thm10FermatLittle}}. $p \in \Natural , \mathrm{prime} (p), a \in \Integer \vdash \exists q \in \Integer . a ^ {p}- a = p \times q$
+
+\textbf{Axiom} \texttt{\detokenize{thm11}}. $n \in \Natural \vdash \exists p \in \Natural . p \geq n \wedge \mathrm{prime} (p)$
+
+\textbf{Axiom} \texttt{\detokenize{thm19}}. $n \in \Natural \vdash \exists a \in \Natural . \exists b \in \Natural . \exists c \in \Natural . \exists d \in \Natural . n = a ^{ 2}+ b ^{ 2}+ c ^{ 2}+ d ^{ 2}$
+
+\textbf{Axiom} \texttt{\detokenize{thm20a}}. $p \in \Natural , \mathrm{prime} (p), k \in \Natural , p = 4 \times k + 1 \vdash \exists x \in \Natural . \exists y \in \Natural . p = x ^{ 2}+ y ^{ 2}$
+
+\textbf{Axiom} \texttt{\detokenize{thm20b}}. $p \in \Natural , \mathrm{prime} (p), \congruent {p}{1}{4}\vdash \exists x \in \Natural . \exists y \in \Natural . p = x ^{ 2}+ y ^{ 2}$
+
+\textbf{Axiom} \texttt{\detokenize{thm22}}. $\neg \mathrm{denumerable} (\Real)$
+
+\textbf{Axiom} \texttt{\detokenize{thm51wilson}}. $n \in \Natural \vdash \mathrm{prime} (n)\leftrightarrow \congruent {(n - 1)!}{- 1}{n}$
+
+\textbf{Axiom} \texttt{\detokenize{thm51b}}. $n \in \Natural \vdash \mathrm{prime} (n)\leftrightarrow \divisible {(n - 1)! + 1}{n}$
+
+\textbf{Axiom} \texttt{\detokenize{thm52}}. $A \in \mathrm{Set} , \mathrm{finite} (A)\vdash | \wp A | = 2 ^ {| A |}$
+
+\textbf{Axiom} \texttt{\detokenize{thm58}}. $A \in \mathrm{Set} , n \in \Natural , | A | = n , k \in \Natural , k \leq n \vdash | C^{ A }_{ k}| = \binom{ n }{ k}$
+
+\textbf{Axiom} \texttt{\detokenize{thm78}}. $u , v \in \mathrm{Vector} \vdash u \cdot v \leq \| u \| \times \| v \|$
+
+\textbf{Axiom} \texttt{\detokenize{thm78a}}. $u , v \in \mathrm{Vector} \vdash u \perp v \rightarrow u \cdot v = 0$
+
+\textbf{Axiom} \texttt{\detokenize{thm91}}. $u , v \in \mathrm{Vector} \vdash \| u + v \| \leq \| u \| + \| v \|$
+
+\textbf{Axiom} \texttt{\detokenize{thm98}}. $n \in \Natural \vdash n > 1 \rightarrow (\exists p \in \Natural . \mathrm{prime} (p)\wedge (n < p \wedge p < 2 \times n))$
+\end{document}

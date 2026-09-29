@@ -1,0 +1,27 @@
+Definition. $\mathrm{TermKind}$ is an element of $N$.
+FormulaProp. $2 + 3 = 5$.
+AndProp. $0$ is even, $1$ is odd and $2$ is even.
+OrProp. $0$ is even, $1$ is odd or $2$ is even.
+AllProp. For all integers $x$ and $y$, $x \times y = y \times x$.
+ExistProp. There exist integers $x$ and $y$, such that $x \times y = x + y$.
+NotAdjProp. $5$ is not even.
+NotAdj2Prop. $7$ is not divisible by $3$.
+NotAdjCProp. $3$ is not distinct from $3$.
+NotAdjEProp. $2 + 3$ is not equal to $2 + 4$.
+NotVerbProp. $f$ does not converge.
+NotVerb2Prop. $A$ does not contain $8$.
+NotNoun2Prop. $A$ is not a proper subset of $B$.
+NotAdj3Prop. It is not the case that $\congruent {7}{4}{2}$.
+AndAdj. $2$ is even and prime.
+OrAdj. $2$ is even or odd.
+AndExp. $6$ and $8$ are even.
+OrExp. $2$ or $3$ is even.
+BothAndProp. $2$ is even and $3$ is odd.
+EitherOrProp. $2$ is even or $3$ is odd.
+BothAndAdj. $2$ is odd and prime.
+EitherOrAdj. $2$ is even or odd.
+BothAndExp. $6$ and $8$ are even.
+EitherOrExp. $2$ or $3$ is even.
+OnlyIfProp. If $7$ is even, then $8$ is odd.
+ExistNoProp. No number is even and odd.
+Adj2Adj. $6$ is even and $6$ is divisible by $3$.

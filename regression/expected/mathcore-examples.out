@@ -1,0 +1,45 @@
+ThmJmt. We can prove that $1$ is odd. Proof. By the first axiom of parity, $0$ is even. By the third axiom of parity, the successor of $0$ is odd.
+AxiomJmt. Let $n$ be an instance of natural numbers. Then we can prove that if $n$ is even, then $n ^{ 2}$ is divisible by $4$.
+Definition. Let $n$ be an instance of natural numbers. Then $n$ is odd, if it is not the case that $n$ is even.
+Definition. A rational number is a real number $x$ such that there exists a natural number $p$, such that there exists a natural number $q$, such that $x = p \times q$.
+Definition. Let $x$ be an instance of real numbers. Then $x ^{ 2}$ is an instance of real numbers defined as $x ^ {2}$.
+Definition. Let $n$ be an instance of integers. Then we can say that $n$ is sphenic.
+Definition. Let $A$ be a set. Then the lists of elements of $A$ are a basic type.
+Definition. Let $u$ and $v$ be instances of vectors. Then $u + v$ is an instance of vectors.
+Definition. $\mathrm{square}$ is defined as the function that maps $x$ to $x ^ {2}$.
+Definition. Let $x$ and $y$ be instances of natural numbers. Then $x + y$ is an instance of natural numbers.
+By cases: \begin{itemize} \item for $m$, $m + \mathrm{Zero}$ is $m$. \item for $m$ and $n$, $m + \mathrm{Succ} (n)$ is the successor of $m + n$. \end{itemize}
+PropHypo. Assume that we can prove that $1 = 0$ ( x) . then we can prove that we have a contradiction.
+VarHypo. Let $n$ be an instance of natural numbers. Then we can prove that $n$ is even or $n$ is odd.
+LocalHypo. Let $m$ be an instance of natural numbers. Let the instance $n$ of natural numbers be $m + m$. Then we can prove that $n \geq m$.
+Definition. Let $n$ be an instance of natural numbers. Then $\mathrm{CoreAbsExp}$ applied to $n$ is an instance of natural numbers defined as $n \times n$.
+Definition. Let $u$ and $v$ be instances of vectors. Then $\mathrm{AppExp}$ applied to $u$ and $v$ is an instance of real numbers.
+CoreAndProp. We can prove that $2$ is even and $3$ is odd.
+CoreOrProp. We can prove that $2$ is even or $3$ is odd.
+CoreIfProp. We can prove that if $2$ is even, then $3$ is odd.
+CoreIffProp. We can prove that $2$ is even, if and only if $3$ is odd.
+CoreNotProp. We can prove that it is not the case that $3$ is even and $2$ is odd.
+FalseProp. We can prove that we have a contradiction.
+CoreAllProp. We can prove that for all integers $x$, $x + 1 > x$.
+CoreExistProp. We can prove that there exists an integer $x$, such that $x + x < x$.
+IdentProp. We can prove that $H$.
+AppProp. We can prove that $K$ holds for $1$, $2$ and $3$.
+IdentKind. Let $x$ be an element of $K$. Then we can prove that we have a contradiction.
+SuchThatKind. Let $n$ be an instance of natural numbers $x$ such that $x$ is even. Then we can prove that $n$ is divisible by $2$.
+AppKind. Let $x$ be an element of $K$ applied to $1$, $2$ and $3$. Then we have a contradiction.
+Definition. Let $x$ and $y$ be instances of integers. Then $\mathrm{FunKind}$ applied to $x$ and $y$ is an instance of integers.
+AdjProp. We can prove that $4$ is even.
+Adj2Prop. We can prove that $6$ is divisible by $3$.
+AdjCProp. We can prove that $2 \neq 3$.
+AdjEProp. We can prove that $2 + 3 = 3 + 2$.
+Definition. $\mathrm{NounKind}$ is an instance of natural numbers.
+Definition. $\mathrm{NameExp}$ is defined as $\emptyset$.
+Definition. $\mathrm{FunExp}$ is defined as $\cos 1$.
+Definition. $\mathrm{Fun2Exp}$ is defined as $8 - 7$.
+Definition. $\mathrm{FunCExp}$ is defined as the greatest common divisor of $9$ and $6$.
+Definition. $\mathrm{FamKind}$ is an instance of elements of $\mathrm{list}$ applied to $N$.
+Definition. $\mathrm{Fam2Kind}$ is an instance of functions from real numbers to real numbers.
+VerbProp. We can prove that $f$ converges.
+Verb2Prop. We can prove that $N \ni 8$.
+Noun2Prop. We can prove that $A \subset B$.
+Adj3Prop. We can prove that $\congruent {7}{4}{3}$.

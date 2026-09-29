@@ -1,0 +1,35 @@
+Axiom prop10 : even 0 .
+
+Axiom prop20 : forall n : nat, (even n -> odd (n + 1)) .
+
+Axiom prop30 : forall n : nat, (odd n -> even (n + 1)) .
+
+Axiom prop40 : All nat (fun n => even n \/ odd n) .
+
+Axiom prop50 : All nat (fun n => ~ (even n /\ odd n)) .
+
+Axiom prop60 : All nat (fun n => n + 0 = n) .
+
+Axiom prop70 : odd 1 .
+
+Axiom prop80 : even 2 .
+
+Axiom prop90 : forall n : nat, (even n /\ prime n -> n = 2) .
+
+Axiom prop100 : forall a : Int, forall b : Int, forall c : Int, (a + b + c = 0 -> a * b * c < 0) .
+
+Axiom prop110 : forall a : Int, forall c : Int, (odd a /\ odd c -> All Int (fun b => even (a * b + b * c))) .
+
+Axiom prop120 : forall a : Int, forall b : Int, (even (a * b) <-> even a \/ even b) .
+
+Axiom prop130 : forall x : Int, forall y : Int, (odd (x * y) -> odd x /\ odd y) .
+
+Definition sameParity (x y : Int) : Prop := even x /\ even y \/ (odd x /\ odd y) .
+
+Axiom prop140 : forall x : Int, forall y : Int, (sameParity x y <-> even (x + y)) .
+
+Axiom prop150 : forall n : nat, even (pow n 3 - n) .
+
+Axiom prop160 : forall a : Int, forall b : Int, (sameParity (a + b) (a * b) -> even a /\ even b) .
+
+Axiom prop170 : All nat (fun x => ~ (even x /\ odd x)) .

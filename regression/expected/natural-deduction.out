@@ -1,0 +1,18 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+Nd1. Let $A$ and $B$ be propositions. Then if $A$, then if $B$, then $A$. Proof. Let $A$ be arbitrary. Let $B$ be arbitrary. Assume that $A$. (h) assume that $B$. (k) by h, $A$. Hence if $B$, then $A$. Hence if $A$, then if $B$, then $A$.
+
+Prop1. $1$ is odd. Proof. By the first axiom of parity, $0$ is even. By the third axiom of parity, the successor of $0$ is odd.
+
+Prop2. Let $n$ be a natural number. Then $n$ is even, if and only if $n$ is divisible by $2$.
+
+Prop3. Every natural number is even or odd. Proof. We reason by induction: let $x$ be $0$. By the first axiom of parity, $0$ is even. A fortiori $0$ is even or $0$ is odd. Let $x$ be a natural number. Assume that $x$ is even or odd. ( y) by y, $x$ is even or odd. We reason by cases: \item assume that $x$ is even. ( h) by h, $x$ is even. By the third axiom of parity, the successor of $x$ is odd. A fortiori the successor of $x$ is even or the successor of $x$ is odd. \item assume that $x$ is odd. ( h) by h, $x$ is odd. By the second axiom of parity, the successor of $x$ is even. A fortiori the successor of $x$ is even or the successor of $x$ is odd. Hence the successor of $x$ is even or odd. We conclude that for all natural numbers $x$, $x$ is even or odd.
+\end{document}

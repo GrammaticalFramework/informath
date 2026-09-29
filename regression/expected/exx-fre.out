@@ -1,0 +1,18 @@
+Prop10. $0$ est pair.
+Prop20. Soit $n$ un nombre naturel. Supposons que $n$ est pair. Alors $n + 1$ est impair.
+Prop30. Soit $n$ un nombre naturel. Supposons que $n$ est impair. Alors $n + 1$ est pair.
+Prop40. Chaque nombre naturel est pair ou impair.
+Prop50. Pour tous les nombres naturels $n$, $n$ n'est pas pair et impair.
+Prop60. Pour tous les nombres naturels $n$, $n + 0 = n$.
+Prop70. $1$ est impair.
+Prop80. $2$ est pair.
+Prop90. Soit $n$ un nombre naturel. Alors si $n$ est pair et premier, alors $n = 2$.
+Prop100. Soient $a$, $b$ et $c$ des entiers. Supposons que $a + b + c = 0$. Alors $a \times b \times c < 0$.
+Prop110. Soient $a$ et $c$ des entiers. Supposons que $a$ et $c$ sont impairs. Alors pour tous les entiers $b$, $a \times b + b \times c$ est pair.
+Prop120. Soient $a$ et $b$ des entiers. Alors $a \times b$ est pair si et seulement si $a$ ou $b$ est pair.
+Prop130. Soient $x$ et $y$ des entiers. Alors si $x \times y$ est impair, alors $x$ et $y$ sont impairs.
+Définition. Soient $x$ et $y$ des entiers. Alors $x$ et $y$ [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] la parité [same_Adj] [have_Verb] si $x$ est pair et $y$ est pair ou $x$ est impair et $y$ est impair.
+Prop140. Soient $x$ et $y$ des entiers. Alors $x$ et $y$ [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] la parité [same_Adj] [have_Verb] si et seulement si $x + y$ est pair.
+Prop150. Soit $n$ un nombre naturel. Alors $n ^ {3}- n$ est pair.
+Prop160. Soient $a$ et $b$ des entiers. Alors si $a + b$ et $a \times b$ [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] [have_Verb] la parité [same_Adj] [have_Verb], alors $a$ et $b$ sont pairs.
+Prop170. Pour tous les nombres naturels $x$, $x$ n'est pas pair et impair.

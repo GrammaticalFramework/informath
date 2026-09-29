@@ -1,0 +1,50 @@
+p : Proof (exists Num (_x_0 => forall Num (_x_1 => Lt _x_0 _x_1))) .
+p : Proof (forall Num (_x_1 => exists Num (_x_0 => Lt _x_0 _x_1))) .
+p : Proof (forall Num (_h0 => exists Num (_x_0 => Lt _h0 _x_0))) .
+q : Proof (exists Num (_x_0 => forall Num (_x_1 => Lt _x_0 (succ _x_1)))) .
+q : Proof (forall Num (_x_1 => exists Num (_x_0 => Lt _x_0 (succ _x_1)))) .
+q : Proof (forall Num (_h0 => exists Num (_x_0 => Lt _h0 (succ _x_0)))) .
+r : Proof (forall Num (_x_0 => exists Num (_x_1 => Lt (square _x_0) (succ _x_1)))) .
+r : Proof (exists Num (_x_1 => forall Num (_x_0 => Lt (square _x_0) (succ _x_1)))) .
+s : Proof (exists Num (_x_0 => forall Num (_x_1 => divide _x_0 (square _x_1)))) .
+s : Proof (forall Num (_x_1 => exists Num (_x_0 => divide _x_0 (square _x_1)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt (_UNDEFINEDNounPrepFun2 sum_Noun of_Prep and_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt (_UNDEFINEDNounPrepFunC sum_Noun of_Prep _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt (plus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt (vectorPlus _x_0 _x_1) _x_2)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt {|_UNDEFINED_FunCCollExp_(NounPrepFunC_sum_Noun_of_Prep)_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_0 => forall Num (_x_1 => exists Num (_x_2 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_1 => forall Num (_x_0 => exists Num (_x_2 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_1 => forall Num (_x_0 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_1 => exists Num (_x_2 => forall Num (_x_0 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (exists Num (_x_2 => forall Num (_x_0 => forall Num (_x_1 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+t : Proof (forall Num (_x_0 => exists Num (_x_2 => forall Num (_x_1 => Lt {|_UNDEFINED_FunCCollExp_plus_FunC_(BaseExp_(TermExp_(IdentTerm_(StrIdent_"_x_0")))_(TermExp_(IdentTerm_(StrIdent_"_x_1"))))|} _x_2)))) .
+u : Proof (not (exists Num (_x_0 => forall Num (_x_1 => Lt _x_0 (square _x_1))))) .
+u : Proof (not (forall Num (_x_1 => exists Num (_x_0 => Lt _x_0 (square _x_1))))) .
+u : Proof (not (forall Num (_h0 => exists Num (_x_0 => Lt _h0 (square _x_0))))) .
+u : Proof (forall Num (_h0 => _UNDEFINEDNotAdjAdj (Adj2Adj Lt_Adj2 (FunExp square_Fun (QuantExp (SomeKindQuant (NounKind number_Noun))))) _h0)) .

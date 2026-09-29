@@ -1,0 +1,55 @@
+Obj : object_Noun []
+Prop : proposition_Noun []
+Set : set_Noun []
+Type : type_Noun []
+contradiction : FalseProp  | '\\contradictionMACRoA'
+conv : VerbPrepVerb2 converge_Verb to_Prep
+cross : VerbVerb2 cross_Verb
+disj : AdjPrepAdj2 disjoint_Adj from_Prep  | AdjAdjC disjoint_Adj  | '\\disjMACRoB'
+emp : empty_Adj
+empset : DefNounName (AdjNounNoun empty_Adj set_Noun) [] | '\\empsetMACRoC'
+eulerconstant : ProperNameNounName Euler_ProperName constant_Noun [] | '\\eulerconstantMACRoE'
+gcd : NounPrepFun2 (AdjNounNoun greatest_Adj (AdjNounNoun common_commoner_Adj divisor_Noun)) of_Prep and_Prep
+hilbertspace : ProperNameNounNoun Hilbert_ProperName space_Noun []
+iso : AdjAdjE isomorphic_Adj
+lebesguemeasure : NounPrepFun (ProperNameNounNoun Lebesgue_ProperName measure_Noun) of_Prep
+max : NounPrepFun (AdjNounNoun maximal_Adj element_Noun) of_Prep
+pr : NounNoun1 (AdjNounNoun prime_Adj number_Noun)
+root : NounPrepNoun2 root_Noun of_Prep
+sim : AdjPrepAdj3 similar_Adj to_Prep in_Prep
+sing : NounPrepFun singleton_Noun of_Prep  | '\\singMACRoD'
+unicont : AdverbAdjAdj uniformly_Adverb continuous_Adj
+vectorspace : NounNounNoun vector_Noun space_Noun []
+
+# semantics table keys: []
+# NLG table keys: []
+\newcommand{\contradictionMACRoA}{\bot}
+\newcommand{\disjMACRoB}[2]{#1 \mathrel{\not\meets} #2}
+\newcommand{\empsetMACRoC}{\emptyset}
+\newcommand{\eulerconstantMACRoE}{e}
+\newcommand{\singMACRoD}[1]{\{ #1 \}}
+
+## MISSING IN TABLE: Elem
+## MISSING IN TABLE: Proof
+## MISSING IN TABLE: 0
+## MISSING IN TABLE: 1
+## MISSING IN TABLE: 2
+## MISSING IN TABLE: 3
+## MISSING IN TABLE: 6
+## MISSING IN TABLE: 9
+## MISSING IN TABLE: A
+## MISSING IN TABLE: B
+## MISSING IN TABLE: E
+## MISSING IN TABLE: F
+## MISSING IN TABLE: a
+## MISSING IN TABLE: b
+## MISSING IN TABLE: c
+## MISSING IN TABLE: d
+## MISSING IN TABLE: e
+## MISSING IN TABLE: f
+## MISSING IN TABLE: g
+## MISSING IN TABLE: h
+## MISSING IN TABLE: i
+## MISSING IN TABLE: j
+## MISSING IN TABLE: k
+## MISSING IN TABLE: l

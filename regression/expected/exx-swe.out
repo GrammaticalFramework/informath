@@ -1,0 +1,18 @@
+Prop10. $0$ är jämnt.
+Prop20. Låt $n$ vara ett naturligt tal. Anta att $n$ är jämnt. Då är $n + 1$ udda.
+Prop30. Låt $n$ vara ett naturligt tal. Anta att $n$ är udda. Då är $n + 1$ jämnt.
+Prop40. Alla naturliga tal är jämna eller udda.
+Prop50. För alla naturliga tal $n$, är $n$ inte jämnt och udda.
+Prop60. För alla naturliga tal $n$, $n + 0 = n$.
+Prop70. $1$ är udda.
+Prop80. $2$ är jämnt.
+Prop90. Låt $n$ vara ett naturligt tal. Då om $n$ är jämnt och primt, så $n = 2$.
+Prop100. Låt $a$, $b$ och $c$ vara heltal. Anta att $a + b + c = 0$. Då $a \times b \times c < 0$.
+Prop110. Låt $a$ och $c$ vara heltal. Anta att $a$ och $c$ är udda. Då för alla heltal $b$, är $a \times b + b \times c$ jämnt.
+Prop120. Låt $a$ och $b$ vara heltal. Då är $a \times b$ jämnt, om och endast om $a$ eller $b$ är jämnt.
+Prop130. Låt $x$ och $y$ vara heltal. Då om $x \times y$ är udda, så är $x$ och $y$ udda.
+
+
+Prop150. Låt $n$ vara ett naturligt tal. Då är $n ^ {3}- n$ jämnt.
+
+Prop170. För alla naturliga tal $x$, är $x$ inte jämnt och udda.

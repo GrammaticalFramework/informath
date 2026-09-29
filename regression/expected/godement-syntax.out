@@ -1,0 +1,252 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+A group $G$ is said to be commutative if $x y = y x$.
+
+$\Rightarrow$ Let $G$ be a group. Then $G$ is commutative, if $x \times y = y \times x$.
+
+A ring $K$ is said to be commutative (or abelian) if $x y = y x$.
+
+$\Rightarrow$ Let $K$ be a ring. Then $K$ is commutative, if $x \times y = y \times x$.
+
+$x$ is said to be a divisor of $y$ if $y = x z$.
+
+$\Rightarrow$ $x$ is a divisor of $y$, if $y = x \times z$.
+
+$G$ and $H$ are said to be isomorphic if $f(G) = H$.
+
+$\Rightarrow$ $G$ and $H$ are isomorphic, if $f (G)= H$.
+
+$\Rightarrow$ ( $G$ is isomorphic and $H$ is isomorphic) , if $f (G)= H$.
+
+$x$ is called a unit if $x y = 1$.
+
+$\Rightarrow$ $x$ is a unit, if $x \times y = 1$.
+
+An isomorphism is by definition any homomorphism that is bijective.
+
+$\Rightarrow$ An isomorphism is a homomorphism $_g0$ such that $_g0$ is bijective.
+
+$p$ is called the characteristic of $K$.
+
+$\Rightarrow$ The characteristic of $K$ is an object defined as $p$.
+
+The order of $G$ is defined to be the determinant of $G$.
+
+$\Rightarrow$ The order of $G$ is an object defined as the determinant of $G$.
+
+We define the order of $G$ to be $n$.
+
+$\Rightarrow$ The order of $G$ is an object defined as $n$.
+
+We say that $G$ is abelian if $G$ is commutative.
+
+$\Rightarrow$ $G$ is abelian, if $G$ is commutative.
+
+We denote by $N$ the kernel of $f$.
+
+$\Rightarrow$ $N$ is an object defined as the kernel of $f$.
+
+The characteristic of $K$ is denoted by $c$.
+
+$\Rightarrow$ $c$ is an object defined as the characteristic of $K$.
+
+Groups that are commutative are called abelian groups.
+
+$\Rightarrow$ A group $_g0$ such that $_g0$ is abelian is a group $_g0$ such that $_g0$ is commutative.
+
+$\Rightarrow$ An abelian group is a group $_g0$ such that $_g0$ is commutative.
+
+$f$ is a bijective homomorphism.
+
+$\Rightarrow$ $f$ is an instance of homomorphisms $_g0$ such that $_g0$ is bijective.
+
+$\Rightarrow$ $f$ is an instance of bijective homomorphisms.
+
+$\Rightarrow$ We can prove that $f$ is a homomorphism and $f$ is bijective.
+
+$\Rightarrow$ We can prove that $f$ is a bijective homomorphism.
+
+$G$ is not a commutative group.
+
+$\Rightarrow$ We can prove that it is not the case that ( $G$ is a group and $G$ is commutative) .
+
+$\Rightarrow$ We can prove that it is not the case that $G$ is a commutative group.
+
+$G$ has at least two subgroups.
+
+$\Rightarrow$ We can prove that the cardinality of the set of subgroups of $G$ is greater than or equal to $2$.
+
+$\Rightarrow$ We can prove that the cardinality of the set of subgroups $_x_0$ such that $G$ has $_x_0$ is greater than or equal to $2$.
+
+$x$ has a left reflection.
+
+$\Rightarrow$ We can prove that there is a left reflection of $x$.
+
+$\Rightarrow$ We can prove that $x$ has a left reflection.
+
+$\Rightarrow$ We can prove that there exists a reflection $_g0$  $_x_0$ such that $_g0$ is left, such that $x$ has $_x_0$.
+
+$\Rightarrow$ We can prove that there exists a left reflection $_x_0$, such that $x$ has $_x_0$.
+
+For $x$ to be invertible it is necessary and sufficient that $x$ is a unit.
+
+$\Rightarrow$ We can prove that $x$ is invertible, if and only if $x$ is a unit.
+
+For an element $x$ of $G$ to be reflexible, it is necessary and sufficient that $x$ has a left reflection.
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$, ( $x$ is reflexible, if and only if there is a left reflection of $x$ ).
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$, ( $x$ is reflexible, if and only if there exists a reflection $_g0$  $_x_0$ such that $_g0$ is left, such that $x$ has $_x_0$ ).
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$, ( $x$ is reflexible, if and only if there exists a left reflection $_x_0$, such that $x$ has $_x_0$ ).
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$, ( $x$ is reflexible, if and only if $x$ has a left reflection) .
+
+$\Rightarrow$ We can prove that there exists an element $x$  $_h0$ of $G$, such that $_h0$ is reflexible, if and only if there is a left reflection of $x$.
+
+$\Rightarrow$ We can prove that there exists an element $x$  $_h0$ of $G$, such that $_h0$ is reflexible, if and only if there exists a reflection $_g0$  $_x_0$ such that $_g0$ is left, such that $x$ has $_x_0$.
+
+$\Rightarrow$ We can prove that there exists an element $x$  $_h0$ of $G$, such that $_h0$ is reflexible, if and only if there exists a left reflection $_x_0$, such that $x$ has $_x_0$.
+
+$\Rightarrow$ We can prove that there exists an element $x$  $_h0$ of $G$, such that $_h0$ is reflexible, if and only if $x$ has a left reflection.
+
+For $G$ to be commutative it is sufficient that $G$ is finite.
+
+$\Rightarrow$ We can prove that if $G$ is finite, then $G$ is commutative.
+
+There exists a unique element $x$ of $G$ such that $x$ is invertible.
+
+$\Rightarrow$ We can prove that there exists an element $x$ of $G$, such that ( $x$ is invertible and for all elements $_g0$ of $G$, (if $_g0$ is invertible, then $_g0$ is equal to $x$ )) .
+
+$\Rightarrow$ We can prove that there exists an element $x$  $_g0$ of $G$, such that ( $x$ is invertible and for all elements $x$  $_g0$ of $G$, (if $x$ is invertible, then $_g0$ is equal to $_g0$ )) .
+
+$\Rightarrow$ We can prove that there exists an element $x$ of $G$  $_g0$, such that ( $x$ is invertible and for all elements $x$ of $G$  $_g0$, (if $x$ is invertible, then $_g0$ is equal to $_g0$ )) .
+
+If $x$ is reflexible, then so is $y$.
+
+$\Rightarrow$ We can prove that if $x$ is reflexible, then $y$ is reflexible.
+
+$x$ is finite whenever $y$ is finite.
+
+$\Rightarrow$ We can prove that if $y$ is finite, then $x$ is finite.
+
+$f$ is injective (resp. surjective).
+
+$\Rightarrow$ We can prove that $f$ is injective.
+
+$\Rightarrow$ We can prove that $f$ is surjective.
+
+Every subgroup of $G$ that contains $x$ is commutative.
+
+$\Rightarrow$ We can prove that for all subgroups $_g0$  $x$ of $G$ such that $_g0$ contains, $x$ is commutative.
+
+$\Rightarrow$ We can prove that for all subgroups $_g0$  $_h0$ of $G$ such that $_g0$ contains $x$, $_h0$ is commutative.
+
+$\Rightarrow$ We can prove that for all subgroups of $G$  $_g0$  $x$ such that $_g0$ contains, $x$ is commutative.
+
+$\Rightarrow$ We can prove that for all subgroups of $G$  $_g0$  $_h0$ such that $_g0$ contains $x$, $_h0$ is commutative.
+
+Every divisor of $x$ divisible by $y$ is finite.
+
+$\Rightarrow$ We can prove that for all divisors $_g0$  $_h0$ of $x$ such that $_g0$ is divisible by $y$, $_h0$ is finite.
+
+$\Rightarrow$ We can prove that for all divisors of $x$  $_g0$  $_h0$ such that $_g0$ is divisible by $y$, $_h0$ is finite.
+
+$\Rightarrow$ We can prove that for all divisors of $x$ divisible by $y$  $_h0$, $_h0$ is finite.
+
+Given an element $x$ of $G$, $x$ is reflexible.
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$, $x$ is reflexible.
+
+$\Rightarrow$ We can prove that for all elements $x$  $_h0$ of $G$, $x$ is reflexible.
+
+$\Rightarrow$ We can prove that for all elements $x$ of $G$  $_h0$, $x$ is reflexible.
+
+The number of subgroups of $G$ is finite.
+
+$\Rightarrow$ We can prove that the cardinality of the set of subgroups of $G$ is finite.
+
+The set of all subgroups of $G$ is finite.
+
+$\Rightarrow$ We can prove that the set of all subgroups of $G$ is finite.
+
+$\Rightarrow$ We can prove that the set of every subgroup of $G$ is finite.
+
+$\Rightarrow$ We can prove that the set of subgroups of $G$ is finite.
+
+The kernel of $f$, called the order of $f$, is finite.
+
+$\Rightarrow$ We can prove that the kernel of $f$ is finite.
+
+$\Rightarrow$ The order of $f$ is an object defined as the kernel of $f$.
+
+$\Rightarrow$ The order of $f$ is an object defined as $f$.
+
+$x$ is equal to the unique element $y$ of $G$ such that $y$ is invertible.
+
+$\Rightarrow$ We can prove that there exists an element $y$ of $G$, such that (( $y$ is invertible and for all elements $_g0$ of $G$, (if $_g0$ is invertible, then $_g0$ is equal to $y$ )) and $x$ is equal to $y$ ).
+
+$\Rightarrow$ We can prove that there exists an element $y$  $_g0$ of $G$, such that (( $y$ is invertible and for all elements $y$  $_g0$ of $G$, (if $y$ is invertible, then $_g0$ is equal to $_g0$ )) and $x$ is equal to $_g0$ ).
+
+$\Rightarrow$ We can prove that there exists an element $y$ of $G$  $_g0$, such that (( $y$ is invertible and for all elements $y$ of $G$  $_g0$, (if $y$ is invertible, then $_g0$ is equal to $_g0$ )) and $x$ is equal to $_g0$ ).
+
+A subgroup of $G$, namely $H$, is finite.
+
+$\Rightarrow$ We can prove that $H$ is a subgroup of $G$ and $H$ is finite.
+
+$\Rightarrow$ We can prove that there exists a subgroup $_h0$ of $H$, such that $_h0$ is finite.
+
+$\Rightarrow$ We can prove that there exists a subgroup of $H$  $_h0$, such that $_h0$ is finite.
+
+Every element $x \in G$ such that $x$ is invertible is reflexible.
+
+$\Rightarrow$ We can prove that for all elements $x$  $_h0$ of $G$ such that $x$ is invertible, $_h0$ is reflexible.
+
+Every element of $G$ of the form $x y$, where $y \in H$, is reflexible.
+
+$\Rightarrow$ We can prove that for all elements $_g0$  $_h0$ of $G$ such that there exists an element $y$ of $H$, such that $_g0$ is equal to $x \times y$, $_h0$ is reflexible.
+
+$\Rightarrow$ We can prove that for all elements of $G$  $_g0$  $_h0$ such that there exists an element $y$ of $H$, such that $_g0$ is equal to $x \times y$, $_h0$ is reflexible.
+
+The following conditions are equivalent: a) $G$ is commutative; b) $G$ is abelian; c) $G$ is finite.
+
+$\Rightarrow$ We can prove that ( $G$ is commutative, if and only if $G$ is abelian) and ( $G$ is abelian, if and only if $G$ is finite) .
+
+$G$ has exactly $n$ subgroups.
+
+$\Rightarrow$ We can prove that the cardinality of the set of subgroups of $G$ is equal to $n$.
+
+$\Rightarrow$ We can prove that the cardinality of the set of subgroups $_x_0$ such that $G$ has $_x_0$ is equal to $n$.
+
+Given an element $x \in G$, $x$ is reflexible.
+
+Let $H$ be a subgroup of $G$ with the following properties: a) $H$ is finite; b) $H$ is commutative. Then $H$ is normal.
+
+$\Rightarrow$ Let $H$ be a subgroup of $G$. Assume that we can prove that $H$ is finite. Assume that we can prove that $H$ is commutative. Then we can prove that $H$ is normal.
+
+$\Rightarrow$ Let $H$ be an instance of subgroups of $G$. Assume that we can prove that $H$ is finite. Assume that we can prove that $H$ is commutative. Then we can prove that $H$ is normal.
+
+$\Rightarrow$ Let $H$ be a subgroup $_g0$ of $G$ such that ( $H$ is finite and $H$ is commutative) . then we can prove that $H$ is normal.
+
+$\Rightarrow$ Let $H$ be a subgroup of $G$  $_g0$ such that ( $H$ is finite and $H$ is commutative) . then we can prove that $H$ is normal.
+\end{document}

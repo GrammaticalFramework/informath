@@ -1,0 +1,64 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+
+The first sum:
+
+\begin{verbatim}
+theorem : Proof (Eq (sigma (nd 1) (nd 9) (i => i)) (nn 4 (nd 5))).
+\end{verbatim}
+
+Theorem. $\\\Summa {1}{9}{i}{i}= 45$.
+
+Theorem. $\\\Summa {1}{9}{i}{i}$ is equal to $45$.
+
+Theorem. $\\\Summa {1}{9}{i}{i}$ and $45$ are equal.
+
+
+The first integral:
+
+\begin{verbatim}
+theorem : Proof (Gt (integral (nd 0) (nd 1) (x => x)) 0).
+\end{verbatim}
+
+Theorem. $\\\Integral {0}{1}{x}{x}> 0$.
+
+Theorem. $\\\Integral {0}{1}{x}{x}$ is greater than $0$.
+
+Theorem. The definite integral of $x$ where $x$ ranges from $0$ to $1$ is greater than $0$.
+
+
+The second sum:
+
+\begin{verbatim}
+theorem : (m : Nat) -> (n : Nat) -> Proof (and (Lt 0 m) (Lt m (minus n 1))) ->
+  Proof (Gt (sigma m n (i => div 1 i)) (sigma (plus m 1) n (i => div 1 i)) ).
+\end{verbatim}
+
+Theorem. Let $m$ and $n$ be natural numbers. Assume that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}> \\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
+
+Theorem. Let $m$ and $n$ be elements of $\Natural$. Assume that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}> \\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
+
+Theorem. Let $m$ and $n$ be natural numbers. Assume that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}$ is greater than $\\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
+
+
+
+\end{document}

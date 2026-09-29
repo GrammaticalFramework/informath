@@ -1,0 +1,229 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[margin=2cm]{geometry}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if (and A B) A)}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$ and $B$. &  \\
+2. & $A$. & \texttt{andEl} 1  \\
+3. & If $A$ and $B$, then $A$. & \texttt{ifI} 2 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if A (or A B))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$. &  \\
+2. & $A$ or $B$. & \texttt{orIl} 1  \\
+3. & If $A$, then $A$ or $B$. & \texttt{ifI} 2 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if (and A B) (and B A))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$ and $B$. &  \\
+2. & $B$. & \texttt{andEr} 1  \\
+3. & $A$. & \texttt{andEl} 1  \\
+4. & $B$ and $A$. & \texttt{andI} 2, 3  \\
+5. & If $A$ and $B$, then $B$ and $A$. & \texttt{ifI} 4 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if A (if B A))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$. &  \\
+2. & If $B$, then $A$. & \texttt{ifI} 1 [k] \\
+3. & If $A$, then if $B$, then $A$. & \texttt{ifI} 2 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if (and A B) (and (not (not A)) (not (not B))))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$ and $B$. &  \\
+2. & $A$. & \texttt{andEl} 1  \\
+3. & Assume that it is not the case that $A$. &  \\
+4. & We have a contradiction. & \texttt{notE} 2, 3  \\
+5. & It is not the case that it is not the case that $A$. & \texttt{notI} 4 [d] \\
+6. & $B$. & \texttt{andEr} 1  \\
+7. & Assume that it is not the case that $B$. &  \\
+8. & We have a contradiction. & \texttt{notE} 6, 7  \\
+9. & It is not the case that it is not the case that $B$. & \texttt{notI} 8 [e] \\
+10. & It is not the case that it is not the case that $A$ and it is not the case that it is not the case that $B$. & \texttt{andI} 5, 9  \\
+11. & If $A$ and $B$, then it is not the case that it is not the case that $A$ and it is not the case that it is not the case that $B$. & \texttt{ifI} 10 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Prop) -> (B : Prop) -> Proof (if (or A B) (or B A))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Assume that $A$ or $B$. &  \\
+2. & Assume that $A$. &  \\
+3. & $B$ or $A$. & \texttt{orIr} 2  \\
+4. & Assume that $B$. &  \\
+5. & $B$ or $A$. & \texttt{orIl} 4  \\
+6. & $B$ or $A$. & \texttt{orE} 1, 3, 5 [d, e] \\
+7. & If $A$ or $B$, then $B$ or $A$. & \texttt{ifI} 6 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(A : Set) -> (B : (x : Elem A -> Prop)) -> Proof (forall A (x => if (B x) (B x)))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Let $x$ be an element of $A$. &  \\
+2. & Assume that $B$ holds for $x$. &  \\
+3. & If $B$ holds for $x$, then $B$ holds for $x$. & \texttt{ifI} 2 [h] \\
+4. & For all elements $x$ of $A$, if $B$ holds for $x$, then $B$ holds for $x$. & \texttt{forallI} 1, 3 [x] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{Proof (odd 1)}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & $0$ is even. &  \\
+2. & The successor of $0$ is odd. & \texttt{oddSucc} 1  \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{Proof (forall Nat (n => or (even n) (odd n)))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & $0$ is even. &  \\
+2. & $0$ is even or odd. & \texttt{orIl} 1  \\
+3. & Let $x$ be an element of $\Natural$. &  \\
+4. & Assume that $x$ is even or odd. &  \\
+5. & Assume that $x$ is even. &  \\
+6. & The successor of $x$ is odd. & \texttt{oddSucc} 5  \\
+7. & The successor of $x$ is even or odd. & \texttt{orIr} 6  \\
+8. & Assume that $x$ is odd. &  \\
+9. & The successor of $x$ is even. & \texttt{evenSucc} 8  \\
+10. & The successor of $x$ is even or odd. & \texttt{orIl} 9  \\
+11. & The successor of $x$ is even or odd. & \texttt{orE} 4, 7, 10 [h, k] \\
+12. & Every element of $\Natural$ is even or odd. & \texttt{NatInd} 2, 3, 11 [x, y] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+
+
+\subsection*{\texttt{(n : Elem Nat) -> Proof (if (odd (Succ n)) (even n))}}
+
+
+
+\begin{tabular}{rp{0.62\textwidth}l}
+1. & Let $n$ be an element of $\Natural$. &  \\
+2. & $n$ is even or odd. &  \\
+3. & Assume that $n$ is even. &  \\
+4. & Assume that $n$ is odd. &  \\
+5. & The successor of $n$ is even. & \texttt{evenSucc} 4  \\
+6. & Assume that the successor of $n$ is odd. &  \\
+7. & We have a contradiction. & \texttt{neverEvenOdd} 5, 6  \\
+8. & $n$ is even. & \texttt{falseE} 7  \\
+9. & $n$ is even. & \texttt{orE} 2, 3, 8 [d, e] \\
+10. & If the successor of $n$ is odd, then $n$ is even. & \texttt{ifI} 9 [h] \\
+\end{tabular}
+
+
+
+
+\clearpage
+
+
+\end{document}

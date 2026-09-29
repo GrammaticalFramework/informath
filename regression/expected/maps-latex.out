@@ -1,0 +1,60 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\F}[2]{\mathcal{F}(#1, #2)}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\app}[2]{#1 (#2)}
+\newcommand{\comp}[2]{#1 \circ #2}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\id}[1]{id_{#1}}
+\newcommand{\infinity}{\infty}
+\newcommand{\inv}[2]{#1^{-1}}
+\newcommand{\invImage}[3]{#2^{-1}(#1)}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+Definition. Let $X$ and $Y$ be sets. Then $\F {X}{Y}$ is a set.
+
+Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Let $x$ be an element of $X$. Then $\app {f}{x}$ is an element of $Y$.
+
+IsMap. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Then for all elements $x$ of $X$, there exists an element $y$ of $Y$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and for all elements $y$ of $Y$, for all elements $\mathrm{y'}$ of $Y$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\mathrm{y'}$, then $\mathrm{Equ}$ holds for $Y$, $y$ and $\mathrm{y'}$.
+
+Definition. Let $X$ be a set. Then $\id {X}$ is a map from $X$ to $X$.
+
+Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Then $f$ is injective, if for all elements $x$ and $\mathrm{x'}$ of $X$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\app {f}{\mathrm{x'}}$, then $\mathrm{Equ}$ holds for $X$, $x$ and $\mathrm{x'}$.
+
+Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Then $f$ is surjective, if for all elements $y$ of $Y$, there exists an element $x$ of $X$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$.
+
+Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Then $f$ is bijective, if $f$ is injective and surjective.
+
+IdIsBij. Let $X$ be a set. Then $\id {X}$ is bijective.
+
+Definition. Let $X$, $Y$ and $Z$ be sets. Let $g$ be a map from $Y$ to $Z$. Let $f$ be a map from $X$ to $Y$. Then $\comp {g}{f}$ is a map from $X$ to $Z$.
+
+IdCompNeutral. Let $X$ and $Y$ be sets. Then for all maps $f$ from $X$ to $Y$, $\mathrm{Equ}$ holds for $\F {X}{Y}$, $f$ and $\comp {f}{\id {X}}$ and $\mathrm{Equ}$ holds for $\F {X}{Y}$, $f$ and $\comp {\id {Y}}{f}$.
+
+CompAssoc. Let $X$, $Y$, $Z$ and $T$ be sets. Let $f$ be a map from $X$ to $Y$. Let $g$ be a map from $Y$ to $Z$. Let $h$ be a map from $Z$ to $T$. Then $\mathrm{Equ}$ holds for $\F {X}{T}$, $\comp {(\comp {h}{g})}{f}$ and $\comp {h}{(\comp {g}{f})}$.
+
+Definition. Let $X$ and $Y$ be sets. Let $g$ be a map from $Y$ to $X$. Let $f$ be a map from $X$ to $Y$. Then $g$ is an inverse of $f$, if $\mathrm{Equ}$ holds for $\F {X}{X}$, $\comp {g}{f}$ and $\id {X}$ and $\mathrm{Equ}$ holds for $\F {Y}{Y}$, $\comp {f}{g}$ and $\id {Y}$.
+
+InverseProp. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Then $f$ is bijective, if and only if there exists a map $g$ from $Y$ to $X$, such that $g$ is an inverse of $f$.
+
+Definition. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Assume that $f$ is bijective. Then $\inv {f}{u}$ is a map from $Y$ to $X$.
+
+InvInverse. Let $X$ and $Y$ be sets. Let $f$ be a map from $X$ to $Y$. Assume that $f$ is bijective. Then $\inv {f}{p}$ is an inverse of $f$.
+
+By cases: \begin{itemize} \item for $X$ and $x$, $\app {X}{X}{\id {X}}{x}$ is $x$. \item for $X$, $Y$, $Z$, $f$, $g$ and $x$, $\app {X}{Z}{\mathrm{comp} (X , Y , Z , g , f)}{x}$ is $\app {g}{(\app {f}{x})}$. \end{itemize}
+\end{document}

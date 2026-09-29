@@ -1,0 +1,288 @@
+\batchmode
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\setlength\parindent{0pt}
+\setlength\parskip{8pt}
+\begin{document}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Integral}[4]{\int_{ #1 }^{#2} #4 d #3}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Summa}[4]{\sum_{ #3 = #1 }^{#2}{#4}}
+\newcommand{\congruent}[3]{#1 \equiv #2 \, \mbox{mod} \, #3}
+\newcommand{\divides}[2]{#1 \mid #2}
+\newcommand{\divisible}[2]{#2 \mid #1}
+\newcommand{\infinity}{\infty}
+\newcommand{\isempty}[1]{#1 = \emptyset}
+AbbreviationNi. $ A \ni a $ iff $ a \in A $ .
+
+AxiomSetext. Suppose for all $a$ we have $ a \in A $ iff $ a \in B $ . then $ A = B $ .
+
+PropositionNeqWitness. Suppose $ A \neq B $ . then there exists $c$ such that either $ c \in A $ and $ c \not \in B $ or $ c \not \in A $ and $ c \in B $ .
+
+AbbreviationIsSubset. $A$ is a subset of $B$ iff $ A \subseteq B $ .
+
+AbbreviationSupseteq. $ B \supseteq A $ iff $ A \subseteq B $ .
+
+PropositionSubseteqRefl. $ A \subseteq A $ .
+
+PropositionSubseteqAntisymmetric. Suppose $ A \subseteq B \subseteq A $ . then $ A = B $ .
+
+PropositionElemSubseteq. Suppose $ a \in A \subseteq B $ . then $ a \in B $ .
+
+PropositionNotInSubseteq. Suppose $ A \subseteq B $ and $ c \notin B $ . then $ c \notin A $ .
+
+PropositionSubseteqTransitive. Suppose $ A \subseteq B \subseteq C $ . then $ A \subseteq C $ .
+
+DefinitionSubset. $ A \subset B $ iff $ A \subseteq B $ and $ A \neq B $ .
+
+PropositionSubsetIrrefl. $ A \not \subset A $ .
+
+PropositionSubsetTransitive. Suppose $ A \subseteq B \subseteq C $ . then $ A \subseteq C $ .
+
+Proof. $ A \subseteq B $ and $ A \neq B $ .
+
+AxiomEmptyset. For all $a$ we have $ a \notin \emptyset $ .
+
+AbbreviationInhabited. $A$ is inhabited iff there exists $a$ such that $ a \in A $ .
+
+AbbreviationEmpty. $A$ is empty iff for all $x$ we have $ x \notin A $ .
+
+PropositionNonemptyInhabited. Suppose $ A \neq \emptyset $ . then $A$ is inhabited.
+
+PropositionEmptysetSubseteq. For all $a$ we have $ \emptyset \subseteq a $ .
+
+PropositionSubseteqEmptysetIff. $ A \subseteq \emptyset $ iff $ A = \emptyset $ .
+
+AbbreviationNotmeets. $ A \notmeets B $ iff $A$ is disjoint from $B$.
+
+AbbreviationMeets. $ A \meets B $ iff $A$ is not disjoint from $B$.
+
+PropositionDisjointSymmetric. If $A$ is disjoint from $B$, then $B$ is disjoint from $A$.
+
+AxiomConsIff. $ x \in \cons { y } { X } $ iff $ x = y $ or $ x \in X $ .
+
+PropositionConsLeft. $ x \in \cons { x } { X } $ .
+
+PropositionConsRight. If $ y \in X $ , then $ y \in \cons { x } { X } $ .
+
+PropositionUpairIntroLeft. $ a \in \{ a , b \} $ .
+
+PropositionUpairIntroRight. $ b \in \{ a , b \} $ .
+
+PropositionUpairElim. Suppose $ c \in \{ a , b \} $ . then $ a = c $ or $ b = c $ .
+
+PropositionUpairIff. $ c \in \{ a , b \} $ iff $ a = c $ or $ b = c $ .
+
+PropositionSingletonIntro. $ a \in \{ a \} $ .
+
+PropositionSingletonElim. If $ a \in \{ b \} $ , then $ a = b $ .
+
+PropositionSingletonIff. $ a \in \{ b \} $ iff $ a = b $ .
+
+PropositionSingletonInhabited. $ \{ a \} $ is inhabited.
+
+PropositionSingletonSubsetIntro. Suppose $ a \in C $ . then $ \{ a \} \subseteq C $ .
+
+PropositionSingletonSubsetElim. Suppose $ \{ a \} \subseteq C $ . then $ a \in C $ .
+
+PropositionUnionsIntro. Suppose $ A \in B \in C $ . then $ A \in \unions { C } $ .
+
+PropositionUnionsEmptyset. $ \unions { \emptyset } = \emptyset $ .
+
+PropositionIntersDestr. Suppose $ A \in \inters { C } $ . suppose $ B \in C $ . then $ A \in B $ .
+
+PropositionIntersSubseteqElem. Let $ B \in A $ . then $ \inters { A } \subseteq B $ .
+
+PropositionIntersSingleton. $ \inters { \{ a \} } = a $ .
+
+PropositionIntersEmptyset. $ \inters { \{ \emptyset \} } = \emptyset $ .
+
+PropositionUnionIntroLeft. If $ c \in A $ , then $ c \in A \union B $ .
+
+PropositionUnionIntroRight. If $ c \in B $ , then $ c \in A \union B $ .
+
+PropositionUnionAsUnions. $ \unions { \{ x , y \} } = x \union y $ .
+
+PropositionUnionComm. $ A \union B = B \union A $ .
+
+PropositionUnionAssoc. $ ( A \union B ) \union C = A \union ( B \union C ) $ .
+
+PropositionUnionIdempotent. $ A \union A = A $ .
+
+PropositionUnionSubsetsIsSubset. Suppose $ A \subseteq C $ and $ B \subseteq C $ . then $ A \union B \subseteq C $ .
+
+PropositionSubseteqUnionIff. $ A \union B \subseteq C $ iff $ A \subseteq C $ and $ B \subseteq C $ .
+
+PropositionUnionUpperLeft. $ A \subseteq A \union B $ .
+
+PropositionUnionUpperRight. $ B \subseteq A \union B $ .
+
+PropositionUnionSubseteqUnion. Suppose $ A \subseteq C $ and $ B \subseteq D $ . then $ A \union B \subseteq C \union D $ .
+
+PropositionUnionEmptyset. $ A \union \emptyset = A $ .
+
+PropositionUnionEmptysetIntro. Suppose $ A = \emptyset $ and $ B = \emptyset $ . then $ A \union B = \emptyset $ .
+
+PropositionUnionEmptysetElimLeft. Suppose $ A \union B = \emptyset $ . then $ A = \emptyset $ .
+
+PropositionUnionEmptysetElimRight. Suppose $ A \union B = \emptyset $ . then $ B = \emptyset $ .
+
+PropositionUnionAbsorbSubseteqLeft. Suppose $ A \subseteq B $ . then $ A \union B = B $ .
+
+PropositionUnionAbsorbSubseteqRight. Suppose $ A \subseteq B $ . then $ B \union A = B $ .
+
+PropositionUnionEqSelfImpliesSubseteq. If $ A \union B = B $ , then $ A \subseteq B $ .
+
+PropositionUnionsCons. $ \unions { \cons { b } { A } } = b \union \unions { A } $ .
+
+PropositionUnionCons. $ \cons { b } { A } \union C = \cons { b } { A \union C } $ .
+
+PropositionUnionAbsorbLeft. $ A \union ( A \union B ) = A \union B $ .
+
+PropositionUnionAbsorbRight. $ ( A \union B ) \union B = A \union B $ .
+
+PropositionUnionCommLeft. $ A \union ( B \union C ) = B \union ( A \union C ) $ .
+
+DefinitionInter. $ A \inter B = \{ a \in A \mid a \in B \} $ .
+
+PropositionInterIntro. If $ c \in A , B $ , then $ c \in A \inter B $ .
+
+PropositionInterElimLeft. If $ c \in A \inter B $ , then $ c \in A $ .
+
+PropositionInterElimRight. If $ c \in A \inter B $ , then $ c \in B $ .
+
+PropositionInterAsInters. $ \inters { \{ A , B \} } = A \inter B $ .
+
+PropositionInterComm. $ A \inter B = B \inter A $ .
+
+PropositionInterAssoc. $ ( A \inter B ) \inter C = A \inter ( B \inter C ) $ .
+
+PropositionInterIdempotent. $ A \inter A = A $ .
+
+PropositionInterEmptyset. $ A \inter \emptyset = \emptyset $ .
+
+PropositionInterAbsorbSupseteqRight. Suppose $ A \subseteq B $ . then $ A \inter B = A $ .
+
+PropositionInterAbsorbSupseteqLeft. Suppose $ A \subseteq B $ . then $ B \inter A = A $ .
+
+PropositionInterEqLeftImpliesSubseteq. Suppose $ A \inter B = A $ . then $ A \subseteq B $ .
+
+PropositionSubseteqInterIff. $ C \subseteq A \inter B $ iff $ C \subseteq A $ and $ C \subseteq B $ .
+
+PropositionInterLowerLeft. $ A \inter B \subseteq A $ .
+
+PropositionInterLowerRight. $ A \inter B \subseteq B $ .
+
+PropositionInterAbsorbLeft. $ A \inter ( A \inter B ) = A \inter B $ .
+
+PropositionInterAbsorbRight. $ ( A \inter B ) \inter B = A \inter B $ .
+
+PropositionInterCommLeft. $ A \inter ( B \inter C ) = B \inter ( A \inter C ) $ .
+
+PropositionInterSubseteq. Suppose $ A , B \subseteq C $ . then $ A \inter B \subseteq C $ .
+
+PropositionInterDistribUnion. $ A \inter ( B \union C ) = ( A \inter B ) \union ( A \inter C ) $ .
+
+PropositionUnionDistribInter. $ x \union ( y \inter z ) = ( x \union y ) \inter ( x \union z ) $ .
+
+PropositionUnionInterAssocIntro. Suppose $ C \subseteq A $ . then $ A \inter ( B \union C ) = ( A \inter B ) \union C $ .
+
+PropositionUnionInterAssocElim. Suppose $ ( A \inter B ) \union C = A \inter ( B \union C ) $ . then $ C \subseteq A $ .
+
+PropositionUnionInterCrazy. $ ( A \inter B ) \union ( B \inter C ) \union ( C \inter A ) = ( A \union B ) \inter ( B \union C ) \inter ( C \union A ) $ .
+
+PropositionIntersDistribUnion. Suppose $A$ and $B$ are inhabited. Then $ \inters { A \union B } = ( \inters { A } ) \inter \inters { B } $ .
+
+DefinitionSetminus. $ A \setminus B = \{ a \in A \mid a \not \in B \} $ .
+
+PropositionSetminusIntro. If $ a \in A $ and $ a \notin B $ , then $ a \in A \setminus B $ .
+
+PropositionSetminusElimLeft. If $ a \in A \setminus B $ , then $ a \in A $ .
+
+PropositionSetminusElimRight. If $ a \in A \setminus B $ , then $ a \notin B $ .
+
+PropositionSetminusEmptyset. $ x \setminus \emptyset = x $ .
+
+PropositionEmptysetSetminus. $ \emptyset \setminus x = \emptyset $ .
+
+PropositionSetminusSelf. $ x \setminus x = \emptyset $ .
+
+PropositionSetminusSetminus. $ x \setminus ( x \setminus y ) = x \inter y $ .
+
+PropositionDoubleRelativeComplement. Suppose $ y \subseteq x $ . then $ x \setminus ( x \setminus y ) = y $ .
+
+PropositionSetminusInter. $ x \setminus ( y \inter z ) = ( x \setminus y ) \union ( x \setminus z ) $ .
+
+PropositionSetminusUnion. $ x \setminus ( y \union z ) = ( x \setminus y ) \inter ( x \setminus z ) $ .
+
+PropositionInterSetminus. $ x \inter ( y \setminus z ) = ( x \inter y ) \setminus ( x \inter z ) $ .
+
+PropositionSetminusSubseteq. $ B \setminus A \subseteq B $ .
+
+PropositionSubseteqSetminus. Suppose $ C \subseteq A $ . suppose $ C \inter B = \emptyset $ . then $ C \subseteq A \setminus B $ .
+
+PropositionSubseteqImpliesSetminusSupseteq. Suppose $ A \subseteq B $ . then $ C \setminus A \supseteq C \setminus B $ .
+
+PropositionSetminusAbsorbRight. Suppose $ A \inter B = \emptyset $ . then $ A \setminus B = A $ .
+
+PropositionSetminusEqEmptysetIffSubseteq. $ A \setminus B = \emptyset $ iff $ A \subseteq B $ .
+
+PropositionSubseteqSetminusConsIntro. Suppose $ B \subseteq A \setminus C $ and $ c \notin B $ . then $ B \subseteq A \setminus \cons { c } { C } $ .
+
+PropositionSubseteqSetminusConsElim. Suppose $ B \subseteq A \setminus \cons { c } { C } $ . then $ B \subseteq A \setminus C $ and $ c \notin B $ .
+
+PropositionSetminusCons. $ A \setminus \cons { a } { B } = ( A \setminus \{ a \} ) \setminus B $ .
+
+PropositionSetminusConsFlip. $ A \setminus \cons { a } { B } = ( A \setminus B ) \setminus \{ a \} $ .
+
+PropositionSetminusDisjoint. $ A \inter ( B \setminus A ) = \emptyset $ .
+
+PropositionSetminusPartition. Suppose $ A \subseteq B $ . then $ A \union ( B \setminus A ) = B $ .
+
+PropositionSubseteqUnionSetminus. $ A \subseteq B \union ( A \setminus B ) $ .
+
+PropositionDoubleComplement. Suppose $ A \subseteq B \subseteq C $ . then $ B \setminus ( C \setminus A ) = A $ .
+
+PropositionSetminusEqInterComplement. Suppose $ A , B \subseteq C $ . then $ A \setminus B = A \inter ( C \setminus B ) $ .
+
+AxiomPairEqIff. $ ( a , b ) = ( a' , b' ) $ iff $ a = a' \land b = b' $ .
+
+AxiomPairNeqEmptyset. $ ( a , b ) \neq \emptyset $ .
+
+AxiomPairNeqFst. $ ( a , b ) \neq a $ .
+
+AxiomPairNeqSnd. $ ( a , b ) \neq b $ .
+
+PropositionTripleEqIff. $ ( a , b , c ) = ( a' , b' , c' ) $ iff $ a = a' \land b = b' \land c = c' $ .
+
+AxiomFstEq. $ \fst { ( a , b ) } = a $ .
+
+AxiomSndEq. $ \snd { ( a , b ) } = b $ .
+
+PropositionPairEqPairOfProj. $ ( a , b ) = ( \fst { ( a , b ) } , \snd { ( a , b ) } ) $ .
+
+DefinitionTimes. $ A \times B = \{ ( a , b ) \mid a \in A , b \in B \} $ .
+
+PropositionTimesTupleElim. Suppose $ ( x , y ) \in X \times Y $ . then $ x \in X $ and $ y \in Y $ .
+
+PropositionTimesTupleIntro. Suppose $ x \in X $ and $ y \in Y $ . then $ ( x , y ) \in X \times Y $ .
+
+PropositionTimesEmptyLeft. $ \emptyset \times Y = \emptyset $ .
+
+PropositionTimesEmptyRight. $ X \times \emptyset = \emptyset $ .
+
+PropositionTimesEmptyIff. $ X \times Y $ is empty iff $X$ is empty or $Y$ is empty.
+
+PropositionFstType. Suppose $ c \in A \times B $ . then $ \fst { c } \in A $ .
+
+PropositionSndType. Suppose $ c \in A \times B $ . then $ \snd { c } \in B $ .
+
+PropositionTimesProjElim. Suppose $ p \in X \times Y $ . then $ \fst { p } \in X $ and $ \snd { p } \in Y $ .
+\end{document}
