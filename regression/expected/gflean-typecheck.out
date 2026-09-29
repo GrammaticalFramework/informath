@@ -1,0 +1,13 @@
+ex : x : Elem Real -> Proof (if (Lt x (nd 0)) (Gt (plus (pow x (nd 2)) (nd 1)) (nd 0))) .
+ex : x : Elem Int -> Proof (if (even (minus (times (nd 5) x) (nd 7))) (odd x)) .
+ex : x : Elem Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even x)) .
+ex : x : Elem Int -> Proof (if (odd (minus (times (nd 5) x) (nd 7))) (even (plus (times (nd 9) x) (nd 2)))) .
+ex : x : Elem Int -> Proof (if (odd (plus (times (nd 7) x) (nd 5))) (even x)) .
+ex : n : Elem Int -> Proof (if (even (times (nn 1 (nd 5)) n)) (even (times (nd 9) n))) .
+ex : x : Elem Int -> Proof (if (even (plus (times (nd 7) x) (nd 4))) (odd (minus (times (nd 3) x) (nn 1 (nd 1))))) .
+(; ILL-TYPED ;) ex : Proof (if (element n Int) (even (minus (pow n (nd 3)) n))) .
+ex : x : Elem Int -> y : Elem Int -> Proof (if (odd (times x y)) (and (odd x) (odd y))) .
+ex : a : Elem Int -> b : Elem Int -> Proof (if (or (even a) (even b)) (even (times a b))) .
+ex : n : Elem Int -> Proof (if (odd (minus (times (nd 3) n) (nd 8))) (odd n)) .
+ex : x : Elem Int -> y : Elem Int -> Proof (if (or (even x) (even y)) (even (times x (pow y (nd 2))))) .
+ex : x : Elem Int -> Proof (if (even (minus (times (nd 7) x) (nd 3))) (odd (plus (times (nd 3) x) (nd 8)))) .

@@ -43,6 +43,12 @@ import qualified Data.Map as M
 import qualified Data.Set as S
 import Text.JSON (JSValue)
 import System.Environment(getEnv)
+import System.Process (readProcessWithExitCode)
+import System.Exit (ExitCode(..))
+import System.Directory (getTemporaryDirectory, removeFile)
+import System.IO (openTempFile, hClose)
+import Control.Exception (try, SomeException)
+import Control.Monad (foldM)
 
 
 -- * The environment
@@ -209,7 +215,8 @@ data ParseResult = ParseResult {
   parseResults  :: [GFTree],
   unindexedResults :: [GFTree],
   formalResults :: [(GFTree, GFTree, GFTree, [Jmt])], -- | parsed, unindexed, normalized
-  transResults  :: [String] -- | back-translation or translation to another language
+  transResults  :: [String], -- | back-translation or translation to another language
+  typecheckMessage :: String -- | with -typecheck: what type-checking did to the readings
   }
 
 
@@ -290,6 +297,7 @@ processLatexLine env s =
       then ["\\textbf{No parse:} " ++ s]
       else s : ["$\\Rightarrow$ " ++ unlex env c | c <- cores]
   in ParseResult {
+    typecheckMessage = "",
     originalLine = s,
     lexedLine = ls,
     termIndex = tindex,
@@ -452,6 +460,49 @@ dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
 checkJmt :: Jmt -> Bool
 checkJmt _ = True ----
 
+-- | With -typecheck: keep only the readings of a parsed line whose Dedukti
+-- type-checks with dk, on top of the base constants (-base). If no reading of
+-- the line type-checks, all are kept, and marked as ill-typed.
+typecheckParseResults :: Env -> [ParseResult] -> IO [ParseResult]
+typecheckParseResults env results
+  | not (isFlag "-typecheck" env) = return results
+  | otherwise = do
+      tmp <- getTemporaryDirectory
+      -- a file of its own, as several RunInformath may run at the same time
+      (file, h) <- openTempFile tmp "informath-typecheck.dk"
+      hClose h
+      let base = printTree (baseConstantModule env)
+      (rs, _) <- foldM (check base file) ([], M.empty) results
+      _ <- try (removeFile file) :: IO (Either SomeException ())
+      return (reverse rs)
+ where
+   check base file (done, memo) r = do
+     (checked, memo') <- foldM (checkReading base file) ([], memo) (formalResults r)
+     let good = [(t, ut, ct, js) | (t, ut, ct, js) <- reverse checked, not (null js)]
+         r' = case () of
+           _ | null (formalResults r) -> r
+           _ | null good -> r {typecheckMessage = "no reading type-checks"}
+           _ -> r {formalResults = good, typecheckMessage =
+                     show (length (concat [js | (_, _, _, js) <- good])) ++ " of " ++
+                     show (length (nub (concat [js | (_, _, _, js) <- formalResults r]))) ++
+                     " readings type-check"}
+     return (r' : done, memo')
+   checkReading base file (acc, memo) (t, ut, ct, jmts) = do
+     (oks, memo') <- foldM (wellTyped base file) ([], memo) jmts
+     return ((t, ut, ct, [j | (j, True) <- zip jmts (reverse oks)]) : acc, memo')
+   wellTyped base file (oks, memo) jmt = do
+     let s = printTree jmt
+     case M.lookup s memo of
+       Just ok -> return (ok : oks, memo)
+       Nothing -> do
+         writeFile file (base ++ "\n" ++ s ++ "\n")
+         res <- try (readProcessWithExitCode "dk" ["check", file] "")
+                  :: IO (Either SomeException (ExitCode, String, String))
+         ok <- case res of
+           Right (code, _, _) -> return (code == ExitSuccess)
+           Left e -> error ("-typecheck needs dk, the Dedukti checker, on the path: " ++ show e)
+         return (ok : oks, M.insert s ok memo)
+
 -- ** Conversions starting from natural language
 
 -- | Print the parse results with all intermediate phases.
@@ -477,6 +528,7 @@ printParseResult env result = case 0 of
     mkJSONListField "termIndex" (map stringJSON (termIndex result)),
     mkJSONField "indexedLine" (stringJSON (indexedLine result)),
     mkJSONField "parseMessage" (stringJSON (parseMessage result)),
+    mkJSONField "typecheckMessage" (stringJSON (typecheckMessage result)),
     mkJSONListField "unknownWords" (map stringJSON (unknownWords result)),
     mkJSONListField "formalResults" (map (finalParseResult env) (formalResults result))
     ]]
@@ -485,7 +537,10 @@ printParseResult env result = case 0 of
 -- | Print just the resulting Dedukti code.
 printDeduktiOutput :: Env -> ParseResult -> [String]
 printDeduktiOutput env result =
-  nub [printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+  nub [mark ++ printDeduktiEnv env jmt | (_,_,_,jmts) <- formalResults result, jmt <- jmts]
+ where
+   -- with -typecheck, when no reading of the line type-checks
+   mark = if typecheckMessage result == "no reading type-checks" then "(; ILL-TYPED ;) " else ""
 
 -- | Print both GF trees and resulting Dedukti, in JSON. 
 finalParseResult :: Env -> (GFTree, GFTree, GFTree, [Jmt]) -> JSValue

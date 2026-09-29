@@ -109,8 +109,13 @@ These are the problems:
    `dk-gflean`), but `make demo` shows them all. Since all readings of the
    formulas are kept, they multiply: `prop100` has 24 readings, of which one
    type-checks, and the Naproche round trip (`naproche-interpret`) grew from 55
-   to 130 pages. Filtering the parser's readings by type-checking them would
-   remove the spurious ones.
+   to 130 pages. The new option `-typecheck` filters them: each reading is
+   checked with `dk check` on top of the base constants (`-base`), and only the
+   well-typed readings of a line are kept. If none is well-typed, all are kept,
+   each marked with the Dedukti comment `(; ILL-TYPED ;)`. With it, the round
+   trip of `exx.dk` gives exactly the correct reading of each statement, and
+   the Chartrand et al. examples one reading each (`exx-roundtrip-typecheck`,
+   `gflean-typecheck`: 16 and 13 lines, against 51 and 33 without).
 3. **`make fermat` stops** with *conflicting profile information in "Fermat's
    theorem ."* (XFAIL `fermat`).
 4. **`make bind` stops**: `test/bind.dk` does not parse, *syntax error at line
@@ -126,6 +131,7 @@ These are the problems:
    intended, but it is now counted.
 
 ## Suggestions
+
 
 - **Hook it into the root Makefile**, e.g.
 

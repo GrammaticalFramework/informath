@@ -53,7 +53,7 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       mapM_ putStrLn (showFreqs (unknownWordsInTex env (unlines (dictValues s))))
     Just (file, txt) | elem txt ["tex", "txt", "md"] -> do
       s <- readFile file 
-      let results = processLatex env s
+      results <- typecheckParseResults env (processLatex env s)
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Just (file, "dkgf") | any (flip elem args) ["-try-symboltable", "-keep-ok-entries"] -> do
       ss <- readFile file >>= return . lines
@@ -80,7 +80,7 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       mapM_ (putStrLn . unlines . parseFunExample env) (lines s)
     Nothing | elem "-formalize" args -> do
       s <- getContents 
-      let results = processLatex env s
+      results <- typecheckParseResults env (processLatex env s)
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     Nothing | elem "-from-gf-trees" args -> do
       ss <- getContents >>= return . filter (not . null) . lines
@@ -149,6 +149,7 @@ helpMsg4 = [
   just "-from-lang=<lang>" "parse from <lang>, default Eng",
   just "-translate" "translate text without parsing parts in $...$",
   just "-translate-core" "print each line followed by the verbalizations of its MathCore semantics",
+  just "-typecheck" "keep only the readings whose Dedukti type-checks with dk, on top of -base",
   just "-parse-only" "return GF syntax trees, also parsing the parts in $...$",
   just "-include-unreachable" "include trees with functions unreachable from symbol table",
   just "-unknown-words" "show words in text file not in grammar",
@@ -198,7 +199,7 @@ loopInformath env = do
   s <- getLine
   case s of
     '?':cs -> do
-      let results = processLatex env cs
+      results <- typecheckParseResults env (processLatex env cs)
       mapM_ putStrLn (printResults env (concatMap (printParseResult env) results))
     _ -> do
       let mmo = parseDeduktiModuleErrorFree s

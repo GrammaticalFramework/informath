@@ -61,6 +61,15 @@ dict(name='gflean-failures', tier='demo', make='demo',
      what='the examples from Chartrand et al. that do not parse',
      cmd='{RUN} -failures test/gflean-data.txt', fewer=True),
 
+dict(name='exx-roundtrip-typecheck', tier='demo', make=None,
+     what='the English of exx.dk parsed back, keeping only the readings that type-check',
+     cmd='{RUN} -to-lang=Eng test/exx.dk >{WORK}/exx.txt && '
+         '{RUN} -from-lang=Eng -typecheck {WORK}/exx.txt | grep -v UN'),
+
+dict(name='gflean-typecheck', tier='demo', make=None,
+     what='the Chartrand et al. examples parsed, keeping only the readings that type-check',
+     cmd='{RUN} -from-lang=Eng -typecheck test/gflean-data.txt | grep -v UN'),
+
 dict(name='exx-agda', tier='demo', make='demo',
      what='arithmetic statements from Dedukti to Agda',
      cmd='{RUN} -to-formalism=agda test/exx.dk'),
