@@ -359,8 +359,8 @@ appProfile prof exp = case prof of
   DropProfile int -> case splitApp exp of
     (fun, args) -> foldl EApp fun (drop int args)
   PermProfile ints -> case splitApp exp of
-    (fun, args) | all (<= length args) ints -> foldl EApp fun [args !! (i-1) | i <- ints]
-    _ -> exp  -- a partial application keeps all of its arguments
+    -- a partial application shows those of the shown arguments it has
+    (fun, args) -> foldl EApp fun [args !! (i-1) | i <- ints, i <= length args]
   HoasProfile ints -> case splitApp exp of
     (fun, args) ->
         let xargs = concatMap flattenAbs args
@@ -370,8 +370,8 @@ appProfile prof exp = case prof of
 appPattProfile :: Profile -> Patt -> Patt
 appPattProfile prof patt = case (prof, splitPatt patt) of
   (DropProfile int, (fun, args)) -> foldl PApp fun (drop int args)
-  (PermProfile ints, (fun, args)) | all (<= length args) ints ->
-    foldl PApp fun [args !! (i-1) | i <- ints]
+  (PermProfile ints, (fun, args)) ->
+    foldl PApp fun [args !! (i-1) | i <- ints, i <= length args]
   _ -> patt
 
 -- from GF to Dk
