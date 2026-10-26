@@ -113,4 +113,38 @@ lin unipotent_Adj = mkAdj (mkA "unipotent") ;
 lin vertice_Noun = mkNoun (mkN "sommet" masculine) ;
 -- END words of the Mathlib definitions
 
+-- BEGIN words of the Godement symbol tables, written by Claude, to be reviewed
+lin satisfy_Verb = mkVerb (mkV "vérifier") ;
+lin isotropic_Adj = mkAdj (mkA "isotrope") ;
+lin finite_dimensional_Adj = mkAdj (mkA "de dimension finie" "de dimension finie" "de dimension finie") ;
+lin indeterminate_Noun = mkNoun (mkN "indéterminée" feminine) ;
+lin equipotent_Adj = mkAdj (mkA "équipotent") ;
+lin bidual_Noun = mkNoun (mkN "bidual" "biduaux" masculine) ;
+lin complementary_Adj = mkAdj (mkA "complémentaire") ;
+lin Cramer_Adj = mkAdj (mkA "de Cramer" "de Cramer" "de Cramer") ;
+lin trilinear_Adj = mkAdj (mkA "trilinéaire") ;
+lin adjugate_Noun = mkNoun (mkN "matrice complémentaire" "matrices complémentaires" feminine) ;
+lin algebraically_dependent_Adj = mkAdj (mkA "algébriquement dépendant") ;
+lin algebraically_independent_Adj = mkAdj (mkA "algébriquement indépendant") ;
+lin substitutable_Adj = mkAdj (mkA "substituable") ;
+lin indeterminacy_Noun = mkNoun (mkN "indétermination" feminine) ;
+lin highest_Adj = mkAdj (mkA "dominant") ;
+lin semi_simple_Adj = mkAdj (mkA "semi-simple") ;
+lin two_sided_Adj = mkAdj (mkA "bilatère") ;
+lin algebraically_closed_Adj = mkAdj (mkA "algébriquement clos" "algébriquement close" "algébriquement clos" "algébriquement closes") ;
+lin barycentre_Noun = mkNoun (mkN "barycentre" masculine) ;
+lin commute_Verb = mkVerb (mkV "commuter") ;
+lin contradictory_Adj = mkAdj (mkA "contradictoire") ;
+lin divide_Verb = mkVerb (mkV "diviser") ;
+lin negative_definite_Adj = mkAdj (mkA "défini négatif" "définie négative" "définis négatifs" "définies négatives") ;
+lin non_empty_Adj = mkAdj (mkA "non vide" "non vide" "non vides" "non vides") ;
+lin operate_Verb = mkVerb (mkV "opérer") ;
+lin positive_definite_Adj = mkAdj (mkA "défini positif" "définie positive" "définis positifs" "définies positives") ;
+lin reflexible_Adj = mkAdj (mkA "symétrisable") ;  -- Godement's French for "reflexible"
+lin semi_linear_Adj = mkAdj (mkA "semi-linéaire") ;
+lin triangulable_Adj = mkAdj (mkA "trigonalisable") ;  -- Godement's word
+lin undecidable_Adj = mkAdj (mkA "indécidable") ;
+lin vectorial_Adj = mkAdj (mkA "vectoriel" "vectorielle") ;  -- espace vectoriel
+-- END words of the Godement symbol tables
+
 }

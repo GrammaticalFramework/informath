@@ -758,7 +758,8 @@ fun rightarrow_Verb : Verb ;
 fun rotate_Verb : Verb ;  
 fun run_Verb : Verb ;  
 fun satisfied_Verb : Verb ;  
-fun satisfy_Verb : Verb ;  
+fun satisfy_Verb : Verb ;
+fun vectorial_Adj : Adj ;  -- French "espace vectoriel"; English "vector space"  
 fun say_Verb : Verb ;  
 fun see_Verb : Verb ;  
 fun seek_Verb : Verb ;  

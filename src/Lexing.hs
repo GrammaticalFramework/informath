@@ -138,8 +138,13 @@ lexText' uncap1 = uncap . lext where
     c:cs | isParen c      -> [c] : lext cs
     c:cs | isSpecial c    -> [c] : lext cs
     c:cs | isSpace c      ->       lext cs
-    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x || isSpecial x) s in w : lext cs
+    _:_ -> let (w,cs) = break (\x -> isSpace x || isPunct x || isParen x || isSpecial x) s in elide w ++ lext cs
     _ -> [s]
+  -- French elision: l'action -> l' &+ action, as the French grammar binds them
+  elide w = case break (== '\'') w of
+    (p, '\'':r@(_:_)) | map toLower p `elem` elisionPrefixes -> [p ++ "'", "&+", r]
+    _ -> [w]
+  elisionPrefixes = words "l d qu n s j c m t jusqu lorsqu puisqu quoiqu"
   uncap s = case s of
     w:ws -> uncap1 w:ws
     _ -> s

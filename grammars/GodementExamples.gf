@@ -34,6 +34,7 @@ fun
   associated_with_Prep, joining_Prep : Prep ;
   with_coefficients_in_Prep, with_coefficients_Prep, with_exponents_Prep, with_masses_Prep : Prep ;
   of_degree_Prep, of_order_Prep : Prep ;
+  en_Prep : Prep ;    -- French "en": la valeur de f en u, polynôme en X; English "at"
 
 -- numbers used as names
   two_Name, three_Name : Name ;

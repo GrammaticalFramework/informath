@@ -60,6 +60,7 @@ lin
   with_masses_Prep = strPrep "with masses" ;
   of_degree_Prep = strPrep "of degree" ;
   of_order_Prep = strPrep "of order" ;
+  en_Prep = strPrep "at" ;
 
   two_Name = mkName "two" ;
   three_Name = mkName "three" ;

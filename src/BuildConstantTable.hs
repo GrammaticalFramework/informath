@@ -19,8 +19,8 @@ import Utils (split, splitOutside)
 
 import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (partition, sort, groupBy, intersperse, mapAccumL, nub)
-import Data.Char (isDigit, isAlpha)
+import Data.List (partition, sort, groupBy, intersperse, mapAccumL, nub, dropWhileEnd)
+import Data.Char (isDigit, isAlpha, isSpace)
 
 type GFTree = PGF.Tree
 type Fun = GFTree
@@ -50,7 +50,20 @@ tryParseFunProfile pgf lang mdrop s = case s of
       (Just k, NoProfile) -> return (t, DropProfile k)
       (Just k, DropProfile n) | k == n -> return (t, DropProfile k)
       (Just k, _) -> Bad $ "conflicting profile information in " ++ s ++ ": Drop " ++ show k ++ " vs. " ++ showProfile p
+  -- a tree with its argument profile, as printed by printSymbolTable: f x [1,3]
+  _ | Just (t, is) <- treeWithProfile s, mdrop == Nothing -> return (readGFTree t, PermProfile is)
   _ -> return (readGFTree s, maybe NoProfile DropProfile mdrop)
+ where
+  -- "f x [1,3]" -> Just ("f x", [1,3]); "c []" -> Just ("c", [])
+  treeWithProfile str =
+    let t = dropWhileEnd isSpace str
+        (revProf, revBody) = break (== '[') (reverse (init t))
+        prof = reverse revProf
+        body = dropWhileEnd isSpace (reverse (drop 1 revBody))
+    in if not (null t) && last t == ']' && not (null revBody) && not (null body)
+          && all (\c -> isDigit c || c == ',') prof
+       then Just (body, if null prof then [] else map read (split ',' prof))
+       else Nothing
 
 
 -- no separate drop table assumed here; could be done by preproc in general
@@ -75,7 +88,9 @@ parseExample pgf lang =
 
    lexex s = case s of
      c:' ':cs -> c : ' ' :lextex cs  -- don't uncap first letter
-     c:cs | isAlpha c -> c : lextex cs -- don't uncap first letter
+     c:_ | isAlpha c -> case lextex s of  -- don't uncap first letter, but lex the
+       _:ws -> c : ws                    -- whole first word (French l'action)
+       ws -> ws
      _ -> lextex s
 
    getProfile args = do

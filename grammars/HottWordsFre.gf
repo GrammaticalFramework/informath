@@ -148,4 +148,8 @@ lin wide_Adj = mkAdj (mkA "large") ;
 lin witness_Noun = mkNoun (mkN "témoin" masculine) ;
 -- END words of the Mathlib definitions
 
+-- a word of the Godement symbol tables, written by Claude, to be reviewed
+lin composite_Noun = mkNoun (mkN "composée" feminine) ;
+lin hypothesis_Noun = mkNoun (mkN "hypothèse" feminine) ;
+
 }

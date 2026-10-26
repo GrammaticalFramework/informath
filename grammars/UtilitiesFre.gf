@@ -62,7 +62,7 @@ oper
   function_N : N = mkN "fonction" ;
   predicate_N : N = mkN "prédicat" ;
   basic_type_CN : CN = mkCN type_CN (ParadigmsFre.mkAdv "de base") ;
-  map_V3 = mkV3 I.envoyer_V accusative dative ; ----
+  map_V3 = mkV3 I.envoyer_V accusative (mkPrep "sur") ; -- "envoie x sur y", as Godement's "amène P sur Q"
   say_VS = mkVS I.dire_V ;
   hold_V2 = mkV2 I.tenir_V for_Prep ; ----
   arbitrary_A = mkA "arbitraire" ;

@@ -3,6 +3,8 @@ concrete UserExtensionsFre of UserExtensions =
   NaprocheWordsFre,
   HottWordsFre,
   GodementWordsFre,
+  GodementSyntaxFre,
+  MizarFre,
   ProofUnitsFre,
   GodementExamplesFre,
   MathlibFre

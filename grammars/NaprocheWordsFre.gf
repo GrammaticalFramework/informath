@@ -29,4 +29,7 @@ lin surjection_Noun = mkNoun (mkN "surjection" feminine) ;
 lin tuple_Noun = mkNoun (mkN "n-uplet" masculine) ;
 -- END words of the Mathlib definitions
 
+-- a word of the Godement symbol tables, written by Claude, to be reviewed
+lin usual_Adj = mkAdj (mkA "usuel") ;
+
 }
