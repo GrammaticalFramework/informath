@@ -132,6 +132,7 @@ unit2exp unit = case unit of
   GPropAssumption prop label -> wrap "PropAssumption" [prop2dedukti prop, EIdent (label2ident label)]
   GPropConclusion _ prop -> wrap "PropConclusion" [prop2dedukti prop]
   GPropLabelConclusion _ prop label -> wrap "PropLabelConclusion" [prop2dedukti prop, EIdent (label2ident label)]
+  GLabelPropConclusion label prop -> wrap "LabelPropConclusion" [EIdent (label2ident label), prop2dedukti prop]
   GSinceConclusion a b -> wrap "SinceConclusion" [prop2dedukti a, prop2dedukti b]
   GSinceGoal a b -> wrap "SinceGoal" [prop2dedukti a, prop2dedukti b]
   _ -> eUnit

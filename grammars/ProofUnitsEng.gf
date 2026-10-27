@@ -44,6 +44,8 @@ lin
     strText ("follows by" ++ (mkUtt label.np).s) ;
   PropLabelConclusion hence prop label =
     ccText (strText hence.s) (propInText prop) (strText ("by" ++ (mkUtt label.np).s ++ ".")) ;
+  LabelPropConclusion label prop =
+    ccText (strText ("by" ++ (mkUtt label.np).s ++ ",")) (propText prop) ;
   FollowsPropConclusion prop =
     prefixText "it follows that" (propText prop) ;
   ObviousConclusion = strText "it is obvious ." ;

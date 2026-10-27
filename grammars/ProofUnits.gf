@@ -30,6 +30,7 @@ fun
   SinceConclusion : Prop -> Prop -> Unit ;
   LabelConclusion : Label -> Unit ;
   PropLabelConclusion : Hence -> Prop -> Label -> Unit ;
+  LabelPropConclusion : Label -> Prop -> Unit ;  -- by modus ponens, B
   FollowsPropConclusion : Prop -> Unit ;
   ObviousConclusion : Unit ;
   

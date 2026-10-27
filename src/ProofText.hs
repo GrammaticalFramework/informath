@@ -91,7 +91,7 @@ line2unitline env dkmap line = line {
    -- a premiss) yields a conclusion, as a constant does
    unit = case rule (step line) of
      h | constant h || not (null (premisses line)) -> case ruleLabel h of
-       Just label -> GPropLabelConclusion GnoHence (exp2prop fla) label  -- "B by modus ponens."
+       Just label -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
        Nothing -> GConclusionUnit (exp2prop fla)
      h -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
    fla = head (annotateDkIdents env (formula (step line)))

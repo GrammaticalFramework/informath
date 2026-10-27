@@ -13,6 +13,9 @@ in {
 lin
   HyposUnit hypos = hypos.text ;
   ConclusionUnit prop = mkText (topProp prop) ;
+  -- the fronted adverbial inverts the clause: "nach dem Modus ponens ist n gerade"
+  LabelPropConclusion label prop =
+    mkText (mkS (SyntaxGer.mkAdv (P.mkPrep "nach" P.dative) label.np) (topProp prop)) ;
 
   UnitJmt unit = lin Text {s = ">" ++ unit.s} ; --- not to be used, just to be reached
 

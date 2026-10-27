@@ -40,6 +40,9 @@ lin
     strText ("följer av" ++ (mkUtt label.np).s) ;
   PropLabelConclusion hence prop label =
     ccText (strText hence.s) (propInText prop) (strText ("enligt" ++ (mkUtt label.np).s ++ ".")) ;
+  -- the fronted adverbial inverts the clause: "enligt modus ponens är n jämnt"
+  LabelPropConclusion label prop =
+    mkText (mkS (SyntaxSwe.mkAdv (P.mkPrep "enligt") label.np) (topProp prop)) ;
   FollowsPropConclusion prop =
     prefixText "det följer att" (propText prop) ;
   ObviousConclusion = strText "det är uppenbart ." ;

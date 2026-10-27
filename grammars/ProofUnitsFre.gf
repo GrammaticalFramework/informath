@@ -40,6 +40,8 @@ lin
     strText ("s'ensuit par" ++ (mkUtt label.np).s) ;
   PropLabelConclusion hence prop label =
     ccText (strText hence.s) (propInText prop) (strText ("par" ++ (mkUtt label.np).s ++ ".")) ;
+  LabelPropConclusion label prop =
+    ccText (strText ("par" ++ (mkUtt label.np).s ++ ",")) (propText prop) ;
   FollowsPropConclusion prop =
     prefixText "il s'ensuit que" (propText prop) ;
   ObviousConclusion = strText "il est évident ." ;
