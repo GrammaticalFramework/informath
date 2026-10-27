@@ -765,8 +765,14 @@ showTacticProofs env s = case J.decode s of
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
-showProofDemo env base mo = proofDemo env base mo (map unit2nat proofLangs)
+showProofDemo env base mo = proofDemo env base mo (map unit2nat proofLangs) trees
  where
+   -- the formulas of the trees in symbolic LaTeX (-proof-trees), as with -to-symbolic-latex
+   trees = if isFlag "-proof-trees" env then Just formula else Nothing
+   formula e = gftree2nat senv (mkLanguage (grammar env) "Latex")
+                 (gf (DMC.exp2prop (head (annotateDkIdents senv e))))
+   senv = env{flags = "-to-symbolic-latex" : flags env}
+
    -- one proof text for each language of -languages, or for -to-lang
    proofLangs = if flagHasValue "-languages" (flags env) then langs env else [toLang env]
 

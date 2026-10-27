@@ -145,6 +145,7 @@ helpMsg4 = [
   just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
   just "-tactic-proof" "print proof texts of proofs given as lists of proof units in a .json file (from tactic proofs)",
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
+  just "-proof-trees" "with -proof-text, also show the proofs as natural deduction trees (bussproofs)",
   just "-to-lang=<lang>" "linearize to natural language <lang>, default Eng",
   just "-languages=<langs>" "with -json, rank and show only these languages (e.g. Eng,Fre), default all; with -proof-text, a proof text in each",
   just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",

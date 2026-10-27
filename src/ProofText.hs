@@ -37,11 +37,13 @@ import qualified Data.Map as M
 
 -- | The proof texts of the proofs of a module, each with one table of lines
 -- for each linearization given (one for each language).
-proofDemo :: Env -> Module -> Module -> [GUnit -> String] -> String
-proofDemo env base (MJmts proofs) informalizes = 
+-- With a printer of formulas (-proof-trees), each proof is also shown as a
+-- natural deduction tree.
+proofDemo :: Env -> Module -> Module -> [GUnit -> String] -> Maybe (Exp -> String) -> String
+proofDemo env base (MJmts proofs) informalizes trees =
   prLatexFile (macroCommands (macroTable (symbolTable env))) $
     unlines $ intersperse "\n\n" [
-      oneProof env dkmap informalizes t e | (t, e) <- concatMap proved proofs]
+      oneProof env dkmap informalizes trees t e | (t, e) <- concatMap proved proofs]
  where
    -- the constants of the base and of the module itself: a lemma stated in
    -- the module and used in a later proof is a rule with premisses, not a
@@ -61,10 +63,11 @@ proofDemo env base (MJmts proofs) informalizes =
        (EIdent f, _:_) -> f == identProof
        _ -> False
 
-oneProof :: Env -> M.Map QIdent Exp -> [GUnit -> String] -> Exp -> Exp -> String  
-oneProof env dkmap lins typ exp = unlines $ intersperse "\n\n" (
+oneProof :: Env -> M.Map QIdent Exp -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
+oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}" ] ++
     [ prls (prlu lin) unitlines | lin <- lins ] ++
+    [ proofTree latex rawlines number | Just latex <- [trees] ] ++
     (if isFlag "-proof-terms" env
        then [ "The proof term"
             , verbatim (printTree exp)
@@ -76,8 +79,10 @@ oneProof env dkmap lins typ exp = unlines $ intersperse "\n\n" (
   where
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
-    linesterm = term2lines term
-    unitlines = compressVarsHypos (map (line2unitline env dkmap) linesterm)
+    (rawlines, linesterm, renumbering) = term2linesMap term
+    (unitlines, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) linesterm)
+    -- the number in the proof text of a line before compression
+    number l = let k = maybe l id (lookup l renumbering) in maybe k id (lookup k renumbering2)
     
 
 
@@ -110,7 +115,12 @@ line2unitline env dkmap line = line {
 -- the first argument recognizes such a line, the second builds the merged one
 compressVars :: Eq k => (Line a -> Maybe ([v], k)) -> ([v] -> k -> Line a -> Line a)
                      -> [Line a] -> [Line a]
-compressVars varsLine merge = go 0 []
+compressVars varsLine merge = fst . compressVarsMap varsLine merge
+
+-- the same, with the renumbering: old line number -> new line number
+compressVarsMap :: Eq k => (Line a -> Maybe ([v], k)) -> ([v] -> k -> Line a -> Line a)
+                        -> [Line a] -> ([Line a], [(Int, Int)])
+compressVarsMap varsLine merge = go 0 []
  where
   go gaps relines ls = case ls of
     ln : rest | Just (xs, kind) <- varsLine ln ->
@@ -118,21 +128,24 @@ compressVars varsLine merge = go 0 []
           xss = xs ++ concat [ys | Just (ys, _) <- map varsLine same]
           nln = line ln - gaps
           relines' = [(line l, nln) | l <- ln : same] ++ relines
-      in (merge xss kind ln){line = nln} :
-         go (gaps + length same) relines' rest'
+          (lns, rels) = go (gaps + length same) relines' rest'
+      in ((merge xss kind ln){line = nln} : lns, rels)
     ln : rest ->
       let nln = line ln - gaps
-      in ln{line = nln,
-            premisses = nub [maybe p id (lookup p relines) | p <- premisses ln]} :
-         go gaps ((line ln, nln) : relines) rest
-    [] -> []
+          (lns, rels) = go gaps ((line ln, nln) : relines) rest
+      in (ln{line = nln,
+             premisses = nub [maybe p id (lookup p relines) | p <- premisses ln]} : lns, rels)
+    [] -> ([], relines)
 
   sameKind kind ln = case varsLine ln of
     Just (_, k) -> k == kind
     _ -> False
 
 compressVarsHypos :: [Line GUnit] -> [Line GUnit]
-compressVarsHypos = compressVars varsHypo merge
+compressVarsHypos = fst . compressVarsHyposMap
+
+compressVarsHyposMap :: [Line GUnit] -> ([Line GUnit], [(Int, Int)])
+compressVarsHyposMap = compressVarsMap varsHypo merge
  where
   varsHypo :: Line GUnit -> Maybe ([GIdent], GKind)
   varsHypo ln = case formula (step ln) of
@@ -322,10 +335,18 @@ showOnly prof e = case e of
 ----------------------
 
 term2lines :: Exp -> [Line Exp]
-term2lines =
-    compress 0 [] [] [] .
-    ps 1 []
-      where
+term2lines = (\(_, ls, _) -> ls) . term2linesMap
+
+-- | The lines before compression (one for each step of the proof term, so
+-- that they make a tree by their premisses), the compressed lines, and the
+-- renumbering from the former to the latter, in which a dropped line points
+-- to the line that it repeats.
+term2linesMap :: Exp -> ([Line Exp], [Line Exp], [(Int, Int)])
+term2linesMap proof = (raw, lns, relines)
+  where
+ raw = ps 1 [] proof
+ (lns, relines) = compress 0 [] [] [] raw
+
  -- generate lines starting with this line number and context
  ps :: Int -> [QIdent] -> Exp -> [Line Exp]
  ps ln cont proof = case proof of -- next line number, its context 
@@ -380,7 +401,7 @@ term2lines =
  -- hypotheses and variables are among the present ones), so that the
  -- earlier line can be cited instead.
  compress :: Int -> [(Int, Int)] -> [((QIdent, Exp), Int)] -> [(Exp, Int, [QIdent])]
-          -> [Line Exp] -> [Line Exp]
+          -> [Line Exp] -> ([Line Exp], [(Int, Int)])
  compress gaps relines rehypos reconcls ls = case ls of
    ln : rest | isHypoLine ln ->
      let key = (rule (step ln), formula (step ln)) -- a hypothesis is identified by its label and formula
@@ -389,8 +410,8 @@ term2lines =
             compress (gaps + 1) ((line ln, k) : relines) rehypos reconcls rest
           _ ->       -- new hypothesis: keep it, renumbering to close earlier gaps
             let nln = line ln - gaps
-            in ln{line = nln} :
-               compress gaps ((line ln, nln) : relines) ((key, nln) : rehypos) reconcls rest
+            in cons ln{line = nln}
+               (compress gaps ((line ln, nln) : relines) ((key, nln) : rehypos) reconcls rest)
    ln : rest | k : _ <- [k | (f, k, ctx) <- reconcls, f == formula (step ln),
                               all (`elem` context ln) ctx] ->
      -- old conclusion: drop this line, re-point its number to the earlier one
@@ -402,9 +423,11 @@ term2lines =
          -- and conclusions that depend on them can no longer be cited
          reconcls' = [r | r@(_, _, ctx) <- (formula (step ln), nln, context ln) : reconcls,
                           not (any (`elem` ds) ctx)]
-     in renumberLine nln relines ln :
-        compress gaps ((line ln, nln) : relines) rehypos' reconcls' rest
-   _ -> ls
+     in cons (renumberLine nln relines ln)
+        (compress gaps ((line ln, nln) : relines) rehypos' reconcls' rest)
+   _ -> (ls, relines)
+
+ cons l (ls, rels) = (l : ls, rels)
 
  -- a hypothesis line just cites an open assumption: no premisses, rule is a context variable
  isHypoLine ln = null (premisses ln) && elem (rule (step ln)) (context ln)
@@ -414,6 +437,49 @@ term2lines =
     premisses = [maybe p id (lookup p relines) | p <- premisses ln],
     line = num
     }
+
+----------------------------
+-- natural deduction trees
+----------------------------
+
+-- | The proof as a natural deduction tree (bussproofs), one node for each
+-- line before compression: its formula, on the left the number of its line
+-- in the proof text (the same number can occur several times, as the text
+-- states a repeated conclusion or hypothesis once), on the right the rule
+-- and the lines of the hypotheses it discharges.
+proofTree :: (Exp -> String) -> [Line Exp] -> (Int -> Int) -> String
+proofTree latex raw number = unlines $
+  ["\\begin{prooftree}"] ++ node (last raw) ++ ["\\end{prooftree}"]
+ where
+  byLine = M.fromList [(line l, l) | l <- raw]
+  hypo l = null (premisses l) && elem (rule (step l)) (context l)
+  object l = headedBy identElem (formula (step l))
+  premissLines l = [k | p <- premisses l, Just k <- [M.lookup p byLine]]
+  subtree l = l : concatMap subtree (premissLines l)
+  num l = "\\scriptstyle " ++ show (number (line l))
+  fla l = latex (formula (step l))
+
+  node l
+    | hypo l = ["\\AxiomC{${" ++ num l ++ "}\\quad " ++ fla l ++ "$}"]
+    | otherwise =
+        let kids = filter (not . object) (premissLines l)
+            dis = nub [number (line h) | d <- discharged (step l), h <- subtree l,
+                                         hypo h, rule (step h) == d]
+        in (if null kids then ["\\AxiomC{}"] else concatMap node kids) ++
+           [ "\\LeftLabel{$" ++ num l ++ "$}"
+           , "\\RightLabel{$\\scriptstyle " ++ mathtt (printTree (rule (step l))) ++
+               (if null dis then "" else "\\ (" ++ concat (intersperse "," (map show dis)) ++ ")") ++ "$}"
+           , inference (length kids) ++ "{$" ++ fla l ++ "$}" ]
+
+  inference n = case n of
+    0 -> "\\UnaryInfC"
+    1 -> "\\UnaryInfC"
+    2 -> "\\BinaryInfC"
+    3 -> "\\TrinaryInfC"
+    4 -> "\\QuaternaryInfC"
+    _ -> "\\QuinaryInfC"  --- bussproofs has at most five premisses
+
+  mathtt s = "\\mathtt{" ++ concatMap (\c -> if c == '_' then "\\_" else [c]) s ++ "}"
 
 ----------------------------
 -- printing
