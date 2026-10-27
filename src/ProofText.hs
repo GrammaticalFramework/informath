@@ -12,7 +12,7 @@ import Environment
 import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
-import Dedukti2MathCore (exp2prop, hypos2hypos)
+import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label)
 import Utils (latexPreamble, latexEndDoc)
 
 
@@ -90,9 +90,18 @@ line2unitline env dkmap line = line {
    -- premisses; a hypothesis applied to premisses (a derived rule taken as
    -- a premiss) yields a conclusion, as a constant does
    unit = case rule (step line) of
-     h | constant h || not (null (premisses line)) -> GConclusionUnit (exp2prop fla)
+     h | constant h || not (null (premisses line)) -> case ruleLabel h of
+       Just label -> GPropLabelConclusion GnoHence (exp2prop fla) label  -- "B by modus ponens."
+       Nothing -> GConclusionUnit (exp2prop fla)
      h -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
    fla = head (annotateDkIdents env (formula (step line)))
+
+   -- the name of a rule in words, if the symbol table gives it as a Label
+   ruleLabel h = case annotateDkIdents env (EIdent h) of
+     EIdent q : _ -> case ident2label q of
+       GIdentLabel _ -> Nothing
+       label -> Just label
+     _ -> Nothing
 
    constant h = maybe False (const True) (M.lookup h dkmap)
 
