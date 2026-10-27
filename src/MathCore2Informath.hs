@@ -27,7 +27,7 @@ nlg env tree = case () of
    iafts = map insitu afts
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
-   ncviafts = map negated cviafts  -- better do this at this late stage
+   ncviafts = map (implied . negated) cviafts  -- better do this at this late stage
    vncviafts = concatMap variations ncviafts
    uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
    godementvariants = concatMap godementVariants ncviafts
@@ -454,6 +454,31 @@ collectivize t = case t of
      exp : ee -> exp : collectArgs func ee ---- TODO collectivize exp ?
      [] -> []
 
+
+-- | "if A implies B, then C" for "if if A, then B, then C": in the antecedent
+-- of an implication and on both sides of an equivalence, an implication
+-- between two formulas or propositional variables; also in a conjunction or
+-- disjunction there if all of its parts are such implications, as "P or Q
+-- implies R" would be read as (P or Q) implies R
+implied :: Tree a -> Tree a
+implied t = case t of
+  GIfProp a b -> GIfProp (antecedent (implied a)) (implied b)
+  GIffProp a b -> GIffProp (antecedent (implied a)) (antecedent (implied b))
+  _ -> composOp implied t
+ where
+   antecedent :: GProp -> GProp
+   antecedent p = maybe p id (implication p)
+   implication :: GProp -> Maybe GProp
+   implication p = case p of
+     GIfProp a b -> GFormulaImpliesProp <$> asFormula a <*> asFormula b
+     GAndProp (GListProp ps) -> GAndProp . GListProp <$> mapM implication ps
+     GOrProp (GListProp ps) -> GOrProp . GListProp <$> mapM implication ps
+     _ -> Nothing
+   asFormula :: GProp -> Maybe GFormula
+   asFormula p = case p of
+     GFormulaProp f -> Just f
+     GIdentProp (GStrIdent s) -> Just (GMacroFormula (GStringMacro s))
+     _ -> Nothing
 
 ---- TODO: move more of negation from earlier stages here
 negated :: Tree a -> Tree a
