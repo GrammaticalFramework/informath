@@ -19,31 +19,8 @@ fun set_of_divisors_Noun : Noun ;
 fun set_of_proper_divisors_Noun : Noun ;
 fun set_of_prime_factors_Noun : Noun ;
 
--- names of the rules of natural deduction and of set theory, used in proof
--- texts ("B by modus ponens"): the Edukera exercises (edukera/edukera.dkgf)
-fun implication_introduction_Label : Label ;
-fun modus_ponens_Label : Label ;
-fun conjunction_introduction_Label : Label ;
-fun left_conjunction_elimination_Label : Label ;
-fun right_conjunction_elimination_Label : Label ;
-fun left_disjunction_introduction_Label : Label ;
-fun right_disjunction_introduction_Label : Label ;
-fun disjunction_elimination_Label : Label ;
-fun ex_falso_quodlibet_Label : Label ;
-fun negation_introduction_Label : Label ;
-fun negation_elimination_Label : Label ;
-fun equivalence_introduction_Label : Label ;
-fun left_equivalence_elimination_Label : Label ;
-fun right_equivalence_elimination_Label : Label ;
-fun universal_introduction_Label : Label ;
-fun universal_elimination_Label : Label ;
-fun excluded_middle_Label : Label ;
-fun reductio_ad_absurdum_Label : Label ;
-fun Peirce_law_Label : Label ;
-fun double_negation_elimination_Label : Label ;
-fun double_negation_introduction_Label : Label ;
-fun De_Morgan_law_Label : Label ;
-fun contraposition_Label : Label ;
+-- the definitions of set theory as the rules that apply them, in proof
+-- texts ("by the definition of union, ..."): the Edukera exercises (edukera/edukera.dkgf)
 fun empty_set_definition_Label : Label ;
 fun universe_definition_Label : Label ;
 fun union_definition_Label : Label ;

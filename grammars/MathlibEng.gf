@@ -24,31 +24,8 @@ lin set_of_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkN "divisor"
 lin set_of_proper_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkA "proper") (mkN "divisor"))) ;
 lin set_of_prime_factors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkA "prime") (mkN "factor"))) ;
 
--- names of the rules of natural deduction and of set theory, used in proof
--- texts ("B by modus ponens"): the Edukera exercises (edukera/edukera.dkgf)
-lin implication_introduction_Label = mkLabel "implication introduction" ;
-lin modus_ponens_Label = mkLabel "modus ponens" ;
-lin conjunction_introduction_Label = mkLabel "conjunction introduction" ;
-lin left_conjunction_elimination_Label = mkLabel "left conjunction elimination" ;
-lin right_conjunction_elimination_Label = mkLabel "right conjunction elimination" ;
-lin left_disjunction_introduction_Label = mkLabel "left disjunction introduction" ;
-lin right_disjunction_introduction_Label = mkLabel "right disjunction introduction" ;
-lin disjunction_elimination_Label = mkLabel "disjunction elimination" ;
-lin ex_falso_quodlibet_Label = mkLabel "ex falso quodlibet" ;
-lin negation_introduction_Label = mkLabel "negation introduction" ;
-lin negation_elimination_Label = mkLabel "negation elimination" ;
-lin equivalence_introduction_Label = mkLabel "equivalence introduction" ;
-lin left_equivalence_elimination_Label = mkLabel "left equivalence elimination" ;
-lin right_equivalence_elimination_Label = mkLabel "right equivalence elimination" ;
-lin universal_introduction_Label = mkLabel "universal introduction" ;
-lin universal_elimination_Label = mkLabel "universal elimination" ;
-lin excluded_middle_Label = mkLabel "the law of excluded middle" ;
-lin reductio_ad_absurdum_Label = mkLabel "reductio ad absurdum" ;
-lin Peirce_law_Label = mkLabel "Peirce's law" ;
-lin double_negation_elimination_Label = mkLabel "double negation elimination" ;
-lin double_negation_introduction_Label = mkLabel "double negation introduction" ;
-lin De_Morgan_law_Label = mkLabel "De Morgan's law" ;
-lin contraposition_Label = mkLabel "contraposition" ;
+-- the definitions of set theory as the rules that apply them, in proof
+-- texts ("by the definition of union, ..."): the Edukera exercises (edukera/edukera.dkgf)
 lin empty_set_definition_Label = mkLabel "the definition of the empty set" ;
 lin universe_definition_Label = mkLabel "the definition of the universe" ;
 lin union_definition_Label = mkLabel "the definition of union" ;
