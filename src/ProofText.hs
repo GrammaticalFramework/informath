@@ -80,8 +80,12 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
-    -- the variables of implicit types are not introduced
-    (explicitlines, renumbering1) = dropImplicitLines (isImplicitType env) (map statedGoal linesterm)
+    -- the variables of implicit types are not introduced, and neither are
+    -- the hypotheses of the statement that the proof does not use
+    (explicitlines, renumbering1) = dropImplicitLines dropped (map statedGoal linesterm)
+    dropped l = isImplicitType env (formula (step l)) ||
+                (elem (rule (step l)) statementVars && notElem (line l) cited)
+    cited = concat [premisses l ++ closes l | l <- linesterm]
     (unitlines0, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) explicitlines)
     -- with -proof-merge-hypos, the variables and hypotheses of a scope in one line
     (unitlines, renumbering3) = if isFlag "-proof-merge-hypos" env
@@ -187,14 +191,15 @@ compressVarsHyposMap = compressVarsMap varsHypo merge
   merge xs kind ln =
     ln{step = (step ln){formula = GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind])}}
 
--- | The lines without those that introduce variables of implicit types, and
+-- | The lines without those that introduce variables of implicit types (or
+-- that the predicate otherwise selects among the introducing lines), and
 -- the renumbering of the others; they are no longer cited as premisses, and
 -- the goal of a dropped line goes to the next line of its scope.
-dropImplicitLines :: (Exp -> Bool) -> [Line Exp] -> ([Line Exp], [(Int, Int)])
+dropImplicitLines :: (Line Exp -> Bool) -> [Line Exp] -> ([Line Exp], [(Int, Int)])
 dropImplicitLines implicit = go 0 []
  where
   go gaps rel ls = case ls of
-    l : rest | introduces l && implicit (formula (step l)) ->
+    l : rest | introduces l && implicit l ->
       let rest' = case rest of
             l2 : rest2 | goal l /= Nothing && introduces l2 && context l2 == context l ->
               l2{goal = goal l} : rest2

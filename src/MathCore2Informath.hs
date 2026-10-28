@@ -482,14 +482,15 @@ implied t = case t of
 
 -- | The scope of the connectives made explicit, where the plain lists of
 -- conjuncts and disjuncts would be ambiguous: a conjunction or disjunction of
--- two inside another one, or negated, is "both A and B", "either A or B"
+-- two inside the other one, or negated, is "both A and B", "either A or B"
 -- ("P or both Q and R", "it is not the case that either A or B"); and so is
 -- one whose first part is a negation ("either it is not the case that A or
--- B", not to be read as the negation of "A or B").
+-- B", not to be read as the negation of "A or B"). A conjunction in a
+-- conjunction (a disjunction in a disjunction) is part of its list.
 scoped :: Tree a -> Tree a
 scoped t = case t of
-  GAndProp (GListProp ps) -> conj GBothAndProp GAndProp (map (inner . scoped) ps)
-  GOrProp (GListProp ps) -> conj GEitherOrProp GOrProp (map (inner . scoped) ps)
+  GAndProp (GListProp ps) -> conj GBothAndProp GAndProp (map inner (concatMap ands (map scoped ps)))
+  GOrProp (GListProp ps) -> conj GEitherOrProp GOrProp (map inner (concatMap ors (map scoped ps)))
   GCoreNotProp p -> GCoreNotProp (inner (scoped p))
   _ -> composOp scoped t
  where
@@ -497,6 +498,13 @@ scoped t = case t of
    conj both list ps = case ps of
      [a@(GCoreNotProp _), b] -> both a b
      _ -> list (GListProp ps)
+   ands, ors :: GProp -> [GProp]
+   ands p = case p of
+     GAndProp (GListProp qs) -> qs
+     _ -> [p]
+   ors p = case p of
+     GOrProp (GListProp qs) -> qs
+     _ -> [p]
    inner :: GProp -> GProp
    inner p = case p of
      GAndProp (GListProp [a, b]) -> GBothAndProp a b
