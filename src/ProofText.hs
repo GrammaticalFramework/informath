@@ -166,7 +166,8 @@ compressVarsMap varsLine merge = go 0 []
       let nln = line ln - gaps
           (lns, rels) = go gaps ((line ln, nln) : relines) rest
       in (ln{line = nln,
-             premisses = nub [maybe p id (lookup p relines) | p <- premisses ln]} : lns, rels)
+             premisses = nub [maybe p id (lookup p relines) | p <- premisses ln],
+             closes = nub [maybe p id (lookup p relines) | p <- closes ln]} : lns, rels)
     [] -> ([], relines)
 
   sameKind kind ln = case varsLine ln of
@@ -202,7 +203,8 @@ dropImplicitLines implicit = go 0 []
     l : rest ->
       let n = line l - gaps
           (lns, rels) = go gaps ((line l, n) : rel) rest
-      in (l{line = n, premisses = [p' | p <- premisses l, Just p' <- [lookup p rel]]} : lns, rels)
+      in (l{line = n, premisses = [p' | p <- premisses l, Just p' <- [lookup p rel]],
+            closes = [p' | p <- closes l, Just p' <- [lookup p rel]]} : lns, rels)
     [] -> ([], rel)
   introduces l = null (premisses l) && elem (rule (step l)) (context l) && mark l == NoMark
 
@@ -279,8 +281,9 @@ data Line a = Line {
   premisses :: [Int],    -- line numbers of premisses
   step :: Step a,        -- the main content of the line
   mark :: Mark,          -- its part in a case analysis
-  goal :: Maybe Exp      -- for the first variable or hypothesis that a premiss
+  goal :: Maybe Exp,     -- for the first variable or hypothesis that a premiss
                          -- binds: the conclusion of the rule, which it serves
+  closes :: [Int]        -- the lines of the hypotheses that the rule discharges
   }
   deriving (Show, Eq)
 
@@ -290,14 +293,14 @@ data Mark = NoMark | CasesMark Int | CaseMark Int
   deriving (Show, Eq)
 
 mkLine :: Int -> [QIdent] -> a -> QIdent -> [Int] -> [QIdent] -> Line a
-mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di) NoMark Nothing
+mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di) NoMark Nothing []
 
 mkHypoLine :: Int -> a -> QIdent -> QIdent -> Line a
-mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru []) NoMark Nothing
+mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru []) NoMark Nothing []
 
 -- | The line of "we have n cases"
 mkCasesLine :: Int -> [QIdent] -> Int -> Line Exp
-mkCasesLine li co n = Line li co [] (mkStep noIdent (EIdent casesIdent) casesIdent []) (CasesMark n) Nothing
+mkCasesLine li co n = Line li co [] (mkStep noIdent (EIdent casesIdent) casesIdent []) (CasesMark n) Nothing []
 
 casesIdent = QIdent "#CASES" ----
 
@@ -492,9 +495,9 @@ term2linesMap proof = (raw, lns, relines)
                    then snd (mapAccumL (\k a -> if isCase typ a then (k + 1, Just (k, length caseArgs))
                                                                else (k, Nothing)) 1 args)
                    else map (const Nothing) args
-         (argss, prems, lnConcl) = psArgs ln cont typ (zip args cases)
+         (argss, prems, hypoLines, lnConcl) = psArgs ln cont typ (zip args cases)
       in concat argss ++
-         [mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)]
+         [(mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)){closes = nub hypoLines}]
    -- an abstraction introduces variables: the ones it binds over objects are
    -- the "let x be an A" of the proof text, and the ones over proofs its
    -- "assume that A", in the order the statement has them
@@ -510,19 +513,21 @@ term2linesMap proof = (raw, lns, relines)
  -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
  -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
  -- the arguments of a rule whose conclusion is concl
- psArgs :: Int -> [QIdent] -> Exp -> [(Exp, Maybe (Int, Int))] -> ([[Line Exp]], [Int], Int)
- psArgs n _ _ [] = ([], [], n)
+ -- with the lines of the hypotheses that the premisses bind, which the rule
+ -- discharges (not their eigenvariables, which are premisses)
+ psArgs :: Int -> [QIdent] -> Exp -> [(Exp, Maybe (Int, Int))] -> ([[Line Exp]], [Int], [Int], Int)
+ psArgs n _ _ [] = ([], [], [], n)
  psArgs n cont concl ((a, c):as) =
    let -- the first case is preceded by "we have n cases"
        casesLines = [mkCasesLine n cont k | Just (1, k) <- [c]]
-       (ls, prem) = psArg (n + length casesLines) cont c concl a
+       (ls, prem, hyps) = psArg (n + length casesLines) cont c concl a
        ls' = casesLines ++ ls
-       (lss, prems, nf) = psArgs (nextline n ls') cont concl as
-   in (ls' : lss, prem ++ prems, nf)
+       (lss, prems, hypss, nf) = psArgs (nextline n ls') cont concl as
+   in (ls' : lss, prem ++ prems, hyps ++ hypss, nf)
 
  -- an argument; the lines of the variables it binds over objects are
  -- premisses of the rule (eigenvariables), the lines of its hypotheses are not
- psArg :: Int -> [QIdent] -> Maybe (Int, Int) -> Exp -> Exp -> ([Line Exp], [Int])
+ psArg :: Int -> [QIdent] -> Maybe (Int, Int) -> Exp -> Exp -> ([Line Exp], [Int], [Int])
  psArg n cont c concl arg = case arg of
    EAbs _ _ ->
      let (binds, body) = splitAbs arg
@@ -545,10 +550,11 @@ term2linesMap proof = (raw, lns, relines)
          bodyLines = ps (n + length introLines) cont' body
      in (introLines ++ bodyLines,
          [line l | l <- introLines, headedBy identElem (formula (step l))] ++
-         [lastline bodyLines | not (null bodyLines)])
+         [lastline bodyLines | not (null bodyLines)],
+         [line l | l <- introLines, headedBy identProof (formula (step l))])
    _ ->
      let ls = ps n cont arg
-     in (ls, [lastline ls | not (null ls)])
+     in (ls, [lastline ls | not (null ls)], [])
 
  -- the lines that introduce the variables of a lambda; the first hypothesis
  -- of case k is marked as opening that case
@@ -620,6 +626,7 @@ term2linesMap proof = (raw, lns, relines)
  -- change the line number and re-point all references to premiss line numbers
  renumberLine num relines ln = ln {
     premisses = [maybe p id (lookup p relines) | p <- premisses ln],
+    closes = nub [maybe p id (lookup p relines) | p <- closes ln],
     line = num
     }
 
@@ -648,8 +655,7 @@ proofTree latex raw number = unlines $
     | hypo l = ["\\AxiomC{${" ++ num l ++ "}\\quad " ++ fla l ++ "$}"]
     | otherwise =
         let kids = filter (not . object) (premissLines l)
-            dis = nub [number (line h) | d <- discharged (step l), h <- subtree l,
-                                         hypo h, rule (step h) == d]
+            dis = nub (map number (closes l))
         in (if null kids then ["\\AxiomC{}"] else concatMap node kids) ++
            [ "\\LeftLabel{$" ++ num l ++ "$}"
            , "\\RightLabel{$\\scriptstyle " ++ mathtt (printTree (rule (step l))) ++
@@ -706,9 +712,10 @@ justification ln
   | otherwise = unwords [
       texttt (printTree (rule (step ln))),
       concat (intersperse ", " (map show (premisses ln))),
-      case discharged (step ln) of
+      -- the lines of the hypotheses discharged, as in the trees
+      case closes ln of
         [] -> ""
-        dis -> "[" ++ concat (intersperse ", " (map printTree dis)) ++ "]"
+        dis -> "(" ++ concat (intersperse ", " (map show dis)) ++ ")"
       ]
 
 texttt :: String -> String
