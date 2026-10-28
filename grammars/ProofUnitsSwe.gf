@@ -73,4 +73,21 @@ lin
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;
 
+
+  -- case analyses: "we have two cases :", "in the first case , assume that A ."
+  lincat CaseNumber = Numeral ;
+  lin
+  NumberCasesGoal n =
+    strText ("vi har" ++ (SyntaxSwe.mkUtt (SyntaxSwe.mkNP (SyntaxSwe.mkDet n) case_N)).s ++ ":") ;
+  NumberCaseGoal n A =
+    prefixText ((SyntaxSwe.mkAdv in_Prep (SyntaxSwe.mkNP (SyntaxSwe.mkDet the_Quant (SyntaxSwe.mkOrd n)) case_N)).s ++ "," ++ "anta att") (propText A) ;
+  one_CaseNumber = mkNumeral "1" ;
+  two_CaseNumber = mkNumeral "2" ;
+  three_CaseNumber = mkNumeral "3" ;
+  four_CaseNumber = mkNumeral "4" ;
+  five_CaseNumber = mkNumeral "5" ;
+  six_CaseNumber = mkNumeral "6" ;
+  seven_CaseNumber = mkNumeral "7" ;
+  eight_CaseNumber = mkNumeral "8" ;
+  nine_CaseNumber = mkNumeral "9" ;
 }

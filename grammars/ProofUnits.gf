@@ -15,6 +15,7 @@ fun
 cat
   [Unit] ;
   Hence ;
+  CaseNumber ;  -- the numbers of the cases of a case analysis, one to nine
 
 
 fun
@@ -40,6 +41,13 @@ fun
   CasesGoal : Unit ;
   InductionGoal : Unit ;
   CaseGoal : Prop -> Ident -> Unit ;
+
+  -- the case analyses of proof texts: "we have two cases :", and the
+  -- assumption of each case, "in the first case , assume that A ."
+  NumberCasesGoal : CaseNumber -> Unit ;
+  NumberCaseGoal : CaseNumber -> Prop -> Unit ;
+  one_CaseNumber, two_CaseNumber, three_CaseNumber, four_CaseNumber, five_CaseNumber,
+    six_CaseNumber, seven_CaseNumber, eight_CaseNumber, nine_CaseNumber : CaseNumber ;
 
   noHence : Hence ;
   henceHence : Hence ;

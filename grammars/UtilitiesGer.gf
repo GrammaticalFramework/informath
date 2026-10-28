@@ -44,7 +44,7 @@ oper
   define_V2 : V2 = mkV2 (mkV "definieren") (mkPrep "als" nominative) ;
   assume_VS : VS = mkVS (mkV "an" I.nehmen_V) ;
   type_CN : CN = mkCN (mkN "Typ") ;
-  case_N : N = mkN "Fall" ;
+  case_N : N = mkN "Fall" "Fälle" masculine ;
   contradiction_N : N = mkN "Widerspruch" ;
   then_Adv : Adv = ParadigmsGer.mkAdv "dann" ;
   thenText_Adv : Adv = ParadigmsGer.mkAdv "dann" ;

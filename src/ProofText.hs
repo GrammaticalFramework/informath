@@ -16,7 +16,7 @@ import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label)
 import Utils (latexPreamble, latexEndDoc)
 
 
-import Data.List (intersperse, nub)
+import Data.List (intersperse, isPrefixOf, nub, mapAccumL)
 import qualified Data.Map as M
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
@@ -94,12 +94,18 @@ line2unitline env dkmap line = line {
    -- a line is an assumption only if it cites a hypothesis without
    -- premisses; a hypothesis applied to premisses (a derived rule taken as
    -- a premiss) yields a conclusion, as a constant does
-   unit = case rule (step line) of
-     h | constant h || not (null (premisses line)) -> case ruleLabel h of
+   unit = case (mark line, rule (step line)) of
+     (CasesMark n, _) -> GNumberCasesGoal (caseNumber n)
+     (CaseMark k, _) -> GNumberCaseGoal (caseNumber k) (exp2prop fla)
+     (_, h) | constant h || not (null (premisses line)) -> case ruleLabel h of
        Just label -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
        Nothing -> GConclusionUnit (exp2prop fla)
-     h -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
+     (_, h) -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
    fla = head (annotateDkIdents env (formula (step line)))
+
+   caseNumber k = [Gone_CaseNumber, Gtwo_CaseNumber, Gthree_CaseNumber, Gfour_CaseNumber,
+                   Gfive_CaseNumber, Gsix_CaseNumber, Gseven_CaseNumber, Geight_CaseNumber,
+                   Gnine_CaseNumber] !! (k - 1)
 
    -- the name of a rule in words, if the symbol table gives it as a Label
    ruleLabel h = case annotateDkIdents env (EIdent h) of
@@ -190,15 +196,27 @@ data Line a = Line {
   line      :: Int,      -- line number
   context   :: [QIdent], -- labels of open hypotheses
   premisses :: [Int],    -- line numbers of premisses
-  step :: Step a         -- the main content of the line
+  step :: Step a,        -- the main content of the line
+  mark :: Mark           -- its part in a case analysis
   }
   deriving (Show, Eq)
 
+-- | The lines of a case analysis: "we have n cases", and the hypothesis that
+-- opens case k
+data Mark = NoMark | CasesMark Int | CaseMark Int
+  deriving (Show, Eq)
+
 mkLine :: Int -> [QIdent] -> a -> QIdent -> [Int] -> [QIdent] -> Line a
-mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di)
+mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di) NoMark
 
 mkHypoLine :: Int -> a -> QIdent -> QIdent -> Line a
-mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru [])
+mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru []) NoMark
+
+-- | The line of "we have n cases"
+mkCasesLine :: Int -> [QIdent] -> Int -> Line Exp
+mkCasesLine li co n = Line li co [] (mkStep noIdent (EIdent casesIdent) casesIdent []) (CasesMark n)
+
+casesIdent = QIdent "#CASES" ----
 
 noIdent = QIdent "#NOIDENT" ---- 
 
@@ -211,6 +229,13 @@ isElemType e = case splitApp e of
 -- the variables a lambda binds over objects, which a proof text introduces
 objectBinders :: [Bind] -> [(QIdent, Exp)]
 objectBinders binds = [(v, t) | BTyped v t <- binds, headedBy identElem t]
+
+-- the variables it binds over objects and over proofs, in their order: the
+-- "let x be an A" and the "assume that A" of the proof text, which are
+-- stated where the lambda binds them, not where they are first used
+introducedBinders :: [Bind] -> [(QIdent, Exp)]
+introducedBinders binds =
+  [(v, t) | BTyped v t <- binds, headedBy identElem t || headedBy identProof t]
 
 
 -----------------------------------------
@@ -354,43 +379,73 @@ term2linesMap proof = (raw, lns, relines)
    ETyped e typ -> case splitApp e of
     (EIdent fun, args) ->
       let
-         (argss, prems, lnConcl) = psArgs ln cont args
+         -- a case analysis: two or more premisses that are hypothetical
+         -- proofs of the conclusion itself, numbered in their order
+         caseArgs = [a | a <- args, isCase typ a]
+         cases = if length caseArgs >= 2 && length caseArgs <= 9
+                   then snd (mapAccumL (\k a -> if isCase typ a then (k + 1, Just (k, length caseArgs))
+                                                               else (k, Nothing)) 1 args)
+                   else map (const Nothing) args
+         (argss, prems, lnConcl) = psArgs ln cont (zip args cases)
       in concat argss ++
          [mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)]
    -- an abstraction introduces variables: the ones it binds over objects are
-   -- the "let x be an A" of the proof text, in the order the statement has them
+   -- the "let x be an A" of the proof text, and the ones over proofs its
+   -- "assume that A", in the order the statement has them
    EAbs _ _ -> case splitAbs proof of
      (binds, body) ->
        let cont' = cont ++ map bind2ident binds
-           eigenLines = [mkLine (ln + i) cont' t v [] []
-                          | (i, (v, t)) <- zip [0 ..] (objectBinders binds)]
-       in eigenLines ++ ps (ln + length eigenLines) cont' body
+           introLines = binderLines ln cont' Nothing binds
+       in introLines ++ ps (ln + length introLines) cont' body
 
    _ -> error ("term2lines " ++ printTree proof)
 
  -- process arguments left to right, threading line numbers; each argument yields its lines
  -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
  -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
- psArgs :: Int -> [QIdent] -> [Exp] -> ([[Line Exp]], [Int], Int)
+ psArgs :: Int -> [QIdent] -> [(Exp, Maybe (Int, Int))] -> ([[Line Exp]], [Int], Int)
  psArgs n _ [] = ([], [], n)
- psArgs n cont (a:as) =
-   let (ls, prem) = psArg n cont a
-       (lss, prems, nf) = psArgs (nextline n ls) cont as
-   in (ls : lss, prem ++ prems, nf)
+ psArgs n cont ((a, c):as) =
+   let -- the first case is preceded by "we have n cases"
+       casesLines = [mkCasesLine n cont k | Just (1, k) <- [c]]
+       (ls, prem) = psArg (n + length casesLines) cont c a
+       ls' = casesLines ++ ls
+       (lss, prems, nf) = psArgs (nextline n ls') cont as
+   in (ls' : lss, prem ++ prems, nf)
 
- psArg :: Int -> [QIdent] -> Exp -> ([Line Exp], [Int])
- psArg n cont arg = case arg of
+ -- an argument; the lines of the variables it binds over objects are
+ -- premisses of the rule (eigenvariables), the lines of its hypotheses are not
+ psArg :: Int -> [QIdent] -> Maybe (Int, Int) -> Exp -> ([Line Exp], [Int])
+ psArg n cont c arg = case arg of
    EAbs _ _ ->
      let (binds, body) = splitAbs arg
          cont' = cont ++ map bind2ident binds
-         eigenLines = [mkLine (n + i) cont' t v [] []
-                        | (i, (v, t)) <- zip [0 ..] (objectBinders binds)]
-         bodyLines = ps (n + length eigenLines) cont' body
-     in (eigenLines ++ bodyLines,
-         map line eigenLines ++ [lastline bodyLines | not (null bodyLines)])
+         introLines = binderLines n cont' (fmap fst c) binds
+         bodyLines = ps (n + length introLines) cont' body
+     in (introLines ++ bodyLines,
+         [line l | l <- introLines, headedBy identElem (formula (step l))] ++
+         [lastline bodyLines | not (null bodyLines)])
    _ ->
      let ls = ps n cont arg
      in (ls, [lastline ls | not (null ls)])
+
+ -- the lines that introduce the variables of a lambda; the first hypothesis
+ -- of case k is marked as opening that case
+ binderLines :: Int -> [QIdent] -> Maybe Int -> [Bind] -> [Line Exp]
+ binderLines n cont' c binds =
+   let vs = introducedBinders binds
+       firstHypo = take 1 [v | (v, t) <- vs, headedBy identProof t]
+   in [(mkLine (n + i) cont' t v [] []){mark = caseMark v}
+      | (i, (v, t)) <- zip [0 ..] vs, let caseMark v = maybe NoMark CaseMark (if v `elem` firstHypo then c else Nothing)]
+
+ -- an argument that is a hypothetical proof of the conclusion typ
+ isCase :: Exp -> Exp -> Bool
+ isCase typ a = case a of
+   EAbs _ _ -> case splitAbs a of
+     (binds, ETyped _ bodytyp) ->
+       any (headedBy identProof . snd) (introducedBinders binds) && bodytyp == typ
+     _ -> False
+   _ -> False
 
  lastline = line . last
  nextline ln p = if null p then ln else lastline p + 1
@@ -400,26 +455,32 @@ term2linesMap proof = (raw, lns, relines)
  -- formula was concluded before in a context that is still open (its
  -- hypotheses and variables are among the present ones), so that the
  -- earlier line can be cited instead.
- compress :: Int -> [(Int, Int)] -> [((QIdent, Exp), Int)] -> [(Exp, Int, [QIdent])]
+ -- A hypothesis or conclusion can be cited later only within its scope: where
+ -- its context is a prefix of the present one (contexts grow by appending the
+ -- variables bound), not in another case that binds a variable of the same name.
+ compress :: Int -> [(Int, Int)] -> [((QIdent, Exp), Int, [QIdent])] -> [(Exp, Int, [QIdent])]
           -> [Line Exp] -> ([Line Exp], [(Int, Int)])
  compress gaps relines rehypos reconcls ls = case ls of
+   ln : rest | isCasesLine ln ->  -- "we have n cases": kept, and not a conclusion to cite
+     let nln = line ln - gaps
+     in cons ln{line = nln} (compress gaps ((line ln, nln) : relines) rehypos reconcls rest)
    ln : rest | isHypoLine ln ->
      let key = (rule (step ln), formula (step ln)) -- a hypothesis is identified by its label and formula
-     in case lookup key rehypos of
-          Just k ->  -- old hypothesis: drop this line, re-point its number to the first occurrence
+     in case [k | (key', k, ctx) <- rehypos, key' == key, ctx `isPrefixOf` context ln] of
+          k : _ ->  -- old hypothesis: drop this line, re-point its number to the first occurrence
             compress (gaps + 1) ((line ln, k) : relines) rehypos reconcls rest
           _ ->       -- new hypothesis: keep it, renumbering to close earlier gaps
             let nln = line ln - gaps
             in cons ln{line = nln}
-               (compress gaps ((line ln, nln) : relines) ((key, nln) : rehypos) reconcls rest)
+               (compress gaps ((line ln, nln) : relines) ((key, nln, context ln) : rehypos) reconcls rest)
    ln : rest | k : _ <- [k | (f, k, ctx) <- reconcls, f == formula (step ln),
-                              all (`elem` context ln) ctx] ->
+                              ctx `isPrefixOf` context ln] ->
      -- old conclusion: drop this line, re-point its number to the earlier one
      compress (gaps + 1) ((line ln, k) : relines) rehypos reconcls rest
    ln : rest ->
      let nln = line ln - gaps
          ds  = discharged (step ln) -- hypotheses closed here may be reused (as new) below
-         rehypos' = [r | r@((h, _), _) <- rehypos, notElem h ds]
+         rehypos' = [r | r@((h, _), _, _) <- rehypos, notElem h ds]
          -- and conclusions that depend on them can no longer be cited
          reconcls' = [r | r@(_, _, ctx) <- (formula (step ln), nln, context ln) : reconcls,
                           not (any (`elem` ds) ctx)]
@@ -431,6 +492,9 @@ term2linesMap proof = (raw, lns, relines)
 
  -- a hypothesis line just cites an open assumption: no premisses, rule is a context variable
  isHypoLine ln = null (premisses ln) && elem (rule (step ln)) (context ln)
+ isCasesLine ln = case mark ln of
+   CasesMark _ -> True
+   _ -> False
 
  -- change the line number and re-point all references to premiss line numbers
  renumberLine num relines ln = ln {
@@ -515,6 +579,7 @@ prlu lin ln = [
 -- hypotheses it closes
 justification :: Line a -> String
 justification ln
+  | mark ln /= NoMark = ""                                          -- "we have n cases"
   | null (premisses ln) && elem (rule (step ln)) (context ln) = ""  -- a hypothesis or variable
   | null (premisses ln) = texttt (printTree (rule (step ln)))       -- a lemma without premisses
   | otherwise = unwords [

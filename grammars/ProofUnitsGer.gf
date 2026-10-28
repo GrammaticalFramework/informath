@@ -48,4 +48,22 @@ lin
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;
 
+
+  -- case analyses: "we have two cases :", "in the first case , assume that A ."
+  lincat CaseNumber = Numeral ;
+  lin
+  NumberCasesGoal n =
+    strText ("wir haben" ++ (SyntaxGer.mkUtt (SyntaxGer.mkNP (SyntaxGer.mkDet n) case_N)).s ++ ":") ;
+  NumberCaseGoal n A =
+    strText ((SyntaxGer.mkAdv in_Prep (SyntaxGer.mkNP (SyntaxGer.mkDet the_Quant (SyntaxGer.mkOrd n)) case_N)).s ++
+             "nehmen wir an ," ++ (SyntaxGer.mkAdv that_Subj (partProp A)).s ++ ".") ;
+  one_CaseNumber = mkNumeral "1" ;
+  two_CaseNumber = mkNumeral "2" ;
+  three_CaseNumber = mkNumeral "3" ;
+  four_CaseNumber = mkNumeral "4" ;
+  five_CaseNumber = mkNumeral "5" ;
+  six_CaseNumber = mkNumeral "6" ;
+  seven_CaseNumber = mkNumeral "7" ;
+  eight_CaseNumber = mkNumeral "8" ;
+  nine_CaseNumber = mkNumeral "9" ;
 }

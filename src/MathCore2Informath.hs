@@ -27,7 +27,7 @@ nlg env tree = case () of
    iafts = map insitu afts
    viafts = map varless iafts
    cviafts = concatMap collectivize viafts
-   ncviafts = map (implied . negated) cviafts  -- better do this at this late stage
+   ncviafts = map (scoped . implied . negated) cviafts  -- better do this at this late stage
    vncviafts = concatMap variations ncviafts
    uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
    godementvariants = concatMap godementVariants ncviafts
@@ -479,6 +479,29 @@ implied t = case t of
      GFormulaProp f -> Just f
      GIdentProp (GStrIdent s) -> Just (GMacroFormula (GStringMacro s))
      _ -> Nothing
+
+-- | The scope of the connectives made explicit, where the plain lists of
+-- conjuncts and disjuncts would be ambiguous: a conjunction or disjunction of
+-- two inside another one, or negated, is "both A and B", "either A or B"
+-- ("P or both Q and R", "it is not the case that either A or B"); and so is
+-- one whose first part is a negation ("either it is not the case that A or
+-- B", not to be read as the negation of "A or B").
+scoped :: Tree a -> Tree a
+scoped t = case t of
+  GAndProp (GListProp ps) -> conj GBothAndProp GAndProp (map (inner . scoped) ps)
+  GOrProp (GListProp ps) -> conj GEitherOrProp GOrProp (map (inner . scoped) ps)
+  GCoreNotProp p -> GCoreNotProp (inner (scoped p))
+  _ -> composOp scoped t
+ where
+   conj :: (GProp -> GProp -> GProp) -> (GListProp -> GProp) -> [GProp] -> GProp
+   conj both list ps = case ps of
+     [a@(GCoreNotProp _), b] -> both a b
+     _ -> list (GListProp ps)
+   inner :: GProp -> GProp
+   inner p = case p of
+     GAndProp (GListProp [a, b]) -> GBothAndProp a b
+     GOrProp (GListProp [a, b]) -> GEitherOrProp a b
+     _ -> p
 
 ---- TODO: move more of negation from earlier stages here
 negated :: Tree a -> Tree a
