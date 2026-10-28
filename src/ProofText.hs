@@ -66,7 +66,7 @@ proofDemo env base (MJmts proofs) informalizes trees =
 oneProof :: Env -> M.Map QIdent Exp -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
 oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}" ] ++
-    [ prls (prlu lin) unitlines | lin <- lins ] ++
+    [ prls (\ln -> prlu lin (indentation ln) ln) unitlines | lin <- lins ] ++
     [ proofTree latex rawlines number | Just latex <- [trees] ] ++
     (if isFlag "-proof-terms" env
        then [ "The proof term"
@@ -81,6 +81,15 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
     (unitlines, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) linesterm)
+    -- with -proof-indent, a line is indented by the number of scopes open at
+    -- it that the proof itself introduces (not the variables and hypotheses
+    -- of the statement), as in Fitch's notation: a scope is what one lambda
+    -- binds, and the lines introducing its variables have the same context
+    indentation ln = if isFlag "-proof-indent" env
+      then length (nub [c | h <- context ln, notElem h statementVars, Just c <- [lookup h introduced]])
+      else 0
+    introduced = [(rule (step l), context l) | l <- unitlines, null (premisses l), elem (rule (step l)) (context l)]
+    statementVars = map bind2ident (fst (splitAbs term))
     -- the number in the proof text of a line before compression
     number l = let k = maybe l id (lookup l renumbering) in maybe k id (lookup k renumbering2)
     
@@ -568,10 +577,10 @@ prle ln
       justification ln
       ]
   
-prlu :: (GUnit -> String) -> Line GUnit -> [String]
-prlu lin ln = [
+prlu :: (GUnit -> String) -> Int -> Line GUnit -> [String]
+prlu lin depth ln = [
   show (line ln) ++ ".",
-  lin (formula (step ln)),
+  concat (replicate depth "\\hspace*{1.5em}") ++ lin (formula (step ln)),
   justification ln
   ]
 
