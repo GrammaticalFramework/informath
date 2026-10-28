@@ -32,7 +32,7 @@ import Utils (commaSepInts, setnub, unindexString)
 import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
 import Utils (toLatexDoc, transInEnv, frequencyTable)
 
-import ProofText(proofDemo, prLatexFile, verbatimInline)
+import ProofText(proofDemo, prLatexFile, verbatimInline, dropImplicitHypos)
 
 import Informath
 import PGF
@@ -236,7 +236,7 @@ processJmt env djmt =
   then dummyGenResult (applyDeduktiConversions env djmt)
   else
     let
-      jmts = annotateDedukti env (applyDeduktiConversions env djmt)
+      jmts = annotateDedukti env (dropImplicitHypos env (applyDeduktiConversions env djmt))
       core = map dedukti2core jmts
       exts = concatMap (core2ext env) core
       nlgs = setnub $ map gf $ exts

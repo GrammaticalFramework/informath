@@ -80,7 +80,9 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
-    (unitlines0, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap . statedGoal) linesterm)
+    -- the variables of implicit types are not introduced
+    (explicitlines, renumbering1) = dropImplicitLines (isImplicitType env) (map statedGoal linesterm)
+    (unitlines0, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) explicitlines)
     -- with -proof-merge-hypos, the variables and hypotheses of a scope in one line
     (unitlines, renumbering3) = if isFlag "-proof-merge-hypos" env
       then compressScopesMap unitlines0
@@ -99,7 +101,8 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     introduced = [(rule (step l), context l) | l <- unitlines, null (premisses l), elem (rule (step l)) (context l)]
     statementVars = map bind2ident (fst (splitAbs term))
     -- the number in the proof text of a line before compression
-    number l = let k = maybe l id (lookup l renumbering)
+    number l = let k0 = maybe l id (lookup l renumbering)
+                   k = maybe k0 id (lookup k0 renumbering1)
                    k2 = maybe k id (lookup k renumbering2)
                in maybe k2 id (lookup k2 renumbering3)
     
@@ -182,6 +185,26 @@ compressVarsHyposMap = compressVarsMap varsHypo merge
     _ -> Nothing
   merge xs kind ln =
     ln{step = (step ln){formula = GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind])}}
+
+-- | The lines without those that introduce variables of implicit types, and
+-- the renumbering of the others; they are no longer cited as premisses, and
+-- the goal of a dropped line goes to the next line of its scope.
+dropImplicitLines :: (Exp -> Bool) -> [Line Exp] -> ([Line Exp], [(Int, Int)])
+dropImplicitLines implicit = go 0 []
+ where
+  go gaps rel ls = case ls of
+    l : rest | introduces l && implicit (formula (step l)) ->
+      let rest' = case rest of
+            l2 : rest2 | goal l /= Nothing && introduces l2 && context l2 == context l ->
+              l2{goal = goal l} : rest2
+            _ -> rest
+      in go (gaps + 1) rel rest'
+    l : rest ->
+      let n = line l - gaps
+          (lns, rels) = go gaps ((line l, n) : rel) rest
+      in (l{line = n, premisses = [p' | p <- premisses l, Just p' <- [lookup p rel]]} : lns, rels)
+    [] -> ([], rel)
+  introduces l = null (premisses l) && elem (rule (step l)) (context l) && mark l == NoMark
 
 -- | The consecutive lines that introduce the variables and hypotheses of one
 -- scope (they have the same context) as one line, "let x be an A such that
@@ -285,6 +308,29 @@ isElemType :: Exp -> Bool
 isElemType e = case splitApp e of
   (EIdent _, _) -> True
   _ -> False
+
+-- | A type that a symbol table declares implicit (#IMPLICIT Elem universeset):
+-- its variables are not introduced in statements and proof texts, unless
+-- with -show-implicit-hypotheses
+isImplicitType :: Env -> Exp -> Bool
+isImplicitType env t =
+  not (isFlag "-show-implicit-hypotheses" env) &&
+  elem (normalizeType (printTree t)) (implicitTypes (symbolTable env))
+
+-- | A statement (of a proof) without its leading hypotheses of implicit types
+dropImplicitHypos :: Env -> Jmt -> Jmt
+dropImplicitHypos env jmt = case jmt of
+  JStatic c t | proves t -> JStatic c (dropFun t)
+  JThm c (MTExp t) MENone | proves t -> JThm c (MTExp (dropFun t)) MENone
+  JDef c (MTExp t) MENone | proves t -> JDef c (MTExp (dropFun t)) MENone
+  _ -> jmt
+ where
+   proves t = headedBy identProof (snd (splitType t))
+   dropFun t = case t of
+     EFun (HVarExp _ a) r | isImplicitType env a -> dropFun r
+     EFun (HParVarExp _ a) r | isImplicitType env a -> dropFun r
+     EFun h r -> EFun h (dropFun r)
+     _ -> t
 
 -- the variables a lambda binds over objects, which a proof text introduces
 objectBinders :: [Bind] -> [(QIdent, Exp)]

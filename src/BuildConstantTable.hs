@@ -116,7 +116,8 @@ data SymbolTable = SymbolTable {
   macroTable :: MacroTable,
   semanticsTable :: SemDefs,
   nlgTable :: NLGDefs,
-  builtinSet :: S.Set QIdent
+  builtinSet :: S.Set QIdent,
+  implicitTypes :: [String]  -- #IMPLICIT: types of variables left implicit, as Dedukti text
   }
 
 -- conversion from Dk to GF, with synonyms and category information
@@ -212,7 +213,8 @@ buildSymbolTable pgf lang ls = SymbolTable {
   macroTable = macroTable,
   semanticsTable = semanticsTable,
   nlgTable = nlgTable,
-  builtinSet = builtinSet
+  builtinSet = builtinSet,
+  implicitTypes = implicitTypes
   }
  where
     entrylines = filter (not . null) (map words (stripDkComments ls))
@@ -222,6 +224,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     showlines = filter isShow entrylines
     macrolines = filter isMacro entrylines
     builtinlines = filter isBuiltin entrylines
+    implicitlines = filter isImplicit entrylines
     semanticslines = filter isSemantics entrylines
     nlglines = filter isNLG entrylines
     -- every latex form of every constant line, numbered once for the whole
@@ -257,6 +260,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
           (_:gids, names) <- numberedlines,
           (gid, name) <- zip [gid | gid@('$':_) <- gids] names])
     builtinSet = S.fromList [QIdent c | _:cs <- builtinlines, c <- cs]
+    implicitTypes = [normalizeType (unwords ws) | _:ws <- implicitlines]
     semanticsTable = M.fromList [readSemDef (unwords ws) | _:ws <- semanticslines]
     nlgTable = M.fromListWith (++) [(c, [f]) | _:ws <- nlglines, let (c, f) = readSemDef (unwords ws)]
     
@@ -266,8 +270,14 @@ buildSymbolTable pgf lang ls = SymbolTable {
     isShow line = head line == "#SHOW"
     isMacro line = head line == "#MACRO"
     isBuiltin line = head line == "#BUILTIN"
+    isImplicit line = head line == "#IMPLICIT"
     isSemantics line = head line == "#SEMANTICS"
     isNLG line = head line == "#NLG"
+
+-- | A type as written in #IMPLICIT or printed from Dedukti, for comparison:
+-- without parentheses and with single spaces
+normalizeType :: String -> String
+normalizeType = unwords . words . map (\c -> if c == '(' || c == ')' then ' ' else c)
 
 splitEntry :: [Char] -> [String]
 splitEntry s = case splitOutside '$'  '|' s of
