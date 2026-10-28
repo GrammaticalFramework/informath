@@ -721,14 +721,21 @@ showTacticProofs env s = case J.decode s of
 
    oneTacticProof p = unlines $ intersperse "\n\n" (
      ["\\subsection*{" ++ verbatimInline (str (field "name" p)) ++ "}"] ++
-     [table lang [(i, stepUnit st, str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
+     [table lang [(i, (depth st, stepUnit st), str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
        | lang <- langsShown] ++
      ["\\clearpage"])
 
    table lang rows = unlines $
      "\\begin{tabular}{rp{0.62\\textwidth}l}" :
-     [show i ++ ". & " ++ unit2nat lang u ++ " & " ++ verbatimInline by ++ " \\\\" | (i, u, by) <- rows] ++
+     [show i ++ ". & " ++ indent d ++ unit2nat lang u ++ " & " ++ verbatimInline by ++ " \\\\" | (i, (d, u), by) <- rows] ++
      ["\\end{tabular}"]
+
+   -- with -proof-indent, a step is indented by the assumptions open at it
+   -- ("depth", from tactic-units.py), as the lines of -proof-text
+   depth st = case field "depth" st of
+     J.JSRational _ r | isFlag "-proof-indent" env -> round r
+     _ -> 0 :: Int
+   indent d = concat (replicate d "\\hspace*{1.5em}")
 
    -- a step whose Dedukti does not parse is shown as obvious
    stepUnit st = either (const GObviousConclusion) id (stepUnitE st)
@@ -736,7 +743,13 @@ showTacticProofs env s = case J.decode s of
      "hypos" -> do
        hs <- sequence [fmap (HVarExp (QIdent (str x))) (dk (str t))
                       | J.JSArray [x, t] <- list (field "hypos" st)]
-       return (GHyposUnit (GListHypo (DMC.hypos2hypos [HVarExp x (ann t) | HVarExp x t <- hs])))
+       let hypos = GListHypo (DMC.hypos2hypos [HVarExp x (ann t) | HVarExp x t <- hs])
+       -- with -proof-goals, the goal of an assumption: "to prove that B, assume that A"
+       case field "goal" st of
+         J.JSString g | isFlag "-proof-goals" env -> do
+           ge <- dk (J.fromJSString g)
+           return (GGoalHyposUnit hypos (DMC.exp2prop (ann ge)))
+         _ -> return (GHyposUnit hypos)
      "conclusion" -> fmap (GConclusionUnit . DMC.exp2prop . ann) (dk (str (field "prop" st)))
      "enough" -> fmap (GEnoughGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
      "verify" -> fmap (GFirstVerifyGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
