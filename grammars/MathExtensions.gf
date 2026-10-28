@@ -36,6 +36,9 @@ fun
   AllProp : [ArgKind] -> Prop -> Prop ;
   ExistProp : [ArgKind] -> Prop -> Prop ; 
   ExistNoProp : [ArgKind] -> Prop -> Prop ;
+  -- quantifiers over variables of an implicit type (#IMPLICIT), whose kind is not said
+  BareAllProp : [Ident] -> Prop -> Prop ;    -- for all x and y, P
+  BareExistProp : [Ident] -> Prop -> Prop ;  -- there exist x and y such that P
 
   NotAdjProp : Adj -> Exp -> Prop ;
   NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;

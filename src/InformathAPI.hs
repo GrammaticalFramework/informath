@@ -241,7 +241,8 @@ processJmt env djmt =
       hidden = implicitPositions env cjmt
       core = [DMC.hideHypoVars (hypoVarsAt hidden j) (dedukti2core j) | j <- jmts]
       exts = concatMap (core2ext env) core
-      nlgs = setnub $ map gf $ exts
+      bare = MCI.bareQuantifiers (implicitKinds env)
+      nlgs = setnub $ map (gf . bare) $ exts
       vars = if elem "-variations" (flags env) then id else (take 1) 
       best = maybe vars take (nbestNLG env)
       nlglins lang = [(tree, gftree2nat env lang tree) | tree <- nlgs]
@@ -249,10 +250,18 @@ processJmt env djmt =
     in GenResult {
       originalDedukti = djmt,
       annotatedDedukti = jmts,
-      coreGF = map gf core,
+      coreGF = map (gf . bare) core,
       nlgResults = nlgranks,
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
+
+-- | The kinds of the implicit types (#IMPLICIT), as MathCore says them
+implicitKinds :: Env -> [GKind]
+implicitKinds env = [DMC.cleanup (DMC.exp2kind k) |
+  not (isFlag "-show-implicit-hypotheses" env),
+  s <- implicitTypes (symbolTable env),
+  Right t <- [pExp (myLexer s)],
+  k <- annotateDkIdents env t]
 
 -- | When just converting form Dk to another formalism, no GF is needed.
 dummyGenResult :: Jmt -> GenResult
@@ -776,7 +785,8 @@ showTacticProofs env s = case J.decode s of
      _ -> []
 
    unit2nat lang u = unlex env (gftree2nat env lang (gf (best u)))
-   best u = head ([u' | GUnitJmt u' <- core2ext env (GUnitJmt u)] ++ [u])
+   best u = MCI.bareQuantifiers (implicitKinds env)
+              (head ([u' | GUnitJmt u' <- core2ext env (GUnitJmt u)] ++ [u]))
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
@@ -785,7 +795,7 @@ showProofDemo env base mo = proofDemo env base mo (map unit2nat proofLangs) tree
    -- the formulas of the trees in symbolic LaTeX (-proof-trees), as with -to-symbolic-latex
    trees = if isFlag "-proof-trees" env then Just formula else Nothing
    formula e = gftree2nat senv (mkLanguage (grammar env) "Latex")
-                 (gf (DMC.exp2prop (head (annotateDkIdents senv e))))
+                 (gf (MCI.bareQuantifiers kinds (DMC.exp2prop (head (annotateDkIdents senv e)))))
    senv = env{flags = "-to-symbolic-latex" : flags env}
 
    -- one proof text for each language of -languages, or for -to-lang
@@ -794,5 +804,6 @@ showProofDemo env base mo = proofDemo env base mo (map unit2nat proofLangs) tree
    unit2nat :: Language -> GUnit -> String
    unit2nat lang u = unlex env (gftree2nat env lang (gf (best u)))
 
-   best u = head [u | GUnitJmt u <- core2ext env (GUnitJmt u)]
+   best u = MCI.bareQuantifiers kinds (head [u | GUnitJmt u <- core2ext env (GUnitJmt u)])
+   kinds = implicitKinds env
 

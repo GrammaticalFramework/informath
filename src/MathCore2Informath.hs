@@ -47,6 +47,28 @@ unparenth t = case t of
   GCoreIffProp a b -> GIffProp (unparenth a) (unparenth b)
   _ -> composOp unparenth t
 
+-- | Quantifiers over variables of an implicit type (#IMPLICIT) without their
+-- kind: "for all x" for "for all mathematical objects x". Applied last, to the
+-- Informath trees (AllProp, ExistProp) and to the MathCore ones for symbolic
+-- LaTeX (CoreAllProp, CoreExistProp), as the other passes need the kind
+-- ("every mathematical object is ..."). The kinds are compared uncoerced.
+bareQuantifiers :: [GKind] -> Tree a -> Tree a
+bareQuantifiers [] t = t
+bareQuantifiers kinds t = case t of
+  GAllProp (GListArgKind [GIdentsArgKind k xs]) p | implicit k -> GBareAllProp xs (bare p)
+  GExistProp (GListArgKind [GIdentsArgKind k xs]) p | implicit k -> GBareExistProp xs (bare p)
+  GCoreAllProp k x p | implicit k -> case bare p of
+    GBareAllProp (GListIdent ys) q -> GBareAllProp (GListIdent (x : ys)) q
+    q -> GBareAllProp (GListIdent [x]) q
+  GCoreExistProp k x p | implicit k -> case bare p of
+    GBareExistProp (GListIdent ys) q -> GBareExistProp (GListIdent (x : ys)) q
+    q -> GBareExistProp (GListIdent [x]) q
+  _ -> composOp bare t
+ where
+  bare :: Tree b -> Tree b
+  bare = bareQuantifiers kinds
+  implicit k = elem (uncoerce k) (map uncoerce kinds)
+
 uncoerce :: Tree a -> Tree a
 uncoerce t = case t of
   GProofProp prop -> uncoerce prop

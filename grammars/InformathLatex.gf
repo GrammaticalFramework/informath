@@ -20,5 +20,7 @@ lin
   AbsExp idents exp = mkPrec 0 ("\\lambda" ++ idents ++ "." ++ top exp) ;
 
   AllProp argkinds prop = mkPrec 0 (argkinds.q ++ top prop) ;
+  BareAllProp idents prop = mkPrec 0 ("\\forall" ++ idents ++ "." ++ top prop) ;
+  BareExistProp idents prop = mkPrec 0 ("\\exists" ++ idents ++ "." ++ top prop) ;
 
 }
