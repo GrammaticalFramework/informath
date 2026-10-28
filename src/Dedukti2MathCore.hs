@@ -21,6 +21,23 @@ import qualified Data.Set as S
 jmt2core :: Jmt -> GJmt
 jmt2core = cleanup . jmt2jmt . introduceLocalDefinitions where
 
+-- the variables of the hypotheses of a judgement left out, where they are of
+-- an implicit type (#IMPLICIT): "Let m be a mathematical object" is not said
+-- in a definition, whose definiendum still mentions m
+hideHypoVars :: [QIdent] -> GJmt -> GJmt
+hideHypoVars [] jmt = jmt
+hideHypoVars xs jmt = Informath.composOp hide jmt where
+  names = map (cleanup . ident2ident) xs
+  hide :: Informath.Tree a -> Informath.Tree a
+  hide t = case t of
+    GListHypo hs -> GListHypo (concatMap keep hs)
+    _ -> t
+  keep :: GHypo -> [GHypo]
+  keep h = case h of
+    GVarsHypo (GListIdent ys) k ->
+      [GVarsHypo (GListIdent zs) k | let zs = filter (`notElem` names) ys, not (null zs)]
+    _ -> [h]
+
 cleanup :: Informath.Tree a -> Informath.Tree a
 cleanup t = case t of
   GStrIdent (GString s) -> GStrIdent (GString (unescapeConstant (stripConstant s)))

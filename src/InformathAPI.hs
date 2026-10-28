@@ -32,7 +32,7 @@ import Utils (commaSepInts, setnub, unindexString)
 import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
 import Utils (toLatexDoc, transInEnv, frequencyTable)
 
-import ProofText(proofDemo, prLatexFile, verbatimInline, dropImplicitHypos)
+import ProofText(proofDemo, prLatexFile, verbatimInline, dropImplicitHypos, implicitPositions, hypoVarsAt)
 
 import Informath
 import PGF
@@ -236,8 +236,10 @@ processJmt env djmt =
   then dummyGenResult (applyDeduktiConversions env djmt)
   else
     let
-      jmts = annotateDedukti env (dropImplicitHypos env (applyDeduktiConversions env djmt))
-      core = map dedukti2core jmts
+      cjmt = applyDeduktiConversions env djmt
+      jmts = annotateDedukti env (dropImplicitHypos env cjmt)
+      hidden = implicitPositions env cjmt
+      core = [DMC.hideHypoVars (hypoVarsAt hidden j) (dedukti2core j) | j <- jmts]
       exts = concatMap (core2ext env) core
       nlgs = setnub $ map gf $ exts
       vars = if elem "-variations" (flags env) then id else (take 1) 

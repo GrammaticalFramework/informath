@@ -325,6 +325,30 @@ isImplicitType env t =
   not (isFlag "-show-implicit-hypotheses" env) &&
   elem (normalizeType (printTree t)) (implicitTypes (symbolTable env))
 
+-- | The positions of the hypotheses of implicit types in a judgement that does
+-- not prove anything (a definition): they are not dropped, as the definiendum
+-- applies the constant to them, but only left unsaid (Dedukti2MathCore.hideHypoVars)
+implicitPositions :: Env -> Jmt -> [Int]
+implicitPositions env jmt = case jmtType jmt of
+  Just t | not (headedBy identProof (snd (splitType t))) ->
+    [i | (i, h) <- zip [0..] (fst (splitType t)), Just a <- [hypo2type h], isImplicitType env a]
+  _ -> []
+
+-- | The variables at those positions, in the judgement as annotated
+hypoVarsAt :: [Int] -> Jmt -> [QIdent]
+hypoVarsAt [] _ = []
+hypoVarsAt is jmt = case jmtType jmt of
+  Just t -> [v | (i, h) <- zip [0..] (fst (splitType t)), elem i is, v <- hypo2vars h]
+  _ -> []
+
+jmtType :: Jmt -> Maybe Exp
+jmtType jmt = case jmt of
+  JStatic _ t -> Just t
+  JDef _ (MTExp t) _ -> Just t
+  JThm _ (MTExp t) _ -> Just t
+  JInj _ (MTExp t) _ -> Just t
+  _ -> Nothing
+
 -- | A statement (of a proof) without its leading hypotheses of implicit types
 dropImplicitHypos :: Env -> Jmt -> Jmt
 dropImplicitHypos env jmt = case jmt of
