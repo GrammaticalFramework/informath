@@ -44,7 +44,7 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{Seventy-one Commits}
+\title{Eighty-eight Commits}
 \subtitle{What Claude Code has contributed to Informath, July--October 2026}
 \author{Aarne Ranta}
 \date{October 2026}
@@ -56,7 +56,7 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 900 commits since 2024, almost all by hand.
-    \item \textbf{71} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{88} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,9 +68,9 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October with Tasks 12--28
+  (\commit{35d81f9}, 27 September), and extended in October with Tasks 12--35
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
-  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b} and this version).
+  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f} and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -1500,6 +1500,125 @@ example/           divisibility.tex, formalized
   reading); where a language lacks a word, the older, symbolic reading is kept.
 \end{frame}
 
+
+\begin{frame}{Task 29: French for the definitions and for Godement}
+  \commit{030b40b} (25 Oct), \commit{011704b} (26 Oct) --- on my other computer
+  \begin{itemize}\small
+    \item 252 French nouns and adjectives that the Godement, HoTT and Naproche lexicons
+          lacked (\emph{opposite}, \emph{lift}, \emph{carrier}, \emph{whiskering}):
+          all but 4 French readings of Mathlib's definitions have every word in French.
+    \item The Godement index in French: symbol table entries in French with elision
+          (``l'action de \#1''), or as GF trees with their profile, so that a table
+          written in one language is read in any; \texttt{GodementSyntaxFre},
+          \texttt{MizarFre} (``$E$ est dit $X$'').
+    \item ``pour \ok{tous les} objets'', not \bad{``tous des''}; ``envoie $x$ \ok{sur} $y$''.
+  \end{itemize}
+  The French words are marked as written by Claude, \textbf{to be reviewed}.
+\end{frame}
+
+% =====================================================================
+\section{Part VII: Proof texts, from Edukera}
+
+\begin{frame}{Task 30: Edukera informalized}
+  \commit{4098d47} (27 Oct); the Edukera repository
+  \prompt{I would like to create an informalization of the Dedukti file, using Informath in a
+  way similar to mathlib-informath and, for the symbolic latex, some of the infix and other
+  notations in lp if they conform to good mathematical practice.}
+  \begin{itemize}\small
+    \item Edukera: Amélie's natural deduction and set theory exercises in Lambdapi, exported
+          to Dedukti. A converter to Informath's dialect: connectives to base constants,
+          elements (of type \texttt{Prop}!) to $\mathbb{U}$, the names of the bound variables
+          from the \texttt{.lp} file; \texttt{dk check} verifies it. A page:
+          \texttt{edukera-index.html}, 184 statements, 158 proofs.
+    \item Nested implications read \bad{``if if $A$, then $B$, then $B$''}.
+          \textit{``you can use `if A implies B then...' which is supported in the Informath
+          grammar.}  \texttt{FormulaImpliesProp} in the antecedent: \ok{``if $A$ implies $B$,
+          then $B$''}, 45 statements down to 26.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 31: Which rules to name}
+  \commit{0771c0b}, \commit{ea565fd}, \commit{5cec1f1} (27 Oct)
+  \prompt{add rule names in prose with a dkgf (also French)}
+  \begin{itemize}\small
+    \item Rules as \texttt{Label} words in \texttt{Mathlib.gf} (``modus ponens'', ``le tiers
+          exclu''), named in a proof line when the symbol table gives them a \texttt{Label}.
+    \item ``$B$ by $L$'' could attach to the last part of a compound $B$:
+          \texttt{LabelPropConclusion}, \ok{``By modus ponens, $B$.''}
+    \item \textit{``the explicit mention of proof rules should not be used for logical
+          constants (natural deduction) but only if you apply a definition of a mathematical
+          concept.''} Seven labels kept: ``By the definition of union, $x \in A \cup B$.''
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 32: Natural deduction trees}
+  \commit{77132a4} (27 Oct)
+  \prompt{show proofs as natural deduction trees. Each node in the tree should show just the
+  formal proposition, on the right of it the rule applied and the line of the hypothesis
+  discharged, and on the left of it - which is not standard - the number of the line in the
+  generated text.}
+  \begin{itemize}\small
+    \item \texttt{-proof-trees}: a bussproofs tree from the lines before compression, the
+          renumbering of the compression returned with the lines; the same number may occur
+          several times.
+    \item \textit{``They are wider than necessary''}: MathJax's bussproofs leaves wide gaps
+          between premisses with labels (shown by removing the labels). The page draws the
+          trees itself, in CSS grids; \ok{the same tree from 1100 to 970 pixels}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 33: The structure of proof texts}
+  \commit{21c5ca9}, \commit{5184e24} (28 Oct)
+  \prompt{fix 1, 2, and 3. For 3, you could use the Informath constructors CasesGoal and
+  CaseGoal. CasesGoal could be generalized to one that takes a number as argument}
+  \begin{itemize}\small
+    \item \textbf{Scope}: \bad{``it is not the case that $A$ or $B$''} for both
+          $\neg A \lor B$ and $\neg(A \lor B)$; now \ok{``either it is not the case that $A$ or
+          $B$''}, \ok{``it is not the case that either $A$ or $B$''}; French ``à la fois'',
+          ``soit \dots, soit''. Not ``both'' inside the same connective.
+    \item \textbf{Assumptions where they are made}, as in Fitch, not where first used.
+          It exposed a bug: a hypothesis of one case cited in another case with a variable of
+          the same name; reuse only where its context is a prefix of the present one.
+    \item \textbf{Cases}: ``We have two cases:'', ``In the first case, assume that $A$.'':
+          \texttt{CaseNumber} with the RGL's numerals; German \ok{\emph{Fälle}}, not
+          \bad{\emph{Falle}}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 34: Indentation, goals, merged hypotheses}
+  \commit{63ed185}, \commit{d266d76}, \commit{6053917} (28 Oct)
+  \begin{itemize}\small
+    \item \textit{``Can you test adding indentation to proofs under assumption''}:
+          \texttt{-proof-indent}, one level per scope (all that a $\lambda$ binds), with a line
+          for each open scope on the page.
+    \item \textit{``add the goal for which the assumption is made, when this makes sense''}:
+          \texttt{GoalHyposUnit}, ``To prove that $A$, assume that $\neg A$.'', only where the goal
+          differs from what the scope proves (introductions, not eliminations), and not the
+          statement itself (\textit{``The refinement makes a lot of sense!''}).
+    \item \textit{``hypotheses in proofs can be compressed like they are in theorem
+          statements''}: \texttt{-proof-merge-hypos}, ``Let $x$ be an element of $\mathbb{U}$
+          such that $x \in A$'', ``Assume that $x \in A$ and $x \in B$.''
+  \end{itemize}
+  Each first behind a flag, to compare; the regression outputs unchanged without it.
+\end{frame}
+
+\begin{frame}{Task 35: Implicit variables, cited lines, and Mathlib again}
+  \commit{aa88d6b}, \commit{df6ce0d} (28 Oct); mathlib-informath \commit{f535a28}
+  \begin{itemize}\small
+    \item \textit{``some types could be marked as implicit in dkgf, say \#IMPLICIT Elem
+          universeset''}: their variables not introduced in statements, formulas and proofs;
+          \texttt{-show-implicit-hypotheses} to opt out. ``To prove that $A \subseteq B$, assume
+          that $x \in A$.''
+    \item \textit{``cite discharged hypotheses by line numbers''}: \texttt{$\Rightarrow_i$ 7
+          \ok{(2)}}, not \bad{\texttt{[piAB]}}; the lines recorded when the rule's line is made
+          and renumbered with the premisses, so that names bound twice and vacuous hypotheses
+          come out right, in the text and the trees alike.
+    \item The Mathlib proof texts rebuilt with all of this: 265 proofs,
+          \ok{1068 English lines, from 1298}; an unused hypothesis of a statement (an instance)
+          is no longer stated.
+  \end{itemize}
+\end{frame}
+
 % =====================================================================
 \section{Observations and the future}
 
@@ -1607,6 +1726,34 @@ example/           divisibility.tex, formalized
   \end{columns}
 \end{frame}
 
+
+\begin{frame}{What the proof-text tasks added}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \ok{\textbf{Worked well}}
+      \begin{itemize}\small
+        \item Looking at the output first: a survey of all 1293 proof lines, with counts,
+              before any change.
+        \item New behaviour behind a flag, compared, and only then made the default.
+        \item A check that the layout changes only white space; that the trees cite only
+              lines of the text.
+        \item A change that exposed a hidden bug (cases with the same variable names).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \bad{\textbf{Needed a human}}
+      \begin{itemize}\small
+        \item What good proof style is: name definitions, not logical rules; goals only
+              where they help; ``A implies B''.
+        \item The constructors to use: \texttt{CasesGoal}, the RGL's numerals,
+              \texttt{FormulaImpliesProp}.
+        \item The ideas: trees with text line numbers, implicit types, merged hypotheses.
+        \item Noticing what was missing: goals only on variables, wide trees.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{Speculation: what would be good to do next}
   \begin{itemize}\small
     \item \textbf{Review}: native checking of the Finnish, Czech, Polish and French
@@ -1616,7 +1763,9 @@ example/           divisibility.tex, formalized
     \item \textbf{Scale}: \ok{big statements get English (Task 16)}; next,
           linearization, now the slowest part; and a lexer and unlexer that agree.
     \item \textbf{Proofs}: \ok{lemmas, conclusions and the statement's variables right
-          (Task 21)}; next, English theorem headings, and rules that read as tautologies.
+          (Task 21); Fitch structure, cases, goals, trees (Tasks 32--35)}; next, rules with
+          hypothetical premisses that read as tautologies, ``assume that $A$ implies $B$'',
+          and the last 26 ``if if''.
     \item \textbf{Coverage}: run GodementSyntax on all 10\,413 sentences and measure
           how much of the book parses; port it to French, German, Swedish.
     \item \textbf{Autoformalization}: parse Godement's own text into Dedukti and
