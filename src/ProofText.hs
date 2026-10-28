@@ -80,20 +80,28 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
-    (unitlines, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap . statedGoal) linesterm)
+    (unitlines0, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap . statedGoal) linesterm)
+    -- with -proof-merge-hypos, the variables and hypotheses of a scope in one line
+    (unitlines, renumbering3) = if isFlag "-proof-merge-hypos" env
+      then compressScopesMap unitlines0
+      else (unitlines0, [])
     -- a goal that is the conclusion of the statement is not repeated
     statedGoal l = if goal l == Just (formula (step (last linesterm))) then l{goal = Nothing} else l
     -- with -proof-indent, a line is indented by the number of scopes open at
     -- it that the proof itself introduces (not the variables and hypotheses
     -- of the statement), as in Fitch's notation: a scope is what one lambda
     -- binds, and the lines introducing its variables have the same context
+    -- (a scope is open at a line if its context is a prefix of the line's:
+    -- the same name can be bound in different scopes)
     indentation ln = if isFlag "-proof-indent" env
-      then length (nub [c | h <- context ln, notElem h statementVars, Just c <- [lookup h introduced]])
+      then length (nub [c | (h, c) <- introduced, notElem h statementVars, c `isPrefixOf` context ln])
       else 0
     introduced = [(rule (step l), context l) | l <- unitlines, null (premisses l), elem (rule (step l)) (context l)]
     statementVars = map bind2ident (fst (splitAbs term))
     -- the number in the proof text of a line before compression
-    number l = let k = maybe l id (lookup l renumbering) in maybe k id (lookup k renumbering2)
+    number l = let k = maybe l id (lookup l renumbering)
+                   k2 = maybe k id (lookup k renumbering2)
+               in maybe k2 id (lookup k2 renumbering3)
     
 
 
@@ -174,6 +182,41 @@ compressVarsHyposMap = compressVarsMap varsHypo merge
     _ -> Nothing
   merge xs kind ln =
     ln{step = (step ln){formula = GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind])}}
+
+-- | The consecutive lines that introduce the variables and hypotheses of one
+-- scope (they have the same context) as one line, "let x be an A such that
+-- B", aggregated as the hypotheses of a statement are; with the goal of its
+-- first line. The lines of a case analysis are not merged.
+compressScopesMap :: [Line GUnit] -> ([Line GUnit], [(Int, Int)])
+compressScopesMap = compressVarsMap scopeLine merge
+ where
+  scopeLine :: Line GUnit -> Maybe ([([GHypo], Maybe GProp)], [QIdent])
+  scopeLine ln
+    | mark ln == NoMark && null (premisses ln) && elem (rule (step ln)) (context ln) =
+        case formula (step ln) of
+          GHyposUnit (GListHypo hs) -> Just ([(hs, Nothing)], context ln)
+          GGoalHyposUnit (GListHypo hs) g -> Just ([(hs, Just g)], context ln)
+          _ -> Nothing
+    | otherwise = Nothing
+  merge xs _ ln =
+    let hs = conjoined (concatMap fst xs)
+        unit = case xs of
+          (_, Just g) : _ -> GGoalHyposUnit (GListHypo hs) g
+          _ -> GHyposUnit (GListHypo hs)
+    in ln{step = (step ln){formula = unit}}
+
+  -- consecutive hypotheses of propositions as one: "assume that A and B"
+  conjoined hs = case hs of
+    h : rest@(h2 : _) | Just p <- prop h, Just _ <- prop h2 ->
+      let (ps, rest') = span (maybe False (const True) . prop) rest
+      in GPropHypo (GAndProp (GListProp (p : [q | Just q <- map prop ps]))) : conjoined rest'
+    h : rest -> h : conjoined rest
+    [] -> []
+  prop :: GHypo -> Maybe GProp
+  prop h = case h of
+    GPropHypo p -> Just p
+    GPropVarHypo _ p -> Just p
+    _ -> Nothing
 
 -- in Dedukti, the merged line shows the variables as one label "x, y : A"
 compressVarsLines :: [Line Exp] -> [Line Exp]
