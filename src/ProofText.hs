@@ -80,7 +80,9 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
-    (unitlines, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) linesterm)
+    (unitlines, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap . statedGoal) linesterm)
+    -- a goal that is the conclusion of the statement is not repeated
+    statedGoal l = if goal l == Just (formula (step (last linesterm))) then l{goal = Nothing} else l
     -- with -proof-indent, a line is indented by the number of scopes open at
     -- it that the proof itself introduces (not the variables and hypotheses
     -- of the statement), as in Fitch's notation: a scope is what one lambda
@@ -109,7 +111,11 @@ line2unitline env dkmap line = line {
      (_, h) | constant h || not (null (premisses line)) -> case ruleLabel h of
        Just label -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
        Nothing -> GConclusionUnit (exp2prop fla)
-     (_, h) -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
+     (_, h) -> case goal line of
+       -- with -proof-goals: "to prove that B , assume that A"
+       Just g | isFlag "-proof-goals" env ->
+         GGoalHyposUnit (GListHypo (hypos2hypos [HVarExp h fla])) (exp2prop (head (annotateDkIdents env g)))
+       _ -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
    fla = head (annotateDkIdents env (formula (step line)))
 
    caseNumber k = [Gone_CaseNumber, Gtwo_CaseNumber, Gthree_CaseNumber, Gfour_CaseNumber,
@@ -206,7 +212,9 @@ data Line a = Line {
   context   :: [QIdent], -- labels of open hypotheses
   premisses :: [Int],    -- line numbers of premisses
   step :: Step a,        -- the main content of the line
-  mark :: Mark           -- its part in a case analysis
+  mark :: Mark,          -- its part in a case analysis
+  goal :: Maybe Exp      -- for the first variable or hypothesis that a premiss
+                         -- binds: the conclusion of the rule, which it serves
   }
   deriving (Show, Eq)
 
@@ -216,14 +224,14 @@ data Mark = NoMark | CasesMark Int | CaseMark Int
   deriving (Show, Eq)
 
 mkLine :: Int -> [QIdent] -> a -> QIdent -> [Int] -> [QIdent] -> Line a
-mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di) NoMark
+mkLine li co fo ru prs di = Line li co prs (mkStep noIdent fo ru di) NoMark Nothing
 
 mkHypoLine :: Int -> a -> QIdent -> QIdent -> Line a
-mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru []) NoMark
+mkHypoLine li fo ru hy = Line li [hy] [] (mkStep hy fo ru []) NoMark Nothing
 
 -- | The line of "we have n cases"
 mkCasesLine :: Int -> [QIdent] -> Int -> Line Exp
-mkCasesLine li co n = Line li co [] (mkStep noIdent (EIdent casesIdent) casesIdent []) (CasesMark n)
+mkCasesLine li co n = Line li co [] (mkStep noIdent (EIdent casesIdent) casesIdent []) (CasesMark n) Nothing
 
 casesIdent = QIdent "#CASES" ----
 
@@ -395,7 +403,7 @@ term2linesMap proof = (raw, lns, relines)
                    then snd (mapAccumL (\k a -> if isCase typ a then (k + 1, Just (k, length caseArgs))
                                                                else (k, Nothing)) 1 args)
                    else map (const Nothing) args
-         (argss, prems, lnConcl) = psArgs ln cont (zip args cases)
+         (argss, prems, lnConcl) = psArgs ln cont typ (zip args cases)
       in concat argss ++
          [mkLine lnConcl cont typ fun (nub prems) (concatMap absIdents args)]
    -- an abstraction introduces variables: the ones it binds over objects are
@@ -412,24 +420,39 @@ term2linesMap proof = (raw, lns, relines)
  -- process arguments left to right, threading line numbers; each argument yields its lines
  -- (eigenvariable lines for its Elem-typed binders, then its own derivation) together with the
  -- line numbers to cite as premisses (those eigenvariables and the argument's conclusion)
- psArgs :: Int -> [QIdent] -> [(Exp, Maybe (Int, Int))] -> ([[Line Exp]], [Int], Int)
- psArgs n _ [] = ([], [], n)
- psArgs n cont ((a, c):as) =
+ -- the arguments of a rule whose conclusion is concl
+ psArgs :: Int -> [QIdent] -> Exp -> [(Exp, Maybe (Int, Int))] -> ([[Line Exp]], [Int], Int)
+ psArgs n _ _ [] = ([], [], n)
+ psArgs n cont concl ((a, c):as) =
    let -- the first case is preceded by "we have n cases"
        casesLines = [mkCasesLine n cont k | Just (1, k) <- [c]]
-       (ls, prem) = psArg (n + length casesLines) cont c a
+       (ls, prem) = psArg (n + length casesLines) cont c concl a
        ls' = casesLines ++ ls
-       (lss, prems, nf) = psArgs (nextline n ls') cont as
+       (lss, prems, nf) = psArgs (nextline n ls') cont concl as
    in (ls' : lss, prem ++ prems, nf)
 
  -- an argument; the lines of the variables it binds over objects are
  -- premisses of the rule (eigenvariables), the lines of its hypotheses are not
- psArg :: Int -> [QIdent] -> Maybe (Int, Int) -> Exp -> ([Line Exp], [Int])
- psArg n cont c arg = case arg of
+ psArg :: Int -> [QIdent] -> Maybe (Int, Int) -> Exp -> Exp -> ([Line Exp], [Int])
+ psArg n cont c concl arg = case arg of
    EAbs _ _ ->
      let (binds, body) = splitAbs arg
          cont' = cont ++ map bind2ident binds
-         introLines = binderLines n cont' (fmap fst c) binds
+         -- the goal is the conclusion of the rule, stated where it differs
+         -- from what the premiss proves (as in an introduction rule, not in
+         -- an elimination rule, which passes its conclusion on); a case has none
+         proves = case body of
+           ETyped _ t -> Just t
+           _ -> Nothing
+         -- the first line has the conclusion of the rule as its goal; in a
+         -- scope that begins with variables, the first hypothesis has what
+         -- the scope proves ("let x be ... ; to prove that x in B, assume ...")
+         bls = binderLines n cont' (fmap fst c) binds
+         firstHypo = take 1 [i | (i, l) <- zip [0 :: Int ..] bls, headedBy identProof (formula (step l))]
+         introduces = c == Nothing && proves /= Just concl
+         introLines = [if introduces && i == 0 then l{goal = Just concl}
+                       else if introduces && i `elem` firstHypo then l{goal = proves} else l
+                      | (i, l) <- zip [0 :: Int ..] bls]
          bodyLines = ps (n + length introLines) cont' body
      in (introLines ++ bodyLines,
          [line l | l <- introLines, headedBy identElem (formula (step l))] ++

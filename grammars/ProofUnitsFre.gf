@@ -12,6 +12,13 @@ in {
 
 lin
   HyposUnit hypos = hypos.text ;
+  -- "que" with the indicative, elided before a vowel: that_Subj would take the subjunctive
+  GoalHyposUnit hypos prop = prefixText ("pour démontrer" ++ que_Str ++ (mkUtt (topProp prop)).s ++ ",") hypos.text ;
+
+oper
+  que_Str : Str = pre {"que" ; ("qu'" ++ Predef.BIND) / strs {"a" ; "à" ; "e" ; "é" ; "è" ; "i" ; "o" ; "u" ; "h"}} ;
+
+lin
   ConclusionUnit prop = mkText (topProp prop) ;
 
   UnitJmt unit = lin Text {s = ">" ++ unit.s} ; --- not to be used, just to be reached

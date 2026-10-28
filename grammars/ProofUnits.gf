@@ -4,6 +4,7 @@ abstract ProofUnits = Categories ** {
 
 fun
   HyposUnit : [Hypo] -> Unit ;
+  GoalHyposUnit : [Hypo] -> Prop -> Unit ;  -- to prove that B , assume that A
   ConclusionUnit : Prop -> Unit ;
   
   UnitJmt : Unit -> Jmt ; --- for top level?

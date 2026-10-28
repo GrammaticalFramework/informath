@@ -12,6 +12,7 @@ in {
 
 lin
   HyposUnit hypos = hypos.text ;
+  GoalHyposUnit hypos prop = prefixText ("um zu zeigen ," ++ (SyntaxGer.mkAdv that_Subj (partProp prop)).s ++ ",") hypos.text ;
   ConclusionUnit prop = mkText (topProp prop) ;
   -- the fronted adverbial inverts the clause: "nach dem Modus ponens ist n gerade"
   LabelPropConclusion label prop =

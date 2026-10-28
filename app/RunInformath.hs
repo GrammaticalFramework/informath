@@ -147,6 +147,7 @@ helpMsg4 = [
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
   just "-proof-trees" "with -proof-text, also show the proofs as natural deduction trees (bussproofs)",
   just "-proof-indent" "with -proof-text, indent each line by the assumptions open at it",
+  just "-proof-goals" "with -proof-text, state the goal of each assumption: to prove that B, assume that A",
   just "-to-lang=<lang>" "linearize to natural language <lang>, default Eng",
   just "-languages=<langs>" "with -json, rank and show only these languages (e.g. Eng,Fre), default all; with -proof-text, a proof text in each",
   just "-to-formalism=<formalism>" "convert to <formalism> instead of natural language",

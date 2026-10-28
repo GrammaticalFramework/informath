@@ -12,6 +12,7 @@ in {
 
 lin
   HyposUnit hypos = hypos.text ;
+  GoalHyposUnit hypos prop = prefixText ("to prove" ++ (SyntaxEng.mkAdv that_Subj (partProp prop)).s ++ ",") hypos.text ;
   ConclusionUnit prop = mkText (topProp prop) ;
 
   UnitJmt unit = lin Text {s = ">" ++ unit.s} ; --- not to be used, just to be reached
