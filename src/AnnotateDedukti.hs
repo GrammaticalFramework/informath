@@ -323,12 +323,33 @@ subst gamma bs e = case e of
   -- statement's own variable)
   EAbs b (EApp (EIdent g) (EIdent y))
     | y == bind2ident b, g /= y, Just v@(EAbs _ _) <- lookup g gamma -> v
+  -- a bound variable that occurs free in what is substituted is renamed:
+  -- existsE's (x : Elem A) -> Proof (B x) -> ..., with B := y => pair x y,
+  -- must not become pair x x
+  EAbs (BTyped x ty) a | Just x' <- captured x a ->
+    EAbs (BTyped x' (subst gamma bs ty)) (subst ((x, EIdent x') : gamma) (x' : bs) a)
+  EAbs (BVar x) a | Just x' <- captured x a ->
+    EAbs (BVar x') (subst ((x, EIdent x') : gamma) (x' : bs) a)
+  EFun (HVarExp x ty) a | Just x' <- captured x a ->
+    EFun (HVarExp x' (subst gamma bs ty)) (subst ((x, EIdent x') : gamma) (x' : bs) a)
+  EFun (HParVarExp x ty) a | Just x' <- captured x a ->
+    EFun (HParVarExp x' (subst gamma bs ty)) (subst ((x, EIdent x') : gamma) (x' : bs) a)
   EAbs (BTyped x ty) a -> EAbs (BTyped x (subst gamma bs ty)) (subst gamma (x : bs) a)
   EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
   EFun (HVarExp x ty) a -> EFun (HVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
   EFun (HParVarExp x ty) a -> EFun (HParVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
   EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
   _ -> e
+ where
+  -- a fresh name for x, if x is free in the value of a variable free in the body
+  captured x body
+    | x `elem` concat [identsInTree v | (k, v) <- gamma, k /= x, k `elem` free] =
+        Just (head [y | i <- [1 :: Int ..], let y = suffixed i, notElem y avoid])
+    | otherwise = Nothing
+   where
+    free = identsInTree body
+    avoid = free ++ bs ++ map fst gamma ++ concatMap (identsInTree . snd) gamma
+    suffixed i = case x of QIdent s -> QIdent (s ++ show i)
 
 -- add vars to hypos from abstraction or new vars if not yet given
 unifyVars :: MExp -> [Hypo] -> [Hypo]
