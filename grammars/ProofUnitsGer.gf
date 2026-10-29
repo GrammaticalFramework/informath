@@ -17,6 +17,7 @@ lin
   -- the fronted adverbial inverts the clause: "nach dem Modus ponens ist n gerade"
   LabelPropConclusion label prop =
     mkText (mkS (SyntaxGer.mkAdv (P.mkPrep "nach" P.dative) label.np) (topProp prop)) ;
+  HencePropConclusion hence prop = mkText (mkS hence (topProp prop)) ;
 
   UnitJmt unit = lin Text {s = ">" ++ unit.s} ; --- not to be used, just to be reached
 
@@ -44,6 +45,7 @@ lin
   altogetherHence = P.mkAdv "insgesamt" ;
   afortioriHence = P.mkAdv "erst recht" ;
   inParticularHence = P.mkAdv "insbesondere" ;
+  inBothCasesHence = P.mkAdv "in beiden Fällen" ;
   weConcludeHence = P.mkAdv "wir schließen, dass" ;
 
   BaseUnit = emptyText ;

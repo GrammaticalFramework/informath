@@ -44,6 +44,7 @@ lin
   -- the fronted adverbial inverts the clause: "enligt modus ponens är n jämnt"
   LabelPropConclusion label prop =
     mkText (mkS (SyntaxSwe.mkAdv (P.mkPrep "enligt") label.np) (topProp prop)) ;
+  HencePropConclusion hence prop = mkText (mkS hence (topProp prop)) ;
   FollowsPropConclusion prop =
     prefixText "det följer att" (propText prop) ;
   ObviousConclusion = strText "det är uppenbart ." ;
@@ -69,6 +70,7 @@ lin
   altogetherHence = P.mkAdv "sammantaget" ;
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "i synnerhet" ;
+  inBothCasesHence = P.mkAdv "i båda fallen" ;
   weConcludeHence = P.mkAdv "vi drar slutsatsen att" ;
 
   BaseUnit = emptyText ;

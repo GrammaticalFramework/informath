@@ -12,7 +12,8 @@ import Environment
 import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
-import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label)
+import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label, fgTree)
+import CommonConcepts (lookupConstant)
 import Utils (latexPreamble, latexEndDoc)
 
 
@@ -123,8 +124,9 @@ line2unitline env dkmap line = line {
    unit = case (mark line, rule (step line)) of
      (CasesMark n, _) -> GNumberCasesGoal (caseNumber n)
      (CaseMark k, _) -> GNumberCaseGoal (caseNumber k) (exp2prop fla)
-     (_, h) | constant h || not (null (premisses line)) -> case ruleLabel h of
-       Just label -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
+     (_, h) | constant h || not (null (premisses line)) -> case ruleWords h of
+       Just (Left label) -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
+       Just (Right hence) -> GHencePropConclusion hence (exp2prop fla)  -- "in particular, B"
        Nothing -> GConclusionUnit (exp2prop fla)
      (_, h) -> case goal line of
        -- with -proof-goals: "to prove that B , assume that A"
@@ -137,11 +139,14 @@ line2unitline env dkmap line = line {
                    Gfive_CaseNumber, Gsix_CaseNumber, Gseven_CaseNumber, Geight_CaseNumber,
                    Gnine_CaseNumber] !! (k - 1)
 
-   -- the name of a rule in words, if the symbol table gives it as a Label
-   ruleLabel h = case annotateDkIdents env (EIdent h) of
-     EIdent q : _ -> case ident2label q of
-       GIdentLabel _ -> Nothing
-       label -> Just label
+   -- a rule in words, if the symbol table gives it as a Label (its name: "by
+   -- the definition of union") or as a Hence (an adverb: "in both cases")
+   ruleWords h = case annotateDkIdents env (EIdent h) of
+     EIdent q@(QIdent s) : _ -> case lookupConstant s of
+       Just ("Hence", c) -> Just (Right (fgTree c))
+       _ -> case ident2label q of
+         GIdentLabel _ -> Nothing
+         label -> Just (Left label)
      _ -> Nothing
 
    constant h = maybe False (const True) (M.lookup h dkmap)

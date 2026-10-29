@@ -33,6 +33,7 @@ fun
   LabelConclusion : Label -> Unit ;
   PropLabelConclusion : Hence -> Prop -> Label -> Unit ;
   LabelPropConclusion : Label -> Prop -> Unit ;  -- by modus ponens, B
+  HencePropConclusion : Hence -> Prop -> Unit ;  -- in particular, B
   FollowsPropConclusion : Prop -> Unit ;
   ObviousConclusion : Unit ;
   
@@ -57,6 +58,7 @@ fun
   altogetherHence : Hence ;
   afortioriHence : Hence ;
   inParticularHence : Hence ;
+  inBothCasesHence : Hence ;
   weConcludeHence : Hence ;
 
 }

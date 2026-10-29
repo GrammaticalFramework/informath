@@ -49,6 +49,8 @@ lin
     ccText (strText hence.s) (propInText prop) (strText ("par" ++ (mkUtt label.np).s ++ ".")) ;
   LabelPropConclusion label prop =
     ccText (strText ("par" ++ (mkUtt label.np).s ++ ",")) (propText prop) ;
+  HencePropConclusion hence prop =
+    ccText (strText (hence.s ++ ",")) (propText prop) ;
   FollowsPropConclusion prop =
     prefixText "il s'ensuit que" (propText prop) ;
   ObviousConclusion = strText "il est évident ." ;
@@ -74,6 +76,7 @@ lin
   altogetherHence = P.mkAdv "en somme" ;
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "en particulier" ;
+  inBothCasesHence = P.mkAdv "dans les deux cas" ;
   weConcludeHence = P.mkAdv "nous concluons que" ;
  
   BaseUnit = emptyText ;

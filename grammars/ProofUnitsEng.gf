@@ -47,6 +47,8 @@ lin
     ccText (strText hence.s) (propInText prop) (strText ("by" ++ (mkUtt label.np).s ++ ".")) ;
   LabelPropConclusion label prop =
     ccText (strText ("by" ++ (mkUtt label.np).s ++ ",")) (propText prop) ;
+  HencePropConclusion hence prop =
+    ccText (strText (hence.s ++ ",")) (propText prop) ;
   FollowsPropConclusion prop =
     prefixText "it follows that" (propText prop) ;
   ObviousConclusion = strText "it is obvious ." ;
@@ -72,6 +74,7 @@ lin
   altogetherHence = P.mkAdv "altogether" ;
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "in particular" ;
+  inBothCasesHence = P.mkAdv "in both cases" ;
   weConcludeHence = P.mkAdv "we conclude that" ;
   
   BaseUnit = emptyText ;

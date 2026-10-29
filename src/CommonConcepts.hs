@@ -49,6 +49,7 @@ verbalCatMap = M.fromList [
   ("Fun3", ("Exp", ["Exp", "Exp", "Exp"])),
   ("FunC", ("Exp", ["Exp", "Exp"])),
   ("Label", ("ProofExp", [])),
+  ("Hence", ("ProofExp", [])),   -- a rule said as an adverb: "in particular, B"
   ("Dep", ("Kind", ["Exp"])),
   ("Dep2",("Kind", ["Exp", "Exp"])),
   ("DepC", ("Kind", ["Exp", "Exp"])),
@@ -88,7 +89,7 @@ propCats :: S.Set SCat
 propCats = S.fromList $ "Prop" : [c | (c, ("Prop", _)) <- M.assocs verbalCatMap]
 
 proofCats :: S.Set SCat 
-proofCats = S.fromList ["Label", "Proof", "ProofExp", "Unit"]
+proofCats = S.fromList ["Label", "Hence", "Proof", "ProofExp", "Unit"]
 
 
 -- lookup after annotation from dynamically loaded file
