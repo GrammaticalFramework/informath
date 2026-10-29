@@ -478,28 +478,49 @@ collectivize t = case t of
 
 
 -- | "if A implies B, then C" for "if if A, then B, then C": in the antecedent
--- of an implication and on both sides of an equivalence, an implication
--- between two formulas or propositional variables; also in a conjunction or
--- disjunction there if all of its parts are such implications, as "P or Q
--- implies R" would be read as (P or Q) implies R
+-- of an implication, on both sides of an equivalence and in a hypothesis
+-- ("assume that A implies B"), an implication between two propositions that
+-- can be read as formulas: formulas, propositional variables, and what the
+-- connectives make of them ($\neg A$, $A \Rightarrow B$); also in a
+-- conjunction or disjunction there if all of its parts are such implications,
+-- as "P or Q implies R" would be read as (P or Q) implies R
 implied :: Tree a -> Tree a
 implied t = case t of
   GIfProp a b -> GIfProp (antecedent (implied a)) (implied b)
   GIffProp a b -> GIffProp (antecedent (implied a)) (antecedent (implied b))
+  -- what is assumed reads as an antecedent: "assume that A implies B"
+  GPropHypo p -> GPropHypo (assumed (implied p))
+  GPropVarHypo x p -> GPropVarHypo x (assumed (implied p))
+  GSuchThatHypo xs p k -> GSuchThatHypo xs (assumed (implied p)) k
   _ -> composOp implied t
  where
    antecedent :: GProp -> GProp
    antecedent p = maybe p id (implication p)
+   -- the hypotheses merged into one are a conjunction, each part assumed:
+   -- "assume that A implies B and A"
+   assumed :: GProp -> GProp
+   assumed p = case p of
+     GAndProp (GListProp ps) -> GAndProp (GListProp (map antecedent ps))
+     _ -> antecedent p
    implication :: GProp -> Maybe GProp
    implication p = case p of
      GIfProp a b -> GFormulaImpliesProp <$> asFormula a <*> asFormula b
      GAndProp (GListProp ps) -> GAndProp . GListProp <$> mapM implication ps
      GOrProp (GListProp ps) -> GOrProp . GListProp <$> mapM implication ps
      _ -> Nothing
+   -- a proposition built from formulas and atoms by the connectives, as a
+   -- formula: "if $\neg A$ implies $B$", "if $A \Rightarrow B$ implies $A$"
    asFormula :: GProp -> Maybe GFormula
    asFormula p = case p of
      GFormulaProp f -> Just f
      GIdentProp (GStrIdent s) -> Just (GMacroFormula (GStringMacro s))
+     GFalseProp -> Just (GMacroFormula (GStringMacro (GString "\\bot")))
+     GCoreNotProp a -> GNotFormula <$> asFormula a
+     GIfProp a b -> GIfFormula <$> asFormula a <*> asFormula b
+     GFormulaImpliesProp a b -> Just (GIfFormula a b)
+     GIffProp a b -> GIffFormula <$> asFormula a <*> asFormula b
+     GAndProp (GListProp ps) -> foldl1 GAndFormula <$> mapM asFormula ps
+     GOrProp (GListProp ps) -> foldl1 GOrFormula <$> mapM asFormula ps
      _ -> Nothing
 
 -- | The scope of the connectives made explicit, where the plain lists of

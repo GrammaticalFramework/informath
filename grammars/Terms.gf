@@ -18,6 +18,14 @@ cat
 fun
   EquationFormula : Equation -> Formula ;
   ElemFormula : [Term] -> Term -> Formula ;
+
+  -- the connectives in formulas, for propositions read as formulas in prose:
+  -- "if $\neg A$ implies $B$, then ..."
+  NotFormula : Formula -> Formula ;
+  AndFormula : Formula -> Formula -> Formula ;
+  OrFormula : Formula -> Formula -> Formula ;
+  IfFormula : Formula -> Formula -> Formula ;
+  IffFormula : Formula -> Formula -> Formula ;
   
   ElemDeclaration : [Term] -> Term -> Declaration ;
   FunctionDeclaration : Ident -> Term -> Term -> Declaration ;

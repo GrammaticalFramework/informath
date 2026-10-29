@@ -17,6 +17,13 @@ lincat
 lin
   EquationFormula eq = constant eq.s ;
   ElemFormula es e = constant (es.s ++ "\\in" ++ top e) ;
+
+  -- the precedences of MathCoreLatex, with the arrows of prose mathematics
+  NotFormula a = prefix highest "\\neg" a ;
+  AndFormula a b = infixl 3 "\\wedge" a b ;
+  OrFormula a b = infixl 2 "\\vee" a b ;
+  IfFormula a b = infixr 1 "\\Rightarrow" a b ;
+  IffFormula a b = infixn 0 "\\Leftrightarrow" a b ;
   
   ElemDeclaration es e = {s = es.s ++ "\\in" ++ top e ; isPl = es.isPl} ;
   FunctionDeclaration f a b = {s = f ++ ":" ++ top a ++ "\\rightarrow" ++ top b ; isPl = False} ;
