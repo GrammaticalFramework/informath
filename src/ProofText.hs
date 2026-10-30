@@ -12,13 +12,14 @@ import Environment
 import AnnotateDedukti (annotateDkIdents, subst)
 
 import Informath
-import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label, fgTree)
+import Dedukti2MathCore (exp2prop, hypos2hypos, ident2label, ident2identRaw, fgTree)
 import CommonConcepts (lookupConstant)
 import Utils (latexPreamble, latexEndDoc)
 
 
 import Data.List (intersperse, isPrefixOf, nub, mapAccumL)
 import qualified Data.Map as M
+import qualified Data.Set as S
 
 -- experiment with Jan von Plato 2017. "From Gentzen to Jaskowski and Back:
 -- Algorithmic Translation of Derivations Between the Two Main Systems of Natural Deduction."
@@ -44,12 +45,22 @@ proofDemo :: Env -> Module -> Module -> [GUnit -> String] -> Maybe (Exp -> Strin
 proofDemo env base (MJmts proofs) informalizes trees =
   prLatexFile (macroCommands (macroTable (symbolTable env))) $
     unlines $ intersperse "\n\n" [
-      oneProof env dkmap informalizes trees t e | (t, e) <- concatMap proved proofs]
+      oneProof env dkmap theorems informalizes trees t e | (t, e) <- concatMap proved proofs]
  where
    -- the constants of the base and of the module itself: a lemma stated in
    -- the module and used in a later proof is a rule with premisses, not a
    -- hypothesis, and its type says which of its arguments are premisses
    dkmap = M.union (identTypes base) (identTypes (MJmts proofs))
+
+   -- the constants that the base or the module proves: a line that applies
+   -- one of them names it, "by ex25_set, B", where a rule (an axiom) is only
+   -- cited in the margin
+   theorems = S.fromList [c | MJmts js <- [base, MJmts proofs], j <- js, c <- provedConstant j]
+   provedConstant :: Jmt -> [QIdent]
+   provedConstant jmt = case jmt of
+     JThm c _ _ | not (null (proved jmt)) -> [c]
+     JDef c _ _ | not (null (proved jmt)) -> [c]
+     _ -> []
 
    -- a theorem is a proof, and so is a definition whose type is a Proof:
    -- Dedukti has no separate form for the theorems of a development
@@ -64,10 +75,10 @@ proofDemo env base (MJmts proofs) informalizes trees =
        (EIdent f, _:_) -> f == identProof
        _ -> False
 
-oneProof :: Env -> M.Map QIdent Exp -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
-oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
+oneProof :: Env -> M.Map QIdent Exp -> S.Set QIdent -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
+oneProof env dkmap theorems lins trees typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}" ] ++
-    [ prls (\(depth, ln) -> prlu lin depth (dkline2unitline env ln)) (textLines pls) | lin <- lins ] ++
+    [ prls (\(depth, ln) -> prlu lin depth (dkline2unitline env theorems ln)) (textLines pls) | lin <- lins ] ++
     [ proofTree latex (rawLines pls) (lineNumber pls) | Just latex <- [trees] ] ++
     (if isFlag "-proof-text-dedukti" env
        then [ "The proof text in Dedukti"
@@ -169,9 +180,10 @@ line2dkline env dkmap line = line {
    hypo h = if catExp (head (annotateDkIdents env fla)) == "Prop" then DkProp h fla else DkVars [h] fla
    constant h = maybe False (const True) (M.lookup h dkmap)
 
--- | A line in words
-dkline2unitline :: Env -> Line DkUnit -> Line GUnit
-dkline2unitline env line = line {
+-- | A line in words; a line that applies a theorem (one of the set) without
+-- words in the symbol table names it by its Dedukti name
+dkline2unitline :: Env -> S.Set QIdent -> Line DkUnit -> Line GUnit
+dkline2unitline env theorems line = line {
   step = (step line){formula = unit}
   }
  where
@@ -181,6 +193,8 @@ dkline2unitline env line = line {
      DkConclusion a -> case ruleWords (rule (step line)) of
        Just (Left label) -> GLabelPropConclusion label (prop a)  -- "by modus ponens, B"
        Just (Right hence) -> GHencePropConclusion hence (prop a)  -- "in particular, B"
+       Nothing | S.member (rule (step line)) theorems ->               -- "by ex25_set, B"
+         GLabelPropConclusion (GIdentLabel (ident2identRaw (rule (step line)))) (prop a)
        Nothing -> GConclusionUnit (prop a)
      DkHypos hs g ->
        let ghs = GListHypo (conjoined (concatMap hypo hs))
