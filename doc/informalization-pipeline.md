@@ -691,6 +691,17 @@ Not in the compiled grammar: [Graphs](../grammars/Graphs.gf),
 
 ## 5. Dependencies
 
+The file tables and the diagrams can be generated anew for later versions
+with [scripts/code_map.py](../scripts/code_map.py), which also checks that
+this report's links and quoted names still match the code:
+
+    python3 scripts/code_map.py -out=doc/map.md -hs-main=Main -gf-top=Informath,InformathEng,InformathLatex \
+      -collapse=Dedukti,Agda,Lean,Rocq '-omit=Utils,Dedukti.*' app src grammars > doc/map.md
+    python3 scripts/code_map.py -check=doc/informalization-pipeline.md app src grammars share test
+
+The diagrams below were made in the same way, with some edges and modules
+chosen by hand.
+
 ### Haskell modules
 
 An arrow means that a module imports the other. Only Informath's own modules
