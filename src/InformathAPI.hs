@@ -156,9 +156,9 @@ fullGrammarFile = "share/InformathFull.pgf"
 baseConstantFile = "share/baseconstants.dk"  
 constantTableFile = "share/baseconstants.dkgf"
 
--- * select English-only (default) or full grammar (if -to-lang or -for-lang is other than Eng,
---   or -languages has another language than Eng)
--- * can be overridden with the -grammar=<file>.pgf flag
+-- | Select the English-only grammar (default) or the full grammar (if -from-lang, -to-lang
+--   or -symboltable-lang is other than Eng, or -languages has another language than Eng).
+--   This can be overridden with the @-grammar=\<file\>.pgf@ flag.
 grammarFile :: [Flag] -> FilePath
 grammarFile args = case (argValue "-from-lang" english args,
                          argValue "-to-lang" english args,

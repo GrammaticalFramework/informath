@@ -18,7 +18,7 @@ synonyms=1
 symbolics=1
 sampling=20
 
-.PHONY: all usual Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test baseconstants top100
+.PHONY: all usual haddock Dedukti Agda Lean Rocq demo devdemo RunInformath felix_test felix_set_test baseconstants top100
 
 # by default, builds Eng Fre Swe ; use full_grammar or all_grammars for more languages
 all: Dedukti Agda Rocq Lean english_grammar multi_grammar RunInformath rootlink
@@ -59,6 +59,13 @@ felix_set_test:
 
 RunInformath:
 	stack install
+
+# doc/InformathAPI.html; haddock writes a page for every module, of which only this one is kept
+haddock:
+	@set -e; out=$$(mktemp -d "$${TMPDIR:-/tmp}/informath-haddock.XXXXXX"); \
+		stack exec -- haddock --html --title=RunInformath --optghc=-XHaskell2010 -o "$$out" --optghc=-isrc --optghc=-isrc/typetheory src/InformathAPI.hs; \
+		cp "$$out/InformathAPI.html" doc/; \
+		rm -rf "$$out"
 
 devel: english_grammar RunInformath rootlink
 
