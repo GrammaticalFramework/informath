@@ -67,16 +67,56 @@ proofDemo env base (MJmts proofs) informalizes trees =
 oneProof :: Env -> M.Map QIdent Exp -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
 oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}" ] ++
-    [ prls (\ln -> prlu lin (indentation ln) ln) unitlines | lin <- lins ] ++
-    [ proofTree latex rawlines number | Just latex <- [trees] ] ++
+    [ prls (\(depth, ln) -> prlu lin depth (dkline2unitline env ln)) (textLines pls) | lin <- lins ] ++
+    [ proofTree latex (rawLines pls) (lineNumber pls) | Just latex <- [trees] ] ++
+    (if isFlag "-proof-text-dedukti" env
+       then [ "The proof text in Dedukti"
+            , prls prld (textLines pls)
+            ]
+       else []) ++
     (if isFlag "-proof-terms" env
        then [ "The proof term"
             , verbatim (printTree exp)
             , "The same proof in Dedukti"
-            , prls prle (compressVarsLines linesterm)
+            , prls prle (compressVarsLines (termLines pls))
             ]
        else []) ++
     ["\\clearpage"])
+  where
+    pls = proofLines env dkmap typ exp
+
+-- | The lines of a proof text, before they are put into words
+data ProofLines = ProofLines {
+  textLines  :: [(Int, Line DkUnit)], -- the lines of the proof text, each with its indentation
+  rawLines   :: [Line Exp],           -- the lines before compression, for the tree
+  termLines  :: [Line Exp],           -- the lines of the proof term, for -proof-terms
+  lineNumber :: Int -> Int            -- the number in the proof text of a raw line
+  }
+
+-- | What a line of a proof text says, with the formulas in Dedukti
+data DkUnit =
+    DkCases Int                  -- we have n cases
+  | DkCase Int QIdent Exp        -- case k: the hypothesis that opens it
+  | DkConclusion Exp             -- what the rule of the line concludes
+  | DkHypos [DkHypo] (Maybe Exp) -- variables and hypotheses, with the goal they serve
+  deriving (Show, Eq)
+
+data DkHypo =
+    DkVars [QIdent] Exp          -- x, y : A
+  | DkProp QIdent Exp            -- h : A, of a proposition A
+  deriving (Show, Eq)
+
+-- | The lines of the proof text of a proof of a type, all that the proof text
+-- shows except the words: Informath's grammar is not used, and the lines are
+-- the same as in the natural language proof text, with the same numbers,
+-- premisses and indentation (dkline2unitline puts a line into words)
+proofLines :: Env -> M.Map QIdent Exp -> Exp -> Exp -> ProofLines
+proofLines env dkmap typ exp = ProofLines {
+    textLines = [(indentation ln, ln) | ln <- unitlines],
+    rawLines = rawlines,
+    termLines = linesterm,
+    lineNumber = number
+    }
   where
     term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
@@ -87,7 +127,7 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
     dropped l = isImplicitType env (formula (step l)) ||
                 (elem (rule (step l)) statementVars && notElem (line l) cited)
     cited = concat [premisses l ++ closes l | l <- linesterm]
-    (unitlines0, renumbering2) = compressVarsHyposMap (map (line2unitline env dkmap) explicitlines)
+    (unitlines0, renumbering2) = compressVarsHyposMap (map (line2dkline env dkmap) explicitlines)
     -- with -proof-merge-hypos, the variables and hypotheses of a scope in one line
     (unitlines, renumbering3) = if isFlag "-proof-merge-hypos" env
       then compressScopesMap unitlines0
@@ -110,30 +150,46 @@ oneProof env dkmap lins trees typ exp = unlines $ intersperse "\n\n" (
                    k = maybe k0 id (lookup k0 renumbering1)
                    k2 = maybe k id (lookup k renumbering2)
                in maybe k2 id (lookup k2 renumbering3)
-    
 
-
-line2unitline :: Env ->  M.Map QIdent Exp -> Line Exp -> Line GUnit
-line2unitline env dkmap line = line {
+-- | What a line says: a line is an assumption only if it cites a hypothesis
+-- without premisses; a hypothesis applied to premisses (a derived rule taken
+-- as a premiss) yields a conclusion, as a constant does
+line2dkline :: Env -> M.Map QIdent Exp -> Line Exp -> Line DkUnit
+line2dkline env dkmap line = line {
   step = (step line){formula = unit}
   }
  where
-   -- a line is an assumption only if it cites a hypothesis without
-   -- premisses; a hypothesis applied to premisses (a derived rule taken as
-   -- a premiss) yields a conclusion, as a constant does
    unit = case (mark line, rule (step line)) of
-     (CasesMark n, _) -> GNumberCasesGoal (caseNumber n)
-     (CaseMark k, _) -> GNumberCaseGoal (caseNumber k) (exp2prop fla)
-     (_, h) | constant h || not (null (premisses line)) -> case ruleWords h of
-       Just (Left label) -> GLabelPropConclusion label (exp2prop fla)  -- "by modus ponens, B"
-       Just (Right hence) -> GHencePropConclusion hence (exp2prop fla)  -- "in particular, B"
-       Nothing -> GConclusionUnit (exp2prop fla)
-     (_, h) -> case goal line of
-       -- with -proof-goals: "to prove that B , assume that A"
-       Just g | isFlag "-proof-goals" env ->
-         GGoalHyposUnit (GListHypo (hypos2hypos [HVarExp h fla])) (exp2prop (head (annotateDkIdents env g)))
-       _ -> GHyposUnit (GListHypo (hypos2hypos [HVarExp h fla]))
-   fla = head (annotateDkIdents env (formula (step line)))
+     (CasesMark n, _) -> DkCases n
+     (CaseMark k, h) -> DkCase k h fla
+     (_, h) | constant h || not (null (premisses line)) -> DkConclusion fla
+     -- with -proof-goals: "to prove that B , assume that A"
+     (_, h) -> DkHypos [hypo h] (if isFlag "-proof-goals" env then goal line else Nothing)
+   fla = formula (step line)
+   hypo h = if catExp (head (annotateDkIdents env fla)) == "Prop" then DkProp h fla else DkVars [h] fla
+   constant h = maybe False (const True) (M.lookup h dkmap)
+
+-- | A line in words
+dkline2unitline :: Env -> Line DkUnit -> Line GUnit
+dkline2unitline env line = line {
+  step = (step line){formula = unit}
+  }
+ where
+   unit = case formula (step line) of
+     DkCases n -> GNumberCasesGoal (caseNumber n)
+     DkCase k _ a -> GNumberCaseGoal (caseNumber k) (prop a)
+     DkConclusion a -> case ruleWords (rule (step line)) of
+       Just (Left label) -> GLabelPropConclusion label (prop a)  -- "by modus ponens, B"
+       Just (Right hence) -> GHencePropConclusion hence (prop a)  -- "in particular, B"
+       Nothing -> GConclusionUnit (prop a)
+     DkHypos hs g ->
+       let ghs = GListHypo (conjoined (concatMap hypo hs))
+       in maybe (GHyposUnit ghs) (GGoalHyposUnit ghs . prop) g
+   annotated a = head (annotateDkIdents env a)
+   prop a = exp2prop (annotated a)
+   hypo h = case h of
+     DkVars xs k -> hypos2hypos [HVarExp x (annotated k) | x <- xs]
+     DkProp x a -> hypos2hypos [HVarExp x (annotated a)]
 
    caseNumber k = [Gone_CaseNumber, Gtwo_CaseNumber, Gthree_CaseNumber, Gfour_CaseNumber,
                    Gfive_CaseNumber, Gsix_CaseNumber, Gseven_CaseNumber, Geight_CaseNumber,
@@ -149,7 +205,18 @@ line2unitline env dkmap line = line {
          label -> Just (Left label)
      _ -> Nothing
 
-   constant h = maybe False (const True) (M.lookup h dkmap)
+   -- consecutive hypotheses of propositions as one: "assume that A and B"
+   conjoined hs = case hs of
+     h : rest@(h2 : _) | Just p <- gprop h, Just _ <- gprop h2 ->
+       let (ps, rest') = span (maybe False (const True) . gprop) rest
+       in GPropHypo (GAndProp (GListProp (p : [q | Just q <- map gprop ps]))) : conjoined rest'
+     h : rest -> h : conjoined rest
+     [] -> []
+   gprop :: GHypo -> Maybe GProp
+   gprop h = case h of
+     GPropHypo p -> Just p
+     GPropVarHypo _ p -> Just p
+     _ -> Nothing
 
 -- merge consecutive lines introducing variables of the same kind into one,
 -- "let x, y be A", and renumber the lines and their premisses accordingly;
@@ -183,18 +250,18 @@ compressVarsMap varsLine merge = go 0 []
     Just (_, k) -> k == kind
     _ -> False
 
-compressVarsHypos :: [Line GUnit] -> [Line GUnit]
+compressVarsHypos :: [Line DkUnit] -> [Line DkUnit]
 compressVarsHypos = fst . compressVarsHyposMap
 
-compressVarsHyposMap :: [Line GUnit] -> ([Line GUnit], [(Int, Int)])
+compressVarsHyposMap :: [Line DkUnit] -> ([Line DkUnit], [(Int, Int)])
 compressVarsHyposMap = compressVarsMap varsHypo merge
  where
-  varsHypo :: Line GUnit -> Maybe ([GIdent], GKind)
+  varsHypo :: Line DkUnit -> Maybe ([QIdent], Exp)
   varsHypo ln = case formula (step ln) of
-    GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind]) -> Just (xs, kind)
+    DkHypos [DkVars xs kind] Nothing -> Just (xs, kind)
     _ -> Nothing
   merge xs kind ln =
-    ln{step = (step ln){formula = GHyposUnit (GListHypo [GVarsHypo (GListIdent xs) kind])}}
+    ln{step = (step ln){formula = DkHypos [DkVars xs kind] Nothing}}
 
 -- | The lines without those that introduce variables of implicit types (or
 -- that the predicate otherwise selects among the introducing lines), and
@@ -220,38 +287,20 @@ dropImplicitLines implicit = go 0 []
 
 -- | The consecutive lines that introduce the variables and hypotheses of one
 -- scope (they have the same context) as one line, "let x be an A such that
--- B", aggregated as the hypotheses of a statement are; with the goal of its
--- first line. The lines of a case analysis are not merged.
-compressScopesMap :: [Line GUnit] -> ([Line GUnit], [(Int, Int)])
+-- B", aggregated as the hypotheses of a statement are (dkline2unitline); with
+-- the goal of its first line. The lines of a case analysis are not merged.
+compressScopesMap :: [Line DkUnit] -> ([Line DkUnit], [(Int, Int)])
 compressScopesMap = compressVarsMap scopeLine merge
  where
-  scopeLine :: Line GUnit -> Maybe ([([GHypo], Maybe GProp)], [QIdent])
+  scopeLine :: Line DkUnit -> Maybe ([([DkHypo], Maybe Exp)], [QIdent])
   scopeLine ln
     | mark ln == NoMark && null (premisses ln) && elem (rule (step ln)) (context ln) =
         case formula (step ln) of
-          GHyposUnit (GListHypo hs) -> Just ([(hs, Nothing)], context ln)
-          GGoalHyposUnit (GListHypo hs) g -> Just ([(hs, Just g)], context ln)
+          DkHypos hs g -> Just ([(hs, g)], context ln)
           _ -> Nothing
     | otherwise = Nothing
   merge xs _ ln =
-    let hs = conjoined (concatMap fst xs)
-        unit = case xs of
-          (_, Just g) : _ -> GGoalHyposUnit (GListHypo hs) g
-          _ -> GHyposUnit (GListHypo hs)
-    in ln{step = (step ln){formula = unit}}
-
-  -- consecutive hypotheses of propositions as one: "assume that A and B"
-  conjoined hs = case hs of
-    h : rest@(h2 : _) | Just p <- prop h, Just _ <- prop h2 ->
-      let (ps, rest') = span (maybe False (const True) . prop) rest
-      in GPropHypo (GAndProp (GListProp (p : [q | Just q <- map prop ps]))) : conjoined rest'
-    h : rest -> h : conjoined rest
-    [] -> []
-  prop :: GHypo -> Maybe GProp
-  prop h = case h of
-    GPropHypo p -> Just p
-    GPropVarHypo _ p -> Just p
-    _ -> Nothing
+    ln{step = (step ln){formula = DkHypos (concatMap fst xs) (snd (head xs))}}
 
 -- in Dedukti, the merged line shows the variables as one label "x, y : A"
 compressVarsLines :: [Line Exp] -> [Line Exp]
@@ -711,7 +760,7 @@ proofTree latex raw number = unlines $
 -----------------------------
 
 -- a proof is a table of numbered lines: what is claimed, and why
-prls :: (Line a -> [String]) -> [Line a] -> String
+prls :: (b -> [String]) -> [b] -> String
 prls pr lns = unlines $
   "\\begin{tabular}{rp{0.62\\textwidth}l}" :
   [concat (intersperse " & " (pr ln)) ++ " \\\\" | ln <- lns] ++
@@ -729,6 +778,24 @@ prle ln
       justification ln
       ]
   
+-- | A line of the proof text with its formulas in Dedukti, indented
+prld :: (Int, Line DkUnit) -> [String]
+prld (depth, ln) = [
+  show (line ln) ++ ".",
+  concat (replicate depth "\\hspace*{1.5em}") ++ "\\verb#" ++ dkunit (formula (step ln)) ++ "#",
+  justification ln
+  ]
+ where
+  dkunit u = case u of
+    DkCases n -> show n ++ " cases"
+    DkCase k h a -> "case " ++ show k ++ ": " ++ printTree h ++ " : " ++ printTree a
+    DkConclusion a -> printTree a
+    DkHypos hs g -> concat (intersperse ", " (map hypo hs)) ++
+                    maybe "" (\c -> "   goal: " ++ printTree c) g
+  hypo h = case h of
+    DkVars xs k -> concat (intersperse ", " (map printTree xs)) ++ " : " ++ printTree k
+    DkProp x a -> printTree x ++ " : " ++ printTree a
+
 prlu :: (GUnit -> String) -> Int -> Line GUnit -> [String]
 prlu lin depth ln = [
   show (line ln) ++ ".",

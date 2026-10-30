@@ -145,6 +145,7 @@ helpMsg4 = [
   just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
   just "-tactic-proof" "print proof texts of proofs given as lists of proof units in a .json file (from tactic proofs)",
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
+  just "-proof-text-dedukti" "with -proof-text, also show the lines of the proof text with their formulas in Dedukti",
   just "-proof-trees" "with -proof-text, also show the proofs as natural deduction trees (bussproofs)",
   just "-proof-indent" "with -proof-text, indent each line by the assumptions open at it",
   just "-proof-goals" "with -proof-text, state the goal of each assumption: to prove that B, assume that A",
