@@ -30,7 +30,7 @@ Magma : (A : Set) -> ({|*|} : Oper A) -> Structure.
 
 Semigroup :
   (S : Set) -> ({|*|} : Oper S) ->
-      (assoc : Proof (associative S op)) ->
+      (assoc : Proof (associative S {|*|})) ->
          Structure.
 
 Monoid :
