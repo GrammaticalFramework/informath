@@ -26,7 +26,7 @@ def commutative : (A : Set) -> Oper A -> Prop :=
     forall A (x => forall A (y => 
         equal A (appOper A {|*|} x y) (appOper A {|*|} y x))).
 
-Magma : (A : Set) -> ({|*|} : Oper A) -> Structure.
+Magma : (S : Set) -> ({|*|} : Oper S) -> Structure.
 
 Semigroup :
   (S : Set) -> ({|*|} : Oper S) ->

@@ -1,3 +1,5 @@
+#EXCLUDE Set Elem Prop Proof forall Structure Instance Extension equal refl
+
 equal : "#2 is equal to #3" | $#2 = #3$
 
 refl : "reflexivity."

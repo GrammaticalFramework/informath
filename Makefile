@@ -288,6 +288,7 @@ proof_units:
 #	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
 algebra:
+	dk check test/algebra.dk
 	RunInformath -add-symboltables=test/algebra.dkgf -to-latex-doc -force-symbolic test/algebra.dk  >out/talg.tex
 	cd out ; pdflatex talg.tex ; $(OPEN) talg.pdf
 

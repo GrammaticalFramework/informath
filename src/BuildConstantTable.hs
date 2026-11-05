@@ -117,6 +117,7 @@ data SymbolTable = SymbolTable {
   semanticsTable :: SemDefs,
   nlgTable :: NLGDefs,
   builtinSet :: S.Set QIdent,
+  excludedConstants :: S.Set QIdent,
   implicitTypes :: [String]  -- #IMPLICIT: types of variables left implicit, as Dedukti text
   }
 
@@ -214,7 +215,8 @@ buildSymbolTable pgf lang ls = SymbolTable {
   semanticsTable = semanticsTable,
   nlgTable = nlgTable,
   builtinSet = builtinSet,
-  implicitTypes = implicitTypes
+  implicitTypes = implicitTypes,
+  excludedConstants = S.fromList [QIdent c | line <- filter isExclude (entrylines), c <- tail line]
   }
  where
     entrylines = filter (not . null) (map words (stripDkComments ls))
@@ -273,6 +275,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
     isImplicit line = head line == "#IMPLICIT"
     isSemantics line = head line == "#SEMANTICS"
     isNLG line = head line == "#NLG"
+    isExclude line = head line == "#EXCLUDE"
 
 -- | A type as written in #IMPLICIT or printed from Dedukti, for comparison:
 -- without parentheses and with single spaces

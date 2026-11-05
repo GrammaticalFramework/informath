@@ -180,7 +180,7 @@ type DkJmt = Jmt
 -- | The whole line of generation from Dedukti to formal and natural languages.
 
 processDeduktiModule :: Env -> Module -> [GenResult]
-processDeduktiModule env (MJmts jmts) = map (processJmt env) jmts
+processDeduktiModule env (MJmts jmts) = map (processJmt env) (includedDefs env jmts)
 
 -- | The whole line of parsing latex code and converting to Dedukti.
 -- This assumes that parsing units are single lines not starting with a backslash \ or % 
@@ -195,6 +195,10 @@ processLatex env = map (processLatexLine env) . filter parsable . map uncomment 
      c : cs -> c : uncomment cs
      _ -> line
 
+includedDefs :: Env -> [Jmt] -> [Jmt]
+includedDefs env =
+  filter (\j ->  maybe True
+    (\c -> S.notMember c (excludedConstants (symbolTable env))) (declaredIdent j))
 
 -- * Conversion outcomes
 

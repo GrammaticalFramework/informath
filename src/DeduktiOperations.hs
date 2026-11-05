@@ -62,6 +62,15 @@ identTypes (MJmts jmts) = M.fromList (concatMap idtyp jmts) where
     JStatic qident typ -> [(qident, typ)]
     _ -> []
 
+-- extract declared ident, if any
+declaredIdent :: Jmt -> Maybe QIdent
+declaredIdent jmt = case jmt of
+    JDef qident _ _ -> return qident
+    JThm qident _ _ -> return qident
+    JInj qident _ _ -> return qident
+    JStatic qident _ -> return qident
+    _ -> Nothing
+
 
 -- alpha conversion of constants
 alphaConvert :: M.Map QIdent QIdent -> Tree a -> Tree a
