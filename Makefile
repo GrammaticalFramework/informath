@@ -287,6 +287,10 @@ proof_units:
 	echo "${lightgreen}proof units have no Dedukti formalization so far${neutral}"
 #	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
+algebra:
+	RunInformath -add-symboltables=test/algebra.dkgf -to-latex-doc -force-symbolic test/algebra.dk  >out/talg.tex
+	cd out ; pdflatex talg.tex ; $(OPEN) talg.pdf
+
 mathcore_examples:
 	$(RUN) -add-symboltables=test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk
 

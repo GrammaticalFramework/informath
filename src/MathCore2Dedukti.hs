@@ -93,6 +93,10 @@ jmt2jmt jment = case jment of
       (exp2ident exp)
       (foldr EFun (kind2dedukti kind) (concatMap hypo2dedukti hypos))
   GRewriteJmt (GListRule rules) -> JRules (map rule2dedukti rules)
+  GStructureJmt _ (GListClause clauses) kind ->
+    JStatic
+      (kind2ident kind)
+      (foldr EFun structureType (map clause2dedukti clauses))
   GDefUntypedExpJmt _ exp df ->
     JDef
       (exp2ident exp)
@@ -228,6 +232,13 @@ hypo2dedukti hypo = case hypo of
     [local2dedukti local]
   _ ->
     [HExp (eUndefinedDebug hypo)]
+
+clause2dedukti :: GClause -> Hypo
+clause2dedukti clause = case clause of
+  GVarClause ident kind ->
+    HVarExp (ident2ident ident) (kind2dedukti kind)
+  GPropClause prop ->
+    HExp (prop2dedukti prop)
 
 local2dedukti :: GLocal -> Hypo
 local2dedukti local = case local of

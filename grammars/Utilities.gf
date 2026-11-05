@@ -320,6 +320,7 @@ oper
   function_N : N ;
   predicate_N : N ;
   basic_type_CN : CN ;
+  algebraic_structure_CN : CN ;
   map_V3 : V3 ;
   say_VS : VS ;
   hold_V2 : V2 ;

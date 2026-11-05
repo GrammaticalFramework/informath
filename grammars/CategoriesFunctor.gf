@@ -31,6 +31,8 @@ lincat
   Coercion = {from, to : CN} ;  -- the <from> <Exp> as <to>
   [Ident] = {np : NP ; isPl : Bool} ;
   Unit = Text ;
+  Clause = Utt ;
+  [Clause] = Text ;
 
 -- lexicon, verbal
   Noun = CN ;
@@ -122,6 +124,9 @@ lin
 
   BaseRule rule = prefixText item_str (mkText rule) ;
   ConsRule rule rules = mkText (prefixText item_str (mkText rule)) rules ;
+  
+  BaseClause clause = prefixText item_str (mkText clause) ;
+  ConsClause clause clauses = mkText (prefixText item_str (mkText clause)) clauses ;
 
 
 }

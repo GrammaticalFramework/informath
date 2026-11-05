@@ -89,7 +89,13 @@ identCons = QIdent "cons"
 -- Constants related to set in BaseConstants.dk
 identEnumset = QIdent "enumset"
 
-
-
 type DTree a = Dedukti.AbsDedukti.Tree a
+
+-- representing structures: constructor function with value type Structure
+
+isStructureType :: Exp -> Bool
+isStructureType exp = exp == structureType
+
+structureType :: Exp
+structureType = EIdent (QIdent "Structure")
 

@@ -1,0 +1,22 @@
+equal : "#2 is equal to #3" | $#2 = #3$
+
+refl : "reflexivity."
+
+Oper : "binary operation on #1"
+
+appOper : "the application of #2 to #3 and #4" | $#3 #2 #4$
+
+associative : "#2 is associative"
+
+commutative : "#2 is commutative"
+
+Magma : "magma"
+
+Semigroup : "semigroup"
+
+Monoid : "monoid"
+
+Group : "group"
+
+AbelianGroup : "abelian group"
+

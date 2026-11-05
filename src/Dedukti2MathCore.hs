@@ -73,6 +73,8 @@ jmt2jmt jmt = case jmt of
 
       _ | S.member cat kindCats -> case meexp of
        MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
+       _ | isStructureType kind -> GStructureJmt definitionLabel (GListClause (map hypo2clause hypos))
+                                     (exp2kind definiendum)
        _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum)
 
       _ | S.member cat propCats -> case meexp of
@@ -239,6 +241,16 @@ hypo2coreArgKind hypo = case hypo of
     hypo2coreArgKind (HVarExp var kind)
   HExp kind -> 
     GKindArgKind (exp2kind kind)
+
+hypo2clause :: Hypo -> GClause
+hypo2clause hypo = case hypo of
+  HVarExp x p | catExp p == "Prop" -> GPropClause (exp2prop p)
+  HVarExp x p -> GVarClause (ident2ident x) (exp2kind p)
+  HParVarExp var kind -> hypo2clause (HVarExp var kind) 
+  HExp p -> GPropClause (exp2prop p)
+----  HLetExp ident exp : hh -> GLocalHypo (GBareLetLocal (ident2ident ident) (exp2exp exp)) : hypos2hypos hh
+----  HLetTyped ident typ exp : hh -> GLocalHypo (GLetLocal (ident2ident ident) (exp2kind typ) (exp2exp exp)) : hypos2hypos hh
+  _ -> error ("NOT YET: hypo2clause " ++ show hypo)
 
 rule2rule :: Rule -> GRule
 rule2rule rule = case rule of
@@ -424,7 +436,7 @@ patt2exp = exp2exp . patt2dexp where
 
 ident2ident :: QIdent -> GIdent
 ident2ident ident = case ident of
-  QIdent s -> GStrIdent (GString (mkLatexMathIdent (stripConstant s)))
+  QIdent s -> GStrIdent (GString (mkLatexMathIdent (unescapeConstant (stripConstant s))))
   
 ident2identRaw :: QIdent -> GIdent
 ident2identRaw ident = case ident of

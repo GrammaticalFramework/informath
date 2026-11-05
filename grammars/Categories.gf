@@ -24,7 +24,9 @@ cat
   Coercion ;
   [Ident] {1} ;
   Unit ;
-
+  Clause ; -- in a structure definition
+  [Clause] {1} ;
+  
 -- lexicon, verbal
   Noun ;    -- Kind                      -- set
   Fam ;     -- Kind -> Kind              -- list of integers

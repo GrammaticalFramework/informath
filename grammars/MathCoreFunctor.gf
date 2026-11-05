@@ -49,12 +49,22 @@ lin
     labelText label
       (mkText (mkS (mkCl exp (definedAdv df)))) ;
 
+  StructureJmt label clauses kind =
+    labelText label
+      (ccText
+          (commaText (strText (mkUtt (mkS (mkCl (mkNP a_Det (useKind kind)) (mkNP a_Det algebraic_structure_CN)))).s))
+          (prefixText where_IAdv.s (embedText begin_itemize_str end_itemize_str clauses))) ;
+
   RewriteJmt rules =
     prefixText by_cases_Str (embedText begin_itemize_str end_itemize_str rules) ;
   RewriteRule idents patt exp =
     mkUtt (Grammar.ExtAdvS (Syntax.mkAdv for_Prep idents.np) (mkS (mkCl patt exp))) ;
   NoVarRewriteRule patt exp =
     mkUtt (mkS (mkCl patt exp)) ;
+
+  VarClause ident kind = mkUtt (mkS (mkCl (latexNP (mkSymb ident)) (mkVP (useKind kind)))) ; 
+  PropClause prop = mkUtt (topProp prop) ; 
+
 
   PropHypo prop = assumeUtt (mkVP assume_VS (topProp prop)) ; 
   PropVarHypo ident prop = lin Utt {s = (assumeUtt (mkVP assume_VS (topProp prop))).s ++ "(" ++ ident ++ ")"} ; 

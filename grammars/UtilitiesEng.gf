@@ -59,6 +59,7 @@ oper
   function_N : N = mkN "function" ;
   predicate_N : N = mkN "predicate" ;
   basic_type_CN : CN = mkCN (mkA "basic") (mkN "type") ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebraic") (mkN "structure") ;
   map_V3 = mkV3 (mkV "map") noPrep to_Prep ;
   say_VS = mkVS I.say_V ;
   hold_V2 = mkV2 I.hold_V for_Prep ;

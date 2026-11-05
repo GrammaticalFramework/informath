@@ -18,9 +18,14 @@ fun
 
   DefUntypedExpJmt  : Label -> Exp -> Exp -> Jmt ;
 
+  StructureJmt : Label -> [Clause] -> Kind -> Jmt ; 
+
   RewriteJmt : [Rule] -> Jmt ;
   RewriteRule : [Ident] -> Exp -> Exp -> Rule ; ---- generalize to [] and x:A
   NoVarRewriteRule : Exp -> Exp -> Rule ;
+
+  VarClause : Ident -> Kind -> Clause ;
+  PropClause : Prop -> Clause ;
 
   PropHypo : Prop -> Hypo ;
   PropVarHypo : Ident -> Prop -> Hypo ;

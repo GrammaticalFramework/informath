@@ -1,0 +1,67 @@
+Set : Type.
+Elem : Set -> Type.
+
+Prop : Type.
+Proof : Prop -> Type.
+
+forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
+
+Structure : Type.
+Instance : Structure -> Type.
+Extension : Structure -> Type.
+
+equal : (A : Set) -> Elem A -> Elem A -> Prop.
+refl : (A : Set) -> (a : Elem A) -> Proof (equal A a a).
+
+Oper : Set -> Type.
+appOper : (A : Set) -> ({|*|} : Oper A) -> (x : Elem A) -> (y : Elem A) -> Elem A.
+
+def associative : (A : Set) -> ({|*|} : Oper A) -> Prop :=
+  A => {|*|} => 
+    forall A (x => forall A (y => forall A (z =>
+        equal A (appOper A {|*|} x (appOper A {|*|} y z)) (appOper A {|*|} (appOper A {|*|} x y) z)))).
+
+def commutative : (A : Set) -> Oper A -> Prop :=
+  A => {|*|} => 
+    forall A (x => forall A (y => 
+        equal A (appOper A {|*|} x y) (appOper A {|*|} y x))).
+
+Magma : (A : Set) -> ({|*|} : Oper A) -> Structure.
+
+Semigroup :
+  (S : Set) -> ({|*|} : Oper S) ->
+      (assoc : Proof (associative S op)) ->
+         Structure.
+
+Monoid :
+  (S : Set) -> ({|*|} : Oper S) ->
+    (assoc : Proof (associative S {|*|})) ->
+      (e : Elem S) ->
+        Proof (forall S (x => equal S (appOper S {|*|} x e) x)) ->
+          Proof (forall S (x => equal S (appOper S {|*|} e x) x)) ->
+            Structure.
+
+Group :
+  (S : Set) -> ({|*|} : Oper S) ->
+    (assoc : Proof (associative S {|*|})) ->
+      (e : Elem S) ->
+        Proof (forall S (x => equal S (appOper S {|*|} x e) x)) ->
+          Proof (forall S (x => equal S (appOper S {|*|} e x) x)) ->
+	    (inv : (Elem S -> Elem S)) ->
+	      Proof (forall S (x => equal S (appOper S {|*|} x (inv x)) e)) ->
+	        Proof (forall S (x => equal S (appOper S {|*|} (inv x) x) e)) ->
+                  Structure.
+
+AbelianGroup :
+  (S : Set) -> ({|*|} : Oper S) ->
+    (assoc : Proof (associative S {|*|})) ->
+      (commut : Proof (commutative S {|*|})) ->
+        (e : Elem S) ->
+          Proof (forall S (x => equal S (appOper S {|*|} x e) x)) ->
+	    (inv : (Elem S -> Elem S)) ->
+	      Proof (forall S (x => equal S (appOper S {|*|} x (inv x)) e)) ->
+                Structure.
+
+
+
+
