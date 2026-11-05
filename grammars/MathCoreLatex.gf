@@ -33,6 +33,12 @@ lin
   DefUntypedExpJmt label exp df =
     judgement "Definition" label {s = [] ; isEmpty = True} (top exp ++ ":=" ++ top df) ;
 
+  StructureJmt label clauses kind =
+    judgement "Structure" label {s = [] ; isEmpty = True}
+      (top kind ++ ":=" ++ "\\langle" ++ clauses ++ "\\rangle") ;
+  VarClause ident kind = ident ++ "\\in" ++ top kind ;
+  PropClause prop = top prop ;
+
   RewriteJmt rules = bold "Rules" ++ "." ++ math rules ;
   RewriteRule idents patt exp = top patt ++ "\\longrightarrow" ++ top exp ;
   NoVarRewriteRule patt exp = top patt ++ "\\longrightarrow" ++ top exp ;

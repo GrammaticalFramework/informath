@@ -470,6 +470,7 @@ oper
   function_N : N = funkcja_N ;
   predicate_N : N = mascN "predykat" "predykatu" ;
   basic_type_CN : CN = mkCN (mkA "podstawowy") typ_N ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebraiczny") (femN "struktura" "struktury") ;
   map_V3 = V.mkV3 (mkV "odwzorowywać") [] "na" R.Acc R.Acc ;
   say_VS = mkVS "mówić" ;
   hold_V2 = V.mkV2 (mkV "zachodzić") "dla" R.Gen ;

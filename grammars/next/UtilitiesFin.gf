@@ -59,6 +59,7 @@ oper
   function_N : N = mkN "funktio" ;
   predicate_N : N = mkN "predikaatti" ;
   basic_type_CN : CN = mkCN (mkN "perus" (mkN "tyyppi")) ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebrallinen") (mkN "rakenne") ;
   map_V3 = mkV3 (mkV "kuvata") accusative for_Prep ;
   say_VS = mkVS (mkV "sanoa") ;
   hold_V2 = mkV2 (mkV "päteä") for_Prep ;

@@ -71,6 +71,7 @@ oper
   function_N : N = ruzeN "funkce" ;
   predicate_N : N = hradN "predikát" ;
   basic_type_CN : CN = mkCN (mkA "základní") (hradN "typ") ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebraický") (zenaN "struktura") ;
   map_V3 = mkV3 (mkV "zobrazovat")
     (lin Prep {s = [] ; c = accusative ; hasPrep = False})
     (lin Prep {s = "na" ; c = accusative ; hasPrep = True}) ;

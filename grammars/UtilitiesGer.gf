@@ -62,6 +62,7 @@ oper
   defined_as_Prep : Prep = mkPrep "definiert als" nominative ;
   function_N : N = mkN "Funktion" ;
   basic_type_CN : CN = mkCN (mkN "Grundtyp") ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebraisch") (mkN "Struktur" "Strukturen" feminine) ;
   map_V3 = mkV3 (mkV "ab" (mkV "bilden")) (mkPrep accusative) as_Prep ;
   say_VS = mkVS (mkV "sagen") ;
   hold_V2 = mkV2 I.halten_V for_Prep ;

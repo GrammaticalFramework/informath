@@ -27,6 +27,8 @@ lincat
   ProofExp = TermPrec ;
   Rule = Str ;
   [Rule] = Str ;
+  Clause = Str ;
+  [Clause] = Str ;
   Coercion = Str ;
   [Ident] = Str ;
   Unit = Str ;
@@ -70,5 +72,8 @@ lin
 
   BaseRule r = r ;
   ConsRule r rs = r ++ "\\qquad" ++ rs ;
+
+  BaseClause c = c ;
+  ConsClause c cs = c ++ "," ++ cs ;
 
 }

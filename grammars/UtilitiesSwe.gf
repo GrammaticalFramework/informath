@@ -60,6 +60,7 @@ oper
   function_N : N = mkN "funktion" "funktioner" ;
   predicate_N : N = mkN "predikat" "predikat" ;
   basic_type_CN : CN = mkCN (mkN "grundtyp" "grundtyper") ;
+  algebraic_structure_CN : CN = mkCN (mkA "algebraisk") (mkN "struktur" "strukturer") ;
   map_V3 = mkV3 (mkV "avbilda") noPrep as_Prep ;
   say_VS = mkVS I.säga_V ;
   hold_V2 = mkV2 I.hålla_V for_Prep ;
