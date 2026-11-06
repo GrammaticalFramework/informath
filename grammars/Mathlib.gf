@@ -19,6 +19,10 @@ fun set_of_divisors_Noun : Noun ;
 fun set_of_proper_divisors_Noun : Noun ;
 fun set_of_prime_factors_Noun : Noun ;
 
+-- the words of unit-informath: the gcd domains of Coquand's Unit development
+-- sag/gcddomain (unit/doc/gcddomain.tex)
+fun gcd_domain_Noun : Noun ;
+
 -- the definitions of set theory as the rules that apply them, in proof
 -- texts ("by the definition of union, ..."): the Edukera exercises (edukera/edukera.dkgf)
 fun empty_set_definition_Label : Label ;

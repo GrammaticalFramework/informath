@@ -25,6 +25,7 @@ lin lower_Adj = mkAdj (mkA "inférieur" "inférieure") ;
 lin set_of_divisors_Noun = mkNoun (mkCN (mkCN (mkN "ensemble" masculine)) (setOfPl (mkCN (mkN "diviseur" masculine)))) ;
 lin set_of_proper_divisors_Noun = mkNoun (mkCN (mkCN (mkN "ensemble" masculine)) (setOfPl (mkCN (mkA "propre") (mkN "diviseur" masculine)))) ;
 lin set_of_prime_factors_Noun = mkNoun (mkCN (mkCN (mkN "ensemble" masculine)) (setOfPl (mkCN (mkA "premier" "première") (mkN "facteur" masculine)))) ;
+lin gcd_domain_Noun = mkNoun (mkN "anneau à pgcd" "anneaux à pgcd" masculine) ;
 
 -- the definitions of set theory as the rules that apply them, in proof
 -- texts ("by the definition of union, ..."): the Edukera exercises (edukera/edukera.dkgf)

@@ -23,6 +23,7 @@ lin lower_Adj = mkAdj "lower" ;
 lin set_of_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkN "divisor"))) ;
 lin set_of_proper_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkA "proper") (mkN "divisor"))) ;
 lin set_of_prime_factors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkA "prime") (mkN "factor"))) ;
+lin gcd_domain_Noun = mkNoun "gcd domain" ;
 
 -- the definitions of set theory as the rules that apply them, in proof
 -- texts ("by the definition of union, ..."): the Edukera exercises (edukera/edukera.dkgf)
