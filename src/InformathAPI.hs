@@ -195,10 +195,19 @@ processLatex env = map (processLatexLine env) . filter parsable . map uncomment 
      c : cs -> c : uncomment cs
      _ -> line
 
+-- | The judgements to show: not the declarations of the constants listed by
+-- #EXCLUDE, nor the rewrite rules that define them (a block of rules keeps
+-- its other rules, and is left out if none remain).
 includedDefs :: Env -> [Jmt] -> [Jmt]
-includedDefs env =
-  filter (\j ->  maybe True
-    (\c -> S.notMember c (excludedConstants (symbolTable env))) (declaredIdent j))
+includedDefs env = concatMap include
+ where
+   excluded c = S.member c (excludedConstants (symbolTable env))
+   include j = case j of
+     JRules rules -> case filter (not . maybe False excluded . ruleHead) rules of
+       [] -> []
+       rs -> [JRules rs]
+     _ | maybe False excluded (declaredIdent j) -> []
+     _ -> [j]
 
 -- * Conversion outcomes
 

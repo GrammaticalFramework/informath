@@ -71,6 +71,12 @@ declaredIdent jmt = case jmt of
     JStatic qident _ -> return qident
     _ -> Nothing
 
+-- the constant that a rewrite rule defines: the head of its left-hand side
+ruleHead :: Rule -> Maybe QIdent
+ruleHead (RRule _ patt _) = case fst (splitPatt patt) of
+    PVar qident -> return qident
+    _ -> Nothing
+
 
 -- alpha conversion of constants
 alphaConvert :: M.Map QIdent QIdent -> Tree a -> Tree a

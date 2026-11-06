@@ -1,20 +1,20 @@
 (; selectors of the structures of algebra.dk: their declarations are not shown,
    as the structure definitions informalize them ;)
-#EXCLUDE S_Magma {|*_Magma|} S_Semigroup {|*_Semigroup|} assoc_Semigroup S_Monoid {|*_Monoid|} assoc_Monoid e_Monoid arg5_Monoid arg6_Monoid S_Group {|*_Group|} assoc_Group e_Group arg5_Group arg6_Group inv_Group arg8_Group arg9_Group S_AbelianGroup {|*_AbelianGroup|} assoc_AbelianGroup commut_AbelianGroup e_AbelianGroup arg6_AbelianGroup inv_AbelianGroup arg8_AbelianGroup
+#EXCLUDE S_Magma star_Magma S_Semigroup star_Semigroup assoc_Semigroup S_Monoid star_Monoid assoc_Monoid e_Monoid arg5_Monoid arg6_Monoid S_Group star_Group assoc_Group e_Group arg5_Group arg6_Group inv_Group arg8_Group arg9_Group S_AbelianGroup star_AbelianGroup assoc_AbelianGroup commut_AbelianGroup e_AbelianGroup arg6_AbelianGroup inv_AbelianGroup arg8_AbelianGroup
 
 S_Magma : $S$
-{|*_Magma|} : $*$
+star_Magma : $*$
 S_Semigroup : $S$
-{|*_Semigroup|} : $*$
+star_Semigroup : $*$
 assoc_Semigroup : $\mathrm{assoc}$
 S_Monoid : $S$
-{|*_Monoid|} : $*$
+star_Monoid : $*$
 assoc_Monoid : $\mathrm{assoc}$
 e_Monoid : $e$
 arg5_Monoid : $\mathrm{arg5}$
 arg6_Monoid : $\mathrm{arg6}$
 S_Group : $S$
-{|*_Group|} : $*$
+star_Group : $*$
 assoc_Group : $\mathrm{assoc}$
 e_Group : $e$
 arg5_Group : $\mathrm{arg5}$
@@ -23,7 +23,7 @@ inv_Group : $\mathrm{inv}(#2)$
 arg8_Group : $\mathrm{arg8}$
 arg9_Group : $\mathrm{arg9}$
 S_AbelianGroup : $S$
-{|*_AbelianGroup|} : $*$
+star_AbelianGroup : $*$
 assoc_AbelianGroup : $\mathrm{assoc}$
 commut_AbelianGroup : $\mathrm{commut}$
 e_AbelianGroup : $e$

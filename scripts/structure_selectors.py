@@ -15,9 +15,14 @@ applied to the structure:
 
     def S_Magma : (m : Structure) -> Set.
     [S, {|*|}] S_Magma (Magma S {|*|}) --> S.
-    def {|*_Magma|} : (m : Structure) -> Oper (S_Magma m).
-    [S, {|*|}] {|*_Magma|} (Magma S {|*|}) --> {|*|}.
+    def star_Magma : (m : Structure) -> Oper (S_Magma m).
+    [S, {|*|}] star_Magma (Magma S {|*|}) --> {|*|}.
 
+The selectors are plain identifiers, without Dedukti's {|...|}: an argument
+named by a symbol is named by its characters, letters, digits and _ as they
+are, the common symbols by the names of SYMBOLS (* is star, <= is lt_eq),
+and any other character by its Unicode code point (u2218 for a ring
+operator not in the table); the symbol itself is in the symbol table entry.
 An argument without a name is named by its position (arg5_Monoid for the
 fifth argument of Monoid).  X_selectors.dk uses the constants of X.dk by
 their names, so the two are checked together: the script runs dk check on
@@ -209,10 +214,49 @@ def telescope(typ):
     return args, typ
 
 
+# the names of the common symbols in selectors: by how they look, not by
+# what they mean, as * may be any operation
+SYMBOLS = {
+    '*': 'star', '+': 'plus', '-': 'minus', '/': 'slash', '\\': 'backslash', '<': 'lt', '>': 'gt',
+    '=': 'eq', '~': 'tilde', '^': 'hat', '&': 'amp', '|': 'bar', '@': 'at', '!': 'bang', '?': 'query',
+    "'": 'prime', '.': 'dot', ':': 'colon', '#': 'hash', '%': 'percent', '$': 'dollar',
+    '\u00b7': 'cdot', '\u2218': 'circ', '\u00d7': 'times', '\u2297': 'otimes', '\u2295': 'oplus',
+    '\u2264': 'leq', '\u2265': 'geq', '\u2260': 'neq', '\u2223': 'mid',
+    '\u2227': 'wedge', '\u2228': 'vee', '\u00ac': 'neg', '\u2192': 'to', '\u2194': 'iff',
+    '\u2229': 'cap', '\u222a': 'cup', '\u2208': 'in', '\u2286': 'subseteq', '\u2282': 'subset',
+    '\u207b\u00b9': 'inv',
+}
+
+
+def code_name(sym):
+    """A symbol as the code points of its characters: u2A for *."""
+    return '_'.join('u%X' % ord(c) for c in sym)
+
+
+def plain_name(field, codes=False):
+    """An identifier for a field: {|...|} spelled out, by SYMBOLS or by code
+    points (all of them by code points if codes)."""
+    if not (field.startswith('{|') and field.endswith('|}')):
+        return field
+    sym = field[2:-2]
+    if not codes and sym in SYMBOLS:
+        return SYMBOLS[sym]
+    parts, word = [], ''
+    for c in sym:
+        if c.isascii() and (c.isalnum() or c == '_'):
+            word += c
+            continue
+        if word:
+            parts.append(word)
+            word = ''
+        parts.append(code_name(c) if codes or c not in SYMBOLS else SYMBOLS[c])
+    if word:
+        parts.append(word)
+    return '_'.join(parts)
+
+
 def selector_name(field, structure):
-    if field.startswith('{|') and field.endswith('|}'):
-        return '{|%s_%s|}' % (field[2:-2], structure)
-    return '%s_%s' % (field, structure)
+    return '%s_%s' % (field, plain_name(structure))
 
 
 def formula(field, arity):
@@ -249,11 +293,16 @@ def selectors(name, typ, var):
         while x is None and (v in taken or v in pvars):
             v += "'"
         pvars.append(v)
+    # the selectors' names: a symbol that gets the name of another field (a
+    # field star and a field *) by the code points of its characters
+    plain = [plain_name(f) for f in fields]
+    plain = [plain_name(f, codes=True) if f.startswith('{|') and plain.count(p) > 1 else p
+             for f, p in zip(fields, plain)]
     pattern = '%s %s' % (name, ' '.join(pvars)) if pvars else name
     ctx = ', '.join(pvars)
     dk, table, sub = [], [], {}
-    for (x, a), field, v in zip(args, fields, pvars):
-        sel = selector_name(field, name)
+    for (x, a), field, v, p in zip(args, fields, pvars, plain):
+        sel = selector_name(p, name)
         styp = subst(a, sub)
         dk.append('def %s : (%s : Structure) -> %s.' % (sel, var, show(styp)))
         dk.append('[%s] %s (%s) --> %s.' % (ctx, sel, pattern, v))
