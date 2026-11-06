@@ -30,7 +30,7 @@ import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
 import Utils (commaSepInts, setnub, unindexString)
 import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
-import Utils (toLatexDoc, transInEnv, frequencyTable)
+import Utils (toLatexDoc, transInEnv, frequencyTable, escapeTextUnderscores)
 
 import ProofText(proofDemo, prLatexFile, verbatimInline, dropImplicitHypos, implicitPositions, hypoVarsAt)
 
@@ -589,7 +589,7 @@ finalParseResult env (t, ut, ct, jmts) = mkJSONObject [
 printResults :: Env -> [String] -> [String]
 printResults env ss = 
   if isFlag "-to-latex-doc" env
-  then toLatexDoc (macroCommands (macroTableEnv env)) (intersperse "" (nub ss))
+  then toLatexDoc (macroCommands (macroTableEnv env)) (intersperse "" (map escapeTextUnderscores (nub ss)))
   else ss
 
 -- | To print Dedukti under environment options, given in flags. 

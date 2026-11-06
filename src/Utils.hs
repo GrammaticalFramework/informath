@@ -45,6 +45,22 @@ commaSep s = words (map (\c -> if c==',' then ' ' else c) s)
 toLatexDoc :: [String] -> [String] -> [String]
 toLatexDoc ms ss = latexPreamble ++ ms ++ ss ++ [latexEndDoc]
 
+-- | Underscores in the text of a LaTeX document, outside math ($...$) and
+-- outside \detokenize{...}, as \_: the labels made of identifiers
+-- (div_trans, Nat__Prime__pos) would otherwise begin a subscript.
+escapeTextUnderscores :: String -> String
+escapeTextUnderscores = go False
+ where
+  go _ [] = []
+  go m ('\\':'$':r) = '\\' : '$' : go m r
+  go m ('\\':'_':r) = '\\' : '_' : go m r
+  go m ('$':r) = '$' : go (not m) r
+  go m ('\\':r)
+    | take 11 r == "detokenize{" = let (a, b) = break (== '}') (drop 11 r) in "\\detokenize{" ++ a ++ go m b
+    | otherwise = '\\' : go m r
+  go False ('_':r) = '\\' : '_' : go False r
+  go m (c:r) = c : go m r
+
 latexEndDoc :: String
 latexEndDoc = "\\end{document}"
 
