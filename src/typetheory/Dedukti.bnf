@@ -12,6 +12,10 @@ JDef.     Jmt ::= "def" QIdent MTyp MExp "." ;
 JInj.     Jmt ::= "injective" QIdent MTyp MExp "." ;  --- "inj" in https://github.com/Deducteam/Dedukti
 JThm.     Jmt ::= "thm" QIdent MTyp MExp "." ;
 JRules.   Jmt ::= [Rule] "." ;
+-- an associative and commutative binary operation on a type, and one with a
+-- unit (Dedukti's defac and defacu)
+JDefac.   Jmt ::= "defac" QIdent "[" Exp "]" "." ;
+JDefacu.  Jmt ::= "defacu" QIdent "[" Exp "," Exp "]" "." ;
 
 RRule.  Rule ::= "[" [Pattbind] "]" Patt "-->" Exp ;
 separator nonempty Rule "" ;

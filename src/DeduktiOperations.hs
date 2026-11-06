@@ -71,6 +71,18 @@ declaredIdent jmt = case jmt of
     JStatic qident _ -> return qident
     _ -> Nothing
 
+-- defac f [T] (f an associative and commutative operation on T) and
+-- defacu f [T, u] (also with the unit u): read as the declaration
+-- f : T -> T -> T, which is what the rest of Informath needs of them
+defacStatic :: Module -> Module
+defacStatic (MJmts jmts) = MJmts (map one jmts)
+ where
+  one j = case j of
+    JDefac f t -> JStatic f (binop t)
+    JDefacu f t _ -> JStatic f (binop t)
+    _ -> j
+  binop t = EFun (HExp t) (EFun (HExp t) t)
+
 -- the constant that a rewrite rule defines: the head of its left-hand side
 ruleHead :: Rule -> Maybe QIdent
 ruleHead (RRule _ patt _) = case fst (splitPatt patt) of

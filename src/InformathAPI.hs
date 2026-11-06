@@ -635,13 +635,13 @@ readDeduktiModule files = mapM readFile files >>= return . parseDeduktiModule . 
 parseDeduktiModule :: String -> Module
 parseDeduktiModule s = case pModule (myLexer s) of
   Bad e -> error ("parse error: " ++ e)
-  Ok mo -> mo
+  Ok mo -> defacStatic mo
 
 -- | To parse a Dedukti file into its AST.
 parseDeduktiModuleErrorFree :: String -> Maybe Module
 parseDeduktiModuleErrorFree s = case pModule (myLexer s) of
   Bad _ -> Nothing
-  Ok mo -> return mo
+  Ok mo -> return (defacStatic mo)
 
 -- | To linearize a GF tree.
 gftree2nat :: Env -> Language -> GFTree -> String
