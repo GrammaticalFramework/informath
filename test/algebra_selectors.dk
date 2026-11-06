@@ -1,0 +1,90 @@
+(; selectors of the structures of algebra.dk, by scripts/structure_selectors.py ;)
+
+(; Magma ;)
+def S_Magma : (m : Structure) -> Set.
+[S, {|*|}] S_Magma (Magma S {|*|}) --> S.
+
+def {|*_Magma|} : (m : Structure) -> Oper (S_Magma m).
+[S, {|*|}] {|*_Magma|} (Magma S {|*|}) --> {|*|}.
+
+(; Semigroup ;)
+def S_Semigroup : (m : Structure) -> Set.
+[S, {|*|}, assoc] S_Semigroup (Semigroup S {|*|} assoc) --> S.
+
+def {|*_Semigroup|} : (m : Structure) -> Oper (S_Semigroup m).
+[S, {|*|}, assoc] {|*_Semigroup|} (Semigroup S {|*|} assoc) --> {|*|}.
+
+def assoc_Semigroup : (m : Structure) -> Proof (associative (S_Semigroup m) ({|*_Semigroup|} m)).
+[S, {|*|}, assoc] assoc_Semigroup (Semigroup S {|*|} assoc) --> assoc.
+
+(; Monoid ;)
+def S_Monoid : (m : Structure) -> Set.
+[S, {|*|}, assoc, e, x5, x6] S_Monoid (Monoid S {|*|} assoc e x5 x6) --> S.
+
+def {|*_Monoid|} : (m : Structure) -> Oper (S_Monoid m).
+[S, {|*|}, assoc, e, x5, x6] {|*_Monoid|} (Monoid S {|*|} assoc e x5 x6) --> {|*|}.
+
+def assoc_Monoid : (m : Structure) -> Proof (associative (S_Monoid m) ({|*_Monoid|} m)).
+[S, {|*|}, assoc, e, x5, x6] assoc_Monoid (Monoid S {|*|} assoc e x5 x6) --> assoc.
+
+def e_Monoid : (m : Structure) -> Elem (S_Monoid m).
+[S, {|*|}, assoc, e, x5, x6] e_Monoid (Monoid S {|*|} assoc e x5 x6) --> e.
+
+def arg5_Monoid : (m : Structure) -> Proof (forall (S_Monoid m) (x => equal (S_Monoid m) (appOper (S_Monoid m) ({|*_Monoid|} m) x (e_Monoid m)) x)).
+[S, {|*|}, assoc, e, x5, x6] arg5_Monoid (Monoid S {|*|} assoc e x5 x6) --> x5.
+
+def arg6_Monoid : (m : Structure) -> Proof (forall (S_Monoid m) (x => equal (S_Monoid m) (appOper (S_Monoid m) ({|*_Monoid|} m) (e_Monoid m) x) x)).
+[S, {|*|}, assoc, e, x5, x6] arg6_Monoid (Monoid S {|*|} assoc e x5 x6) --> x6.
+
+(; Group ;)
+def S_Group : (m : Structure) -> Set.
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] S_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> S.
+
+def {|*_Group|} : (m : Structure) -> Oper (S_Group m).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] {|*_Group|} (Group S {|*|} assoc e x5 x6 inv x8 x9) --> {|*|}.
+
+def assoc_Group : (m : Structure) -> Proof (associative (S_Group m) ({|*_Group|} m)).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] assoc_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> assoc.
+
+def e_Group : (m : Structure) -> Elem (S_Group m).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] e_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> e.
+
+def arg5_Group : (m : Structure) -> Proof (forall (S_Group m) (x => equal (S_Group m) (appOper (S_Group m) ({|*_Group|} m) x (e_Group m)) x)).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] arg5_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> x5.
+
+def arg6_Group : (m : Structure) -> Proof (forall (S_Group m) (x => equal (S_Group m) (appOper (S_Group m) ({|*_Group|} m) (e_Group m) x) x)).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] arg6_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> x6.
+
+def inv_Group : (m : Structure) -> Elem (S_Group m) -> Elem (S_Group m).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] inv_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> inv.
+
+def arg8_Group : (m : Structure) -> Proof (forall (S_Group m) (x => equal (S_Group m) (appOper (S_Group m) ({|*_Group|} m) x (inv_Group m x)) (e_Group m))).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] arg8_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> x8.
+
+def arg9_Group : (m : Structure) -> Proof (forall (S_Group m) (x => equal (S_Group m) (appOper (S_Group m) ({|*_Group|} m) (inv_Group m x) x) (e_Group m))).
+[S, {|*|}, assoc, e, x5, x6, inv, x8, x9] arg9_Group (Group S {|*|} assoc e x5 x6 inv x8 x9) --> x9.
+
+(; AbelianGroup ;)
+def S_AbelianGroup : (m : Structure) -> Set.
+[S, {|*|}, assoc, commut, e, x6, inv, x8] S_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> S.
+
+def {|*_AbelianGroup|} : (m : Structure) -> Oper (S_AbelianGroup m).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] {|*_AbelianGroup|} (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> {|*|}.
+
+def assoc_AbelianGroup : (m : Structure) -> Proof (associative (S_AbelianGroup m) ({|*_AbelianGroup|} m)).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] assoc_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> assoc.
+
+def commut_AbelianGroup : (m : Structure) -> Proof (commutative (S_AbelianGroup m) ({|*_AbelianGroup|} m)).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] commut_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> commut.
+
+def e_AbelianGroup : (m : Structure) -> Elem (S_AbelianGroup m).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] e_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> e.
+
+def arg6_AbelianGroup : (m : Structure) -> Proof (forall (S_AbelianGroup m) (x => equal (S_AbelianGroup m) (appOper (S_AbelianGroup m) ({|*_AbelianGroup|} m) x (e_AbelianGroup m)) x)).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] arg6_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> x6.
+
+def inv_AbelianGroup : (m : Structure) -> Elem (S_AbelianGroup m) -> Elem (S_AbelianGroup m).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] inv_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> inv.
+
+def arg8_AbelianGroup : (m : Structure) -> Proof (forall (S_AbelianGroup m) (x => equal (S_AbelianGroup m) (appOper (S_AbelianGroup m) ({|*_AbelianGroup|} m) x (inv_AbelianGroup m x)) (e_AbelianGroup m))).
+[S, {|*|}, assoc, commut, e, x6, inv, x8] arg8_AbelianGroup (AbelianGroup S {|*|} assoc commut e x6 inv x8) --> x8.
