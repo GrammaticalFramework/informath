@@ -37,7 +37,15 @@ nlg env tree = case () of
    chosenVariants = case () of
      _ | isFlag "-more-variants" env ->
        concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
-     _ -> ncviafts
+     _ -> map letDeclared ncviafts
+
+-- | Variables of a set given by a term are declared with a formula: "let
+-- $x, y \\in G$" rather than "let $x$ and $y$ be elements of $G$".
+letDeclared :: Tree a -> Tree a
+letDeclared t = case t of
+  GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
+    GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)
+  _ -> composOp letDeclared t
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
@@ -348,7 +356,7 @@ variations tree = case tree of
           hypoprop <- concatMap variations (hypoProp hypos2 prop2)
           ]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
-    [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)]
+    [GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term), tree]
   GAllProp (GListArgKind [argkind]) prop ->
     tree : [GPostQuantProp prop exp | exp <- allQuantVariations argkind]
   GExistProp (GListArgKind [argkind]) prop ->

@@ -111,12 +111,17 @@ sem env t = case t of
     GElemFormula (GListTerm terms) term | length xs == length terms ->
       GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
         where xs = [x | GIdentTerm x <- terms]
+    -- "let $x \\in A$" read as a comparison
+    GEquationFormula (GBinaryEquation (LexCompar "element_Compar") (GIdentTerm x) term) ->
+      GVarsHypo (GListIdent [x]) (GExpKind (GTermExp term))
     _ -> GPropHypo (sem env (GFormulaProp (sem env formula)))
-{- ----
+  -- "let $x, y \\in A$", as MathCore2Informath generates it for variables of A
   GLetDeclarationHypo decl -> case (sem env decl) of
     GElemDeclaration (GListTerm terms) term | length xs == length terms ->
       GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
         where xs = [x | GIdentTerm x <- terms]
+    d -> GLetDeclarationHypo d
+{- ----
   GIfProp cond@(GFormulaProp (GElemFormula (GListTerm terms) (GSetTerm set))) prop ->
     case getJustVarsFromTerms env terms of
       Just xs -> sem env (GAllProp (GListArgKind [GIdentsArgKind (GSetKind set) (GListIdent xs)]) prop)
