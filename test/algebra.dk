@@ -6,7 +6,17 @@ Proof : Prop -> Type.
 
 forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
 
+(; Structures are of kinds: a magma, a semigroup, ...; Str K is the type of
+   the structures of kind K, so that a structure is a magma or a group, and its
+   selectors apply to the structures of its kind only ;)
 Structure : Type.
+Str : Structure -> Type.
+
+MagmaS : Structure.
+SemigroupS : Structure.
+MonoidS : Structure.
+GroupS : Structure.
+AbelianGroupS : Structure.
 
 equal : (A : Set) -> Elem A -> Elem A -> Prop.
 refl : (A : Set) -> (a : Elem A) -> Proof (equal A a a).
@@ -24,12 +34,12 @@ def commutative : (A : Set) -> Oper A -> Prop :=
     forall A (x => forall A (y => 
         equal A (appOper A {|*|} x y) (appOper A {|*|} y x))).
 
-Magma : (S : Set) -> ({|*|} : Oper S) -> Structure.
+Magma : (S : Set) -> ({|*|} : Oper S) -> Str MagmaS.
 
 Semigroup :
   (S : Set) -> ({|*|} : Oper S) ->
       (assoc : Proof (associative S {|*|})) ->
-         Structure.
+         Str SemigroupS.
 
 Monoid :
   (S : Set) -> ({|*|} : Oper S) ->
@@ -37,7 +47,7 @@ Monoid :
       (e : Elem S) ->
         Proof (forall S (x => equal S (appOper S {|*|} x e) x)) ->
           Proof (forall S (x => equal S (appOper S {|*|} e x) x)) ->
-            Structure.
+            Str MonoidS.
 
 Group :
   (S : Set) -> ({|*|} : Oper S) ->
@@ -48,7 +58,7 @@ Group :
 	    (inv : (Elem S -> Elem S)) ->
 	      Proof (forall S (x => equal S (appOper S {|*|} x (inv x)) e)) ->
 	        Proof (forall S (x => equal S (appOper S {|*|} (inv x) x) e)) ->
-                  Structure.
+                  Str GroupS.
 
 AbelianGroup :
   (S : Set) -> ({|*|} : Oper S) ->
@@ -58,40 +68,40 @@ AbelianGroup :
           Proof (forall S (x => equal S (appOper S {|*|} x e) x)) ->
 	    (inv : (Elem S -> Elem S)) ->
 	      Proof (forall S (x => equal S (appOper S {|*|} x (inv x)) e)) ->
-                Structure.
+                Str AbelianGroupS.
 
 
 (; The same structures as a series of extensions: each takes its parent
-   structure M and adds its new fields only, written with the parent's
+   structure M, of the parent's kind, and adds its new fields only, written with the parent's
    selectors. The selectors are made by scripts/structure_selectors.py,
    which gives an extension also the selectors of its parent's fields
    (S_Semigroup' (Semigroup' M assoc) --> S_Magma M); as the extensions use
    the selectors, the file is checked with them, by the same script. ;)
 
 Semigroup' :
-  (M : Structure) ->
+  (M : Str MagmaS) ->
     (assoc : Proof (associative (S_Magma M) (star_Magma M))) ->
-      Structure.
+      Str SemigroupS.
 
 Monoid' :
-  (M : Structure) ->
+  (M : Str SemigroupS) ->
     (e : Elem (S_Semigroup' M)) ->
       Proof (forall (S_Semigroup' M) (x =>
         equal (S_Semigroup' M) (appOper (S_Semigroup' M) (star_Semigroup' M) x e) x)) ->
         Proof (forall (S_Semigroup' M) (x =>
           equal (S_Semigroup' M) (appOper (S_Semigroup' M) (star_Semigroup' M) e x) x)) ->
-          Structure.
+          Str MonoidS.
 
 Group' :
-  (M : Structure) ->
+  (M : Str MonoidS) ->
     (inv : (Elem (S_Monoid' M) -> Elem (S_Monoid' M))) ->
       Proof (forall (S_Monoid' M) (x =>
         equal (S_Monoid' M) (appOper (S_Monoid' M) (star_Monoid' M) x (inv x)) (e_Monoid' M))) ->
         Proof (forall (S_Monoid' M) (x =>
           equal (S_Monoid' M) (appOper (S_Monoid' M) (star_Monoid' M) (inv x) x) (e_Monoid' M))) ->
-          Structure.
+          Str GroupS.
 
 AbelianGroup' :
-  (M : Structure) ->
+  (M : Str GroupS) ->
     (commut : Proof (commutative (S_Group' M) (star_Group' M))) ->
-      Structure.
+      Str AbelianGroupS.

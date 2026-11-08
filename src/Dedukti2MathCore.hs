@@ -267,6 +267,8 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
  Just (expr, "Exp") -> GExpKind (fg expr)
  _ -> case exp of
     EApp (EIdent f) x | f == identElem -> GElemKind (exp2kind x)
+    -- a structure of a kind is of that kind: Str GroupS, a group
+    EApp f x | isStructureKind f -> exp2kind x
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of
         EIdent ident -> funListKind ident args

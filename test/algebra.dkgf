@@ -1,4 +1,4 @@
-#EXCLUDE Set Elem Prop Proof forall Structure equal refl
+#EXCLUDE Set Elem Prop Proof forall Structure Str MagmaS SemigroupS MonoidS GroupS AbelianGroupS equal refl
 
 equal : "#2 is equal to #3" | $#2 = #3$
 
@@ -30,4 +30,13 @@ Group' : "group"
 
 AbelianGroup' : "abelian group"
 
-Structure : "structure"
+
+MagmaS : "magma"
+
+SemigroupS : "semigroup"
+
+MonoidS : "monoid"
+
+GroupS : "group"
+
+AbelianGroupS : "abelian group"

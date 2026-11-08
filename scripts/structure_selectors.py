@@ -3,19 +3,19 @@
 
     python3 scripts/structure_selectors.py X.dk     # -> X_selectors.dk, X_selectors.dkgf
 
-A structure is declared as a constant whose type ends in Structure, as in
-test/algebra.dk:
+A structure is declared as a constant whose type ends in Structure, or in
+Str K, the structures of kind K, as in test/algebra.dk:
 
-    Magma : (S : Set) -> ({|*|} : Oper S) -> Structure.
+    Magma : (S : Set) -> ({|*|} : Oper S) -> Str MagmaS.
 
 For each argument of such a constant, a selector returns it from the
 structure: it is named by the argument and the structure, and its type is
 the argument's type, in which the earlier arguments are their selectors
 applied to the structure:
 
-    def S_Magma : (m : Structure) -> Set.
+    def S_Magma : (m : Str MagmaS) -> Set.
     [S, {|*|}] S_Magma (Magma S {|*|}) --> S.
-    def star_Magma : (m : Structure) -> Oper (S_Magma m).
+    def star_Magma : (m : Str MagmaS) -> Oper (S_Magma m).
     [S, {|*|}] star_Magma (Magma S {|*|}) --> {|*|}.
 
 The selectors are plain identifiers, without Dedukti's {|...|}: an argument
@@ -32,8 +32,8 @@ A structure may extend another: its first argument is the parent structure,
 and its other arguments are its new fields, written with the parent's
 selectors, as in test/algebra.dk:
 
-    Semigroup' : (M : Structure) ->
-      (assoc : Proof (associative (S_Magma M) (star_Magma M))) -> Structure.
+    Semigroup' : (M : Str MagmaS) ->
+      (assoc : Proof (associative (S_Magma M) (star_Magma M))) -> Str SemigroupS.
 
 The parent is the structure whose selectors the new fields use. An extension
 gets the selectors of all of its parent's fields, defined by the parent's
@@ -41,9 +41,9 @@ selectors, and selectors of its own fields, the parent's fields written by
 its own selectors; its unnamed fields are numbered after the inherited ones,
 as in the flat structure (arg5_Monoid' as arg5_Monoid):
 
-    def S_Semigroup' : (m : Structure) -> Set.
+    def S_Semigroup' : (m : Str SemigroupS) -> Set.
     [M, assoc] S_Semigroup' (Semigroup' M assoc) --> S_Magma M.
-    def assoc_Semigroup' : (m : Structure) ->
+    def assoc_Semigroup' : (m : Str SemigroupS) ->
       Proof (associative (S_Semigroup' m) (star_Semigroup' m)).
     [M, assoc] assoc_Semigroup' (Semigroup' M assoc) --> assoc.
 
@@ -304,7 +304,13 @@ def arity(typ):
 
 def is_parent_arg(arg):
     """The first argument of an extension: its parent structure."""
-    return isinstance(arg[1], Var) and arg[1].name == 'Structure' and arg[0] is not None
+    return is_structure_type(arg[1]) and arg[0] is not None
+
+
+def is_structure_type(t):
+    """Structure, or Str K: the structures of kind K."""
+    return (isinstance(t, Var) and t.name == 'Structure') or \
+        (isinstance(t, App) and isinstance(t.fun, Var) and t.fun.name == 'Str')
 
 
 def replace(e, f):
@@ -320,7 +326,7 @@ def selectors(name, typ, var, known):
     """The Dedukti text and the symbol table entries of a structure's
     selectors, and its fields (selector, field, type) for its extensions;
     known: the fields of the structures before it."""
-    args, _ = telescope(typ)
+    args, result = telescope(typ)
     taken = names(typ, set())
     # an extension: the parent is the structure whose selectors its fields use
     parent, inherited = None, []
@@ -358,7 +364,7 @@ def selectors(name, typ, var, known):
     for psel, field, ptyp in inherited:
         sel = rename[psel]
         styp = replace(ptyp, lambda e: Var(rename[e.name]) if isinstance(e, Var) and e.name in rename else e)
-        dk.append('def %s : (%s : Structure) -> %s.' % (sel, var, show(styp)))
+        dk.append('def %s : (%s : %s) -> %s.' % (sel, var, show(result, 1), show(styp)))
         dk.append('[%s] %s (%s) --> %s %s.' % (ctx, sel, pattern, psel, pvars[0]))
         dk.append('')
         table.append((sel, formula(field, arity(styp))))
@@ -373,7 +379,7 @@ def selectors(name, typ, var, known):
     for k, ((x, a), field, v, p) in enumerate(zip(args, fields, pvars, plain)):
         sel = selector_name(p, name)
         styp = replace(subst(a, sub), own)
-        dk.append('def %s : (%s : Structure) -> %s.' % (sel, var, show(styp)))
+        dk.append('def %s : (%s : %s) -> %s.' % (sel, var, show(result, 1), show(styp)))
         dk.append('[%s] %s (%s) --> %s.' % (ctx, sel, pattern, v))
         dk.append('')
         table.append((sel, formula(field, arity(styp))))
@@ -416,8 +422,7 @@ def main():
     path = args[0]
     text = open(path).read()
     decls = declarations(text)
-    structures = [(n, t) for n, t in decls if isinstance(telescope(t)[1], Var)
-                  and telescope(t)[1].name == 'Structure' and telescope(t)[0]]
+    structures = [(n, t) for n, t in decls if is_structure_type(telescope(t)[1]) and telescope(t)[0]]
     if not structures:
         sys.exit('no structures in %s' % path)
     # the structure variable: a name that no structure's type uses

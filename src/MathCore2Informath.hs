@@ -308,6 +308,17 @@ extendStructure t = case t of
         _ -> GExtensionJmt label kind parent x (GListArgKind fields) (conj props)
      where
       parentKind = nounKind x
+  -- the parent a structure of its kind (M : Str GroupS): "an abelian group is
+  -- a group M such that ..."
+  GStructureJmt label (GListClause (GVarClause x parent@(GNounKind n) : rest)) kind
+    | n /= LexNoun "set_Noun" ->
+      let fields = groupFields [(y, k) | GVarClause y k <- rest]
+          props = [q | GPropClause q <- rest]
+      in case (fields, props) of
+        ([], []) -> t
+        ([], _) -> GExtensionPropJmt label kind parent x (conj props)
+        (_, []) -> GExtensionDataJmt label kind parent x (GListArgKind fields)
+        _ -> GExtensionJmt label kind parent x (GListArgKind fields) (conj props)
   _ -> t
  where
   conj ps = case ps of

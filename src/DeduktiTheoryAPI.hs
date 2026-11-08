@@ -97,6 +97,14 @@ isStructureType :: Exp -> Bool
 isStructureType exp = case exp of
   -- also when annotated by a symbol table entry (Structure#Noun#...)
   EIdent (QIdent s) -> takeWhile (/= '#') s == "Structure"
+  -- the structures of a kind: Str GroupS
+  EApp f _ -> isStructureKind f
+  _ -> False
+
+-- | Str, the type of the structures of a kind: Str GroupS, a group.
+isStructureKind :: Exp -> Bool
+isStructureKind exp = case exp of
+  EIdent (QIdent s) -> takeWhile (/= '#') s == "Str"
   _ -> False
 
 structureType :: Exp
