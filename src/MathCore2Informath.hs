@@ -177,11 +177,25 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . con
      _ -> ([], hs)
    attached :: GListIdent -> GKind -> [GProp] -> GHypo
    attached xs@(GListIdent vars) kind props = case props of
+     -- sets of which a noun is predicated have it as their kind: "let $G$ be
+     -- a monoid", not "let $G$ be a set such that $G$ is a monoid"
+     _ | kind == GNounKind (LexNoun "set_Noun"), Just (n, rest) <- nounOf vars props ->
+       attached xs (GNounKind n) rest
      [] -> GVarsHypo xs kind
      GAdjProp adj _ : _ | Just ys <- mapM (adjOf adj) props, sameElems ys vars ->
        GAdjKindHypo xs adj kind
      [p] -> GSuchThatHypo xs (aggregate p) kind
      _ -> GSuchThatHypo xs (aggregate (GAndProp (GListProp props))) kind
+   -- a noun predicated of each of the variables, and the other propositions
+   nounOf :: [GIdent] -> [GProp] -> Maybe (GNoun, [GProp])
+   nounOf vars props = case [n | GNoun1Prop (GNounNoun1 n) _ <- props] of
+     n : _ | all (\v -> any (isNounOf n v) props) vars ->
+       Just (n, [p | p <- props, not (any (\v -> isNounOf n v p) vars)])
+     _ -> Nothing
+   isNounOf :: GNoun -> GIdent -> GProp -> Bool
+   isNounOf n v p = case p of
+     GNoun1Prop (GNounNoun1 m) (GTermExp (GIdentTerm y)) -> m == n && y == v
+     _ -> False
    adjOf :: GAdj -> GProp -> Maybe GIdent
    adjOf adj p = case p of
      GAdjProp a (GTermExp (GIdentTerm y)) | a == adj -> Just y
