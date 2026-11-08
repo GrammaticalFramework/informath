@@ -252,7 +252,7 @@ groupProps :: String -> [GProp] -> [GProp]
 groupProps conj = groups where
   groups props = case props of
     -- for all a, P and for all a, Q: for all a, P and Q
-    GAllProp ks p : GAllProp ks' q : pp | conj == "and" && ks == ks' ->
+    GAllProp ks p : GAllProp ks' q : pp | conj == "and" && sameArgKinds ks ks' ->
       groups (GAllProp ks (andProps p q) : pp)
     p@(GAdjProp a x) : pp ->
       case getAdjs pp x of
@@ -304,6 +304,17 @@ extendStructure t = case t of
       let (same, others) = span ((== k) . snd) rest
       in GIdentsArgKind k (GListIdent (y : map fst same)) : groupFields others
     [] -> []
+
+-- | The same variables of the same kinds. Not (==): the generated equality
+-- of lists compares them with zip, so that [a, b] == [a, b, c].
+sameArgKinds :: GListArgKind -> GListArgKind -> Bool
+sameArgKinds (GListArgKind xs) (GListArgKind ys) =
+  length xs == length ys && and (zipWith same xs ys)
+ where
+  same :: GArgKind -> GArgKind -> Bool
+  same (GIdentsArgKind k (GListIdent is)) (GIdentsArgKind k' (GListIdent js)) =
+    k == k' && length is == length js && and (zipWith (==) is js)
+  same _ _ = False
 
 andProps :: GProp -> GProp -> GProp
 andProps p q = case (p, q) of
