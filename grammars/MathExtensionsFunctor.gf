@@ -33,6 +33,9 @@ lin
     extensionText label kind (suchThatCN (carrierCN parent ident) (partProp prop)) ;
   ExtensionDataJmt label kind parent ident fields =
     extensionText label kind (withCN (carrierCN parent ident) fields) ;
+  ExtensionHyposJmt label hypos kind parent ident fields prop =
+    labelText label (thenText hypos
+      (extensionS kind (suchThatCN (withCN (carrierCN parent ident) fields) (partProp prop)))) ;
 
 oper
   -- a semigroup M
@@ -42,8 +45,10 @@ oper
   withCN : CN -> {sg, pl, neg : ArgKindNP} -> CN = \cn, fields ->
     mkCN cn (Syntax.mkAdv with_Prep (fromArgKindNP fields.sg)) ;
   -- a monoid is a CN
+  extensionS : {cn : CN ; adv : Syntax.Adv} -> CN -> S = \kind, cn ->
+    mkS (mkCl (mkNP a_Det (useKind kind)) (mkNP a_Det cn)) ;
   extensionText : LabelT -> {cn : CN ; adv : Syntax.Adv} -> CN -> Text = \label, kind, cn ->
-    labelText label (mkText (mkS (mkCl (mkNP a_Det (useKind kind)) (mkNP a_Det cn)))) ;
+    labelText label (mkText (extensionS kind cn)) ;
 
 lin
 

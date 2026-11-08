@@ -25,6 +25,8 @@ fun
       -- a commutative group is a group G such that P
   ExtensionDataJmt : Label -> Kind -> Kind -> Ident -> [ArgKind] -> Jmt ;
       -- a monoid with an inverse operation is a monoid G with a function inv from G to G
+  ExtensionHyposJmt : Label -> [Hypo] -> Kind -> Kind -> Ident -> [ArgKind] -> Prop -> Jmt ;
+      -- let R be a semiring. a module over R is an additive commutative monoid M with ... such that P
     
   VarsHypo : [Ident] -> Kind -> Hypo ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary

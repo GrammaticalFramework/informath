@@ -288,6 +288,14 @@ groupProps conj = groups where
 -- clauses are its new data ("with") and its new properties ("such that").
 extendStructure :: Tree a -> Tree a
 extendStructure t = case t of
+  -- with parameters before the carrier: "let R be a semiring. a module over R is ..."
+  GStructureJmt label (GListClause clauses) kind
+    | (params@(_:_), GVarClause x _ : GPropClause p : rest) <- splitCarrier clauses,
+      Just parent <- nounKind x p,
+      fields@(_:_) <- [(y, k) | GVarClause y k <- rest],
+      props@(_:_) <- [q | GPropClause q <- rest] ->
+      GExtensionHyposJmt label (GListHypo (paramHypos params)) kind parent x
+        (GListArgKind (groupFields fields)) (conj props)
   GStructureJmt label (GListClause (GVarClause x _ : GPropClause p : rest)) kind
     | Just parent <- parentKind p ->
       let fields = groupFields [(y, k) | GVarClause y k <- rest]
@@ -298,14 +306,35 @@ extendStructure t = case t of
         (_, []) -> GExtensionDataJmt label kind parent x (GListArgKind fields)
         _ -> GExtensionJmt label kind parent x (GListArgKind fields) (conj props)
      where
-      parentKind prop = case prop of
-        GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y)) | y == x -> Just (GNounKind n)
-        _ -> Nothing
+      parentKind = nounKind x
   _ -> t
  where
   conj ps = case ps of
     [p] -> p
     _ -> GAndProp (GListProp ps)
+  nounKind :: GIdent -> GProp -> Maybe GKind
+  nounKind x prop = case prop of
+    GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y)) | y == x -> Just (GNounKind n)
+    _ -> Nothing
+  -- the carrier is the last variable followed by a noun about it
+  splitCarrier :: [GClause] -> ([GClause], [GClause])
+  splitCarrier cs =
+    case [i | (i, GVarClause x _ : GPropClause p : _) <- zip [(0 :: Int)..] (suffixes cs),
+              Just _ <- [nounKind x p]] of
+      [] -> ([], cs)
+      is -> splitAt (last is) cs
+  suffixes :: [GClause] -> [[GClause]]
+  suffixes cs = case cs of
+    [] -> []
+    _ : rest -> cs : suffixes rest
+  -- "let R be a semiring" for a set R with a hypothesis that R is a semiring
+  paramHypos :: [GClause] -> [GHypo]
+  paramHypos cs = case cs of
+    GVarClause y _ : GPropClause q : rest | Just k <- nounKind y q ->
+      GVarsHypo (GListIdent [y]) k : paramHypos rest
+    GVarClause y k : rest -> GVarsHypo (GListIdent [y]) k : paramHypos rest
+    GPropClause q : rest -> GPropHypo q : paramHypos rest
+    [] -> []
   -- consecutive fields of the same kind together: "elements a and b of G"
   groupFields fs = case fs of
     (y, k) : rest ->

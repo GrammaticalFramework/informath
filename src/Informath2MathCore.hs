@@ -106,6 +106,11 @@ sem env t = case t of
     sem env (extensionStructure label kind parent x [] [prop])
   GExtensionDataJmt label kind parent x (GListArgKind args) ->
     sem env (extensionStructure label kind parent x args [])
+  GExtensionHyposJmt label (GListHypo hypos) kind parent x (GListArgKind args) prop ->
+    case sem env (extensionStructure label kind parent x args [prop]) of
+      GStructureJmt l (GListClause cs) k ->
+        GStructureJmt l (GListClause (concatMap (paramClauses env) hypos ++ cs)) k
+      j -> j
 
   GLetFormulaHypo formula -> case (sem env formula) of
     GElemFormula (GListTerm terms) term | length xs == length terms ->
@@ -371,6 +376,20 @@ subsequentPairs xs = [(xs !! k, xs !! (k+1)) | k <- [0..(length xs - 2)] ]
 -- | The structure that an extension judgement abbreviates: "a monoid is a
 -- semigroup M with an element 1 of M such that P" has the clauses "M is a
 -- set", "M is a semigroup", "1 is an element of M" and P.
+-- | Parameters of a structure, back from "let R be a semiring".
+paramClauses :: SEnv -> GHypo -> [GClause]
+paramClauses env h = case h of
+  GVarsHypo (GListIdent ys) (GNounKind n) | isStructureNoun n ->
+    concat [[GVarClause y (GNounKind (LexNoun "set_Noun")),
+             GPropClause (GProofProp (GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y))))] | y <- ys]
+  GVarsHypo (GListIdent ys) k -> [GVarClause y (sem env (GElemKind k)) | y <- ys]
+  GPropHypo q -> [GPropClause (GProofProp (sem env q))]
+  _ -> []
+ where
+  isStructureNoun n = case n of
+    LexNoun "set_Noun" -> False
+    _ -> True
+
 extensionStructure :: GLabel -> GKind -> GKind -> GIdent -> [GArgKind] -> [GProp] -> GJmt
 extensionStructure label kind parent x args props =
   GStructureJmt label (GListClause (
