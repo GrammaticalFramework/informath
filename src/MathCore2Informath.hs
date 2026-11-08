@@ -296,8 +296,9 @@ extendStructure t = case t of
       props@(_:_) <- [q | GPropClause q <- rest] ->
       GExtensionHyposJmt label (GListHypo (paramHypos params)) kind parent x
         (GListArgKind (groupFields fields)) (conj props)
-  GStructureJmt label (GListClause (GVarClause x _ : GPropClause p : rest)) kind
-    | Just parent <- parentKind p ->
+  GStructureJmt label (GListClause (GVarClause x setk : GPropClause p : rest)) kind
+    | Just parent <- parentKind p,
+      null [y | GVarClause y k <- rest, k == setk] ->
       let fields = groupFields [(y, k) | GVarClause y k <- rest]
           props = [q | GPropClause q <- rest]
       in case (fields, props) of
@@ -316,13 +317,17 @@ extendStructure t = case t of
   nounKind x prop = case prop of
     GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y)) | y == x -> Just (GNounKind n)
     _ -> Nothing
-  -- the carrier is the last variable followed by a noun about it
+  -- the carrier is the last set (the kind of the first clause), if a noun
+  -- about it follows: the parameters before it ("let R be a semiring")
   splitCarrier :: [GClause] -> ([GClause], [GClause])
-  splitCarrier cs =
-    case [i | (i, GVarClause x _ : GPropClause p : _) <- zip [(0 :: Int)..] (suffixes cs),
-              Just _ <- [nounKind x p]] of
-      [] -> ([], cs)
-      is -> splitAt (last is) cs
+  splitCarrier cs = case cs of
+    GVarClause _ setk : _ ->
+      case [i | (i, GVarClause _ k : _) <- zip [(0 :: Int)..] (suffixes cs), k == setk] of
+        [] -> ([], cs)
+        is -> case splitAt (last is) cs of
+          split@(_, GVarClause x _ : GPropClause p : _) | Just _ <- nounKind x p -> split
+          _ -> ([], [])
+    _ -> ([], cs)
   suffixes :: [GClause] -> [[GClause]]
   suffixes cs = case cs of
     [] -> []
