@@ -72,6 +72,11 @@ lin
   inParticularHence = P.mkAdv "i synnerhet" ;
   inBothCasesHence = P.mkAdv "i båda fallen" ;
   weConcludeHence = P.mkAdv "vi drar slutsatsen att" ;
+  byDefinitionHence = P.mkAdv "per definition" ;
+  byRewritingHence = P.mkAdv "genom omskrivning" ;
+  bySimplificationHence = P.mkAdv "genom förenkling" ;
+  byComputationHence = P.mkAdv "genom beräkning" ;
+  byRoutineHence = P.mkAdv "med ett rutinargument" ;
 
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;

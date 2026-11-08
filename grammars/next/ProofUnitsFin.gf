@@ -70,6 +70,11 @@ lin
   afortioriHence = P.mkAdv "a fortiori" ;
   inParticularHence = P.mkAdv "in particular" ;
   weConcludeHence = P.mkAdv "we conclude that" ;
+  byDefinitionHence = P.mkAdv "määritelmän nojalla" ;
+  byRewritingHence = P.mkAdv "uudelleenkirjoittamalla" ;
+  bySimplificationHence = P.mkAdv "sieventämällä" ;
+  byComputationHence = P.mkAdv "laskemalla" ;
+  byRoutineHence = P.mkAdv "rutiinipäättelyllä" ;
   
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;

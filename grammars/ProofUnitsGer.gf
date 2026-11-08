@@ -47,6 +47,11 @@ lin
   inParticularHence = P.mkAdv "insbesondere" ;
   inBothCasesHence = P.mkAdv "in beiden Fällen" ;
   weConcludeHence = P.mkAdv "wir schließen, dass" ;
+  byDefinitionHence = P.mkAdv "per Definition" ;
+  byRewritingHence = P.mkAdv "durch Umschreiben" ;
+  bySimplificationHence = P.mkAdv "durch Vereinfachung" ;
+  byComputationHence = P.mkAdv "durch Rechnung" ;
+  byRoutineHence = P.mkAdv "durch ein Routineargument" ;
 
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;

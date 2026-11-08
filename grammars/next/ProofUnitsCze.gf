@@ -40,6 +40,11 @@ lin
   afortioriHence = P.mkAdv "tím spíše" ;
   inParticularHence = P.mkAdv "zejména" ;
   weConcludeHence = P.mkAdv "dostáváme, že" ;
+  byDefinitionHence = P.mkAdv "z definice" ;
+  byRewritingHence = P.mkAdv "přepsáním" ;
+  bySimplificationHence = P.mkAdv "zjednodušením" ;
+  byComputationHence = P.mkAdv "výpočtem" ;
+  byRoutineHence = P.mkAdv "rutinní úvahou" ;
 
   BaseUnit = emptyText ;
   ConsUnit unit units = mkText unit units ;

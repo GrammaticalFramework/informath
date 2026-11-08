@@ -17,7 +17,7 @@ import CommonConcepts (lookupConstant)
 import Utils (latexPreamble, latexEndDoc)
 
 
-import Data.List (intersperse, isPrefixOf, nub, mapAccumL)
+import Data.List (intersperse, isPrefixOf, isInfixOf, nub, mapAccumL)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -65,8 +65,9 @@ proofDemoPieces env base (MJmts proofs) informalizes trees =
 
    -- the constants that the base or the module proves: a line that applies
    -- one of them names it, "by ex25_set, B", where a rule (an axiom) is only
-   -- cited in the margin
-   theorems = S.fromList [c | MJmts js <- [base, MJmts proofs], j <- js, c <- provedConstant j]
+   -- cited in the margin; with -proof-no-cite, every rule is only cited in
+   -- the margin
+   theorems = if isFlag "-proof-no-cite" env then S.empty else S.fromList [c | MJmts js <- [base, MJmts proofs], j <- js, c <- provedConstant j]
    provedConstant :: Jmt -> [QIdent]
    provedConstant jmt = case jmt of
      JThm c _ _ | not (null (proved jmt)) -> [c]
@@ -140,7 +141,8 @@ proofLines env dkmap typ exp = ProofLines {
     lineNumber = number
     }
   where
-    term = showOnly (proofProfile (showTable (symbolTable env)) dkmap)
+    term = collapseRewriting $
+             showOnly (proofProfile (showTable (symbolTable env)) dkmap)
                     (typeAnnotate dkmap [] typ exp)
     (rawlines, linesterm, renumbering) = term2linesMap term
     -- the variables of implicit types are not introduced, and neither are
@@ -184,7 +186,7 @@ line2dkline env dkmap line = line {
    unit = case (mark line, rule (step line)) of
      (CasesMark n, _) -> DkCases n
      (CaseMark k, h) -> DkCase k h fla
-     (_, h) | constant h || not (null (premisses line)) -> DkConclusion fla
+     (_, h) | constant h || isRewriting h || not (null (premisses line)) -> DkConclusion fla
      -- with -proof-goals: "to prove that B , assume that A"
      (_, h) -> DkHypos [hypo h] (if isFlag "-proof-goals" env then goal line else Nothing)
    fla = formula (step line)
@@ -201,6 +203,7 @@ dkline2unitline env theorems line = line {
    unit = case formula (step line) of
      DkCases n -> GNumberCasesGoal (caseNumber n)
      DkCase k _ a -> GNumberCaseGoal (caseNumber k) (prop a)
+     DkConclusion a | isRewriting (rule (step line)) -> GHencePropConclusion GbyRewritingHence (prop a)
      DkConclusion a -> case ruleWords (rule (step line)) of
        Just (Left label) -> GLabelPropConclusion label (prop a)  -- "by modus ponens, B"
        Just (Right hence) -> GHencePropConclusion hence (prop a)  -- "in particular, B"
@@ -490,8 +493,8 @@ typeAnnotate mo cont typ exp = case exp of
         vars = [case hypo2topvars h of {v:_ -> v; [] -> QIdent "_"} | h <- hs] -- one var per hypo, aligned 1:1 with args
         apptyp = subst (zip vars args) (map fst cont) body
         newargs = [typeAnnotate mo cont (subst (zip vars args) (map fst cont) ty) arg | (h, arg) <- zip hs args, Just ty <- [hypo2type h]]
-      in ETyped (foldl EApp (EIdent fun) newargs) apptyp
-  EIdent fun -> ETyped exp (look fun)
+      in ETyped (foldl EApp (EIdent fun) newargs) (expected apptyp)
+  EIdent fun -> ETyped exp (expected (look fun))
   EAbs bind body -> 
     let
       bindvar = bind2var bind
@@ -510,6 +513,15 @@ typeAnnotate mo cont typ exp = case exp of
      _ -> case M.lookup fun mo of
         Just ty -> ty
         _ -> typ
+   -- a constant whose implicit arguments the export left out (rfl for
+   -- rfl X a) still has a type with those arguments; the expected type
+   -- is what it proves here
+   expected t = case (t, typ) of
+     (EFun _ _, _) | isProofType typ -> typ
+     _ -> t
+   isProofType t = case splitApp t of
+     (EIdent f, [_]) -> f == identProof
+     _ -> False
 
 {- -- now in AnnotateDedukti
 subst :: [(QIdent, Exp)] -> [QIdent] -> Exp -> Exp
@@ -571,6 +583,71 @@ showOnly prof e = case e of
      DropProfile k -> drop k args
      PermProfile is -> [args !! (i - 1) | i <- is, i <= length args]
      HoasProfile is -> [args !! (i - 1) | i <- is, i <= length args]
+
+-- | A rewriting that Lean's simp or rw leaves in a proof term (congrArg,
+-- Eq.mpr, of_eq_true over equations between propositions) as one step, "by
+-- rewriting, B": its premisses are the steps that are not part of the
+-- rewriting, and its rule names the simp lemmas it uses, which would
+-- otherwise be lines of their own stating an equation between propositions
+collapseRewriting :: Exp -> Exp
+collapseRewriting e = case e of
+  ETyped x ty | rewritingRoot x ty ->
+    let (names, prems) = parts e
+        rulename = rewritingRule ++ concat [" with " ++ concat (intersperse ", " ns) | ns@(_:_) <- [nub names]]
+    in ETyped (foldl EApp (EIdent (QIdent rulename)) (map collapseRewriting prems)) ty
+  ETyped x ty -> ETyped (collapseRewriting x) ty
+  EApp _ _ -> case splitApp e of
+    (f, args) -> foldl EApp (collapseRewriting f) (map collapseRewriting args)
+  EAbs bind body -> EAbs bind (collapseRewriting body)
+  _ -> e
+ where
+  rewritingRoot :: Exp -> Exp -> Bool
+  rewritingRoot x ty = case splitApp x of
+    (EIdent f, _) -> plumbing f && (propEquation ty || elem f strongRoots)
+    _ -> False
+  -- the steps of a rewriting: the simp lemmas it uses, and its premisses
+  parts :: Exp -> ([String], [Exp])
+  parts t = case t of
+    ETyped x ty -> case splitApp x of
+      (EIdent (QIdent f), args) | "___simp_" `isInfixOf` f || (propEquation ty && notElem f plumbingRules) ->
+        let (ns, ps) = combine (map parts args) in (simpName f : ns, ps)
+      (EIdent f, args) | plumbing f -> combine (map parts args)
+      _ -> ([], [t])
+    _ -> ([], [t])
+  combine ps = (concatMap fst ps, concatMap snd ps)
+  simpName f = case breakOn "___simp_" f of
+    (g, _) -> g
+  breakOn pat s = case s of
+    _ | pat `isPrefixOf` s -> ("", s)
+    c : rest -> let (a, b) = breakOn pat rest in (c : a, b)
+    [] -> ("", "")
+  plumbing :: QIdent -> Bool
+  plumbing (QIdent f) = elem f plumbingRules || "___simp_" `isInfixOf` f
+  strongRoots = map QIdent ["of_eq_true", "of_eq_false", "Eq__mpr", "Eq__mp", "propext"]
+  propEquation :: Exp -> Bool
+  propEquation ty = case splitApp ty of
+    (EIdent p, [a]) | p == identProof -> case splitApp a of
+      (EIdent (QIdent "Eqt"), [EIdent (QIdent "Prop"), _, _]) -> True
+      _ -> False
+    _ -> False
+
+-- | The rule of a collapsed rewriting starts with this
+rewritingRule :: String
+rewritingRule = "rewriting"
+
+isRewriting :: QIdent -> Bool
+isRewriting (QIdent s) = rewritingRule `isPrefixOf` s
+
+-- | The steps of a rewriting that are not shown on their own
+plumbingRules :: [String]
+plumbingRules = [
+  "congrArg", "congrFun", "congrFun'", "congr", "congr_arg", "congr_fun", "funext'",
+  "Eq__trans", "Eq__mpr", "Eq__mp", "Eq__refl", "Eq__symm", "id", "cast",
+  "of_eq_true", "of_eq_false", "eq_self", "eq_true", "eq_false", "propext", "eq_self_iff_true",
+  "iff_self", "and_true", "true_and", "and_self", "or_false", "false_or", "not_false_eq_true",
+  "implies_true", "forall_const", "ne_eq", "Eq__mpr_not", "Eq__mpr_prop", "implies_congr",
+  "forall_congr", "and_congr", "or_congr", "iff_congr", "not_congr"
+  ]
 
 -----------------------
 -- linear proofs

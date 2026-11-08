@@ -60,5 +60,10 @@ fun
   inParticularHence : Hence ;
   inBothCasesHence : Hence ;
   weConcludeHence : Hence ;
+  byDefinitionHence : Hence ;  -- rfl
+  byRewritingHence : Hence ;  -- rw
+  bySimplificationHence : Hence ;  -- simp
+  byComputationHence : Hence ;  -- ring, norm_num, omega, linarith
+  byRoutineHence : Hence ;  -- grind, aesop, tauto, decide
 
 }

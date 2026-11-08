@@ -727,7 +727,9 @@ tryParseSymbolTable env ls = map tryParse ils
 -- | Proof texts of tactic proofs, given as lists of proof units in JSON:
 -- [{"name": n, "steps": [{"unit": u, "by": tactic, ...}]}], where u is
 --   "hypos" with "hypos": [[x, type]]  -- let x be ..., assume that ...
---   "conclusion" with "prop": P        -- P
+--   "conclusion" with "prop": P        -- P; with "method": m, "by m, P", where m is
+--                                         definition, rewriting, simplification,
+--                                         computation or routine
 --   "enough" with "prop": P            -- it is enough to show that P
 --   "verify" with "prop": P            -- first verify that P (a nested proof follows)
 --   "cases", "induction", "obvious"
@@ -774,12 +776,21 @@ showTacticProofs env s = case J.decode s of
            ge <- dk (J.fromJSString g)
            return (GGoalHyposUnit hypos (DMC.exp2prop (ann ge)))
          _ -> return (GHyposUnit hypos)
-     "conclusion" -> fmap (GConclusionUnit . DMC.exp2prop . ann) (dk (str (field "prop" st)))
+     "conclusion" -> do
+       p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
+       -- how the step proves it, if the tactic says: "by rewriting, P"
+       return $ case lookup (str (field "method" st)) methods of
+         Just hence -> GHencePropConclusion hence p
+         Nothing -> GConclusionUnit p
      "enough" -> fmap (GEnoughGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
      "verify" -> fmap (GFirstVerifyGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
      "cases" -> return GCasesGoal
      "induction" -> return GInductionGoal
      _ -> return GObviousConclusion
+
+   methods = [("definition", GbyDefinitionHence), ("rewriting", GbyRewritingHence),
+              ("simplification", GbySimplificationHence), ("computation", GbyComputationHence),
+              ("routine", GbyRoutineHence)]
 
    ann e = head (annotateDkIdents env e ++ [e])
    dk :: String -> Either String Exp
