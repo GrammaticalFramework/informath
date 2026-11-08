@@ -84,7 +84,7 @@
  "exx-roundtrip": {
   "lines": 55,
   "undefined": 0,
-  "seconds": 1.9
+  "seconds": 1.8
  },
  "exx-roundtrip-failures": {
   "lines": 1,
@@ -94,7 +94,7 @@
  "exx-roundtrip-typecheck": {
   "lines": 16,
   "undefined": 0,
-  "seconds": 2.5
+  "seconds": 2.4
  },
  "exx-swe": {
   "lines": 18,
@@ -114,7 +114,7 @@
  "gflean-parse": {
   "lines": 19,
   "undefined": 0,
-  "seconds": 5.0
+  "seconds": 4.9
  },
  "gflean-typecheck": {
   "lines": 13,
@@ -143,12 +143,12 @@
  "lean-exx": {
   "lines": 0,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.2
  },
  "maps-latex": {
   "lines": 45,
   "undefined": 0,
-  "seconds": 0.3,
+  "seconds": 0.2,
   "latex_pages": 2,
   "latex_errors": 0
  },
@@ -175,21 +175,21 @@
  "naproche-interpret": {
   "lines": 2247,
   "undefined": 0,
-  "seconds": 7.8,
+  "seconds": 7.9,
   "latex_pages": 142,
   "latex_errors": 0
  },
  "naproche-translate": {
   "lines": 156,
   "undefined": 0,
-  "seconds": 1.2,
+  "seconds": 1.3,
   "latex_pages": 6,
   "latex_errors": 141
  },
  "natural-deduction": {
   "lines": 15,
   "undefined": 0,
-  "seconds": 0.0,
+  "seconds": 0.1,
   "latex_pages": 1,
   "latex_errors": 2
  },
@@ -215,14 +215,14 @@
  "proof-text-lambdas": {
   "lines": 43,
   "undefined": 0,
-  "seconds": 0.0,
+  "seconds": 0.1,
   "latex_pages": 3,
   "latex_errors": 0
  },
  "proof-text-lemmas": {
   "lines": 58,
   "undefined": 0,
-  "seconds": 0.0,
+  "seconds": 0.1,
   "latex_pages": 5,
   "latex_errors": 0
  },
@@ -239,7 +239,7 @@
  "sets-latex": {
   "lines": 1793,
   "undefined": 0,
-  "seconds": 1.0,
+  "seconds": 0.9,
   "latex_pages": 132,
   "latex_errors": 0
  },

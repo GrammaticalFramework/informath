@@ -115,6 +115,10 @@ mkLatexMathIdent s = case s of
     _ | not (any isAlpha s) -> s
     _ | Just g <- greekOrLetter base, not (null digits) -> g ++ "_{" ++ digits ++ "}"
     _ | elem s greekLetters -> "\\" ++ s
+    -- primes after a name that is shown as a letter: M' -> M', x1' -> x_{1}'
+    _ | (primes@(_:_), name@(_:_)) <- span (== '\'') (reverse s),
+        let shown = mkLatexMathIdent (reverse name),
+        not (isPrefixOf "\\mathrm{" shown) -> shown ++ primes
     _ -> "\\mathrm{" ++ escapeUnderscores s ++ "}"
   where
     (base, digits) = splitDigits s

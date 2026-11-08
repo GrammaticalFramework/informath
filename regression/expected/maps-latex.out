@@ -30,11 +30,11 @@ Definition. Let $X$ and $Y$ be sets. Then $\F {X}{Y}$ is a set.
 
 Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Let $x \in X$. Then $\app {f}{x}$ is an element of $Y$.
 
-IsMap. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then for all elements $x$ of $X$, there exists an element $y$ of $Y$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and for all elements $y$ and $\mathrm{y'}$ of $Y$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\mathrm{y'}$, then $\mathrm{Equ}$ holds for $Y$, $y$ and $\mathrm{y'}$.
+IsMap. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then for all elements $x$ of $X$, there exists an element $y$ of $Y$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and for all elements $y$ and $y'$ of $Y$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y'$, then $\mathrm{Equ}$ holds for $Y$, $y$ and $y'$.
 
 Definition. Let $X$ be a set. Then $\id {X}$ is a map from $X$ to $X$.
 
-Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is injective, if for all elements $x$ and $\mathrm{x'}$ of $X$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\app {f}{\mathrm{x'}}$, then $\mathrm{Equ}$ holds for $X$, $x$ and $\mathrm{x'}$.
+Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is injective, if for all elements $x$ and $x'$ of $X$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\app {f}{x'}$, then $\mathrm{Equ}$ holds for $X$, $x$ and $x'$.
 
 Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is surjective, if for all elements $y$ of $Y$, there exists an element $x$ of $X$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$.
 
