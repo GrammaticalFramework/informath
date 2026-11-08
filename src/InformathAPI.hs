@@ -32,7 +32,7 @@ import Utils (commaSepInts, setnub, unindexString)
 import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
 import Utils (toLatexDoc, transInEnv, frequencyTable, escapeTextUnderscores)
 
-import ProofText(proofDemo, prLatexFile, verbatimInline, dropImplicitHypos, implicitPositions, hypoVarsAt)
+import ProofText(proofDemo, proofDemoFile, proofDemoPieces, prLatexFile, verbatimInline, dropImplicitHypos, implicitPositions, hypoVarsAt)
 
 import Informath
 import PGF
@@ -48,7 +48,7 @@ import System.Process (readProcessWithExitCode)
 import System.Exit (ExitCode(..))
 import System.Directory (getTemporaryDirectory, removeFile)
 import System.IO (openTempFile, hClose)
-import Control.Exception (try, SomeException)
+import Control.Exception (try, evaluate, SomeException)
 import Control.Monad (foldM)
 
 
@@ -803,14 +803,37 @@ showTacticProofs env s = case J.decode s of
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String
-showProofDemo env base mo = proofDemo env base mo (map unit2nat proofLangs) trees
+showProofDemo env base mo = proofDemo env base mo (proofLinearizers env) (proofTreePrinter env)
+
+-- | The proof texts of a module as showProofDemo, but each proof evaluated on
+-- its own: a proof whose text cannot be made (an error in its conversion)
+-- gets a section with the comment "% PROOF FAILED: ..." instead of a table,
+-- and the proofs after it are still written
+showProofDemoSafe :: Env -> Module -> Module -> IO String
+showProofDemoSafe env base mo = do
+  pieces <- mapM safe (proofDemoPieces env base mo (proofLinearizers env) (proofTreePrinter env))
+  return (proofDemoFile env pieces)
+ where
+  safe (t, s) = do
+    r <- try (evaluate (foldr seq () s)) :: IO (Either SomeException ())
+    return $ case r of
+      Right () -> s
+      Left e -> unlines [ "\\subsection*{" ++ verbatimInline (printTree t) ++ "}"
+                        , "% PROOF FAILED: " ++ unwords (lines (take 300 (show e)))
+                        , "\\clearpage" ]
+
+proofTreePrinter :: Env -> Maybe (Exp -> String)
+proofTreePrinter env = if isFlag "-proof-trees" env then Just formula else Nothing
  where
    -- the formulas of the trees in symbolic LaTeX (-proof-trees), as with -to-symbolic-latex
-   trees = if isFlag "-proof-trees" env then Just formula else Nothing
    formula e = gftree2nat senv (mkLanguage (grammar env) "Latex")
                  (gf (MCI.bareQuantifiers kinds (DMC.exp2prop (head (annotateDkIdents senv e)))))
    senv = env{flags = "-to-symbolic-latex" : flags env}
+   kinds = implicitKinds env
 
+proofLinearizers :: Env -> [GUnit -> String]
+proofLinearizers env = map unit2nat proofLangs
+ where
    -- one proof text for each language of -languages, or for -to-lang
    proofLangs = if flagHasValue "-languages" (flags env) then langs env else [toLang env]
 

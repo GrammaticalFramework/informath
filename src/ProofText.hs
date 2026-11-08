@@ -42,10 +42,21 @@ import qualified Data.Set as S
 -- With a printer of formulas (-proof-trees), each proof is also shown as a
 -- natural deduction tree.
 proofDemo :: Env -> Module -> Module -> [GUnit -> String] -> Maybe (Exp -> String) -> String
-proofDemo env base (MJmts proofs) informalizes trees =
+proofDemo env base mo informalizes trees =
+  proofDemoFile env (map snd (proofDemoPieces env base mo informalizes trees))
+
+-- | The LaTeX file of the proof texts, given the text of each proof
+proofDemoFile :: Env -> [String] -> String
+proofDemoFile env pieces =
   prLatexFile (macroCommands (macroTable (symbolTable env))) $
-    unlines $ intersperse "\n\n" [
-      oneProof env dkmap theorems informalizes trees t e | (t, e) <- concatMap proved proofs]
+    unlines $ intersperse "\n\n" pieces
+
+-- | The proof text of each proof of a module, with the type it proves:
+-- separately, so that a caller can evaluate each on its own and go on after
+-- one that fails
+proofDemoPieces :: Env -> Module -> Module -> [GUnit -> String] -> Maybe (Exp -> String) -> [(Exp, String)]
+proofDemoPieces env base (MJmts proofs) informalizes trees =
+    [(t, oneProof env dkmap theorems informalizes trees t e) | (t, e) <- concatMap proved proofs]
  where
    -- the constants of the base and of the module itself: a lemma stated in
    -- the module and used in a later proof is a rule with premisses, not a

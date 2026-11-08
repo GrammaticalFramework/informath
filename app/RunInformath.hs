@@ -36,7 +36,7 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
     Just (file, "dk") | elem "-proof-text" args -> do
       mo <- readDeduktiModule [file]
       let base = baseConstantModule env
-      putStrLn (showProofDemo env base mo)
+      showProofDemoSafe env base mo >>= putStrLn
     Just (file, "dk") -> do
       mo <- readDeduktiModule [file]
       let results = processDeduktiModule env mo
