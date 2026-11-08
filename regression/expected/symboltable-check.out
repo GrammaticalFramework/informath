@@ -19,7 +19,7 @@ root : NounPrepNoun2 root_Noun of_Prep
 sim : AdjPrepAdj3 similar_Adj to_Prep in_Prep
 sing : NounPrepFun singleton_Noun of_Prep  | '\\singMACRoD' [1]
 unicont : AdverbAdjAdj uniformly_Adverb continuous_Adj
-vectorspace : NounNounNoun vector_Noun space_Noun []
+vectorspace : AdjNounNoun vectorial_Adj space_Noun []
 
 # semantics table keys: []
 # NLG table keys: []

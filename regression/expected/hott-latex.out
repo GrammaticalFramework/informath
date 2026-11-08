@@ -31,53 +31,59 @@ Definition. The universe is an element of $\mathrm{Type}$.
 
 Definition. $\universe$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of the universe. Then the elements of $x$ are a basic type.
+Definition. Let $x \in \universe$. Then the elements of $x$ form an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of $\universe$. Then the elements of $x$ are a basic type.
+Definition. Let $x$ be an element of the universe. Then the elements of $x$ form an element of $\mathrm{Type}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of the universe.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of $\universe$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of the universe.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of $\universe$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then the sigma type of $A$ and $B$ is an element of the universe.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then the sigma type of $A$ and $B$ is an element of $\universe$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the sigma type of $A$ and $B$ is an element of the universe.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of the universe.
 
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the sigma type of $A$ and $B$ is an element of $\universe$.
+
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of $\universe$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of the universe.
+Definition. Let $A \in \universe$. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of the universe.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of the universe.
-
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of $\universe$.
-
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then $\sigmatype {A}{B}$ is an element of $\universe$.
-
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of the universe.
-
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then $\sigmatype {A}{B}$ is an element of $\universe$.
-
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then the sigma type of $A$ and $B$ is an element of the universe.
-
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then the sigma type of $A$ and $B$ is an element of $\universe$.
+Definition. Let $A \in \universe$. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of $\universe$.
 
 Definition. Let $A$ be an element of the universe. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of the universe.
 
 Definition. Let $A$ be an element of the universe. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of $\universe$.
 
-Definition. Let $A$ be an element of $\universe$. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of the universe.
+Definition. Let $A \in \universe$. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of the universe.
 
-Definition. Let $A$ be an element of $\universe$. Let $y$ and $z$ be elements of $A$. Then $\eq {y}{z}$ is an element of $\universe$.
+Definition. Let $A \in \universe$. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of $\universe$.
 
 Definition. Let $A$ be an element of the universe. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of the universe.
 
 Definition. Let $A$ be an element of the universe. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of $\universe$.
 
-Definition. Let $A$ be an element of $\universe$. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of the universe.
-
-Definition. Let $A$ be an element of $\universe$. Let $y$ and $z$ be elements of $A$. Then the identity between $y$ and $z$ is an element of $\universe$.
+Definition. Let $A \in \universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
 
 Definition. Let $A$ be an element of the universe. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
+Definition. Let $A \in \universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then the concatenation of $v$ and $w$ is an element of $\eq {a}{c}$.
+
+Definition. Let $A \in \universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
+
+Definition. Let $A \in \universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of the identity between $b$ and $c$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
+
+Definition. Let $A \in \universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of the identity between $a$ and $c$.
 
 Definition. Let $A$ be an element of the universe. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then the concatenation of $v$ and $w$ is an element of $\eq {a}{c}$.
-
-Definition. Let $A$ be an element of $\universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then the concatenation of $v$ and $w$ is an element of $\eq {a}{c}$.
 
 Definition. Let $A$ be an element of the universe. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
 
@@ -85,329 +91,323 @@ Definition. Let $A$ be an element of the universe. Let $a$, $b$ and $c$ be eleme
 
 Definition. Let $A$ be an element of the universe. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of the identity between $a$ and $c$.
 
-Definition. Let $A$ be an element of $\universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
+Definition. Let $x , y \in \universe$. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of the identity between $b$ and $c$. Then $\concat {v}{w}$ is an element of $\eq {a}{c}$.
-
-Definition. Let $A$ be an element of $\universe$. Let $a$, $b$ and $c$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $w$ be an element of $\eq {b}{c}$. Then $\concat {v}{w}$ is an element of the identity between $a$ and $c$.
+Definition. Let $x , y \in \universe$. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
 
 Definition. Let $x$ and $y$ be elements of the universe. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ and $y$ be elements of $\universe$. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
-
 Definition. Let $x$ and $y$ be elements of the universe. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ and $y$ be elements of $\universe$. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
+Definition. Let $x \in \universe$. Let $y$ be an element of the universe. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of $\universe$. Let $y$ be an element of the universe. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
+Definition. Let $x$ be an element of the universe. Let $y \in \universe$. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of the universe. Let $y$ be an element of $\universe$. Then $\product {x}{y}$ is an element of $\mathrm{Type}$.
+Definition. Let $x \in \universe$. Let $y$ be an element of the universe. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of $\universe$. Let $y$ be an element of the universe. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
+Definition. Let $x$ be an element of the universe. Let $y \in \universe$. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of the universe. Let $y$ be an element of $\universe$. Then the product of $x$ and $y$ is an element of $\mathrm{Type}$.
+Definition. Let $A \in \universe$. Let $y$ be an element of $A$. Then $\idfun {y}$ is an element of $A$.
 
 Definition. Let $A$ be an element of the universe. Let $y$ be an element of $A$. Then $\idfun {y}$ is an element of $A$.
 
-Definition. Let $A$ be an element of $\universe$. Let $y$ be an element of $A$. Then $\idfun {y}$ is an element of $A$.
+Definition. Let $A \in \universe$. Let $y$ be an element of $A$. Then the identity function on $y$ is an element of $A$.
 
 Definition. Let $A$ be an element of the universe. Let $y$ be an element of $A$. Then the identity function on $y$ is an element of $A$.
 
-Definition. Let $A$ be an element of $\universe$. Let $y$ be an element of $A$. Then the identity function on $y$ is an element of $A$.
+Definition. Let $A , B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
+
+Definition. Let $A , B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A , B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A , B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A$ be an element of the universe. Let $B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
 
-Definition. Let $A$ and $B$ be elements of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A \in \universe$. Let $B$ be an element of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of the identity between $a$ and $b$. Let $f$ be a function from elements of $A$ to elements of $B$. Then the action on $f$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A , B \in \universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of the identity between $f$ applied to $a$ and $f$ applied to $b$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then the maps from $A$ to $B$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $a$ and $b$ be elements of $A$. Let $v$ be an element of $\eq {a}{b}$. Let $f$ be a function from elements of $A$ to elements of $B$. Then $\ap {f}$ is an element of $\eq {f (a)}{f (b)}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the maps from $A$ to $B$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then the maps from $A$ to $B$ are a basic type.
+Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Then the maps from $A$ to $B$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the maps from $A$ to $B$ are a basic type.
+Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the maps from $A$ to $B$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Then the maps from $A$ to $B$ are a basic type.
+Definition. Let $x , y \in \universe$. Then the maps from $x$ to $y$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Then the maps from $A$ to $B$ are a basic type.
+Definition. Let $x$ and $y$ be elements of the universe. Then the maps from $x$ to $y$ form an element of $\mathrm{Type}$.
 
-Definition. Let $x$ and $y$ be elements of the universe. Then the maps from $x$ to $y$ are a basic type.
+Definition. Let $x \in \universe$. Let $y$ be an element of the universe. Then the maps from $x$ to $y$ form an element of $\mathrm{Type}$.
 
-Definition. Let $x$ and $y$ be elements of $\universe$. Then the maps from $x$ to $y$ are a basic type.
+Definition. Let $x$ be an element of the universe. Let $y \in \universe$. Then the maps from $x$ to $y$ form an element of $\mathrm{Type}$.
 
-Definition. Let $x$ be an element of $\universe$. Let $y$ be an element of the universe. Then the maps from $x$ to $y$ are a basic type.
+Definition. Let $A , B , C \in \universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $x$ be an element of the universe. Let $y$ be an element of $\universe$. Then the maps from $x$ to $y$ are a basic type.
+Definition. Let $A , B , C \in \universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then the composition of $u$ and $v$ is a map from $A$ to $C$.
 
 Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
-
 Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then the composition of $u$ and $v$ is a map from $A$ to $C$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then the composition of $u$ and $v$ is a map from $A$ to $C$.
+Definition. Let $A$ be an element of the universe. Let $B , C \in \universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ and $B$ be elements of the universe. Let $C$ be an element of $\universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A , B \in \universe$. Let $C$ be an element of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $C$ be an element of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A , C \in \universe$. Let $B$ be an element of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ and $C$ be elements of the universe. Let $B$ be an element of $\universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A$ and $B$ be elements of the universe. Let $C \in \universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ and $C$ be elements of $\universe$. Let $B$ be an element of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A$ and $C$ be elements of the universe. Let $B \in \universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ and $C$ be elements of $\universe$. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A \in \universe$. Let $B$ and $C$ be elements of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ and $C$ be elements of the universe. Let $u$ be a map from $B$ to $C$. Let $v$ be a map from $A$ to $B$. Then $\compfun {u}{v}$ is a map from $A$ to $C$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
-
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopy between $z$ and $u$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
 
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopy between $z$ and $u$ is an element of $\mathrm{Type}$.
+
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
+Definition. Let $A , B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
+Definition. Let $A , B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ and $u$ are homotopic.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopy between $z$ and $u$ is an element of $\mathrm{Type}$.
-
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopy between $z$ and $u$ is an element of $\mathrm{Type}$.
+Definition. Let $A , B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ and $u$ are homotopic.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
-
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ and $u$ are homotopic.
-
-Definition. Let $A$ and $B$ be elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopies between $z$ and $u$ are a basic type.
-
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopies between $z$ and $u$ are a basic type.
-
 Definition. Let $A$ and $B$ be elements of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then $\homotopy {z}{u}$ is an element of $\mathrm{Type}$.
+Definition. Let $A , B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then the homotopies between $z$ and $u$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+Definition. Let $A$ be an element of the universe. Let $B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+Definition. Let $A \in \universe$. Let $B$ be an element of the universe. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ is homotopic to $u$.
+
+Definition. Let $A$ be an element of the universe. Let $B \in \universe$. Let $z$ and $u$ be maps from $A$ to $B$. Then we can say that $z$ and $u$ are homotopic.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then the reflexive homotopy of $f$ is an element of $\homotopy {f}{f}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of the homotopy between $f$ and $f$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
 
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then the reflexive homotopy of $f$ is an element of $\homotopy {f}{f}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of the homotopy between $f$ and $f$.
+
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\mathrm{htpy}$ applied to $f$ and $f$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\homotopy {f}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of $\mathrm{htpy}$ applied to $f$ and $f$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then the reflexive homotopy of $f$ is an element of $\homotopy {f}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of the homotopy between $f$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then the reflexive homotopy of $f$ is an element of $\homotopy {f}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$. Let $v \in \homotopy {f}{g}$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of the homotopy between $f$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$. Let $v \in \homotopy {f}{g}$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then the reflexive homotopy of $f$ is an element of $\homotopy {f}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\reflhtpy {f}$ is an element of the homotopy between $f$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of the homotopy between $g$ and $f$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$. Let $v \in \homotopy {f}{g}$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of the homotopy between $g$ and $f$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of the homotopy between $g$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Let $X_{1} \in \homotopy {g}{h}$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Let $X_{1} \in \homotopy {g}{h}$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the inverse homotopy of $v$ is an element of $\homotopy {g}{f}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$. Let $w \in \homotopy {f}{g}$. Let $X_{1} \in \homotopy {g}{h}$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of the homotopy between $g$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$. Let $w \in \homotopy {f}{g}$. Assume that $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then $\invhtpy {v}$ is an element of the homotopy between $g$ and $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$. Let $w \in \homotopy {f}{g}$. Let $X_{1} \in \homotopy {g}{h}$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$. Let $w \in \homotopy {f}{g}$. Assume that $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
+
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of the homotopy between $f$ and $h$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$. Let $X_{1} \in \homotopy {f}{g}$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of the homotopy between $f$ and $h$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then the concatenation of $w$ and $X_{1}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of the homotopy between $f$ and $h$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between the composition of $h$ and $f$ and $\compfun {h}{g}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then $\conhtpy {w}{X_{1}}$ is an element of the homotopy between $f$ and $h$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and the composition of $h$ and $g$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then the concatenation of $w$ and $X_{1}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$. Let $X_{1} \in \homotopy {f}{g}$. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $f$, $g$ and $h$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$ and $g$ is homotopic to $h$. Then the concatenation of $w$ and $X_{1}$ is an element of $\homotopy {f}{h}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between the composition of $h$ and $f$ and $\compfun {h}{g}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
+Definition. Let $A , B , C \in \universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and the composition of $h$ and $g$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and $\compfun {h}{g}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$. Let $w \in \homotopy {g}{h}$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$. Let $w \in \homotopy {g}{h}$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ and $g$ are homotopic. Then the left whiskering of $g$ by $X_{1}$ is an element of $\homotopy {(\compfun {h}{f})}{(\compfun {h}{g})}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between the composition of $g$ and $f$ and $\compfun {h}{f}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between the composition of $h$ and $f$ and $\compfun {h}{g}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and the composition of $h$ and $f$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $h$ be a map from $B$ to $C$. Let $f$ and $g$ be maps from $A$ to $B$ such that $f$ is homotopic to $g$. Then the left whiskering of $g$ by $X_{1}$ is a homotopy between $\compfun {h}{f}$ and the composition of $h$ and $g$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between the composition of $g$ and $f$ and $\compfun {h}{f}$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
+Definition. Let $A , B , C \in \universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and the composition of $h$ and $f$.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of $\universe$.
 
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and $\compfun {h}{f}$.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ form an element of the universe.
 
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
-
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
-
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
-
-Definition. Let $A$, $B$ and $C$ be elements of $\universe$. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ and $h$ are homotopic. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is an element of $\homotopy {(\compfun {g}{f})}{(\compfun {h}{f})}$.
-
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between the composition of $g$ and $f$ and $\compfun {h}{f}$.
-
-Definition. Let $A$, $B$ and $C$ be elements of the universe. Let $g$ and $h$ be maps from $B$ to $C$ such that $g$ is homotopic to $h$. Let $f$ be a map from $A$ to $B$. Then the right whiskering of $w$ by $f$ is a homotopy between $\compfun {g}{f}$ and the composition of $h$ and $f$.
-
-Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ are a basic type.
-
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ are a basic type.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ form an element of $\universe$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of $\universe$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
+Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ form an element of the universe.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of $\universe$.
+Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ form an element of $\universe$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ are a basic type.
+Definition. Let $A$ be an element of the universe. Let $B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then the sections of $f$ are a basic type.
+Definition. Let $A \in \universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\sect {f}$ is an element of the universe.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of $\universe$.
 
-Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ are a basic type.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ form an element of the universe.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ are a basic type.
+Definition. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ form an element of $\universe$.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
 
 Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of $\universe$.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
+Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ form an element of the universe.
 
-Definition. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of $\universe$.
+Definition. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ form an element of $\universe$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ are a basic type.
+Definition. Let $A$ be an element of the universe. Let $B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then the retractions of $f$ are a basic type.
+Definition. Let $A \in \universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
-
-Definition. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\retr {f}$ is an element of the universe.
+Equivalence. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
 
 Equivalence. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
 
-Equivalence. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
+Equivalence. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and $\retr {f}$.
+
+Equivalence. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for the set of sections of $f$ and $\retr {f}$.
 
 Equivalence. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and $\retr {f}$.
 
-Equivalence. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and $\retr {f}$.
+Equivalence. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and the set of retractions of $f$.
+
+Equivalence. Let $A$ be an element of the universe. Let $B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
+
+Equivalence. Let $A \in \universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
 
 Equivalence. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for the set of sections of $f$ and $\retr {f}$.
 
-Equivalence. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for the set of sections of $f$ and $\retr {f}$.
+Equivalence. Let $A , B \in \universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for the set of sections of $f$ and the set of retractions of $f$.
 
-Equivalence. Let $A$ and $B$ be elements of the universe. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and the set of retractions of $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
-Equivalence. Let $A$ be an element of the universe. Let $B$ be an element of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
-Equivalence. Let $A$ be an element of $\universe$. Let $B$ be an element of the universe. Let $f$ be a map from $A$ to $B$. Then $\product {\sect {f}}{\retr {f}}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
-Equivalence. Let $A$ and $B$ be elements of $\universe$. Let $f$ be a map from $A$ to $B$. Then $\mathrm{prod}$ holds for $\sect {f}$ and the set of retractions of $f$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then the component equality between $s$ and $t$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
+Definition. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then the component equality between $s$ and $t$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
-Definition. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Then $\sigmaeq {s}{t}$ is an element of $\mathrm{Type}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then the component equality between $s$ and $t$ is an element of $\mathrm{Type}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
-Definition. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Then the component equality between $s$ and $t$ is an element of $\mathrm{Type}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
 Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
 Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
 
-Dependent pair equivalence. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of the identity between $s$ and $t$. Then $\sigmaeq {s}{t}$.
 
-Dependent pair equivalence. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of the identity between $s$ and $t$. Then $\sigmaeq {s}{t}$.
 
-Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\mathrm{Eq\_Sigma}$ holds for $s$ and $t$.
 
-Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
-
-Dependent pair equivalence. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
-
-Dependent pair equivalence. Let $A$ be an element of $\universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of the sigma type of $A$ and $B$. Let $v$ be an element of $\eq {s}{t}$. Then $\sigmaeq {s}{t}$.
-
-Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of the universe. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of the identity between $s$ and $t$. Then $\sigmaeq {s}{t}$.
-
-Dependent pair equivalence. Let $A$ be an element of the universe. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of the identity between $s$ and $t$. Then $\sigmaeq {s}{t}$.
+Dependent pair equivalence. Let $A \in \universe$. Let $B$ be a function from elements of $A$ to elements of $\universe$. Let $s$ and $t$ be elements of $\sigmatype {A}{B}$. Let $v$ be an element of $\eq {s}{t}$. Then $\mathrm{Eq\_Sigma}$ holds for $s$ and $t$.
 \end{document}

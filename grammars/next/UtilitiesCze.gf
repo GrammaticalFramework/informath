@@ -77,6 +77,7 @@ oper
     (lin Prep {s = "na" ; c = accusative ; hasPrep = True}) ;
   say_VS = mkVS (mkV "říkat") ;
   hold_V2 = mkV2 (mkV "platit") (lin Prep {s = "pro" ; c = accusative ; hasPrep = True}) ;
+  form_V2 = mkV2 (mkV "tvořit") ;
   arbitrary_A = mkA "libovolný" ;
   set_N = mnozina_N ;
   proposition_N = hradN "výrok" ;

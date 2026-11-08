@@ -84,10 +84,10 @@ jmt2jmt jment = case jment of
     JStatic
       (prop2deduktiIdent prop)
       (foldr EFun typeProp (concatMap hypo2dedukti hypos))
-  GAxiomKindJmt _ (GListHypo hypos) kind ->
+  GAxiomKindJmt _ (GListHypo hypos) kind typ ->
     JStatic
       (kind2ident kind)
-      (foldr EFun typeType (concatMap hypo2dedukti hypos))
+      (foldr EFun (kind2dedukti typ) (concatMap hypo2dedukti hypos))
   GAxiomExpJmt _ (GListHypo hypos) exp kind ->
     JStatic
       (exp2ident exp)

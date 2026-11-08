@@ -75,7 +75,7 @@ jmt2jmt jmt = case jmt of
        MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
        _ | isStructureType kind -> GStructureJmt definitionLabel (GListClause (map hypo2clause hypos))
                                      (exp2kind definiendum)
-       _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum)
+       _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum) (exp2kind kind)
 
       _ | S.member cat propCats -> case meexp of
        MEExp exp -> GDefPropJmt   definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)

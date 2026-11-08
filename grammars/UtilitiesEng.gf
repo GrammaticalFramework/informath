@@ -63,6 +63,7 @@ oper
   map_V3 = mkV3 (mkV "map") noPrep to_Prep ;
   say_VS = mkVS I.say_V ;
   hold_V2 = mkV2 I.hold_V for_Prep ;
+  form_V2 = mkV2 (mkV "form") ;
   arbitrary_A = mkA "arbitrary" ;
   set_N = mkN "set" ;
   proposition_N = mkN "proposition" ;

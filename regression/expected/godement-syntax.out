@@ -54,9 +54,7 @@ $p$ is called the characteristic of $K$.
 
 $\Rightarrow$ The characteristic of $K$ is an object defined as $p$.
 
-The order of $G$ is defined to be the determinant of $G$.
-
-$\Rightarrow$ The order of $G$ is an object defined as the determinant of $G$.
+\textbf{No parse:} The order of $G$ is defined to be the determinant of $G$.
 
 We define the order of $G$ to be $n$.
 

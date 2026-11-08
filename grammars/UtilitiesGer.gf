@@ -66,6 +66,7 @@ oper
   map_V3 = mkV3 (mkV "ab" (mkV "bilden")) (mkPrep accusative) as_Prep ;
   say_VS = mkVS (mkV "sagen") ;
   hold_V2 = mkV2 I.halten_V for_Prep ;
+  form_V2 = mkV2 (mkV "bilden") ;
   arbitrary_A = mkA "beliebig" ;
   set_N = mkN "Menge" ;
   proposition_N = mkN "Satz" "Sätze" masculine ;

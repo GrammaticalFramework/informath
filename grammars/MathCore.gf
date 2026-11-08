@@ -13,7 +13,7 @@ fun
   DefExpJmt  : Label -> [Hypo] -> Exp -> Kind -> Exp -> Jmt ;
   
   AxiomPropJmt : Label -> [Hypo] -> Prop -> Jmt ;
-  AxiomKindJmt : Label -> [Hypo] -> Kind -> Jmt ;
+  AxiomKindJmt : Label -> [Hypo] -> Kind -> Kind -> Jmt ;  -- the kind and its type: the K form a set
   AxiomExpJmt  : Label -> [Hypo] -> Exp -> Kind -> Jmt ;
 
   DefUntypedExpJmt  : Label -> Exp -> Exp -> Jmt ;

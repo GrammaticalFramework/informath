@@ -25,8 +25,8 @@ lin
 
   AxiomPropJmt label hypos prop =
     judgement "Axiom" label hypos (top prop ++ "\\ \\mathsf{prop}") ;
-  AxiomKindJmt label hypos kind =
-    judgement "Axiom" label hypos (top kind ++ "\\ \\mathsf{set}") ;
+  AxiomKindJmt label hypos kind typ =
+    judgement "Axiom" label hypos (top kind ++ "\\in" ++ top typ) ;
   AxiomExpJmt label hypos exp kind =
     judgement "Axiom" label hypos (top exp ++ "\\in" ++ top kind) ;
 

@@ -64,6 +64,7 @@ oper
   map_V3 = mkV3 (mkV "avbilda") noPrep as_Prep ;
   say_VS = mkVS I.säga_V ;
   hold_V2 = mkV2 I.hålla_V for_Prep ;
+  form_V2 = mkV2 (mkV "bilda") ;
   arbitrary_A = mkA "godtycklig" ;
   set_N = mkN "mängd" "mängder" ;
   proposition_N = mkN "påstående" ;

@@ -20,13 +20,13 @@
 \newcommand{\divisible}[2]{#2 \mid #1}
 \newcommand{\infinity}{\infty}
 \newcommand{\isempty}[1]{#1 = \emptyset}
-Thm01. Let $m$ and $n$ be elements of $\Natural$ such that $n \neq 0$. Then $(\frac{ m}{n})^ {2}\neq 2$.
+Thm01. Let $m , n \in \Natural$ such that $n \neq 0$. Then $(\frac{ m}{n})^ {2}\neq 2$.
 
-Thm01a. Let $m$ and $n$ be elements of $\Natural$. Then $(\frac{ m}{n + 1})^ {2}\neq 2$.
+Thm01a. Let $m , n \in \Natural$. Then $(\frac{ m}{n + 1})^ {2}\neq 2$.
 
-Thm01b. Let $q$ be an element of $\Rational$. Then $q ^ {2}\neq 2$.
+Thm01b. Let $q \in \Rational$. Then $q ^ {2}\neq 2$.
 
-Thm01c. Let $q$ be an element of $\Rational$. Then $\sqrt{ 2}\neq q$.
+Thm01c. Let $q \in \Rational$. Then $\sqrt{ 2}\neq q$.
 
 Thm01d. $\sqrt{ 2}$ is not rational.
 
@@ -42,29 +42,29 @@ Thm03a. $| \Natural | = | \Rational |$.
 
 Thm04. Let $u$ and $v$ be vectors such that $u \perp v$. Then $\| u + v \| = \sqrt{ \| u \| ^{ 2}+ \| v \| ^{ 2}}$.
 
-Thm07. Let $p$ and $q$ be elements of $\Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm09. Let $c$ be a circle. Let $r$ be an element of $\Real$ such that $r = \mathrm{radius} (c)$. Then $\mathrm{area} (c)= \pi \times r ^ {2}$.
+Thm09. Let $c$ be a circle. Let $r \in \Real$ such that $r = \mathrm{radius} (c)$. Then $\mathrm{area} (c)= \pi \times r ^ {2}$.
 
-Thm10FermatLittle. Let $p$ be a prime element of $\Natural$. Let $a$ be an element of $\Integer$. Then there exists an element $q$ of $\Integer$, such that $a ^ {p}- a = p \times q$.
+Thm10FermatLittle. Let $p$ be a prime element of $\Natural$. Let $a \in \Integer$. Then there exists an element $q$ of $\Integer$, such that $a ^ {p}- a = p \times q$.
 
-Thm11. Let $n$ be an element of $\Natural$. Then there exists an element $p$ of $\Natural$, such that $p \geq n$ and $p$ is prime.
+Thm11. Let $n \in \Natural$. Then there exists an element $p$ of $\Natural$, such that $p \geq n$ and $p$ is prime.
 
-Thm19. Let $n$ be an element of $\Natural$. Then there exist elements $a$, $b$, $c$ and $d$ of $\Natural$, such that $n = a ^{ 2}+ b ^{ 2}+ c ^{ 2}+ d ^{ 2}$.
+Thm19. Let $n \in \Natural$. Then there exist elements $a$, $b$, $c$ and $d$ of $\Natural$, such that $n = a ^{ 2}+ b ^{ 2}+ c ^{ 2}+ d ^{ 2}$.
 
-Thm20a. Let $p$ and $k$ be elements of $\Natural$ such that $p$ is prime and $p = 4 \times k + 1$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
+Thm20a. Let $p , k \in \Natural$ such that $p$ is prime and $p = 4 \times k + 1$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
 
-Thm20b. Let $p$ be an element of $\Natural$ such that $p$ is prime and $\congruent {p}{1}{4}$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
+Thm20b. Let $p \in \Natural$ such that $p$ is prime and $\congruent {p}{1}{4}$. Then there exist elements $x$ and $y$ of $\Natural$, such that $p = x ^{ 2}+ y ^{ 2}$.
 
 Thm22. $\Real$ is not denumerable.
 
-Thm51wilson. Let $n$ be an element of $\Natural$. Then $n$ is prime, if and only if $\congruent {(n - 1)!}{- 1}{n}$.
+Thm51wilson. Let $n \in \Natural$. Then $n$ is prime, if and only if $\congruent {(n - 1)!}{- 1}{n}$.
 
-Thm51b. Let $n$ be an element of $\Natural$. Then $n$ is prime, if and only if $\divisible {(n - 1)! + 1}{n}$.
+Thm51b. Let $n \in \Natural$. Then $n$ is prime, if and only if $\divisible {(n - 1)! + 1}{n}$.
 
 Thm52. Let $A$ be a finite set. Then $| \wp A | = 2 ^ {| A |}$.
 
-Thm58. Let $A$ be a set. Let $n$ and $k$ be elements of $\Natural$ such that $| A | = n$ and $k \leq n$. Then $| C^{ A }_{ k}| = \binom{ n }{ k}$.
+Thm58. Let $A$ be a set. Let $n , k \in \Natural$ such that $| A | = n$ and $k \leq n$. Then $| C^{ A }_{ k}| = \binom{ n }{ k}$.
 
 Thm78. Let $u$ and $v$ be vectors. Then $u \cdot v \leq \| u \| \times \| v \|$.
 
@@ -72,5 +72,5 @@ Thm78a. Let $u$ and $v$ be vectors. Then if $u \perp v$, then $u \cdot v = 0$.
 
 Thm91. Let $u$ and $v$ be vectors. Then $\| u + v \| \leq \| u \| + \| v \|$.
 
-Thm98. Let $n$ be an element of $\Natural$. Then if $n > 1$, then there exists an element $p$ of $\Natural$, such that $p$ is prime and $n < p < 2 \times n$.
+Thm98. Let $n \in \Natural$. Then if $n > 1$, then there exists an element $p$ of $\Natural$, such that $p$ is prime and $n < p < 2 \times n$.
 \end{document}

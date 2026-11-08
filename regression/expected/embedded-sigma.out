@@ -53,11 +53,11 @@ theorem : (m : Nat) -> (n : Nat) -> Proof (and (Lt 0 m) (Lt m (minus n 1))) ->
   Proof (Gt (sigma m n (i => div 1 i)) (sigma (plus m 1) n (i => div 1 i)) ).
 \end{verbatim}
 
+Theorem. Let $m , n \in \Natural$ such that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}> \\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
+
 Theorem. Let $m$ and $n$ be natural numbers such that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}> \\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
 
-Theorem. Let $m$ and $n$ be elements of $\Natural$ such that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}> \\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
-
-Theorem. Let $m$ and $n$ be natural numbers such that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}$ is greater than $\\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
+Theorem. Let $m , n \in \Natural$ such that $0 < m < n - 1$. Then $\\\Summa {m}{n}{i}{(\frac{ 1}{i})}$ is greater than $\\\Summa {(m + 1)}{n}{i}{(\frac{ 1}{i})}$.
 
 
 

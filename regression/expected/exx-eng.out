@@ -6,13 +6,13 @@ Prop50. For all natural numbers $n$, $n$ is not even and odd.
 Prop60. For all natural numbers $n$, $n + 0 = n$.
 Prop70. $1$ is odd.
 Prop80. $2$ is even.
-Prop90. Let $n$ be a natural number. Then if $n$ is even and prime, then $n = 2$.
-Prop100. Let $a$, $b$ and $c$ be integers such that $a + b + c = 0$. Then $a \times b \times c < 0$.
-Prop110. Let $a$ and $c$ be integers such that $a$ and $c$ are odd. Then for all integers $b$, $a \times b + b \times c$ is even.
-Prop120. Let $a$ and $b$ be integers. Then $a \times b$ is even, if and only if $a$ or $b$ is even.
-Prop130. Let $x$ and $y$ be integers. Then if $x \times y$ is odd, then $x$ and $y$ are odd.
-Definition. Let $x$ and $y$ be integers. Then $x$ and $y$ have the same parity, if $x$ is even and $y$ is even or $x$ is odd and $y$ is odd.
+Prop90. Let $n \in \Natural$. Then if $n$ is even and prime, then $n = 2$.
+Prop100. Let $a , b , c \in \Integer$ such that $a + b + c = 0$. Then $a \times b \times c < 0$.
+Prop110. Let $a , c \in \Integer$ such that $a$ and $c$ are odd. Then for all integers $b$, $a \times b + b \times c$ is even.
+Prop120. Let $a , b \in \Integer$. Then $a \times b$ is even, if and only if $a$ or $b$ is even.
+Prop130. Let $x , y \in \Integer$. Then if $x \times y$ is odd, then $x$ and $y$ are odd.
+Definition. Let $x , y \in \Integer$. Then $x$ and $y$ have the same parity, if both $x$ is even and $y$ is even or both $x$ is odd and $y$ is odd.
 Prop140. Let $x$ and $y$ be integers. Then $x$ and $y$ have the same parity, if and only if $x + y$ is even.
-Prop150. Let $n$ be a natural number. Then $n ^ {3}- n$ is even.
-Prop160. Let $a$ and $b$ be integers. Then if $a + b$ and $a \times b$ have the same parity, then $a$ and $b$ are even.
+Prop150. Let $n \in \Natural$. Then $n ^ {3}- n$ is even.
+Prop160. Let $a , b \in \Integer$. Then if $a + b$ and $a \times b$ have the same parity, then $a$ and $b$ are even.
 Prop170. For all natural numbers $x$, $x$ is not even and odd.

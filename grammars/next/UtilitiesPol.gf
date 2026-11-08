@@ -474,6 +474,7 @@ oper
   map_V3 = V.mkV3 (mkV "odwzorowywać") [] "na" R.Acc R.Acc ;
   say_VS = mkVS "mówić" ;
   hold_V2 = V.mkV2 (mkV "zachodzić") "dla" R.Gen ;
+  form_V2 = V.mkV2 (mkV "tworzyć") [] R.Acc ;
   arbitrary_A = mkA "dowolny" ;
   set_N = zbior_N ;
   proposition_N = neutEN "zdanie" ;

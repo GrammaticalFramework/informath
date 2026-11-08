@@ -1,9 +1,9 @@
 Definition. Let $A$ and $B$ be sets. Then $\Cart {A}{B}$ is a set.
-Definition. Let $A$ and $B$ be sets. Then the pairs of elements of $A$ with elements of $B$ are a basic type.
-Definition. Let $A$ and $B$ be sets. Let $z$ be an element of $A$. Let $u$ be an element of $B$. Then $\cartpair {z}{u}$ is an element of $\Cart {A}{B}$.
-Definition. Let $A$ and $B$ be sets. Let $z$ be an element of $A$. Let $u$ be an element of $B$. Then the pair of $z$ and $u$ is an element of $\Cart {A}{B}$.
-Definition. Let $A$ and $B$ be sets. Let $z$ be an element of $A$. Let $u$ be an element of $B$. Then $\cartpair {z}{u}$ is a pair of elements of $A$ with elements of $B$.
-Definition. Let $A$ and $B$ be sets. Let $z$ be an element of $A$. Let $u$ be an element of $B$. Then the pair of $z$ and $u$ is a pair of elements of $A$ with elements of $B$.
+Definition. Let $A$ and $B$ be sets. Then the pairs of elements of $A$ with elements of $B$ form a set.
+Definition. Let $A$ and $B$ be sets. Let $z \in A$. Let $u \in B$. Then $\cartpair {z}{u}$ is an element of $\Cart {A}{B}$.
+Definition. Let $A$ and $B$ be sets. Let $z \in A$. Let $u \in B$. Then the pair of $z$ and $u$ is an element of $\Cart {A}{B}$.
+Definition. Let $A$ and $B$ be sets. Let $z \in A$. Let $u \in B$. Then $\cartpair {z}{u}$ is a pair of elements of $A$ with elements of $B$.
+Definition. Let $A$ and $B$ be sets. Let $z \in A$. Let $u \in B$. Then the pair of $z$ and $u$ is a pair of elements of $A$ with elements of $B$.
 Xy. If $x = y$, then $\cartpair {x}{y}= \cartpair {y}{x}$.
 Xy. If $x$ is equal to $y$, then $\cartpair {x}{y}= \cartpair {y}{x}$.
 Xy. If $x = y$, then $\cartpair {x}{y}$ is equal to $\cartpair {y}{x}$.

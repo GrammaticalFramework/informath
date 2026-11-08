@@ -66,6 +66,7 @@ oper
   map_V3 = mkV3 I.envoyer_V accusative (mkPrep "sur") ; -- "envoie x sur y", as Godement's "amène P sur Q"
   say_VS = mkVS I.dire_V ;
   hold_V2 = mkV2 I.tenir_V for_Prep ; ----
+  form_V2 = mkV2 (mkV "former") ;
   arbitrary_A = mkA "arbitraire" ;
   set_N = mkN "ensemble" masculine ;
   combinaison_N = mkN "combinaison" feminine ;

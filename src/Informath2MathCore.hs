@@ -37,7 +37,7 @@ addCoercions t = case t of
   --AxiomPropJmt : Label -> ListHypo -> Prop -> Jmt ;
   --DefPropJmt : Label -> ListHypo -> Prop -> Prop -> Jmt ;
   --SuchThatKind : Ident -> Kind -> Prop -> Kind ;
-  --AxiomKindJmt : Label -> ListHypo -> Kind -> Jmt ;
+  --AxiomKindJmt : Label -> ListHypo -> Kind -> Kind -> Jmt ;
   --DefExpJmt : Label -> ListHypo -> Exp -> Kind -> Exp -> Jmt ;
   --DefKindJmt : Label -> ListHypo -> Kind -> Kind -> Jmt ;
 

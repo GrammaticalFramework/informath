@@ -4,7 +4,7 @@ Definition. Let $n$ be an instance of natural numbers. Then $n$ is odd, if it is
 Definition. A rational number is a real number $x$ such that there exists a natural number $p$ such that there exists a natural number $q$ such that $x = p \times q$.
 Definition. Let $x$ be an instance of real numbers. Then $x ^{ 2}$ is an instance of real numbers defined as $x ^ {2}$.
 Definition. Let $n$ be an instance of integers. Then we can say that $n$ is sphenic.
-Definition. Let $A$ be a set. Then the lists of elements of $A$ are a basic type.
+Definition. Let $A$ be a set. Then the lists of elements of $A$ form a set.
 Definition. Let $u$ and $v$ be instances of vectors. Then $u + v$ is an instance of vectors.
 Definition. $\mathrm{square}$ is defined as the function that maps $x$ to $x ^ {2}$.
 Definition. Let $x$ and $y$ be instances of natural numbers. Then $x + y$ is an instance of natural numbers.

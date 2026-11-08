@@ -324,6 +324,7 @@ oper
   map_V3 : V3 ;
   say_VS : VS ;
   hold_V2 : V2 ;
+  form_V2 : V2 ;
   arbitrary_A : A ;
   set_N : N ;
   proposition_N : N ;

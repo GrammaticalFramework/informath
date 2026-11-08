@@ -25,15 +25,15 @@
 \newcommand{\infinity}{\infty}
 \newcommand{\isempty}[1]{#1 = \emptyset}
 \newcommand{\singMACRoD}[1]{\{ #1 \}}
-Definition. The sets are a basic type.
+Definition. The sets form a type.
 
-Definition. Let $A$ be a set. Then the elements of $A$ are a basic type.
+Definition. Let $A$ be a set. Then the elements of $A$ form a type.
 
-Definition. The propositions are a basic type.
+Definition. The propositions form a type.
 
 Definition. Let $A$ be a proposition. Then we can say that $A$.
 
-Definition. The objects are a basic type.
+Definition. The objects form a set.
 
 Definition. We can say that we have a contradiction.
 
@@ -73,9 +73,9 @@ Definition. Let $x$ and $y$ be objects. Then the greatest common divisor of $x$ 
 
 Definition. Let $x$ be an object. Then we can say that $x$ is uniformly continuous.
 
-Definition. The vector spaces are a basic type.
+Definition. The vector spaces form a type.
 
-Definition. The Hilbert spaces are a basic type.
+Definition. The Hilbert spaces form a type.
 
 Definition. Euler's constant is an object.
 

@@ -2,13 +2,13 @@
  "agda-exx": {
   "lines": 2,
   "undefined": 0,
-  "seconds": 0.4
+  "seconds": 0.2
  },
  "baseconstants-latex": {
   "lines": 1387,
   "undefined": 0,
   "seconds": 0.4,
-  "latex_pages": 93,
+  "latex_pages": 89,
   "latex_errors": 0
  },
  "bind": {
@@ -22,14 +22,14 @@
   "seconds": 0.1
  },
  "dk-gflean": {
-  "lines": 21,
+  "lines": 7,
   "undefined": 0,
-  "seconds": 5.1
+  "seconds": 4.7
  },
  "dk-roundtrip": {
   "lines": 41,
   "undefined": 0,
-  "seconds": 1.5
+  "seconds": 2.1
  },
  "dk-sets": {
   "lines": 0,
@@ -54,7 +54,7 @@
  "exx-agda": {
   "lines": 19,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "exx-eng": {
   "lines": 18,
@@ -64,42 +64,42 @@
  "exx-fre": {
   "lines": 18,
   "undefined": 0,
-  "seconds": 3.2
+  "seconds": 1.0
  },
  "exx-ger": {
   "lines": 15,
   "undefined": 0,
-  "seconds": 2.4
+  "seconds": 0.8
  },
  "exx-lean": {
   "lines": 18,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "exx-rocq": {
   "lines": 18,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "exx-roundtrip": {
   "lines": 55,
   "undefined": 0,
-  "seconds": 1.3
+  "seconds": 1.9
  },
  "exx-roundtrip-failures": {
   "lines": 1,
   "undefined": 0,
-  "seconds": 1.0
+  "seconds": 0.7
  },
  "exx-roundtrip-typecheck": {
   "lines": 16,
   "undefined": 0,
-  "seconds": 2.1
+  "seconds": 2.5
  },
  "exx-swe": {
-  "lines": 15,
+  "lines": 18,
   "undefined": 0,
-  "seconds": 2.0
+  "seconds": 0.7
  },
  "fermat": {
   "lines": 0,
@@ -109,46 +109,46 @@
  "gflean-failures": {
   "lines": 36,
   "undefined": 0,
-  "seconds": 1.2
+  "seconds": 1.0
  },
  "gflean-parse": {
-  "lines": 33,
+  "lines": 19,
   "undefined": 0,
-  "seconds": 5.1
+  "seconds": 5.0
  },
  "gflean-typecheck": {
   "lines": 13,
   "undefined": 0,
-  "seconds": 5.2
+  "seconds": 5.7
  },
  "godement-syntax": {
-  "lines": 140,
+  "lines": 139,
   "undefined": 0,
-  "seconds": 0.9,
+  "seconds": 1.1,
   "latex_pages": 6,
   "latex_errors": 16
  },
  "hott-latex": {
   "lines": 222,
   "undefined": 0,
-  "seconds": 0.4,
+  "seconds": 0.5,
   "latex_pages": 14,
   "latex_errors": 0
  },
  "insitu-dedukti": {
   "lines": 50,
   "undefined": 25,
-  "seconds": 0.4
+  "seconds": 0.1
  },
  "lean-exx": {
   "lines": 0,
   "undefined": 0,
-  "seconds": 0.4
+  "seconds": 0.1
  },
  "maps-latex": {
   "lines": 45,
   "undefined": 0,
-  "seconds": 0.2,
+  "seconds": 0.3,
   "latex_pages": 2,
   "latex_errors": 0
  },
@@ -165,31 +165,31 @@
  "mini-matita": {
   "lines": 1269,
   "undefined": 0,
-  "seconds": 0.4
+  "seconds": 0.5
  },
  "naproche-failures": {
   "lines": 76,
   "undefined": 0,
-  "seconds": 1.6
+  "seconds": 1.2
  },
  "naproche-interpret": {
-  "lines": 2179,
+  "lines": 2247,
   "undefined": 0,
-  "seconds": 6.1,
-  "latex_pages": 136,
+  "seconds": 7.8,
+  "latex_pages": 142,
   "latex_errors": 0
  },
  "naproche-translate": {
   "lines": 156,
   "undefined": 0,
-  "seconds": 1.6,
+  "seconds": 1.2,
   "latex_pages": 6,
   "latex_errors": 141
  },
  "natural-deduction": {
   "lines": 15,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 1,
   "latex_errors": 2
  },
@@ -203,33 +203,33 @@
  "natural-failures": {
   "lines": 49,
   "undefined": 0,
-  "seconds": 1.0
+  "seconds": 0.8
  },
  "proof-text": {
-  "lines": 121,
+  "lines": 124,
   "undefined": 0,
   "seconds": 0.1,
   "latex_pages": 10,
   "latex_errors": 0
  },
  "proof-text-lambdas": {
-  "lines": 42,
+  "lines": 43,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 3,
   "latex_errors": 0
  },
  "proof-text-lemmas": {
   "lines": 58,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 5,
   "latex_errors": 0
  },
  "rocq-exx": {
   "lines": 0,
   "undefined": 0,
-  "seconds": 0.4
+  "seconds": 0.2
  },
  "semtest-failures": {
   "lines": 2,
@@ -239,14 +239,14 @@
  "sets-latex": {
   "lines": 1793,
   "undefined": 0,
-  "seconds": 0.7,
+  "seconds": 1.0,
   "latex_pages": 132,
   "latex_errors": 0
  },
  "sets-single": {
   "lines": 588,
   "undefined": 0,
-  "seconds": 0.2,
+  "seconds": 0.3,
   "latex_pages": 39,
   "latex_errors": 0
  },
@@ -254,7 +254,7 @@
   "lines": 434,
   "undefined": 0,
   "seconds": 0.2,
-  "latex_pages": 38,
+  "latex_pages": 37,
   "latex_errors": 0
  },
  "symboltable-check": {
@@ -265,7 +265,7 @@
  "symboltable-types": {
   "lines": 19,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "symboltest-latex": {
   "lines": 94,
@@ -284,13 +284,13 @@
  "top100-godement-trees": {
   "lines": 641,
   "undefined": 0,
-  "seconds": 0.5
+  "seconds": 0.6
  },
  "top100-latex": {
   "lines": 2260,
   "undefined": 0,
-  "seconds": 0.9,
-  "latex_pages": 184,
+  "seconds": 1.1,
+  "latex_pages": 180,
   "latex_errors": 0
  },
  "top100-symbolic-latex": {

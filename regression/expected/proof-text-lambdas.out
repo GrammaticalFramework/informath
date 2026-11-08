@@ -24,7 +24,8 @@
 
 \begin{tabular}{rp{0.62\textwidth}l}
 1. & Assume that $Q$. &  \\
-2. & $Q$. & \texttt{lemIf} 1 [x] \\
+2. & Assume that $P$. &  \\
+3. & $Q$. & \texttt{lemIf} 1 (2) \\
 \end{tabular}
 
 
@@ -43,7 +44,7 @@
 1. & Assume that it is not the case that $P$. &  \\
 2. & Assume that $P$. &  \\
 3. & We have a contradiction. & \texttt{ifE} 1, 2  \\
-4. & $Q$. & \texttt{lemNot} 3 [x] \\
+4. & $Q$. & \texttt{lemNot} 3 (2) \\
 \end{tabular}
 
 
@@ -59,9 +60,9 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Let $n$ be an element of $\Natural$. &  \\
-2. & Assume that $P$. &  \\
-3. & $Q$. & \texttt{lemAll} 1, 2 [n] \\
+1. & Assume that $P$. &  \\
+2. & Let $n \in \Natural$. &  \\
+3. & $Q$. & \texttt{lemAll} 2, 1  \\
 \end{tabular}
 
 

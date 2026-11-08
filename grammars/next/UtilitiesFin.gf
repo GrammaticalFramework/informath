@@ -63,6 +63,7 @@ oper
   map_V3 = mkV3 (mkV "kuvata") accusative for_Prep ;
   say_VS = mkVS (mkV "sanoa") ;
   hold_V2 = mkV2 (mkV "päteä") for_Prep ;
+  form_V2 = mkV2 (mkV "muodostaa") ;
   arbitrary_A = mkA "mielivaltainen" ;
   set_N = mkN "joukko" ;
   proposition_N = mkN "väittämä" ;

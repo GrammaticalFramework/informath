@@ -6,13 +6,13 @@ Prop50. Für alle natürliche Zahlen $n$, ist $n$ nicht gerade und ungerade.
 Prop60. Für alle natürliche Zahlen $n$, $n + 0 = n$.
 Prop70. $1$ ist ungerade.
 Prop80. $2$ ist gerade.
-Prop90. Sei $n$ eine natürliche Zahl. Dann wenn $n$ gerade und prim ist, dann $n = 2$.
-Prop100. Seien $a$, $b$ und $c$ ganze Zahlen derart, dass $a + b + c = 0$. Dann $a \times b \times c < 0$.
-Prop110. Seien $a$ und $c$ ganze Zahlen derart, dass sowohl $a$ als auch $c$ ungerade ist. Dann für alle ganze Zahlen $b$, ist $a \times b + b \times c$ gerade.
-Prop120. Seien $a$ und $b$ ganze Zahlen. Dann ist $a \times b$ gerade, genau dann, wenn $a$ oder $b$ gerade ist.
-Prop130. Seien $x$ und $y$ ganze Zahlen. Dann wenn $x \times y$ ungerade ist, dann ist sowohl $x$ als auch $y$ ungerade.
+Prop90. Sei $n \in \Natural$. Dann wenn $n$ gerade und prim ist, dann $n = 2$.
+Prop100. Sei $a , b , c \in \Integer$ derart, dass $a + b + c = 0$. Dann $a \times b \times c < 0$.
+Prop110. Sei $a , c \in \Integer$ derart, dass sowohl $a$ als auch $c$ ist ungerade. Dann für alle ganze Zahlen $b$, ist $a \times b + b \times c$ gerade.
+Prop120. Sei $a , b \in \Integer$. Dann ist $a \times b$ gerade, genau dann, wenn $a$ oder $b$ gerade ist.
+Prop130. Sei $x , y \in \Integer$. Dann wenn $x \times y$ ungerade ist, dann ist sowohl $x$ als auch $y$ ungerade.
 
 
-Prop150. Sei $n$ eine natürliche Zahl. Dann ist $n ^ {3}- n$ gerade.
+Prop150. Sei $n \in \Natural$. Dann ist $n ^ {3}- n$ gerade.
 
 Prop170. Für alle natürliche Zahlen $x$, ist $x$ nicht gerade und ungerade.
