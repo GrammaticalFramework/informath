@@ -16,6 +16,15 @@ fun
 
 -- to introduce lists of idents
   IdentsArgKind : Kind -> [Ident] -> ArgKind ;
+
+-- structures defined by extension: the defined kind, the parent kind, the
+-- carrier, the new data and the new properties
+  ExtensionJmt : Label -> Kind -> Kind -> Ident -> [ArgKind] -> Prop -> Jmt ;
+      -- a monoid is a semigroup M with an element 1 of M such that P
+  ExtensionPropJmt : Label -> Kind -> Kind -> Ident -> Prop -> Jmt ;
+      -- a commutative group is a group G such that P
+  ExtensionDataJmt : Label -> Kind -> Kind -> Ident -> [ArgKind] -> Jmt ;
+      -- a monoid with an inverse operation is a monoid G with a function inv from G to G
     
   VarsHypo : [Ident] -> Kind -> Hypo ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary

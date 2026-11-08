@@ -27,6 +27,26 @@ lin
 
   IdentsArgKind kind idents = {cn = mkCN kind.cn idents.np ; adv = kind.adv ; isPl = idents.isPl} ;
 
+  ExtensionJmt label kind parent ident fields prop =
+    extensionText label kind (suchThatCN (withCN (carrierCN parent ident) fields) (partProp prop)) ;
+  ExtensionPropJmt label kind parent ident prop =
+    extensionText label kind (suchThatCN (carrierCN parent ident) (partProp prop)) ;
+  ExtensionDataJmt label kind parent ident fields =
+    extensionText label kind (withCN (carrierCN parent ident) fields) ;
+
+oper
+  -- a semigroup M
+  carrierCN : {cn : CN ; adv : Syntax.Adv} -> Str -> CN = \parent, ident ->
+    mkCN (useKind parent) (latexNP (mkSymb ident)) ;
+  -- ... with an element 1 of M
+  withCN : CN -> {sg, pl, neg : ArgKindNP} -> CN = \cn, fields ->
+    mkCN cn (Syntax.mkAdv with_Prep (fromArgKindNP fields.sg)) ;
+  -- a monoid is a CN
+  extensionText : LabelT -> {cn : CN ; adv : Syntax.Adv} -> CN -> Text = \label, kind, cn ->
+    labelText label (mkText (mkS (mkCl (mkNP a_Det (useKind kind)) (mkNP a_Det cn)))) ;
+
+lin
+
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
   AdjKindHypo idents adj kind = Grammar.ImpP3 idents.np (mkVP (mkCN adj (useKind kind))) ; 

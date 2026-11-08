@@ -111,6 +111,8 @@ mkLatexMathIdent :: String -> String
 mkLatexMathIdent s = case s of
     '\\':_ -> s
     [_] -> s
+    -- a symbol, as a field named by its notation: {-1} in a^{-1}
+    _ | not (any isAlpha s) -> s
     _ | Just g <- greekOrLetter base, not (null digits) -> g ++ "_{" ++ digits ++ "}"
     _ | elem s greekLetters -> "\\" ++ s
     _ -> "\\mathrm{" ++ escapeUnderscores s ++ "}"

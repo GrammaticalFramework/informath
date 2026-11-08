@@ -98,6 +98,15 @@ semHypo hypo = case hypo of
 sem :: SEnv -> Tree a -> Tree a
 sem env t = case t of
 
+  -- a structure defined by extension is a structure whose first clauses are
+  -- its carrier and its parent
+  GExtensionJmt label kind parent x (GListArgKind args) prop ->
+    sem env (extensionStructure label kind parent x args [prop])
+  GExtensionPropJmt label kind parent x prop ->
+    sem env (extensionStructure label kind parent x [] [prop])
+  GExtensionDataJmt label kind parent x (GListArgKind args) ->
+    sem env (extensionStructure label kind parent x args [])
+
   GLetFormulaHypo formula -> case (sem env formula) of
     GElemFormula (GListTerm terms) term | length xs == length terms ->
       GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
@@ -345,3 +354,22 @@ unknownTerm = GIdentTerm (GStrIdent (GString "UNKNOWN"))
 -- used for decomposing AdjE over a list
 subsequentPairs :: [b] -> [(b, b)]
 subsequentPairs xs = [(xs !! k, xs !! (k+1)) | k <- [0..(length xs - 2)] ]
+
+-- | The structure that an extension judgement abbreviates: "a monoid is a
+-- semigroup M with an element 1 of M such that P" has the clauses "M is a
+-- set", "M is a semigroup", "1 is an element of M" and P.
+extensionStructure :: GLabel -> GKind -> GKind -> GIdent -> [GArgKind] -> [GProp] -> GJmt
+extensionStructure label kind parent x args props =
+  GStructureJmt label (GListClause (
+      [GVarClause x setKind, GPropClause (GProofProp (parentProp parent))]
+      ++ [GVarClause y (GElemKind k) | (y, k) <- concatMap semArgkind args]
+      ++ [GPropClause (GProofProp p) | p <- concatMap conjuncts props]))
+    kind
+ where
+  setKind = GNounKind (LexNoun "set_Noun")
+  parentProp k = case k of
+    GNounKind n -> GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm x))
+    _ -> GKindProp (GTermExp (GIdentTerm x)) k
+  conjuncts p = case p of
+    GAndProp (GListProp ps) -> ps
+    _ -> [p]

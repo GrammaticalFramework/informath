@@ -22,7 +22,7 @@ nlg env tree = case () of
  where
    t = unparenth tree
    ut = uncoerce t
-   ft = flatten ut
+   ft = flatten (extendStructure ut)
    afts = [aggregate ft]
    iafts = map insitu afts
    viafts = map varless iafts
@@ -90,10 +90,11 @@ aggregate t = case t of
     GAdjProp adj x -> GNotAdjProp adj x
     aprop -> GCoreNotProp aprop
   GAndProp (GListProp props) ->
-    case groupProps "and" props of
+    case groupProps "and" (map aggregate props) of
       [p] -> p
       pp -> GAndProp (GListProp pp)
   GOrProp (GListProp props) ->
+    -- not inside: "x and y are even" would be grouped to "x and y are even or odd"
     case groupProps "or" props of
       [p] -> p
       pp -> GOrProp (GListProp pp)
@@ -242,6 +243,9 @@ getEquations props b = case props of
 groupProps :: String -> [GProp] -> [GProp]
 groupProps conj = groups where
   groups props = case props of
+    -- for all a, P and for all a, Q: for all a, P and Q
+    GAllProp ks p : GAllProp ks' q : pp | conj == "and" && ks == ks' ->
+      groups (GAllProp ks (andProps p q) : pp)
     p@(GAdjProp a x) : pp ->
       case getAdjs pp x of
         Just (adjs@(_:_), ps) -> (GAdjProp (adjConj conj (GListAdj (a:adjs))) x) : groups ps
@@ -261,6 +265,44 @@ groupProps conj = groups where
     "and" -> GAndExp
     "or" -> GOrExp
 
+
+-- | A structure whose clauses begin with its carrier and a parent of the
+-- carrier read as a noun ("M is a semigroup") is defined by extension: "a
+-- monoid is a semigroup M with an element 1 of M such that P". The other
+-- clauses are its new data ("with") and its new properties ("such that").
+extendStructure :: Tree a -> Tree a
+extendStructure t = case t of
+  GStructureJmt label (GListClause (GVarClause x _ : GPropClause p : rest)) kind
+    | Just parent <- parentKind p ->
+      let fields = groupFields [(y, k) | GVarClause y k <- rest]
+          props = [q | GPropClause q <- rest]
+      in case (fields, props) of
+        ([], []) -> t
+        ([], _) -> GExtensionPropJmt label kind parent x (conj props)
+        (_, []) -> GExtensionDataJmt label kind parent x (GListArgKind fields)
+        _ -> GExtensionJmt label kind parent x (GListArgKind fields) (conj props)
+     where
+      parentKind prop = case prop of
+        GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y)) | y == x -> Just (GNounKind n)
+        _ -> Nothing
+  _ -> t
+ where
+  conj ps = case ps of
+    [p] -> p
+    _ -> GAndProp (GListProp ps)
+  -- consecutive fields of the same kind together: "elements a and b of G"
+  groupFields fs = case fs of
+    (y, k) : rest ->
+      let (same, others) = span ((== k) . snd) rest
+      in GIdentsArgKind k (GListIdent (y : map fst same)) : groupFields others
+    [] -> []
+
+andProps :: GProp -> GProp -> GProp
+andProps p q = case (p, q) of
+  (GAndProp (GListProp ps), GAndProp (GListProp qs)) -> GAndProp (GListProp (ps ++ qs))
+  (GAndProp (GListProp ps), _) -> GAndProp (GListProp (ps ++ [q]))
+  (_, GAndProp (GListProp qs)) -> GAndProp (GListProp (p : qs))
+  _ -> GAndProp (GListProp [p, q])
 
 flatten :: Tree a -> Tree a
 flatten t = case t of
