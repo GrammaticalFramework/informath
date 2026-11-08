@@ -29,3 +29,5 @@ Monoid' : "monoid"
 Group' : "group"
 
 AbelianGroup' : "abelian group"
+
+Structure : "structure"

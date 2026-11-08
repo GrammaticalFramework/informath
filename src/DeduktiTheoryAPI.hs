@@ -94,7 +94,10 @@ type DTree a = Dedukti.AbsDedukti.Tree a
 -- representing structures: constructor function with value type Structure
 
 isStructureType :: Exp -> Bool
-isStructureType exp = exp == structureType
+isStructureType exp = case exp of
+  -- also when annotated by a symbol table entry (Structure#Noun#...)
+  EIdent (QIdent s) -> takeWhile (/= '#') s == "Structure"
+  _ -> False
 
 structureType :: Exp
 structureType = EIdent (QIdent "Structure")
