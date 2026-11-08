@@ -7,8 +7,6 @@ Proof : Prop -> Type.
 forall : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Prop.
 
 Structure : Type.
-Instance : Structure -> Type.
-Extension : Structure -> Type.
 
 equal : (A : Set) -> Elem A -> Elem A -> Prop.
 refl : (A : Set) -> (a : Elem A) -> Proof (equal A a a).
@@ -63,5 +61,37 @@ AbelianGroup :
                 Structure.
 
 
+(; The same structures as a series of extensions: each takes its parent
+   structure M and adds its new fields only, written with the parent's
+   selectors. The selectors are made by scripts/structure_selectors.py,
+   which gives an extension also the selectors of its parent's fields
+   (S_Semigroup' (Semigroup' M assoc) --> S_Magma M); as the extensions use
+   the selectors, the file is checked with them, by the same script. ;)
 
+Semigroup' :
+  (M : Structure) ->
+    (assoc : Proof (associative (S_Magma M) (star_Magma M))) ->
+      Structure.
 
+Monoid' :
+  (M : Structure) ->
+    (e : Elem (S_Semigroup' M)) ->
+      Proof (forall (S_Semigroup' M) (x =>
+        equal (S_Semigroup' M) (appOper (S_Semigroup' M) (star_Semigroup' M) x e) x)) ->
+        Proof (forall (S_Semigroup' M) (x =>
+          equal (S_Semigroup' M) (appOper (S_Semigroup' M) (star_Semigroup' M) e x) x)) ->
+          Structure.
+
+Group' :
+  (M : Structure) ->
+    (inv : (Elem (S_Monoid' M) -> Elem (S_Monoid' M))) ->
+      Proof (forall (S_Monoid' M) (x =>
+        equal (S_Monoid' M) (appOper (S_Monoid' M) (star_Monoid' M) x (inv x)) (e_Monoid' M))) ->
+        Proof (forall (S_Monoid' M) (x =>
+          equal (S_Monoid' M) (appOper (S_Monoid' M) (star_Monoid' M) (inv x) x) (e_Monoid' M))) ->
+          Structure.
+
+AbelianGroup' :
+  (M : Structure) ->
+    (commut : Proof (commutative (S_Group' M) (star_Group' M))) ->
+      Structure.

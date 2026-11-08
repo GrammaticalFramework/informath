@@ -1,6 +1,6 @@
 (; selectors of the structures of algebra.dk: their declarations are not shown,
    as the structure definitions informalize them ;)
-#EXCLUDE S_Magma star_Magma S_Semigroup star_Semigroup assoc_Semigroup S_Monoid star_Monoid assoc_Monoid e_Monoid arg5_Monoid arg6_Monoid S_Group star_Group assoc_Group e_Group arg5_Group arg6_Group inv_Group arg8_Group arg9_Group S_AbelianGroup star_AbelianGroup assoc_AbelianGroup commut_AbelianGroup e_AbelianGroup arg6_AbelianGroup inv_AbelianGroup arg8_AbelianGroup
+#EXCLUDE S_Magma star_Magma S_Semigroup star_Semigroup assoc_Semigroup S_Monoid star_Monoid assoc_Monoid e_Monoid arg5_Monoid arg6_Monoid S_Group star_Group assoc_Group e_Group arg5_Group arg6_Group inv_Group arg8_Group arg9_Group S_AbelianGroup star_AbelianGroup assoc_AbelianGroup commut_AbelianGroup e_AbelianGroup arg6_AbelianGroup inv_AbelianGroup arg8_AbelianGroup S_Semigroup' star_Semigroup' M_Semigroup' assoc_Semigroup' S_Monoid' star_Monoid' assoc_Monoid' M_Monoid' e_Monoid' arg5_Monoid' arg6_Monoid' S_Group' star_Group' assoc_Group' e_Group' arg5_Group' arg6_Group' M_Group' inv_Group' arg8_Group' arg9_Group' S_AbelianGroup' star_AbelianGroup' assoc_AbelianGroup' e_AbelianGroup' arg5_AbelianGroup' arg6_AbelianGroup' inv_AbelianGroup' arg8_AbelianGroup' arg9_AbelianGroup' M_AbelianGroup' commut_AbelianGroup'
 
 S_Magma : $S$
 star_Magma : $*$
@@ -30,3 +30,35 @@ e_AbelianGroup : $e$
 arg6_AbelianGroup : $\mathrm{arg6}$
 inv_AbelianGroup : $\mathrm{inv}(#2)$
 arg8_AbelianGroup : $\mathrm{arg8}$
+S_Semigroup' : $S$
+star_Semigroup' : $*$
+M_Semigroup' : $M$
+assoc_Semigroup' : $\mathrm{assoc}$
+S_Monoid' : $S$
+star_Monoid' : $*$
+assoc_Monoid' : $\mathrm{assoc}$
+M_Monoid' : $M$
+e_Monoid' : $e$
+arg5_Monoid' : $\mathrm{arg5}$
+arg6_Monoid' : $\mathrm{arg6}$
+S_Group' : $S$
+star_Group' : $*$
+assoc_Group' : $\mathrm{assoc}$
+e_Group' : $e$
+arg5_Group' : $\mathrm{arg5}$
+arg6_Group' : $\mathrm{arg6}$
+M_Group' : $M$
+inv_Group' : $\mathrm{inv}(#2)$
+arg8_Group' : $\mathrm{arg8}$
+arg9_Group' : $\mathrm{arg9}$
+S_AbelianGroup' : $S$
+star_AbelianGroup' : $*$
+assoc_AbelianGroup' : $\mathrm{assoc}$
+e_AbelianGroup' : $e$
+arg5_AbelianGroup' : $\mathrm{arg5}$
+arg6_AbelianGroup' : $\mathrm{arg6}$
+inv_AbelianGroup' : $\mathrm{inv}(#2)$
+arg8_AbelianGroup' : $\mathrm{arg8}$
+arg9_AbelianGroup' : $\mathrm{arg9}$
+M_AbelianGroup' : $M$
+commut_AbelianGroup' : $\mathrm{commut}$

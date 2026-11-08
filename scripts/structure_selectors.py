@@ -26,7 +26,29 @@ operator not in the table); the symbol itself is in the symbol table entry.
 An argument without a name is named by its position (arg5_Monoid for the
 fifth argument of Monoid).  X_selectors.dk uses the constants of X.dk by
 their names, so the two are checked together: the script runs dk check on
-them concatenated (-no-check to skip it).
+them together (-no-check to skip it).
+
+A structure may extend another: its first argument is the parent structure,
+and its other arguments are its new fields, written with the parent's
+selectors, as in test/algebra.dk:
+
+    Semigroup' : (M : Structure) ->
+      (assoc : Proof (associative (S_Magma M) (star_Magma M))) -> Structure.
+
+The parent is the structure whose selectors the new fields use. An extension
+gets the selectors of all of its parent's fields, defined by the parent's
+selectors, and selectors of its own fields, the parent's fields written by
+its own selectors; its unnamed fields are numbered after the inherited ones,
+as in the flat structure (arg5_Monoid' as arg5_Monoid):
+
+    def S_Semigroup' : (m : Structure) -> Set.
+    [M, assoc] S_Semigroup' (Semigroup' M assoc) --> S_Magma M.
+    def assoc_Semigroup' : (m : Structure) ->
+      Proof (associative (S_Semigroup' m) (star_Semigroup' m)).
+    [M, assoc] assoc_Semigroup' (Semigroup' M assoc) --> assoc.
+
+and a selector of the parent itself (M_Semigroup'). As X.dk uses the
+selectors, it is checked with each structure's selectors after it.
 
 X_selectors.dkgf has an initial symbol table entry for each selector: the
 argument's name as a formula ($*$, $S$, $\\mathrm{inv}(#2)$), without the
@@ -280,16 +302,43 @@ def arity(typ):
     return n
 
 
-def selectors(name, typ, var):
-    """The Dedukti text and the symbol table entries of a structure's selectors."""
+def is_parent_arg(arg):
+    """The first argument of an extension: its parent structure."""
+    return isinstance(arg[1], Var) and arg[1].name == 'Structure' and arg[0] is not None
+
+
+def replace(e, f):
+    """e with f applied bottom up to its subterms."""
+    if isinstance(e, App):
+        e = App(replace(e.fun, f), replace(e.arg, f))
+    elif isinstance(e, (Lam, Pi)):
+        e = type(e)(e.name, replace(e.typ, f) if e.typ is not None else None, replace(e.body, f))
+    return f(e)
+
+
+def selectors(name, typ, var, known):
+    """The Dedukti text and the symbol table entries of a structure's
+    selectors, and its fields (selector, field, type) for its extensions;
+    known: the fields of the structures before it."""
     args, _ = telescope(typ)
     taken = names(typ, set())
-    # the pattern variables: the arguments' names, or fresh ones
+    # an extension: the parent is the structure whose selectors its fields use
+    parent, inherited = None, []
+    if args and is_parent_arg(args[0]):
+        used = names(typ, set())
+        parents = [p for p, fs in known.items() if any(sel in used for sel, _, _ in fs)]
+        if len(parents) != 1:
+            raise SyntaxError('%s: no single parent among %s' % (name, parents))
+        parent = parents[0]
+        inherited = known[parent]
+    # the pattern variables: the arguments' names, or fresh ones; an unnamed
+    # field of an extension is numbered after the inherited ones
     pvars, fields = [], []
     for k, (x, _) in enumerate(args, 1):
-        field = x if x is not None else 'arg%d' % k
+        pos = k + len(inherited) - 1 if parent else k
+        field = x if x is not None else 'arg%d' % pos
         fields.append(field)
-        v = x if x is not None else 'x%d' % k
+        v = x if x is not None else 'x%d' % pos
         while x is None and (v in taken or v in pvars):
             v += "'"
         pvars.append(v)
@@ -300,17 +349,64 @@ def selectors(name, typ, var):
              for f, p in zip(fields, plain)]
     pattern = '%s %s' % (name, ' '.join(pvars)) if pvars else name
     ctx = ', '.join(pvars)
-    dk, table, sub = [], [], {}
-    for (x, a), field, v, p in zip(args, fields, pvars, plain):
+    dk, table, out, sub = [], [], [], {}
+    # the parent's fields, by the parent's selectors of the parent
+    rename = {}
+    for psel, field, ptyp in inherited:
+        sel = selector_name(plain_name(field), name)
+        rename[psel] = sel
+    for psel, field, ptyp in inherited:
+        sel = rename[psel]
+        styp = replace(ptyp, lambda e: Var(rename[e.name]) if isinstance(e, Var) and e.name in rename else e)
+        dk.append('def %s : (%s : Structure) -> %s.' % (sel, var, show(styp)))
+        dk.append('[%s] %s (%s) --> %s %s.' % (ctx, sel, pattern, psel, pvars[0]))
+        dk.append('')
+        table.append((sel, formula(field, arity(styp))))
+        out.append((sel, field, styp))
+
+    def own(e):
+        # the parent's selector of the parent: this structure's selector
+        if isinstance(e, App) and isinstance(e.fun, Var) and e.fun.name in rename and \
+           isinstance(e.arg, App) and isinstance(e.arg.fun, Var) and e.arg.fun.name == selector_name(plain[0], name):
+            return App(Var(rename[e.fun.name]), e.arg.arg)
+        return e
+    for k, ((x, a), field, v, p) in enumerate(zip(args, fields, pvars, plain)):
         sel = selector_name(p, name)
-        styp = subst(a, sub)
+        styp = replace(subst(a, sub), own)
         dk.append('def %s : (%s : Structure) -> %s.' % (sel, var, show(styp)))
         dk.append('[%s] %s (%s) --> %s.' % (ctx, sel, pattern, v))
         dk.append('')
         table.append((sel, formula(field, arity(styp))))
+        if not (parent and k == 0):
+            out.append((sel, field, styp))
         if x is not None:
             sub[x] = App(Var(sel), Var(var))
-    return dk, table
+    return dk, table, out
+
+
+def judgements(text):
+    """The judgements of a Dedukti file as text, each with the name it
+    declares (None for others): up to a '.' outside brackets, comments and
+    {|...|}, followed by a space or the end."""
+    out, start, i, depth = [], 0, 0, 0
+    while i < len(text):
+        if text.startswith('(;', i):
+            i = text.find(';)', i) + 2
+            continue
+        if text.startswith('{|', i):
+            i = text.find('|}', i) + 2
+            continue
+        c = text[i]
+        depth += {'(': 1, ')': -1, '[': 1, ']': -1}.get(c, 0)
+        if c == '.' and depth == 0 and (i + 1 == len(text) or text[i + 1].isspace()):
+            jmt = text[start:i + 1]
+            toks = tokens(jmt)
+            out.append((jmt, toks[0] if len(toks) > 2 and toks[1] == ':' else None))
+            start = i + 1
+        i += 1
+    if text[start:].strip():
+        out.append((text[start:], None))
+    return out
 
 
 def main():
@@ -333,10 +429,12 @@ def main():
         var += "'"
     base = path[:-3]
     dk = ['(; selectors of the structures of %s, by scripts/structure_selectors.py ;)' % os.path.basename(path), '']
-    table, sels = [], []
+    table, sels, known, after = [], [], {}, {}
     for n, t in structures:
-        d, tb = selectors(n, t, var)
+        d, tb, fs = selectors(n, t, var, known)
+        known[n] = fs
         dk += ['(; %s ;)' % n] + d
+        after[n] = '\n'.join(d)
         table += tb
         sels += [s for s, _ in tb]
     open(base + '_selectors.dk', 'w').write('\n'.join(dk))
@@ -349,14 +447,17 @@ def main():
     print('%d structures, %d selectors -> %s_selectors.dk, %s_selectors.dkgf'
           % (len(structures), len(sels), base, base))
     if '-no-check' not in sys.argv:
-        # X_selectors.dk uses the constants of X.dk unqualified: checked together
+        # X_selectors.dk uses the constants of X.dk, and the extensions of X.dk
+        # use the selectors of their parents: each structure's selectors after it
+        both_text = ''.join(j + ('\n\n' + after[n] if n in after else '') for j, n in judgements(text))
         with tempfile.TemporaryDirectory() as d:
             both = os.path.join(d, 'selectors_check.dk')
-            open(both, 'w').write(text + '\n' + '\n'.join(dk) + '\n')
+            open(both, 'w').write(both_text + '\n')
             r = subprocess.run(['dk', 'check', both], capture_output=True, text=True)
             out = (r.stdout + r.stderr).strip()
-            print('dk check %s + %s_selectors.dk: %s' % (path, base, out.split('\n')[-1] if out else r.returncode))
+            print('dk check %s with %s_selectors.dk: %s' % (path, base, out.split('\n')[-1] if out else r.returncode))
             if r.returncode:
+                print(out)
                 sys.exit(1)
 
 

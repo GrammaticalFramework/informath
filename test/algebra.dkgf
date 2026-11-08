@@ -1,4 +1,4 @@
-#EXCLUDE Set Elem Prop Proof forall Structure Instance Extension equal refl
+#EXCLUDE Set Elem Prop Proof forall Structure equal refl
 
 equal : "#2 is equal to #3" | $#2 = #3$
 
@@ -22,3 +22,10 @@ Group : "group"
 
 AbelianGroup : "abelian group"
 
+Semigroup' : "semigroup"
+
+Monoid' : "monoid"
+
+Group' : "group"
+
+AbelianGroup' : "abelian group"

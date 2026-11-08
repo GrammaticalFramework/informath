@@ -288,8 +288,8 @@ proof_units:
 #	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
 algebra:
-	dk check test/algebra.dk
-	RunInformath -add-symboltables=test/algebra.dkgf -to-latex-doc -force-symbolic test/algebra.dk  >out/talg.tex
+	python3 scripts/structure_selectors.py test/algebra.dk
+	RunInformath -add-symboltables=test/algebra.dkgf,test/algebra_selectors.dkgf -to-latex-doc -force-symbolic test/algebra.dk  >out/talg.tex
 	cd out ; pdflatex talg.tex ; $(OPEN) talg.pdf
 
 mathcore_examples:
