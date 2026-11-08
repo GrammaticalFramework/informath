@@ -2732,7 +2732,7 @@ Definition. Let $A$ be a set. Then $A$ is empty, if $A$ and $\emptyset$ are equa
 
 Definition. Let $A$ be a set. Then $A$ is empty, if $A$ and the empty set are equal.
 
-Definition. Let $A$ be a set. Then $\isempty {A}$ is a proposition defined as $\mathrm{equalset} (A , \emptyset)$.
+Definition. Let $A$ be a set. Then $\isempty {A}$ is a proposition defined as the proposition that $A = \emptyset$.
 
 Definition. Let $A$ be a set. Then $\isempty {A}$ is a proposition defined as the proposition that $A$ is equal to $\emptyset$.
 

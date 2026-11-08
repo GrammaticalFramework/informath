@@ -326,6 +326,8 @@ exp2exp exp = case specialDedukti2Informath callBacks exp of
       Just _ -> funListExp ident []
       _ -> ident2exp ident
 
+    -- a proposition as a term, as the body of a relation (x => y => Leq x y)
+    EApp _ _ | catExp exp == "Prop" -> GPropExp (exp2prop exp)
     EApp _ _ -> case splitApp exp of
       (fun, args) -> case fun of
    {-

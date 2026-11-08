@@ -94,7 +94,7 @@
  "exx-roundtrip-typecheck": {
   "lines": 16,
   "undefined": 0,
-  "seconds": 2.4
+  "seconds": 2.5
  },
  "exx-swe": {
   "lines": 18,
@@ -104,7 +104,7 @@
  "fermat": {
   "lines": 0,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "gflean-failures": {
   "lines": 36,
@@ -143,12 +143,12 @@
  "lean-exx": {
   "lines": 0,
   "undefined": 0,
-  "seconds": 0.2
+  "seconds": 0.1
  },
  "maps-latex": {
   "lines": 45,
   "undefined": 0,
-  "seconds": 0.2,
+  "seconds": 0.3,
   "latex_pages": 2,
   "latex_errors": 0
  },
@@ -165,17 +165,17 @@
  "mini-matita": {
   "lines": 1269,
   "undefined": 0,
-  "seconds": 0.5
+  "seconds": 0.6
  },
  "naproche-failures": {
   "lines": 76,
   "undefined": 0,
-  "seconds": 1.2
+  "seconds": 1.3
  },
  "naproche-interpret": {
   "lines": 2247,
   "undefined": 0,
-  "seconds": 7.9,
+  "seconds": 8.0,
   "latex_pages": 142,
   "latex_errors": 0
  },
@@ -215,14 +215,14 @@
  "proof-text-lambdas": {
   "lines": 43,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 3,
   "latex_errors": 0
  },
  "proof-text-lemmas": {
   "lines": 58,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 5,
   "latex_errors": 0
  },
@@ -296,7 +296,7 @@
  "top100-symbolic-latex": {
   "lines": 50,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 2,
   "latex_errors": 0
  },

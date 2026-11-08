@@ -189,10 +189,12 @@ catExp :: Exp -> String
 catExp e = case e of
   EApp _ _ -> case splitApp e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
-      Just (k, _) | S.member k propCats -> "Prop"
+      -- a comparison (Leq x y as x \leq y) is a proposition too
+      Just (k, _) | S.member k propCats || k == "Compar" -> "Prop"
       _ | elem f [identConj, identDisj, identImpl,
                   identEquiv, identPi, identSigma, identNot, identProof] -> "Prop"
       _ -> "Kind"
+    _ -> "Kind"
   _ -> "Kind"
 
 
