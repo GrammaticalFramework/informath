@@ -127,8 +127,27 @@ aggregate t = case t of
 -- variable has the same adjective, "let $x$ and $y$ be numbers such that $x >
 -- y$" (SuchThatHypo) otherwise. Two remaining propositions are conjoined.
 aggregateHypos :: [GHypo] -> [GHypo]
-aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . concatMap splitVars
+aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap splitVars
  where
+   -- a set variable of which a later hypothesis predicates a noun gets the
+   -- noun as its kind, and the hypothesis goes: the class assumptions of
+   -- Lean come after all the types ("let R be a semiring" instead of "let R
+   -- be a set ... assume that R is a semiring")
+   nounKinds :: [GHypo] -> [GHypo]
+   nounKinds hs = case hs of
+     GVarsHypo xs@(GListIdent [x]) kind : rest | kind == setKind ->
+       case break (isNounHypo x) rest of
+         (before, h : after) | Just (GNoun1Prop (GNounNoun1 n) _) <- propOfHypo h ->
+           GVarsHypo xs (GNounKind n) : nounKinds (before ++ after)
+         _ -> GVarsHypo xs kind : nounKinds rest
+     h : rest -> h : nounKinds rest
+     [] -> []
+   setKind = GNounKind (LexNoun "set_Noun")
+   isNounHypo :: GIdent -> GHypo -> Bool
+   isNounHypo x h = case propOfHypo h of
+     Just (GNoun1Prop (GNounNoun1 _) (GTermExp (GIdentTerm y))) -> y == x
+     _ -> False
+
    -- one variable at a time
    splitVars :: GHypo -> [GHypo]
    splitVars h = case h of
