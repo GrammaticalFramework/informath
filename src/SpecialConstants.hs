@@ -48,7 +48,8 @@ convertArg callbacks arg = case arg of
 specialDedukti2Informath :: CallBacks -> Exp -> Maybe (Expr, SCat)
 specialDedukti2Informath callbacks exp = case lambdaFlatten exp of
   (EIdent (QIdent s), args) -> case lookupConstantFull s of
-    Just (cat, fun, argcats, _) | S.member cat mainCats ->
+    -- only when fully applied: an unapplied 'not' (Injective not) has no tree of its category
+    Just (cat, fun, argcats, _) | S.member cat mainCats && length args >= length argcats ->
       return (mkApp (mkCId fun) (map (convertArg callbacks) (zip argcats args)), cat)
     _ -> Nothing
   _ -> Nothing
