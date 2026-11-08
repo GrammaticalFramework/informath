@@ -287,6 +287,9 @@ proof_units:
 	echo "${lightgreen}proof units have no Dedukti formalization so far${neutral}"
 #	$(RUN) -add-symboltables=test/proof_units.dkgf -to-lang=$(lang) test/proof_units.dk
 
+bnf:
+	stack runghc scripts/InformathBNF.hs > doc/informath-bnf.md
+
 algebra:
 	python3 scripts/structure_selectors.py test/algebra.dk
 	RunInformath -add-symboltables=test/algebra.dkgf,test/algebra_selectors.dkgf -to-latex-doc -force-symbolic test/algebra.dk  >out/talg.tex
