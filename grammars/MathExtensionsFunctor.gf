@@ -119,10 +119,14 @@ lin
   IndexedTermExp i = symb (mkSymb ("\\INDEXEDTERM {" ++ i.s ++ "}")) ;
   IndexedFormulaProp i = simpleProp (symb (mkSymb ("\\INDEXEDTERM {" ++ i.s ++ "}"))) ;
   IndexedLetFormulaHypo i = lin Utt {s = let_Str ! False ++ "\\INDEXEDTERM {" ++ i.s ++ "}"} ;
+  IndexedLetFormulaSuchThatHypo i prop =
+    lin Utt {s = let_Str ! False ++ "\\INDEXEDTERM {" ++ i.s ++ "}" ++ such_that_Subj.s ++ (mkUtt (partProp prop)).s} ;
 
 -- Pathak's and more
 
   LetFormulaHypo formula = lin Utt {s = let_Str ! False ++ "$" ++ top formula ++ "$"} ;
+  LetFormulaSuchThatHypo formula prop =
+    lin Utt {s = let_Str ! False ++ "$" ++ top formula ++ "$" ++ such_that_Subj.s ++ (mkUtt (partProp prop)).s} ;
 
   PostQuantProp prop exp =
     simpleProp (postAdvS prop.s (Syntax.mkAdv for_Prep exp)) ; -- ambiguous: there is no complexProp in Informath

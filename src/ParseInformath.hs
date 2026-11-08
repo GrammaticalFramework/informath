@@ -76,6 +76,10 @@ unindexGFTrees env termindex expr = case take max_number_unindexed (unind expr) 
   ts -> [tracs env ("FOUND " ++ showExpr [] t) t | t <- ts]
  where
   unind expr = case unApp expr of
+    Just (f, [x, p]) | showCId f == "IndexedLetFormulaSuchThatHypo", Just i <- unInt x -> do
+      formula <- parsed "Formula" (filter (/='$') (look i))
+      up <- unind p
+      return $ mkApp (mkCId "LetFormulaSuchThatHypo") [formula, up]
     Just (f, [x]) -> case unInt x of
       Just i -> case showCId f of
         "IndexedTermExp" -> parsed "Exp" (look i)

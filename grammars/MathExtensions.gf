@@ -89,10 +89,12 @@ fun
   IndexedTermExp : Int -> Exp ;
   IndexedFormulaProp : Int -> Prop ;
   IndexedLetFormulaHypo : Int -> Hypo ;
+  IndexedLetFormulaSuchThatHypo : Int -> Prop -> Hypo ;  -- parsing: let \INDEXEDTERM{i} such that P
 
 -- for Pathak's examples (and more)
 
   LetFormulaHypo : Formula -> Hypo ;
+  LetFormulaSuchThatHypo : Formula -> Prop -> Hypo ;  -- let $x, y \in A$ such that P
   PostQuantProp : Prop -> Quant -> Prop ;
 
   LetDeclarationHypo : Declaration -> Hypo ;

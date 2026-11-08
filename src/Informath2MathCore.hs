@@ -121,6 +121,14 @@ sem env t = case t of
       GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
         where xs = [x | GIdentTerm x <- terms]
     d -> GLetDeclarationHypo d
+  -- "let $x, y \\in A$ such that P", as MathCore2Informath generates it
+  GLetFormulaSuchThatHypo formula prop -> case (sem env formula) of
+    GElemFormula (GListTerm terms) term | length xs == length terms ->
+      sem env (GSuchThatHypo (GListIdent xs) prop (GExpKind (GTermExp term)))
+        where xs = [x | GIdentTerm x <- terms]
+    GEquationFormula (GBinaryEquation (LexCompar "element_Compar") (GIdentTerm x) term) ->
+      sem env (GSuchThatHypo (GListIdent [x]) prop (GExpKind (GTermExp term)))
+    f -> GLetFormulaSuchThatHypo f (sem env prop)
 {- ----
   GIfProp cond@(GFormulaProp (GElemFormula (GListTerm terms) (GSetTerm set))) prop ->
     case getJustVarsFromTerms env terms of

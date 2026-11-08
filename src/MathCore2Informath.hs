@@ -40,12 +40,20 @@ nlg env tree = case () of
      _ -> map letDeclared ncviafts
 
 -- | Variables of a set given by a term are declared with a formula: "let
--- $x, y \\in G$" rather than "let $x$ and $y$ be elements of $G$".
+-- $x, y \\in G$" rather than "let $x$ and $y$ be elements of $G$", also
+-- with a condition: "let $x, y \\in G$ such that P".
 letDeclared :: Tree a -> Tree a
 letDeclared t = case t of
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term)
+  GListHypo hs -> GListHypo (concatMap declared hs)
   _ -> composOp letDeclared t
+ where
+  declared :: GHypo -> [GHypo]
+  declared h = case h of
+    GSuchThatHypo (GListIdent xs) prop (GExpKind (GTermExp term)) ->
+      [GLetFormulaSuchThatHypo (GElemFormula (GListTerm [GIdentTerm x | x <- xs]) term) (letDeclared prop)]
+    _ -> [letDeclared h]
 
 unparenth :: Tree a -> Tree a
 unparenth t = case t of
