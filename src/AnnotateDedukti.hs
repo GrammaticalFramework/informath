@@ -22,8 +22,16 @@ import qualified Data.Set as S
 type DkTree a = Dedukti.AbsDedukti.Tree a
 
 -- annotate Dk idents with cats and funs ; used only internally
+-- a tree with no annotation at all, as a verbal constant is in an argument
+-- of a symbolic one (\FinsetProd with the disjoint union of s and t), is
+-- annotated again with such constants shown as themselves, \mathrm{c}(x)
 annotateDkIdents :: Env -> DkTree a -> [DkTree a]
-annotateDkIdents env =
+annotateDkIdents env t = case annotateDkIdentsFb False env t of
+  [] -> annotateDkIdentsFb True env t
+  ts -> ts
+
+annotateDkIdentsFb :: Bool -> Env -> DkTree a -> [DkTree a]
+annotateDkIdentsFb fallback env =
   if force_symbolic || symbolic_latex
   then annot []
   else checkSymbolics . annot []
@@ -40,23 +48,25 @@ annotateDkIdents env =
 
   -- don't annotate bound variables: they override constants
   annot :: forall a. [QIdent] -> DkTree a -> [DkTree a]
-  annot bounds = map fst . runWriterT . annotV bounds
+  annot bounds = map fst . runWriterT . annotV annotId bounds
 
   -- each alternative comes with its verbality, the number of verbal constants
   -- in it, counted as it is built, as verbality would count them
-  annotV :: forall a. [QIdent] -> DkTree a -> Annots (DkTree a)
-  annotV bounds t = WriterT (spread (runWriterT (annotV0 bounds t)))
+  -- ai gives the alternatives of a constant: annotId, or symbolicLatexId's
+  -- in an argument of a symbolic head that has no nonverbal alternative
+  annotV :: forall a. (QIdent -> [(QIdent, Profile)]) -> [QIdent] -> DkTree a -> Annots (DkTree a)
+  annotV ai bounds t = WriterT (spread (runWriterT (annotV0 ai bounds t)))
 
-  annotV0 :: forall a. [QIdent] -> DkTree a -> Annots (DkTree a)
-  annotV0 bounds t = case t of
+  annotV0 :: forall a. (QIdent -> [(QIdent, Profile)]) -> [QIdent] -> DkTree a -> Annots (DkTree a)
+  annotV0 ai bounds t = case t of
     EApp fun arg -> case splitApp t of
       (EIdent c, args) | notElem c bounds -> do
-        (f, p) <- lift (annotId c)
+        (f, p) <- lift (ai c)
         case p of
           -- HOAS profiles take arguments apart, so they are annotated first,
           -- and the result is counted afresh, as some arguments may be dropped
           HoasProfile _ -> do
-            aargs <- censor (const 0) (mapM (annotV bounds) args)
+            aargs <- censor (const 0) (mapM (annotV ai bounds) args)
             let r = appProfile p (foldl EApp (EIdent f) aargs)
             tell (Sum (verbality r))
             return r
@@ -65,39 +75,39 @@ annotateDkIdents env =
           _ -> case splitApp (appProfile p (foldl EApp (EIdent f) args)) of
             (hd, kept) -> do
               tell (verbalIdent f)
-              aargs <- mapM (prune f . annotV bounds) kept
+              aargs <- mapM (prune ai bounds f) kept
               return (foldl EApp hd aargs)
-      _ -> EApp <$> annotV bounds fun <*> annotV bounds arg
+      _ -> EApp <$> annotV ai bounds fun <*> annotV ai bounds arg
     EIdent c -> do
-      c2 <- annotV bounds c
+      c2 <- annotV ai bounds c
       tell (verbalIdent c2)
       return (EIdent c2)
     -- a pattern in a rewrite rule shows the arguments an expression shows
     PApp _ _ -> case splitPatt t of
       (PVar c, args) | notElem c bounds -> do
-        (f, p) <- lift (annotId c)
-        aargs <- mapM (annotV bounds) args
+        (f, p) <- lift (ai c)
+        aargs <- mapM (annotV ai bounds) args
         return (appPattProfile p (foldl PApp (PVar f) aargs))
-      _ -> composOpM (annotV bounds) t
-    QIdent _ | notElem t bounds -> lift (map fst (annotId t))
-    EAbs b exp -> EAbs <$> censor (const 0) (annotV bounds b)
-                       <*> annotV (bind2ident b : bounds) exp
-    EFun h exp -> EFun <$> annotV bounds h <*> annotV (hypo2topvars h ++ bounds) exp
+      _ -> composOpM (annotV ai bounds) t
+    QIdent _ | notElem t bounds -> lift (map fst (ai t))
+    EAbs b exp -> EAbs <$> censor (const 0) (annotV ai bounds b)
+                       <*> annotV ai (bind2ident b : bounds) exp
+    EFun h exp -> EFun <$> annotV ai bounds h <*> annotV ai (hypo2topvars h ++ bounds) exp
     BVar _ -> return t
-    BTyped v ty -> BTyped v <$> annotV bounds ty
-    HVarExp v ty -> HVarExp v <$> annotV bounds ty
-    HParVarExp v ty -> HParVarExp v <$> annotV bounds ty
-    HLetExp v ty -> HLetExp v <$> annotV bounds ty
-    HLetTyped v ty exp -> HLetTyped v <$> annotV bounds ty <*> annotV bounds exp
+    BTyped v ty -> BTyped v <$> annotV ai bounds ty
+    HVarExp v ty -> HVarExp v <$> annotV ai bounds ty
+    HParVarExp v ty -> HParVarExp v <$> annotV ai bounds ty
+    HLetExp v ty -> HLetExp v <$> annotV ai bounds ty
+    HLetTyped v ty exp -> HLetTyped v <$> annotV ai bounds ty <*> annotV ai bounds exp
     -- the name of a judgement counts as verbality counts it
     JStatic _ _ -> named
     JDef _ _ _ -> named
     JThm _ _ _ -> named
     JInj _ _ _ -> named
-    _ -> composOpM (annotV bounds) t
+    _ -> composOpM (annotV ai bounds) t
    where
      named = do
-       r <- composOpM (annotV bounds) t
+       r <- composOpM (annotV ai bounds) t
        tell (verbalIdent (jmtName r))
        return r
      jmtName :: DkTree b -> QIdent
@@ -108,14 +118,25 @@ annotateDkIdents env =
        JInj c _ _ -> c
        _ -> QIdent ""
 
-  -- the alternatives of an argument of f that checkSymbolics would accept
-  prune :: QIdent -> Annots Exp -> Annots Exp
-  prune (QIdent f) us
+  -- the alternatives of an argument of f that checkSymbolics would accept;
+  -- in the fallback, if it has none, as a constant in it has only verbal
+  -- entries, the ones of symbolic LaTeX, where such a constant is shown as
+  -- itself, so that one verbal constant does not take the whole formula with it
+  prune :: (QIdent -> [(QIdent, Profile)]) -> [QIdent] -> QIdent -> Exp -> Annots Exp
+  prune ai bounds (QIdent f) a
     | force_symbolic || symbolic_latex = us
     | otherwise = case lookupConstant f of
         Just (cat, _) | S.member cat symbolicCats ->
-          WriterT (filter ((== 0) . snd) (runWriterT us))
+          case filter ((== 0) . snd) (runWriterT us) of
+            [] | fallback -> WriterT (filter ((== 0) . snd) (runWriterT (annotV rawId bounds a)))
+            vs -> WriterT vs
         _ -> us
+   where
+     us = annotV ai bounds a
+
+  rawId c = case M.lookup c table of
+    Just entry -> symbolicLatexId c entry
+    _ -> [(c, NoProfile)]
 
   verbalIdent :: QIdent -> Sum Int
   verbalIdent (QIdent k) = case lookupConstant k of
