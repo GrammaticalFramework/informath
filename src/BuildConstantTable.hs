@@ -118,7 +118,12 @@ data SymbolTable = SymbolTable {
   nlgTable :: NLGDefs,
   builtinSet :: S.Set QIdent,
   excludedConstants :: S.Set QIdent,
-  implicitTypes :: [String]  -- #IMPLICIT: types of variables left implicit, as Dedukti text
+  implicitTypes :: [String],  -- #IMPLICIT: types of variables left implicit, as Dedukti text
+  -- #HIDE c i j ...: the arguments of c not shown in readings (the implicit
+  -- arguments of Lean), counted from 1; the entries of c count the others
+  hideTable :: M.Map QIdent [Int],
+  -- #COERCION c k: c is read as its k'th argument (counted before #HIDE)
+  coercionTable :: M.Map QIdent Int
   }
 
 -- conversion from Dk to GF, with synonyms and category information
@@ -216,6 +221,8 @@ buildSymbolTable pgf lang ls = SymbolTable {
   nlgTable = nlgTable,
   builtinSet = builtinSet,
   implicitTypes = implicitTypes,
+  hideTable = M.fromList [(QIdent c, map read ns) | "#HIDE":c:ns <- entrylines],
+  coercionTable = M.fromList [(QIdent c, read k) | ["#COERCION", c, k] <- entrylines],
   excludedConstants = S.fromList [QIdent c | line <- filter isExclude (entrylines), c <- tail line]
   }
  where

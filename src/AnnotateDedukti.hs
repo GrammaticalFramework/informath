@@ -13,6 +13,7 @@ import Environment
 import PGF hiding (Hypo)
 
 import Data.List (intersperse, sortOn)
+import Data.Functor.Identity (Identity(..), runIdentity)
 import Data.Monoid (Sum(..))
 import Control.Monad.Writer (WriterT(..), tell, censor, lift)
 import qualified Data.Map as M
@@ -26,9 +27,47 @@ type DkTree a = Dedukti.AbsDedukti.Tree a
 -- of a symbolic one (\FinsetProd with the disjoint union of s and t), is
 -- annotated again with such constants shown as themselves, \mathrm{c}(x)
 annotateDkIdents :: Env -> DkTree a -> [DkTree a]
-annotateDkIdents env t = case annotateDkIdentsFb False env t of
+annotateDkIdents env t0 = case annotateDkIdentsFb False env t of
   [] -> annotateDkIdentsFb True env t
   ts -> ts
+ where
+  t = hideArgs (symbolTable env) t0
+
+-- | The arguments that readings do not show: the coercions read as the
+-- argument they coerce (#COERCION), unless that makes the two sides of an
+-- equation or equivalence the same, as in ↑(m - n) = ↑m - ↑n, whose content
+-- is the coercion; and the implicit arguments of constants (#HIDE)
+hideArgs :: SymbolTable -> DkTree a -> DkTree a
+hideArgs st = hide . uncoerce
+ where
+  hides = hideTable st
+  coes = coercionTable st
+
+  hide :: forall a. DkTree a -> DkTree a
+  hide t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent c, args) | Just is <- M.lookup c hides ->
+        foldl EApp (EIdent c) [hide a | (i, a) <- zip [1..] args, notElem i is]
+      (f, args) -> foldl EApp (hide f) (map hide args)
+    _ -> runIdentity (composOpM (Identity . hide) t)
+
+  uncoerce :: forall a. DkTree a -> DkTree a
+  uncoerce t = case t of
+    EApp _ _ -> case splitApp t of
+      (EIdent c, args)
+        | Just k <- M.lookup c coes, length args >= k ->
+            foldl EApp (uncoerce (args !! (k-1))) (map uncoerce (drop k args))
+        | isEquation c, length args >= 2 ->
+            let (rest, [a, b]) = splitAt (length args - 2) args
+                (a', b') = (uncoerce a, uncoerce b)
+            in if hide a' == hide b' && hide a /= hide b
+               then foldl EApp (EIdent c) (map uncoerce rest ++ [a, b])
+               else foldl EApp (EIdent c) (map uncoerce rest ++ [a', b'])
+      (f, args) -> foldl EApp (uncoerce f) (map uncoerce args)
+    _ -> runIdentity (composOpM (Identity . uncoerce) t)
+
+  isEquation :: QIdent -> Bool
+  isEquation (QIdent c) = elem c ["Eq", "Eqt", "iff", "Equ"]
 
 annotateDkIdentsFb :: Bool -> Env -> DkTree a -> [DkTree a]
 annotateDkIdentsFb fallback env =
