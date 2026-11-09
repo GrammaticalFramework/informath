@@ -794,5 +794,9 @@ lin verify_Verb = UtilitiesCze.mkVerb (mkV "ověřovat") ;
 lin wish_Verb = UtilitiesCze.mkVerb (mkV "přát") ;
 lin work_Verb = UtilitiesCze.mkVerb (mkV "pracovat") ;
 lin write_Verb = UtilitiesCze.mkVerb (mkV "psát") ;
+lin increasing_Adj = mkAdj (mkA "rostoucí") ;
+lin leading_Adj = mkAdj (mkA "vedoucí") ;
+lin vectorial_Adj = mkAdj (mkA "vektorový") ;
+lin two_sided_Adj = mkAdj (mkA "oboustranný") ;
 
 }

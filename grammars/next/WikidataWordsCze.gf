@@ -274,7 +274,7 @@ lin 'boolean_Adj' = mkAdj (mkA "booleovský") ;
 lin 'bornological_Adj' = mkAdj (mkA "bornologický") ;
 lin 'bottleneck_Noun' = mkNoun (mkN "hrdlo" "hrdla" neuter) ;
 lin 'bottom_Adj' = mkAdj (mkA "spodní") ;
-lin 'bound_Noun' = mkNoun (mkN "mez" "meze" feminine) ;
+lin 'bound_Noun' = mkNoun (pisenN "mez" ** {sgen, pnom, pacc = "meze" ; pins = "mezemi"}) ;
 lin 'bound_Verb' = UtilitiesCze.mkVerb (mkV "ohraničit") ;
 lin 'boundary_Noun' = mkNoun (mkN "hranice" "hranice" feminine) ;
 lin 'bouquet_Noun' = mkNoun (mkN "kytice" "kytice" feminine) ;

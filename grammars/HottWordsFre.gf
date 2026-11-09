@@ -151,5 +151,6 @@ lin witness_Noun = mkNoun (mkN "témoin" masculine) ;
 -- a word of the Godement symbol tables, written by Claude, to be reviewed
 lin composite_Noun = mkNoun (mkN "composée" feminine) ;
 lin hypothesis_Noun = mkNoun (mkN "hypothèse" feminine) ;
+lin respect_Noun = mkNoun (mkN "rapport" masculine) ;
 
 }

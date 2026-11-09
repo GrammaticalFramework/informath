@@ -19,6 +19,7 @@ lin partially_ordered_Adj = mkAdj "partially ordered" ;
 lin linearly_ordered_Adj = mkAdj "linearly ordered" ;
 lin trichotomous_Adj = mkAdj "trichotomous" ;
 lin lower_Adj = mkAdj "lower" ;
+lin equivalence_relation_Noun = mkNoun (mkCN (mkA "equivalence") (mkN "relation")) ;
 
 lin set_of_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkN "divisor"))) ;
 lin set_of_proper_divisors_Noun = mkCN (mkCN (mkN "set")) (setOfPl (mkCN (mkA "proper") (mkN "divisor"))) ;

@@ -20,8 +20,9 @@ oper
   postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
+  -- the modifier in the genitive after the head: relace ekvivalence
   compoundCN : CN -> CN -> CN = \cn1, cn2 ->
-    cn2 ** {s = \\n, c => cn1.s ! singular ! nominative ++ Predef.BIND ++ cn2.s ! n ! c} ;
+    cn2 ** {s = \\n, c => cn2.s ! n ! c ++ cn1.s ! singular ! genitive} ;
 
   nameCompoundCN : PN -> CN -> CN = \pn, cn ->
     cn ** {s = \\n, c => pn.s ! nominative ++ Predef.BIND ++ cn.s ! n ! c} ;

@@ -23,6 +23,7 @@ lin partially_ordered_Adj = mkAdj (partA "partiellt ordnad" "partiellt ordnat" "
 lin linearly_ordered_Adj = mkAdj (partA "linjärt ordnad" "linjärt ordnat" "linjärt ordnade") ;
 lin trichotomous_Adj = mkAdj (mkA "trikotom") ;
 lin lower_Adj = mkAdj (mkA "undre" "undre" "undre" "undre" "understa") ;
+lin equivalence_relation_Noun = mkNoun (mkN "ekvivalensrelation" "ekvivalensrelationer") ;
 
 lin set_of_divisors_Noun = mkNoun (mkCN (mkCN mängd_N) (setOfPl (mkCN delare_N))) ;
 lin set_of_proper_divisors_Noun = mkNoun (mkCN (mkCN mängd_N) (setOfPl (mkCN (mkA "äkta" "äkta" "äkta" "äkta" "äkta") delare_N))) ;

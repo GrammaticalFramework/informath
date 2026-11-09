@@ -5,7 +5,8 @@ concrete GodementExamplesCze of GodementExamples = CategoriesCze **
 
 open UtilitiesCze, ParadigmsCze in {
 
-lin and_Prep = mkPrep "a" nominative ;
+-- genitive, as the second argument of "the intersection of A and B" (průnik A a B)
+lin and_Prep = mkPrep "a" genitive ;
 lin of_order_Prep = mkPrep "řádu" nominative ;
 lin with_respect_to_Prep = mkPrep "vzhledem k" dative ;
 
