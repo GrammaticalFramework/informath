@@ -21,6 +21,8 @@ lin linearly_ordered_Adj = mkAdj (mkA "lineárně uspořádaný") ;
 lin trichotomous_Adj = mkAdj (mkA "trichotomický") ;
 lin lower_Adj = mkAdj (mkA "dolní") ;
 lin equivalence_relation_Noun = mkNoun (mkCN (mkN "relace" "relace" feminine) (ParadigmsCze.mkAdv "ekvivalence")) ;
+-- "rovný" with the dative, not "do": f je rovná g na s
+lin equal_on_Adj3 = mkAdj3 (mladyA "rovný") (mkPrep "" dative) (mkPrep "na" locative) ;
 
 lin set_of_divisors_Noun = mkNoun (mkCN (mkCN mnozina_N) (setOfPl (mkCN divisor_N))) ;
 lin set_of_proper_divisors_Noun = mkNoun (mkCN (mkCN mnozina_N) (setOfPl (mkCN (mkA "vlastní") divisor_N))) ;

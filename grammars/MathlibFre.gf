@@ -22,6 +22,7 @@ lin linearly_ordered_Adj = mkAdj "totalement ordonné" ;
 lin trichotomous_Adj = mkAdj "trichotome" ;
 lin lower_Adj = mkAdj (mkA "inférieur" "inférieure") ;
 lin equivalence_relation_Noun = mkNoun (mkN "relation d'équivalence" "relations d'équivalence" feminine) ;
+lin equal_on_Adj3 = mkAdj3 (mkA "égal") dative (mkPrep "sur") ;
 
 lin set_of_divisors_Noun = mkNoun (mkCN (mkCN (mkN "ensemble" masculine)) (setOfPl (mkCN (mkN "diviseur" masculine)))) ;
 lin set_of_proper_divisors_Noun = mkNoun (mkCN (mkCN (mkN "ensemble" masculine)) (setOfPl (mkCN (mkA "propre") (mkN "diviseur" masculine)))) ;

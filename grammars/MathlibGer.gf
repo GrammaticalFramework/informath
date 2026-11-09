@@ -21,6 +21,7 @@ lin linearly_ordered_Adj = mkAdj (mkA "linear geordnet") ;
 lin trichotomous_Adj = mkAdj (mkA "trichotom") ;
 lin lower_Adj = mkAdj (mkA "unter") ;
 lin equivalence_relation_Noun = mkNoun (mkN "Äquivalenzrelation" feminine) ;
+lin equal_on_Adj3 = mkAdj3 (mkA "gleich") (mkPrep "" dative) (mkPrep "auf" dative) ;
 
 lin set_of_divisors_Noun = mkNoun (mkCN (mkCN menge_N) (setOfPl (mkCN teiler_N))) ;
 lin set_of_proper_divisors_Noun = mkNoun (mkCN (mkCN menge_N) (setOfPl (mkCN (mkA "echt") teiler_N))) ;

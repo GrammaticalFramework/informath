@@ -14,6 +14,7 @@ fun linearly_ordered_Adj : Adj ;
 fun trichotomous_Adj : Adj ;
 fun lower_Adj : Adj ;
 fun equivalence_relation_Noun : Noun ;
+fun equal_on_Adj3 : Adj3 ;
 
 -- sets named after their elements, as Mathlib's Finset-valued functions are
 fun set_of_divisors_Noun : Noun ;

@@ -7,7 +7,7 @@ import Dedukti.AbsDedukti
 import Dedukti.PrintDedukti
 import Informath -- superset of MathCore
 import CommonConcepts (lookupConstant, lookupConstantFull, stripConstant, unescapeConstant)
-import CommonConcepts (expCats, propCats, kindCats, proofCats, symbolicCats)
+import CommonConcepts (expCats, propCats, kindCats, proofCats, symbolicCats, verbalCats)
 import DeduktiTheoryAPI
 import DeduktiOperations
 import BuildConstantTable
@@ -132,7 +132,24 @@ funListExp ident exps = case ident of
     (Just (c, _), _) | S.member c symbolicCats -> GTermExp (funListTerm ident exps)
     _ -> case exps of
       [] -> ident2exp ident
+      _:_ | all symbolicArg exps -> GTermExp (appTerm ident exps)
       _:_ -> GAppExp (ident2exp ident) (gExps (map exp2exp exps))
+
+-- a constant without an entry (or a variable) applied to arguments that are
+-- formulas, as a formula, c(x, y), not "c applied to x and y"
+appTerm :: QIdent -> [Exp] -> GTerm
+appTerm ident exps = GAppFunctionTerm (GIdentFunction (ident2ident ident)) (GListTerm (map exp2term exps))
+
+-- an argument that exp2term can write as a formula: applications and
+-- abstractions of constants none of which has a verbal entry
+symbolicArg :: Exp -> Bool
+symbolicArg exp = case exp of
+  EIdent (QIdent s) -> case lookupConstant s of
+    Just (c, _) -> not (S.member c verbalCats) && not (S.member c propCats) && not (S.member c kindCats)
+    Nothing -> True
+  EApp f x -> symbolicArg f && symbolicArg x
+  EAbs (BVar _) body -> symbolicArg body
+  _ -> False
 
 funListTerm :: QIdent -> [Exp] -> GTerm
 funListTerm ident exps = case ident of
@@ -165,6 +182,7 @@ funListKind ident exps = case ident of
     (Just (c, _), _) | S.member c symbolicCats -> GExpKind (GTermExp (funListTerm ident exps))
     _ -> case exps of
       [] -> ident2kind ident
+      _:_ | all symbolicArg exps -> GExpKind (GTermExp (appTerm ident exps))
       _:_ -> GExpKind (GAppExp (ident2exp ident) (gExps (map exp2exp exps)))
 
 
@@ -192,6 +210,8 @@ funListProp ident exps = case ident of
     (Just (c, _), _) | S.member c symbolicCats -> GFormulaProp (funListFormula ident exps)
     _ -> case exps of
       [] -> GIdentProp (ident2ident ident)
+      _:_ | all symbolicArg exps ->
+        GFormulaProp (GAppPredicateFormula (GIdentPredicate (ident2ident ident)) (GListTerm (map exp2term exps)))
       _:_ -> GAppProp (ident2ident ident) (gExps (map exp2exp exps)) ---- TODO: this causes "Gt holds for ..." etc
       
 funListFormula :: QIdent -> [Exp] -> GFormula
