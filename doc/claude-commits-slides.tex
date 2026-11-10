@@ -44,10 +44,10 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{Eighty-eight Commits}
-\subtitle{What Claude Code has contributed to Informath, July--October 2026}
+\title{A Hundred and Thirty-One Commits}
+\subtitle{What Claude Code has contributed to Informath, July--November 2026}
 \author{Aarne Ranta}
-\date{October 2026}
+\date{November 2026}
 
 \begin{document}
 
@@ -56,7 +56,7 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 900 commits since 2024, almost all by hand.
-    \item \textbf{88} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{131} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,7 +68,7 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October with Tasks 12--35
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--43
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
   \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f} and this version).
 \end{frame}
@@ -1620,6 +1620,198 @@ example/           divisibility.tex, formalized
 \end{frame}
 
 % =====================================================================
+\section{Part VIII: Proof texts, and maps of the code}
+
+\begin{frame}{Since 28 October: 42 more commits as 8 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    36 & Proof texts: tactics, captures, implicit types, ``implies'' & 28--30 Oct & 7 \\
+    37 & Maps of the code & 30 Oct & 5 \\
+    \midrule
+    38 & Algebraic structures in Dedukti & 5--6 Nov & 6 \\
+    39 & Structures by extension, and sets declared by formulas & 8 Nov & 11 \\
+    \midrule
+    40 & Mathlib's undergraduate core & 8 Nov & 7 \\
+    41 & Verbose proofs, and Czech & 9 Nov & 2 \\
+    42 & Constants without words, and hidden arguments & 9 Nov & 2 \\
+    43 & Aggregation, and the regression suite catching up & 10 Nov & 2 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  Plus four commits by me (structures, \texttt{\#EXCLUDE}) and one for these slides.
+  The Mathlib side of Tasks 39--43 is in \texttt{informalizing-mathlib-slides.pdf}, steps 25--36.
+\end{frame}
+
+\begin{frame}{Task 36: Proof texts, continued}
+  \commit{45ca95c}, \commit{b7fa44c}, \commit{6272b7c}, \commit{d33094e} (28 Oct),
+  \commit{5e9d80d}, \commit{3c91060} (29 Oct), \commit{4109371} (30 Oct)
+  \begin{itemize}\small
+    \item \textbf{Tactic proofs} get the layout of term proofs: each unit with its
+          \texttt{depth} and the goal of its assumption (\texttt{-proof-indent},
+          \texttt{-proof-goals}).
+    \item \textbf{Variable capture}: \texttt{existsE}'s own $x$ captured the $x$ of the proof,
+          \bad{``pair $y$ $y$''} for \texttt{pair x y}; substitution now renames.
+    \item \textbf{\#IMPLICIT} also for definitions (``The underlying set of $m$ is \ldots''),
+          and quantifiers over implicit types without their kind: \ok{``for all $x$ and $y$,
+          $P$''}, $\forall x .\ P$.
+    \item Rules as adverbs: a table entry gives a rule as a \texttt{Hence}, \ok{``in
+          particular, $x \in A$''}; ``in both cases'' in four languages.
+    \item \textbf{No more ``if if''}: an implication between formulas says \ok{``$A$ implies
+          $B$''} in antecedents and hypotheses (new \texttt{NotFormula} \ldots\
+          \texttt{IffFormula}: $\neg A$, $A \Rightarrow B$). The last 26 of Task 30.
+    \item A line that applies a theorem of the module names it: ``by \texttt{ex25\_set}, $B$''.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 37: Maps of the code}
+  \commit{22038f6}, \commit{379fc9a}, \commit{ce5c8f6}, \commit{90f44cb}, \commit{9c90831}
+  (30 Oct)
+  \begin{itemize}\small
+    \item \texttt{doc/informalization-pipeline.md}: the phases of informalization and
+          formalization, following \texttt{InformathAPI} step by step with a running example and
+          its real intermediate results; the files with their roles; Mermaid diagrams.
+    \item \texttt{scripts/code\_map.py}: for any project, the modules with their sizes and
+          first comments, the Haskell imports and how the GF modules are built (extends,
+          instantiates, opens); \texttt{-check=DOC} reports links that lead nowhere and names
+          no longer in the code.
+    \item \texttt{scripts/gf\_function\_uses.py}: how often the Haskell code uses each GF
+          function; \texttt{make haddock} for \texttt{InformathAPI.html}.
+    \item \texttt{ProofText}: the lines of a proof text built from Dedukti alone, the
+          grammar only putting them into words; the output unchanged in three languages,
+          and \texttt{-proof-text-dedukti} to see the lines as Dedukti.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part IX: Algebraic structures}
+
+\begin{frame}{Task 38: Algebraic structures in Dedukti}
+  \commit{735eb39} (5 Nov), \commit{21a299d}, \commit{e043d27}, \commit{b2f9f3c},
+  \commit{0a59340}, \commit{41b41d7} (6 Nov); my \commit{a62ccc1}, \commit{08878fe},
+  \commit{25015a8}
+  \begin{itemize}\small
+    \item I added a grammar rule for structure definitions (\texttt{make algebra}), in English
+          only, and \texttt{full\_grammar} no longer compiled: Claude added
+          \texttt{algebraic\_structure\_CN} to the other six languages and \texttt{StructureJmt}
+          to \LaTeX\ ($K := \langle\text{clauses}\rangle$).
+    \item I added \texttt{\#EXCLUDE}: declarations not shown in documents. Claude made it
+          leave out their rewrite rules too.
+    \item \texttt{scripts/structure\_selectors.py}: a selector for each field of each
+          structure, defined by a rewrite rule, checked by \texttt{dk check}, with
+          \texttt{\#EXCLUDE} lines and formula entries ($S$, $*$, $\mathrm{inv}(x)$).
+    \item For unit-informath (Coquand's gcd domains): \texttt{defac} and \texttt{defacu} read as
+          declarations of binary operations; \emph{gcd domain}; escaped underscores in labels
+          (\texttt{div\_trans}).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 39: Structures by extension, and sets by formulas}
+  \commit{8793eb1}, \commit{5e34c71}, \commit{c449ed7}, \commit{0b17043}, \commit{c2c7cd7},
+  \commit{06ec169}, \commit{4ba410e}, \commit{c3260d0}, \commit{1e8ea8d}, \commit{ee40350},
+  \commit{2e8c9b6} (8 Nov)
+  \begin{itemize}\small
+    \item For Mathlib's classes, as a textbook defines them: \texttt{ExtensionJmt},
+          \ok{``a monoid is a semigroup $M$ with an element $1$ of $M$ such that \ldots''};
+          with parameters, ``let $R$ be a semiring. Then a module over $R$ is \ldots'';
+          structures of kinds, ``an abelian group is a group $M$ such that $*$ is
+          commutative''.
+    \item Variables of a set given by a term declared by a formula: \ok{``let $n \in
+          \mathbb{N}$''}, ``let $x, y \in A$ such that $P$'', not ``let $n$ be an element of
+          $\mathbb{N}$''; quantifiers merged only over the same variables.
+    \item ``The $K$ form a set'' instead of \bad{``a basic type''};
+          \texttt{doc/informath-bnf.md}, a BNF of Informath's English.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part X: Mathlib's core, and what it found}
+
+\begin{frame}{Task 40: Mathlib's undergraduate core}
+  \commit{9def983}, \commit{da2c7c4}, \commit{04f6df7}, \commit{62e2142}, \commit{4c82215},
+  \commit{3a71cbd}, \commit{204b99c} (8 Nov)
+  \prompt{Start with English only, then tier A. But also continue with B to F; I will have to
+  leave you alone for a few hours and will be excited to see what you achieve in the meantime :-)}
+  \begin{itemize}\small
+    \item 82 modules, 9,126 declarations, overnight. What Informath needed:
+    \item \texttt{-proof-text} evaluates each proof on its own: a failed one is marked and the
+          rest written (one failure had cost a whole module).
+    \item \ok{``Let $G$ be a monoid''}, not ``let $G$ be a set such that $G$ is a monoid'';
+          $M'$ as a letter, not $\mathrm{M'}$; a proposition in the place of a term read as
+          one (the body of a relation).
+    \item After \textit{``what next?''}, a hundred proofs read: \texttt{rfl} at its expected
+          type; the rewriting that \texttt{simp} leaves in a term as one step,
+          \ok{``By rewriting, $P$''}; \texttt{-proof-no-cite}; the methods of tactic steps
+          (``By simplification'', 1,405 lines).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 41: Verbose proofs, and Czech}
+  \commit{acf3326}, \commit{4fbfd58} (9 Nov)
+  \prompt{some proofs look quite verbose to me \ldots\ Is there a systematic reason for
+  this, and could it be fixed?}
+  \begin{itemize}\small
+    \item One verbal-only constant inside a symbolic one (\texttt{disjUnion} in
+          $\prod$) left a whole goal \bad{unannotated}, ``Eqt holds for $M$, \ldots''; now only
+          that constant is shown as itself. (The other two causes were in the exporter.)
+  \end{itemize}
+  \prompt{Could you now add French and Czech to the new work? You can use the same Informath
+  ASTs, hence just add their linearizations.}
+  \begin{itemize}\small
+    \item Czech lacked most proof units, and \bad{had no Mizar module}: ``left inverse'' was
+          an \bad{empty string}, 453 Mathlib statements without Czech. \texttt{MizarCze}, the
+          units, 76 words; compounds with the genitive, \ok{``relace ekvivalence''}; ``prvky $x$
+          \ok{z} $X$''; \emph{meze}, where the RGL gave \bad{\emph{mezě}}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Task 42: Constants without words, and hidden arguments}
+  \commit{0d144b0}, \commit{64c2bf9} (9 Nov)
+  \prompt{Can you do something with the ``applied to'' phrases?} \prompt{One possibility is to
+  -force-symbolic instead}
+  \begin{itemize}\small
+    \item \texttt{-force-symbolic} missed the main case: constants with no entry at all.
+          Such a constant applied to formulas is now a formula: \ok{$\mathrm{Min}(X)$} for
+          \bad{``Min holds for $X$''}. ``Applied to'' on the Mathlib pages: 12,520 $\to$ 1,500.
+  \end{itemize}
+  \prompt{Could one have a coercion operator such that (co x) translates to x in the symbol
+  table? \ldots\ For signatures, would it help to have \#IMPLICIT directives for certain types?}
+  \begin{itemize}\small
+    \item \texttt{\#HIDE c i j}: arguments removed before the entries apply, so that
+          hand-written entries count the visible ones; \texttt{\#COERCION c k}: $c$ read as its
+          $k$'th argument, \emph{unless} the two sides of an equation then coincide:
+          \ok{``$\uparrow(x - y)$ is equal to $\uparrow x - \uparrow y$''}, not
+          \bad{``$x - y$ is equal to $x - y$''}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 43: Aggregation, and the regression suite catching up}
+  \commit{a9ccfa7}, \commit{1c17d79} (10 Nov)
+  \prompt{some of the results have a perfect aggregation of hypotheses \ldots\ But there are
+  also partially aggregated statements such as ``let p : N. let q be a natural number.'' \ldots\
+  What is also missing is the most aggressive aggregation, ``let p and q be prime natural
+  numbers''.}
+  \begin{itemize}\small
+    \item The partial ones came from \emph{annotation}: each occurrence of \texttt{Nat} got
+          $\mathbb{N}$ or ``natural number'' independently. Now each constant has
+          \ok{one form in all the hypotheses} (kept so, at my request, also for
+          ``$0 < m$ and $m$ is less than \ldots'').
+    \item \texttt{AdjKindHypo} also from a conjunction, ``$p$ and $q$ are prime''; not with
+          $\mathbb{N}$, which gave \bad{``a prime element of $\mathbb{N}$''}.
+  \end{itemize}
+  \prompt{But why does dk-roundtrip fail in regression?}
+  \begin{itemize}\small
+    \item An improvement: \texttt{prop110} parsed back for the first time, with 15 spurious
+          readings. But the suite had \bad{not been run for six commits}, and it found that
+          6,771 Mathlib \emph{formulas} showed \bad{\texttt{[AppPredicateFormula]}} since
+          Task 42. Fixed, 23 cases reviewed and accepted: 52 pass.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
 \section{Observations and the future}
 
 \begin{frame}{What we observed}
@@ -1754,18 +1946,45 @@ example/           divisibility.tex, formalized
   \end{columns}
 \end{frame}
 
+\begin{frame}{What the Mathlib core tasks added}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \ok{\textbf{Worked well}}
+      \begin{itemize}\small
+        \item Hours unattended, with the scale chosen in advance: six tiers, English first.
+        \item Reading a sample before changing anything: a hundred proofs, their classes of
+              errors with counts.
+        \item Every fix measured on all 9,126 statements, with before-and-after diffs.
+        \item A diagnosis from one bad example to three systematic causes.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \bad{\textbf{Needed a human}}
+      \begin{itemize}\small
+        \item Noticing: verbose proofs, partial aggregations, a failing test.
+        \item The questions: \emph{why does lean2dk look more complicated?}
+        \item The designs: a coercion operator hidden by the table; one form per
+              constant in the hypotheses.
+        \item The regression suite, \bad{not run for six commits}: the broken formulas
+              were found only when I asked about a failure.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{Speculation: what would be good to do next}
   \begin{itemize}\small
     \item \textbf{Review}: native checking of the Finnish, Czech, Polish and French
           words, and of \texttt{translations.tsv} (Task 28); agreement of ``such that'' \ok{after a CN (Task 23)}; next, after a
           list of kinds, without a parameter explosion.
-    \item \textbf{Tests}: \ok{a regression suite exists (Task 14)}; next, CI.
+    \item \textbf{Tests}: \ok{a regression suite exists (Task 14)}; next, CI, so that it
+          is run after every commit (Task 43).
     \item \textbf{Scale}: \ok{big statements get English (Task 16)}; next,
           linearization, now the slowest part; and a lexer and unlexer that agree.
     \item \textbf{Proofs}: \ok{lemmas, conclusions and the statement's variables right
-          (Task 21); Fitch structure, cases, goals, trees (Tasks 32--35)}; next, rules with
-          hypothetical premisses that read as tautologies, ``assume that $A$ implies $B$'',
-          and the last 26 ``if if''.
+          (Task 21); Fitch structure, cases, goals, trees (Tasks 32--35); ``implies'' (Task
+          36)}; next, rules with hypothetical premisses that read as tautologies, the unfolding
+          of definitions that 42 Mathlib proofs need, and binders over proofs read as ``if''.
     \item \textbf{Coverage}: run GodementSyntax on all 10\,413 sentences and measure
           how much of the book parses; port it to French, German, Swedish.
     \item \textbf{Autoformalization}: parse Godement's own text into Dedukti and
