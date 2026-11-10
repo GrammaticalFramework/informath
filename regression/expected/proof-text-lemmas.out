@@ -59,8 +59,8 @@
 
 \begin{tabular}{rp{0.62\textwidth}l}
 1. & Let $a \in D$. &  \\
-2. & Assume that $S$ holds for $a$. &  \\
-3. & $T$ holds for $a$. & \texttt{d} 1, 2  \\
+2. & Assume that $S (a)$. &  \\
+3. & $T (a)$. & \texttt{d} 1, 2  \\
 \end{tabular}
 
 
@@ -77,8 +77,8 @@
 
 \begin{tabular}{rp{0.62\textwidth}l}
 1. & Let $y \in D$. &  \\
-2. & $S$ holds for $y$. & \texttt{d} 1  \\
-3. & For all elements $y$ of $D$, $S$ holds for $y$. & \texttt{forallI} 1, 2  \\
+2. & $S (y)$. & \texttt{d} 1  \\
+3. & For all elements $y$ of $D$, $S (y)$. & \texttt{forallI} 1, 2  \\
 \end{tabular}
 
 

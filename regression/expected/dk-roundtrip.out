@@ -31,6 +31,21 @@ ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (
 ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (vectorPlus (plus a b) c) (nd 0)) -> Proof (Lt (times a (cartesian b c)) (nd 0)) .
 ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (vectorPlus a b) c) (nd 0)) -> Proof (Lt (times a (cartesian b c)) (nd 0)) .
 ill-typed: prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (plus a b) c) (nd 0)) -> Proof (Lt (times a (cartesian b c)) (nd 0)) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (vectorPlus (times a b) (times b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (vectorPlus (times a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (plus (times a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (vectorPlus (cartesian a b) (times b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (plus (cartesian a b) (times b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (vectorPlus (cartesian a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (plus (cartesian a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (vectorPlus (times a b) (times b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (plus (times a b) (times b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (vectorPlus (times a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (plus (times a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (vectorPlus (cartesian a b) (times b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (plus (cartesian a b) (times b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (vectorPlus (cartesian a b) (cartesian b c)))) .
+ill-typed: prop110 : a : Elem (suchthat Int (_g0 => odd _g0)) -> c : Elem (suchthat Int (_g0 => odd _g0)) -> Proof (forall Int (b => even (plus (cartesian a b) (cartesian b c)))) .
 ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (or (iff (even (times a b)) a) (even b)) .
 ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (or (iff (even (cartesian a b)) a) (even b)) .
 ill-typed: prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (cartesian a b)) (or (even a) (even b))) .

@@ -130,7 +130,7 @@ Definition. Let $x$ and $y$ be numbers. Then we can say that $x \geq y$.
 
 Definition. Let $x$ and $y$ be numbers. Then we can say that $x$ is greater than or equal to $y$.
 
-Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Eqt}$ holds for $A$, $y$ and $z$.
+Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Eqt} (A , y , z)$.
 
 Definition. Let $x \in \Real$. Then we can say that $x$ is positive.
 
@@ -188,14 +188,6 @@ Definition. Let $x$ and $y$ be integers. Then the greatest common divisor of $x$
 
 Definition. Let $x , y \in \Integer$. Then the greatest common divisor of $x$ and $y$ is an element of $\Integer$.
 
-Definition. Let $x \in \Integer$. Let $y$ be an integer. Then the greatest common divisor of $x$ and $y$ is an integer.
-
-Definition. Let $x$ be an integer. Let $y \in \Integer$. Then the greatest common divisor of $x$ and $y$ is an integer.
-
-Definition. Let $x \in \Integer$. Let $y$ be an integer. Then the greatest common divisor of $x$ and $y$ is an element of $\Integer$.
-
-Definition. Let $x$ be an integer. Let $y \in \Integer$. Then the greatest common divisor of $x$ and $y$ is an element of $\Integer$.
-
 Definition. Let $r \in \Real$. Then $| r |$ is a real number.
 
 Definition. Let $r$ be a real number. Then $| r |$ is a real number.
@@ -252,10 +244,6 @@ Definition. Let $n , m \in \Integer$. Then $n$ is divisible by $m$, if there exi
 
 Definition. Let $n$ and $m$ be integers. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n = k \times m$.
 
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n = k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n = k \times m$.
-
 Definition. Let $n$ and $m$ be integers. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
 
 Definition. Let $n , m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
@@ -272,18 +260,6 @@ Definition. Let $n , m \in \Integer$. Then $n$ is divisible by $m$, if there exi
 
 Definition. Let $n$ and $m$ be integers. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
 
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n = k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n = k \times m$.
-
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n = k \times m$.
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n = k \times m$.
@@ -296,25 +272,9 @@ Definition. Let $n , m \in \Integer$. Then $n$ is divisible by $m$, if there exi
 
 Definition. Let $n$ and $m$ be integers. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to $k \times m$.
 
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an integer $k$, such that $n$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
 
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ and $k \times m$ are equal.
 
@@ -324,21 +284,9 @@ Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition 
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n = k \times m$.
 
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n = k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n = k \times m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
-
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ is divisible by $m$, if there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to $k \times m$.
 
@@ -352,18 +300,6 @@ Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition 
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
 
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n = k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n = k \times m$.
-
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
@@ -371,30 +307,6 @@ Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a propositi
 Definition. Let $n , m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $n$ and $m$ be integers. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to $k \times m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an integer $k$, such that $n$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and $k \times m$ are equal.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ is equal to the product of $k$ and $m$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divisible {n}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Integer$, such that $n$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $n$ and $m$ be integers. Then $n$ divides $m$, if $\divisible {m}{n}$.
 
@@ -404,29 +316,13 @@ Definition. Let $n$ and $m$ be integers. Then $n$ divides $m$, if $m$ is divisib
 
 Definition. Let $n , m \in \Integer$. Then $n$ divides $m$, if $m$ is divisible by $n$.
 
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ divides $m$, if $\divisible {m}{n}$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ divides $m$, if $\divisible {m}{n}$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $n$ divides $m$, if $m$ is divisible by $n$.
-
 Definition. Let $n$ and $m$ be integers. Then $\divides {n}{m}$ is a proposition defined as $\divisible {m}{n}$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $n$ divides $m$, if $m$ is divisible by $n$.
 
 Definition. Let $n , m \in \Integer$. Then $\divides {n}{m}$ is a proposition defined as $\divisible {m}{n}$.
 
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divides {n}{m}$ is a proposition defined as $\divisible {m}{n}$.
-
 Definition. Let $n$ and $m$ be integers. Then $\divides {n}{m}$ is a proposition defined as the proposition that $m$ is divisible by $n$.
 
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divides {n}{m}$ is a proposition defined as $\divisible {m}{n}$.
-
 Definition. Let $n , m \in \Integer$. Then $\divides {n}{m}$ is a proposition defined as the proposition that $m$ is divisible by $n$.
-
-Definition. Let $n \in \Integer$. Let $m$ be an integer. Then $\divides {n}{m}$ is a proposition defined as the proposition that $m$ is divisible by $n$.
-
-Definition. Let $n$ be an integer. Let $m \in \Integer$. Then $\divides {n}{m}$ is a proposition defined as the proposition that $m$ is divisible by $n$.
 
 Definition. Let $x$ and $y$ be integers. Then $x$ is a divisor of $y$, if $x$ divides $y$.
 
@@ -435,14 +331,6 @@ Definition. Let $x , y \in \Integer$. Then $x$ is a divisor of $y$, if $x$ divid
 Definition. Let $x$ and $y$ be integers. Then $x$ is a divisor of $y$, if $\divides {x}{y}$.
 
 Definition. Let $x , y \in \Integer$. Then $x$ is a divisor of $y$, if $\divides {x}{y}$.
-
-Definition. Let $x \in \Integer$. Let $y$ be an integer. Then $x$ is a divisor of $y$, if $x$ divides $y$.
-
-Definition. Let $x$ be an integer. Let $y \in \Integer$. Then $x$ is a divisor of $y$, if $x$ divides $y$.
-
-Definition. Let $x \in \Integer$. Let $y$ be an integer. Then $x$ is a divisor of $y$, if $\divides {x}{y}$.
-
-Definition. Let $x$ be an integer. Let $y \in \Integer$. Then $x$ is a divisor of $y$, if $\divides {x}{y}$.
 
 Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m < n$ and $\divisible {n}{m}$.
 
@@ -512,7 +400,7 @@ Definition. The booleans form a set.
 
 Definition. Let $x$ be a set. Then the lists of elements of $x$ form a set.
 
-Definition. Let $A$ be a set. Let $y \in A$. Let $z$ be a list of elements of $A$. Then we can say that $\mathrm{member}$ holds for $A$, $y$ and $z$.
+Definition. Let $A$ be a set. Let $y \in A$. Let $z$ be a list of elements of $A$. Then we can say that $\mathrm{member} (A , y , z)$.
 
 Definition. Let $x$ and $y$ be sets. Then the functions from elements of $x$ to elements of $y$ form a set.
 
@@ -586,9 +474,9 @@ Definition. Let $x \in \mathbb{ U}$. Let $y$ be a set. Then we can say that $x$ 
 
 Definition. Let $x$ be an element of the universal set. Let $y$ be a set. Then we can say that $x$ is a non-element of $y$.
 
-Definition. Let $x$ be a set. Then the elements of $\mathrm{positivePart}$ applied to $x$ form a set.
+Definition. Let $x$ be a set. Then the elements of $\mathrm{positivePart} (x)$ form a set.
 
-Definition. Let $x$ be a set. Then the elements of $\mathrm{negativePart}$ applied to $x$ form a set.
+Definition. Let $x$ be a set. Then the elements of $\mathrm{negativePart} (x)$ form a set.
 
 Definition. Let $x$ be a set. Then we can say that $x$ is finite.
 
@@ -596,7 +484,7 @@ Definition. Let $A$ be a set. Then $A$ is infinite, if $A$ is not finite.
 
 Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Then the elements $x$ of $A$ such that $B$ form a set.
 
-Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $z$ be an element $x$ of $A$ such that $B$ holds for $x$. Then $\mathrm{fst}$ applied to $B$ and $z$ is an element of $A$.
+Definition. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $z$ be an element $x$ of $A$ such that $B (x)$. Then $\mathrm{fst} (B , z)$ is an element of $A$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b = k \times m$.
 
@@ -630,10 +518,6 @@ Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ i
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b = k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
@@ -641,10 +525,6 @@ Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congr
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b = k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
 
@@ -670,37 +550,17 @@ Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ i
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
 
@@ -708,11 +568,7 @@ Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congr
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
@@ -746,15 +602,7 @@ Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent 
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
 
@@ -768,43 +616,19 @@ Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congru
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
 
@@ -812,23 +636,15 @@ Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is c
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b = k \times m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
@@ -848,39 +664,15 @@ Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\con
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
@@ -888,45 +680,17 @@ Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congru
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b = k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to $k \times m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
@@ -940,23 +704,11 @@ Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent 
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and $k \times m$ are equal.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
@@ -966,79 +718,27 @@ Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congru
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
@@ -1046,21 +746,9 @@ Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
@@ -1068,121 +756,33 @@ Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\con
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $a$ is congruent to $b$ modulo $m$, if there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to $k \times m$.
 
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
 Definition. Let $a , b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a$ and $b$ be integers. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that $a - b$ and the product of $k$ and $m$ are equal.
 
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
 
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
 Definition. Let $a , b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
 Definition. Let $a$ and $b$ be integers. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to $k \times m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and $k \times m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists a natural number $k$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m \in \Natural$. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ is equal to the product of $k$ and $m$.
-
-Definition. Let $a$ be an integer. Let $b \in \Integer$. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
-
-Definition. Let $a \in \Integer$. Let $b$ be an integer. Let $m$ be a natural number. Then $\congruent {a}{b}{m}$ is a proposition defined as the proposition that there exists an element $k$ of $\Natural$, such that the difference between $a$ and $b$ and the product of $k$ and $m$ are equal.
 
 Definition. The elements of $\mathrm{Enum}$ form a set.
 
 Definition. $\mathrm{nil}$ is an element of $\mathrm{Enum}$.
 
-Definition. Let $x$ be a number. Let $y \in \mathrm{Enum}$. Then $\mathrm{cons}$ applied to $x$ and $y$ is an element of $\mathrm{Enum}$.
+Definition. Let $x$ be a number. Let $y \in \mathrm{Enum}$. Then $\mathrm{cons} (x , y)$ is an element of $\mathrm{Enum}$.
 
-Definition. $\mathrm{enum123}$ is an element of $\mathrm{Enum}$ defined as $\mathrm{cons}$ applied to $1$ and $\mathrm{cons}$ applied to $2$ and $\mathrm{cons}$ applied to $3$ and $\mathrm{nil}$.
+Definition. $\mathrm{enum123}$ is an element of $\mathrm{Enum}$ defined as $\mathrm{cons} (1 , \mathrm{cons} (2 , \mathrm{cons} (3 , \mathrm{nil})))$.
 
-Definition. Let $x \in \mathrm{Enum}$. Then the elements of $\mathrm{enumset}$ applied to $x$ form a set.
+Definition. Let $x \in \mathrm{Enum}$. Then the elements of $\mathrm{enumset} (x)$ form a set.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q \neq 0$ and $x = \frac{ p}{q}$.
 
@@ -1564,23 +1164,7 @@ Definition. Let $x$ and $y$ be natural numbers. Then $\left(\frac{ x }{ y }\righ
 
 Definition. Let $x , y \in \Natural$. Then the Legendre symbol of $x$ over $y$ is an element of $\Integer$.
 
-Definition. Let $x \in \Natural$. Let $y$ be a natural number. Then $\left(\frac{ x }{ y }\right)$ is an integer.
-
-Definition. Let $x$ be a natural number. Let $y \in \Natural$. Then $\left(\frac{ x }{ y }\right)$ is an integer.
-
 Definition. Let $x$ and $y$ be natural numbers. Then the Legendre symbol of $x$ over $y$ is an element of $\Integer$.
-
-Definition. Let $x \in \Natural$. Let $y$ be a natural number. Then the Legendre symbol of $x$ over $y$ is an integer.
-
-Definition. Let $x$ be a natural number. Let $y \in \Natural$. Then the Legendre symbol of $x$ over $y$ is an integer.
-
-Definition. Let $x \in \Natural$. Let $y$ be a natural number. Then $\left(\frac{ x }{ y }\right)$ is an element of $\Integer$.
-
-Definition. Let $x$ be a natural number. Let $y \in \Natural$. Then $\left(\frac{ x }{ y }\right)$ is an element of $\Integer$.
-
-Definition. Let $x \in \Natural$. Let $y$ be a natural number. Then the Legendre symbol of $x$ over $y$ is an element of $\Integer$.
-
-Definition. Let $x$ be a natural number. Let $y \in \Natural$. Then the Legendre symbol of $x$ over $y$ is an element of $\Integer$.
 
 Definition. $\pi$ is a real number.
 
@@ -1618,10 +1202,6 @@ Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as $\frac{ n !}{k ! \times (n - k)!}$.
@@ -1638,19 +1218,11 @@ Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natu
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and $k ! \times (n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and $k ! \times (n - k)!$.
 
@@ -1672,17 +1244,9 @@ Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natu
 
 Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and $k ! \times (n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and $k ! \times (n - k)!$.
 
@@ -1694,17 +1258,9 @@ Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
@@ -1720,19 +1276,11 @@ Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natu
 
 Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as $\frac{ n !}{k ! \times (n - k)!}$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and $k ! \times (n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
 
@@ -1742,10 +1290,6 @@ Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
@@ -1754,25 +1298,9 @@ Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
 
@@ -1790,10 +1318,6 @@ Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is an ele
 
 Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and $k ! \times (n - k)!$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
@@ -1802,45 +1326,17 @@ Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over 
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
 
@@ -1849,10 +1345,6 @@ Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
@@ -1868,61 +1360,21 @@ Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over 
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and $k ! \times (n - k)!$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
@@ -1940,55 +1392,15 @@ Definition. Let $n$ and $k$ be natural numbers. Then $\binom{ n }{ k}$ is a natu
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of $n - k$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
 Definition. Let $n , k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
@@ -2000,85 +1412,17 @@ Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over 
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and $(n - k)!$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of $n - k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $\binom{ n }{ k}$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
 Definition. Let $n$ and $k$ be natural numbers. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of $k !$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of $n !$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is a natural number defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the binomial coefficient of $n$ over $k$ is an element of $\Natural$ defined as the quotient of the factorial of $n$ and the product of the factorial of $k$ and the factorial of the difference between $n$ and $k$.
 
 Definition. Let $n , k \in \Natural$. Then $C^{ n }_{ k}$ is a natural number.
 
@@ -2088,29 +1432,13 @@ Definition. Let $n , k \in \Natural$. Then $C^{ n }_{ k}$ is an element of $\Nat
 
 Definition. Let $n$ and $k$ be natural numbers. Then $C^{ n }_{ k}$ is an element of $\Natural$.
 
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $C^{ n }_{ k}$ is a natural number.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $C^{ n }_{ k}$ is a natural number.
-
 Definition. Let $n , k \in \Natural$. Then the set of combinations of $n$ of size $k$ is a natural number.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the set of combinations of $n$ of size $k$ is a natural number.
 
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then $C^{ n }_{ k}$ is an element of $\Natural$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then $C^{ n }_{ k}$ is an element of $\Natural$.
-
 Definition. Let $n , k \in \Natural$. Then the set of combinations of $n$ of size $k$ is an element of $\Natural$.
 
 Definition. Let $n$ and $k$ be natural numbers. Then the set of combinations of $n$ of size $k$ is an element of $\Natural$.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the set of combinations of $n$ of size $k$ is a natural number.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the set of combinations of $n$ of size $k$ is a natural number.
-
-Definition. Let $n \in \Natural$. Let $k$ be a natural number. Then the set of combinations of $n$ of size $k$ is an element of $\Natural$.
-
-Definition. Let $n$ be a natural number. Let $k \in \Natural$. Then the set of combinations of $n$ of size $k$ is an element of $\Natural$.
 
 Definition. Let $A$ be a set. Let $k \in \Natural$. Then $C^{ A }_{ k}$ is a set.
 
@@ -2494,165 +1822,29 @@ Definition. Let $u$ and $v$ be vectors. Then the sum of $u$ and $v$ is a vector.
 
 Definition. Let $u$ and $v$ be vectors. Then the resultant of $u$ and $v$ is a vector.
 
-Definition. Let $m , n \in \Natural$. Let $f$ be a function from natural numbers $i$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
 Definition. Let $m$ and $n$ be natural numbers. Let $f$ be a function from natural numbers $i$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
+
+Definition. Let $m$ and $n$ be natural numbers. Let $f$ be a function from natural numbers $i$ to numbers. Then $\sigma (m , n , i , f)$ is a number.
 
 Definition. Let $m , n \in \Natural$. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
 
-Definition. Let $m$ and $n$ be natural numbers. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
-Definition. Let $m , n \in \Natural$. Let $f$ be a function from natural numbers $i$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m$ be a natural number. Let $n \in \Natural$. Let $f$ be a function from natural numbers $i$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
-Definition. Let $m \in \Natural$. Let $n$ be a natural number. Let $f$ be a function from natural numbers $i$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
-Definition. Let $m$ and $n$ be natural numbers. Let $f$ be a function from natural numbers $i$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m , n \in \Natural$. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m$ be a natural number. Let $n \in \Natural$. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
-Definition. Let $m \in \Natural$. Let $n$ be a natural number. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\\\Summa {m}{n}{i}{f}$ is a number.
-
-Definition. Let $m$ and $n$ be natural numbers. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m$ be a natural number. Let $n \in \Natural$. Let $f$ be a function from natural numbers $i$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m \in \Natural$. Let $n$ be a natural number. Let $f$ be a function from natural numbers $i$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m$ be a natural number. Let $n \in \Natural$. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m \in \Natural$. Let $n$ be a natural number. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\sigma$ applied to $m$, $n$, $i$ and $f$ is a number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
+Definition. Let $m , n \in \Natural$. Let $f$ be a function from elements $i$ of $\Natural$ to numbers. Then $\sigma (m , n , i , f)$ is a number.
 
 Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
 
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
+Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral} (m , n , x , f)$ is a real number.
 
 Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
 
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
 Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
 
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
+Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral} (m , n , x , f)$ is an element of $\Real$.
 
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
+Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral} (m , n , x , f)$ is a real number.
 
 Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
 
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\\\Integral {m}{n}{x}{f}$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ and $n$ be real numbers. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from real numbers $x$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is a real number.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to real numbers. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m$ be a real number. Let $n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
-
-Definition. Let $m \in \Real$. Let $n$ be a real number. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral}$ applied to $m$, $n$, $x$ and $f$ is an element of $\Real$.
+Definition. Let $m , n \in \Real$. Let $f$ be a function from elements $x$ of $\Real$ to elements of $\Real$. Then $\mathrm{integral} (m , n , x , f)$ is an element of $\Real$.
 
 Definition. The infinity is a number.
 
@@ -2746,5 +1938,5 @@ Definition. Let $A$ be a set. Then $A$ is inhabited, if $A$ is not empty.
 
 Definition. Let $A$ be a set. Then $A$ is inhabited, if it is not the case that $\isempty {A}$.
 
-Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Equ}$ holds for $A$, $y$ and $z$.
+Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Equ} (A , y , z)$.
 \end{document}

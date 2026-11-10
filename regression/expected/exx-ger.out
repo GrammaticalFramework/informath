@@ -8,7 +8,7 @@ Prop70. $1$ ist ungerade.
 Prop80. $2$ ist gerade.
 Prop90. Sei $n \in \Natural$. Dann wenn $n$ gerade und prim ist, dann $n = 2$.
 Prop100. Sei $a , b , c \in \Integer$ derart, dass $a + b + c = 0$. Dann $a \times b \times c < 0$.
-Prop110. Sei $a , c \in \Integer$ derart, dass sowohl $a$ als auch $c$ ist ungerade. Dann für alle ganze Zahlen $b$, ist $a \times b + b \times c$ gerade.
+Prop110. Seien $a$ und $c$ ungerade ganze Zahlen. Dann für alle ganze Zahlen $b$, ist $a \times b + b \times c$ gerade.
 Prop120. Sei $a , b \in \Integer$. Dann ist $a \times b$ gerade, genau dann, wenn $a$ oder $b$ gerade ist.
 Prop130. Sei $x , y \in \Integer$. Dann wenn $x \times y$ ungerade ist, dann ist sowohl $x$ als auch $y$ ungerade.
 

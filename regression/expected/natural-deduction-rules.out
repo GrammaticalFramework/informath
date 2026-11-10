@@ -14,7 +14,7 @@ Definition. The propositions form an element of $\mathrm{Type}$.
 
 Definition. Let $A$ be a set. Then the elements of $A$ form an element of $\mathrm{Type}$.
 
-Definition. Let $A$ be a proposition. Then the elements of $\mathrm{Proof}$ applied to $A$ form an element of $\mathrm{Type}$.
+Definition. Let $A$ be a proposition. Then the elements of $\mathrm{Proof} (A)$ form an element of $\mathrm{Type}$.
 
 Definition. We can say that we have a contradiction.
 
@@ -38,11 +38,11 @@ AndI. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $A$ and $B$.
 
 AndEl. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $A$.
 
-By cases: \begin{itemize} \item for $A$, $B$ and $a$, $\mathrm{andEl}$ applied to $_$, $_$ and $\mathrm{andI}$ applied to $A$, $B$, $a$ and $_$ is $a$. \end{itemize}
+By cases: \begin{itemize} \item for $A$, $B$ and $a$, $\mathrm{andEl} (_ , _ , \mathrm{andI} (A , B , a , _))$ is $a$. \end{itemize}
 
 AndEr. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $B$.
 
-By cases: \begin{itemize} \item for $A$, $B$ and $b$, $\mathrm{andEr}$ applied to $_$, $_$ and $\mathrm{andI}$ applied to $A$, $B$, $_$ and $b$ is $b$. \end{itemize}
+By cases: \begin{itemize} \item for $A$, $B$ and $b$, $\mathrm{andEr} (_ , _ , \mathrm{andI} (A , B , _ , b))$ is $b$. \end{itemize}
 
 OrIl. Let $A$ and $B$ be propositions such that $A$. Then $A$ or $B$.
 
@@ -50,25 +50,25 @@ OrIr. Let $A$ and $B$ be propositions such that $B$. Then $A$ or $B$.
 
 OrE. Let $A$, $B$ and $C$ be propositions such that either $A$ or $B$, $A$ implies $C$ and $B$ implies $C$. Then $C$.
 
-By cases: \begin{itemize} \item for $a$ and $d$, $\mathrm{orE}$ applied to $_$, $_$, $_$, $\mathrm{orIl}$ applied to $_$, $_$ and $a$, $d$ and $_$ is $d$ applied to $a$. \item for $b$ and $e$, $\mathrm{orE}$ applied to $_$, $_$, $_$, $\mathrm{orIr}$ applied to $_$, $_$ and $b$, $_$ and $e$ is $e$ applied to $b$. \end{itemize}
+By cases: \begin{itemize} \item for $a$ and $d$, $\mathrm{orE} (_ , _ , _ , \mathrm{orIl} (_ , _ , a), d , _)$ is $d (a)$. \item for $b$ and $e$, $\mathrm{orE} (_ , _ , _ , \mathrm{orIr} (_ , _ , b), _ , e)$ is $e (b)$. \end{itemize}
 
 IfI. Let $A$ and $B$ be propositions such that $A$ implies $B$. Then if $A$, then $B$.
 
 IfE. Let $A$ and $B$ be propositions such that $A$ implies $B$ and $A$. Then $B$.
 
-By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{ifE}$ applied to $_$, $_$, $\mathrm{ifI}$ applied to $_$, $_$ and $c$ and $a$ is $c$ applied to $a$. \end{itemize}
+By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{ifE} (_ , _ , \mathrm{ifI} (_ , _ , c), a)$ is $c (a)$. \end{itemize}
 
-ForallI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions such that for all elements $x$ of $A$, $B$ holds for $x$. Then for all elements $x$ of $A$, $B$ holds for $x$.
+ForallI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions such that for all elements $x$ of $A$, $B (x)$. Then for all elements $x$ of $A$, $B (x)$.
 
-ForallE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions such that for all elements $x$ of $A$, $B$ holds for $x$. Let $a \in A$. Then $B$ holds for $a$.
+ForallE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions such that for all elements $x$ of $A$, $B (x)$. Let $a \in A$. Then $B (a)$.
 
-By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{forallE}$ applied to $_$, $_$, $\mathrm{forallI}$ applied to $_$, $_$ and $c$ and $a$ is $c$ applied to $a$. \end{itemize}
+By cases: \begin{itemize} \item for $c$ and $a$, $\mathrm{forallE} (_ , _ , \mathrm{forallI} (_ , _ , c), a)$ is $c (a)$. \end{itemize}
 
-ExistsI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $a \in A$ such that $B$ holds for $a$. Then there exists an element $x$ of $A$, such that $B$ holds for $x$.
+ExistsI. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $a \in A$ such that $B (a)$. Then there exists an element $x$ of $A$, such that $B (x)$.
 
-ExistsE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $C$ be a proposition. Assume that there exists an element $x$ of $A$, such that $B$ holds for $x$. Assume that for all elements $x$ of $A$, if $B$ holds for $x$, then $C$. Then $C$.
+ExistsE. Let $A$ be a set. Let $B$ be a function from elements $x$ of $A$ to propositions. Let $C$ be a proposition. Assume that there exists an element $x$ of $A$, such that $B (x)$. Assume that for all elements $x$ of $A$, if $B (x)$, then $C$. Then $C$.
 
-By cases: \begin{itemize} \item for $a$, $b$ and $c$, $\mathrm{existsE}$ applied to $_$, $_$, $_$, $\mathrm{existsI}$ applied to $_$, $_$, $a$ and $b$ and $c$ is $c$ applied to $a$ and $b$. \end{itemize}
+By cases: \begin{itemize} \item for $a$, $b$ and $c$, $\mathrm{existsE} (_ , _ , _ , \mathrm{existsI} (_ , _ , a , b), c)$ is $c (a , b)$. \end{itemize}
 
 Hypo. Let $A$ be a proposition such that $A$. Then $A$. Proof. Let $A$ be arbitrary. Let $a$ be arbitrary. By a.
 
@@ -84,11 +84,11 @@ Definition. $0$ is a natural number.
 
 Definition. Let $x \in N$. Then the successor of $x$ is a natural number.
 
-NatE. Let $n \in N$. Let $C$ be a function from natural numbers $x$ to propositions such that $C$ holds for $0$ and for all natural numbers $n$, if $C$ holds for $n$, then $C$ holds for the successor of $n$. Then $C$ holds for $n$.
+NatE. Let $n \in N$. Let $C$ be a function from elements $x$ of $N$ to propositions such that $C (0)$ and for all elements $n$ of $N$, if $C (n)$, then $C$ holds for the successor of $n$. Then $C (n)$.
 
-By cases: \begin{itemize} \item for $d$, $\mathrm{NatE}$ applied to $0$, $_$, $d$ and $_$ is $d$. \item for $n$, $C$, $d$ and $e$, $\mathrm{NatE}$ applied to the successor of $n$, $C$, $d$ and $e$ is $e$ applied to $n$ and $\mathrm{NatE}$ applied to $n$, $C$, $d$ and $e$. \end{itemize}
+By cases: \begin{itemize} \item for $d$, $\mathrm{NatE} (0 , _ , d , _)$ is $d$. \item for $n$, $C$, $d$ and $e$, $\mathrm{NatE}$ applied to the successor of $n$, $C$, $d$ and $e$ is $e (n , \mathrm{NatE} (n , C , d , e))$. \end{itemize}
 
-NatInd. Let $C$ be a function from natural numbers $x$ to propositions such that $C$ holds for $0$ and for all natural numbers $n$, if $C$ holds for $n$, then $C$ holds for the successor of $n$. Then for all natural numbers $n$, $C$ holds for $n$. Proof. Let $C$ be arbitrary. Let $d$ be arbitrary. Let $e$ be arbitrary. Let $e$ be arbitrary. Let $x_{1}$ be a natural number. By n. By x. By C. By d. By NatE. Hence for all natural numbers $x_{1}$, $x$ holds for $x_{1}$.
+NatInd. Let $C$ be a function from natural numbers $x$ to propositions such that $C (0)$ and for all natural numbers $n$, if $C (n)$, then $C$ holds for the successor of $n$. Then for all natural numbers $n$, $C (n)$. Proof. Let $C$ be arbitrary. Let $d$ be arbitrary. Let $e$ be arbitrary. Let $e$ be arbitrary. Let $x_{1}$ be a natural number. By n. By x. By C. By d. By NatE. Hence for all natural numbers $x_{1}$, $x (x_{1})$.
 
 Definition. Let $x , y \in N$. Then $x + y$ is a natural number.
 

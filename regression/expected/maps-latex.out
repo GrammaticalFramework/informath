@@ -30,13 +30,13 @@ Definition. Let $X$ and $Y$ be sets. Then $\F {X}{Y}$ is a set.
 
 Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Let $x \in X$. Then $\app {f}{x}$ is an element of $Y$.
 
-IsMap. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then for all elements $x$ of $X$, there exists an element $y$ of $Y$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and for all elements $y$ and $y'$ of $Y$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$ and $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y'$, then $\mathrm{Equ}$ holds for $Y$, $y$ and $y'$.
+IsMap. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then for all elements $x$ of $X$, there exists an element $y$ of $Y$, such that $\mathrm{Equ} (Y , \app {f}{x}, y)$ and for all elements $y$ and $y'$ of $Y$, if $\mathrm{Equ} (Y , \app {f}{x}, y)$ and $\mathrm{Equ} (Y , \app {f}{x}, y')$, then $\mathrm{Equ} (Y , y , y')$.
 
 Definition. Let $X$ be a set. Then $\id {X}$ is a map from $X$ to $X$.
 
-Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is injective, if for all elements $x$ and $x'$ of $X$, if $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $\app {f}{x'}$, then $\mathrm{Equ}$ holds for $X$, $x$ and $x'$.
+Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is injective, if for all elements $x$ and $x'$ of $X$, if $\mathrm{Equ} (Y , \app {f}{x}, \app {f}{x'})$, then $\mathrm{Equ} (X , x , x')$.
 
-Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is surjective, if for all elements $y$ of $Y$, there exists an element $x$ of $X$, such that $\mathrm{Equ}$ holds for $Y$, $\app {f}{x}$ and $y$.
+Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is surjective, if for all elements $y$ of $Y$, there exists an element $x$ of $X$, such that $\mathrm{Equ} (Y , \app {f}{x}, y)$.
 
 Definition. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is bijective, if $f$ is injective and surjective.
 
@@ -44,11 +44,11 @@ IdIsBij. Let $X$ be a set. Then $\id {X}$ is bijective.
 
 Definition. Let $X$, $Y$ and $Z$ be sets. Let $g \in \F {Y}{Z}$. Let $f \in \F {X}{Y}$. Then $\comp {g}{f}$ is a map from $X$ to $Z$.
 
-IdCompNeutral. Let $X$ and $Y$ be sets. Then for all maps $f$ from $X$ to $Y$, $\mathrm{Equ}$ holds for $\F {X}{Y}$, $f$ and $\comp {f}{\id {X}}$ and $\mathrm{Equ}$ holds for $\F {X}{Y}$, $f$ and $\comp {\id {Y}}{f}$.
+IdCompNeutral. Let $X$ and $Y$ be sets. Then for all maps $f$ from $X$ to $Y$, $\mathrm{Equ} (\F {X}{Y}, f , \comp {f}{\id {X}})$ and $\mathrm{Equ} (\F {X}{Y}, f , \comp {\id {Y}}{f})$.
 
-CompAssoc. Let $X$, $Y$, $Z$ and $T$ be sets. Let $f \in \F {X}{Y}$. Let $g \in \F {Y}{Z}$. Let $h \in \F {Z}{T}$. Then $\mathrm{Equ}$ holds for $\F {X}{T}$, $\comp {(\comp {h}{g})}{f}$ and $\comp {h}{(\comp {g}{f})}$.
+CompAssoc. Let $X$, $Y$, $Z$ and $T$ be sets. Let $f \in \F {X}{Y}$. Let $g \in \F {Y}{Z}$. Let $h \in \F {Z}{T}$. Then $\mathrm{Equ} (\F {X}{T}, \comp {(\comp {h}{g})}{f}, \comp {h}{(\comp {g}{f})})$.
 
-Definition. Let $X$ and $Y$ be sets. Let $g \in \F {Y}{X}$. Let $f \in \F {X}{Y}$. Then $g$ is an inverse of $f$, if $\mathrm{Equ}$ holds for $\F {X}{X}$, $\comp {g}{f}$ and $\id {X}$ and $\mathrm{Equ}$ holds for $\F {Y}{Y}$, $\comp {f}{g}$ and $\id {Y}$.
+Definition. Let $X$ and $Y$ be sets. Let $g \in \F {Y}{X}$. Let $f \in \F {X}{Y}$. Then $g$ is an inverse of $f$, if $\mathrm{Equ} (\F {X}{X}, \comp {g}{f}, \id {X})$ and $\mathrm{Equ} (\F {Y}{Y}, \comp {f}{g}, \id {Y})$.
 
 InverseProp. Let $X$ and $Y$ be sets. Let $f \in \F {X}{Y}$. Then $f$ is bijective, if and only if there exists a map $g$ from $Y$ to $X$, such that $g$ is an inverse of $f$.
 

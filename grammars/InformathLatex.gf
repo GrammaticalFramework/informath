@@ -8,8 +8,16 @@ concrete InformathLatex of Informath =
   SymbolicConstantsLatex
   ** open Formal, Prelude in {
 
+lincat
+  Predicate = Str ;
+
 lin
   FormulaProp formula = formula ;
+
+  -- a constant without an entry applied to formulas, as a formula: c(x, y)
+  -- (Dedukti2MathCore makes it of Mizar's predicate formula)
+  IdentPredicate id = id ;
+  AppPredicateFormula P xs = tconstant (P ++ "(" ++ xs.s ++ ")") ;
 
   IdentsArgKind kind idents =
     {q = "\\forall" ++ idents ++ "\\in" ++ top kind ++ "." ; d = kind} ;

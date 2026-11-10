@@ -366,15 +366,7 @@ ComplUniverse. The complement of $\mathbb{ U}$ is equal to the empty set.
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B = \emptyset$. Then $B = {A }^{\complement}$.
 
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to $\emptyset$. Then $B = {A }^{\complement}$.
-
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to the empty set. Then $B = {A }^{\complement}$.
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to the complement of $A$.
 
@@ -384,31 +376,7 @@ UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the uni
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and $A \cap B$ is equal to the empty set. Then $B = {A }^{\complement}$.
 
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to $\emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the universal set and $A \cap B$ is equal to the empty set. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to the empty set. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to $\emptyset$. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and $A \cap B$ is equal to the empty set. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to $\emptyset$. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to the empty set. Then $B = {A }^{\complement}$.
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and $A \cap B$ is equal to $\emptyset$. Then $B$ is equal to ${A }^{\complement}$.
 
@@ -432,15 +400,7 @@ UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is eq
 
 UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to $\mathbb{ U}$ and $A \cap B$ is equal to the empty set. Then $B = {A }^{\complement}$.
 
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
 UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to the universal set and $A \cap B$ is equal to the empty set. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to $\mathbb{ U}$ and $A \cap B = \emptyset$. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to the universal set and $A \cap B = \emptyset$. Then $B$ is equal to the complement of $A$.
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and the intersection of $A$ and $B$ is equal to $\emptyset$. Then $B = {A }^{\complement}$.
 
@@ -448,15 +408,7 @@ UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the uni
 
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to $\mathbb{ U}$ and the intersection of $A$ and $B$ is equal to the empty set. Then $B = {A }^{\complement}$.
 
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to $\emptyset$. Then $B$ is equal to ${A }^{\complement}$.
-
 UniqComplement. Let $A$ and $B$ be sets such that $A \cup B$ is equal to the universal set and the intersection of $A$ and $B$ is equal to the empty set. Then $B = {A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to the empty set. Then $B$ is equal to ${A }^{\complement}$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to $\emptyset$. Then $B$ is equal to the complement of $A$.
-
-UniqComplement. Let $A$ and $B$ be sets such that $A \cup B = \mathbb{ U}$ and the intersection of $A$ and $B$ is equal to the empty set. Then $B$ is equal to the complement of $A$.
 
 UniqComplement. Let $A$ and $B$ be sets such that the union of $A$ and $B$ is equal to $\mathbb{ U}$ and $A \cap B$ is equal to $\emptyset$. Then $B$ is equal to ${A }^{\complement}$.
 

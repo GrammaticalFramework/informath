@@ -46,7 +46,7 @@ Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\fr
 
 Thm09. Let $c$ be a circle. Let $r \in \Real$ such that $r = \mathrm{radius} (c)$. Then $\mathrm{area} (c)= \pi \times r ^ {2}$.
 
-Thm10FermatLittle. Let $p$ be a prime element of $\Natural$. Let $a \in \Integer$. Then there exists an element $q$ of $\Integer$, such that $a ^ {p}- a = p \times q$.
+Thm10FermatLittle. Let $p \in \Natural$ such that $p$ is prime. Let $a \in \Integer$. Then there exists an element $q$ of $\Integer$, such that $a ^ {p}- a = p \times q$.
 
 Thm11. Let $n \in \Natural$. Then there exists an element $p$ of $\Natural$, such that $p \geq n$ and $p$ is prime.
 

@@ -5,10 +5,10 @@
   "seconds": 0.2
  },
  "baseconstants-latex": {
-  "lines": 1387,
+  "lines": 983,
   "undefined": 0,
-  "seconds": 0.4,
-  "latex_pages": 89,
+  "seconds": 0.3,
+  "latex_pages": 59,
   "latex_errors": 0
  },
  "bind": {
@@ -27,9 +27,9 @@
   "seconds": 4.7
  },
  "dk-roundtrip": {
-  "lines": 41,
+  "lines": 56,
   "undefined": 0,
-  "seconds": 2.1
+  "seconds": 1.8
  },
  "dk-sets": {
   "lines": 0,
@@ -82,9 +82,9 @@
   "seconds": 0.0
  },
  "exx-roundtrip": {
-  "lines": 55,
+  "lines": 71,
   "undefined": 0,
-  "seconds": 1.8
+  "seconds": 1.5
  },
  "exx-roundtrip-failures": {
   "lines": 1,
@@ -92,9 +92,9 @@
   "seconds": 0.7
  },
  "exx-roundtrip-typecheck": {
-  "lines": 16,
+  "lines": 17,
   "undefined": 0,
-  "seconds": 2.5
+  "seconds": 2.4
  },
  "exx-swe": {
   "lines": 18,
@@ -129,10 +129,10 @@
   "latex_errors": 16
  },
  "hott-latex": {
-  "lines": 222,
+  "lines": 194,
   "undefined": 0,
-  "seconds": 0.5,
-  "latex_pages": 14,
+  "seconds": 0.2,
+  "latex_pages": 12,
   "latex_errors": 0
  },
  "insitu-dedukti": {
@@ -148,8 +148,8 @@
  "maps-latex": {
   "lines": 45,
   "undefined": 0,
-  "seconds": 0.3,
-  "latex_pages": 2,
+  "seconds": 0.2,
+  "latex_pages": 1,
   "latex_errors": 0
  },
  "mathcore-examples": {
@@ -165,7 +165,7 @@
  "mini-matita": {
   "lines": 1269,
   "undefined": 0,
-  "seconds": 0.6
+  "seconds": 0.5
  },
  "naproche-failures": {
   "lines": 76,
@@ -173,10 +173,10 @@
   "seconds": 1.3
  },
  "naproche-interpret": {
-  "lines": 2247,
+  "lines": 1855,
   "undefined": 0,
-  "seconds": 8.0,
-  "latex_pages": 142,
+  "seconds": 7.1,
+  "latex_pages": 116,
   "latex_errors": 0
  },
  "naproche-translate": {
@@ -198,7 +198,7 @@
   "undefined": 3,
   "seconds": 0.1,
   "latex_pages": 4,
-  "latex_errors": 77
+  "latex_errors": 26
  },
  "natural-failures": {
   "lines": 49,
@@ -237,24 +237,24 @@
   "seconds": 0.3
  },
  "sets-latex": {
-  "lines": 1793,
+  "lines": 1553,
   "undefined": 0,
   "seconds": 0.9,
-  "latex_pages": 132,
+  "latex_pages": 116,
   "latex_errors": 0
  },
  "sets-single": {
-  "lines": 588,
+  "lines": 564,
   "undefined": 0,
   "seconds": 0.3,
-  "latex_pages": 39,
+  "latex_pages": 38,
   "latex_errors": 0
  },
  "sigma-latex": {
-  "lines": 434,
+  "lines": 146,
   "undefined": 0,
-  "seconds": 0.2,
-  "latex_pages": 37,
+  "seconds": 0.1,
+  "latex_pages": 10,
   "latex_errors": 0
  },
  "symboltable-check": {
@@ -282,15 +282,15 @@
   "latex_errors": 0
  },
  "top100-godement-trees": {
-  "lines": 641,
+  "lines": 615,
   "undefined": 0,
-  "seconds": 0.6
+  "seconds": 0.5
  },
  "top100-latex": {
-  "lines": 2260,
+  "lines": 1746,
   "undefined": 0,
-  "seconds": 1.1,
-  "latex_pages": 180,
+  "seconds": 0.9,
+  "latex_pages": 134,
   "latex_errors": 0
  },
  "top100-symbolic-latex": {

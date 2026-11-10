@@ -68,7 +68,7 @@ Definition. Let $x$ and $y$ be sets. Then we can say that $x \subseteq y$.
 
 Definition. Let $x$ and $y$ be sets. Then we can say that $x = y$.
 
-Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Equ}$ holds for $A$, $y$ and $z$.
+Definition. Let $A$ be a set. Let $y , z \in A$. Then we can say that $\mathrm{Equ} (A , y , z)$.
 
 Definition. Let $x$ and $y$ be sets. Then we can say that $x \in y$.
 
@@ -76,21 +76,21 @@ Definition. Let $X$ be a set. Let $y \in X$. Let $z \in \wp X$. Then we can say 
 
 Definition. Let $x$ and $y$ be sets. Then $\F {x}{y}$ is a set.
 
-Definition. Let $X$ and $I$ be sets. Then the elements of $\mathrm{Family}$ applied to $X$ and $I$ form a set.
+Definition. Let $X$ and $I$ be sets. Then the elements of $\mathrm{Family} (X , I)$ form a set.
 
-By cases: \begin{itemize} \item for $X$ and $I$, the set of elements of $\mathrm{Family}$ applied to $X$ and $I$ is the set of elements of $\F {I}{(\wp X)}$. \end{itemize}
+By cases: \begin{itemize} \item for $X$ and $I$, the set of elements of $\mathrm{Family} (X , I)$ is the set of elements of $\F {I}{(\wp X)}$. \end{itemize}
 
-Definition. Let $X$ and $I$ be sets. Let $U$ be a function from elements $i$ of $I$ to elements of $\wp X$. Then $\family {I}{i}{U}$ is an element of $\mathrm{Family}$ applied to $X$ and $I$.
+Definition. Let $X$ and $I$ be sets. Let $U$ be a function from elements $i$ of $I$ to elements of $\wp X$. Then $\family {I}{i}{U}$ is an element of $\mathrm{Family} (X , I)$.
 
-Definition. Let $X$ and $I$ be sets. Let $U$ be an element of $\mathrm{Family}$ applied to $X$ and $I$. Let $i \in I$. Then $\elemFam {U}{i}$ is a set.
+Definition. Let $X$ and $I$ be sets. Let $U \in \mathrm{Family} (X , I)$. Let $i \in I$. Then $\elemFam {U}{i}$ is a set.
 
-Definition. Let $X$ and $I$ be sets. Let $U$ be an element of $\mathrm{Family}$ applied to $X$ and $I$. Then $\famCup {I}{U}$ is a set.
+Definition. Let $X$ and $I$ be sets. Let $U \in \mathrm{Family} (X , I)$. Then $\famCup {I}{U}$ is a set.
 
 By cases: \begin{itemize} \item for $X$, the set of elements of $\wp X$ is the set of sets. \item for $X$ and $Y$, the set of elements of $\F {X}{Y}$ is the set of functions from elements of $X$ to elements of $Y$. \end{itemize}
 
 Definition. Let $X$ and $T$ be sets. Then $T$ is closed under finite intersection, if for all elements $A$ and $B$ of $\wp X$, if $A \in T$ and $B \in T$, then $A \cap B \in T$.
 
-Definition. Let $X$ and $T$ be sets. Then $T$ is closed under arbitrary union, if for all elements $I$ of $\wp \mathbb{ U}$, for all elements $U$ of $\mathrm{Family}$ applied to $X$ and $I$, if for all elements $i$ of $I$, $\elemFam {U}{i}\in T$, then $\famCup {I}{U}\in T$.
+Definition. Let $X$ and $T$ be sets. Then $T$ is closed under arbitrary union, if for all elements $I$ of $\wp \mathbb{ U}$, for all elements $U$ of $\mathrm{Family} (X , I)$, if for all elements $i$ of $I$, $\elemFam {U}{i}\in T$, then $\famCup {I}{U}\in T$.
 
 Definition. Let $X$ and $T$ be sets. Then $T$ is a topology, if $\emptyset \in T$, $X \in T$ and $T$ is closed under finite intersection and closed under arbitrary union.
 
@@ -104,7 +104,7 @@ Definition. Let $X$, $T$ and $U$ be sets such that $\toposet {X}{T}$ is a topolo
 
 Definition. Let $X$, $T$ and $F$ be sets such that $\toposet {X}{T}$ is a topological space. Then $F$ is close, if $X \setminus F$ is open.
 
-Definition. Let $X$ and $T$ be sets such that $\toposet {X}{T}$ is a topological space. Then $p$ is a Hausdorff space, if for all elements $x$ and $y$ of $X$, if it is not the case that $\mathrm{Equ}$ holds for $X$, $x$ and $y$, then there exist elements $\mathrm{U\_x}$ and $\mathrm{U\_y}$ of $\wp X$, such that $\mathrm{U\_x} \in T$, $\mathrm{U\_y} \in T$, $x \in \mathrm{U\_x}$, $y \in \mathrm{U\_y}$ and $\mathrm{U\_x} \cap \mathrm{U\_y} = \emptyset$.
+Definition. Let $X$ and $T$ be sets such that $\toposet {X}{T}$ is a topological space. Then $p$ is a Hausdorff space, if for all elements $x$ and $y$ of $X$, if it is not the case that $\mathrm{Equ} (X , x , y)$, then there exist elements $\mathrm{U\_x}$ and $\mathrm{U\_y}$ of $\wp X$, such that $\mathrm{U\_x} \in T$, $\mathrm{U\_y} \in T$, $x \in \mathrm{U\_x}$, $y \in \mathrm{U\_y}$ and $\mathrm{U\_x} \cap \mathrm{U\_y} = \emptyset$.
 
 Definition. Let $X$ and $T$ be sets such that $\toposet {X}{T}$ is a topological space. Let $N \in \wp X$. Let $x \in X$. Then $N$ is a neighborhood of $x$, if there exists an element $U$ of $\wp X$, such that $U \in T$ and $x \in U \subset N$.
 \end{document}
