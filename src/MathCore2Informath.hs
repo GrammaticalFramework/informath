@@ -201,10 +201,25 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
      _ | kind == GNounKind (LexNoun "set_Noun"), Just (n, rest) <- nounOf vars props ->
        attached xs (GNounKind n) rest
      [] -> GVarsHypo xs kind
-     GAdjProp adj _ : _ | Just ys <- mapM (adjOf adj) props, sameElems ys vars ->
+     -- "let $p$ and $q$ be prime natural numbers", also from "p and q are
+     -- prime" as one hypothesis; not with a set given by a formula ("prime
+     -- elements of N"), which is declared "let $p, q \in N$ such that ..."
+     _ | not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
+         Just ys <- mapM (adjOf adj) conjuncts, sameElems ys vars ->
        GAdjKindHypo xs adj kind
      [p] -> GSuchThatHypo xs (aggregate p) kind
      _ -> GSuchThatHypo xs (aggregate (GAndProp (GListProp props))) kind
+    where
+     conjuncts = concatMap conjunctsOf props
+   conjunctsOf :: GProp -> [GProp]
+   conjunctsOf p = case p of
+     GCoreAndProp a b -> conjunctsOf a ++ conjunctsOf b
+     GAndProp (GListProp ps) -> concatMap conjunctsOf ps
+     _ -> [p]
+   isTermKind :: GKind -> Bool
+   isTermKind k = case k of
+     GExpKind (GTermExp _) -> True
+     _ -> False
    -- a noun predicated of each of the variables, and the other propositions
    nounOf :: [GIdent] -> [GProp] -> Maybe (GNoun, [GProp])
    nounOf vars props = case [n | GNoun1Prop (GNounNoun1 n) _ <- props] of

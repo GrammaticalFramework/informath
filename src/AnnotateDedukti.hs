@@ -28,10 +28,35 @@ type DkTree a = Dedukti.AbsDedukti.Tree a
 -- annotated again with such constants shown as themselves, \mathrm{c}(x)
 annotateDkIdents :: Env -> DkTree a -> [DkTree a]
 annotateDkIdents env t0 = case annotateDkIdentsFb False env t of
-  [] -> annotateDkIdentsFb True env t
-  ts -> ts
+  [] -> consistentHypos (annotateDkIdentsFb True env t)
+  ts -> consistentHypos ts
  where
   t = hideArgs (symbolTable env) t0
+
+-- | The annotations in which each constant has the same form in all the
+-- hypotheses of a judgement: "let $p, q \in \mathbb{N}$" or "let $p$ and $q$
+-- be natural numbers", not "let $p$ be a natural number. Let $q \in
+-- \mathbb{N}$", whose kinds differ only in form and cannot be aggregated;
+-- all of them if there are none such
+consistentHypos :: [DkTree a] -> [DkTree a]
+consistentHypos ts = case filter consistent ts of
+  [] -> ts
+  cs -> cs
+ where
+  consistent :: DkTree a -> Bool
+  consistent u = all ((<= 1) . S.size)
+    (M.elems (M.fromListWith S.union [(takeWhile (/= '#') k, S.singleton k) | k <- hypoIdents u, elem '#' k]))
+  hypoIdents :: DkTree a -> [String]
+  hypoIdents u = case u of
+    JStatic _ ty -> hypos ty
+    JDef _ (MTExp ty) _ -> hypos ty
+    JThm _ (MTExp ty) _ -> hypos ty
+    JInj _ (MTExp ty) _ -> hypos ty
+    _ -> []
+  hypos :: Exp -> [String]
+  hypos ty = case ty of
+    EFun h rest -> [k | QIdent k <- identsInTree h] ++ hypos rest
+    _ -> []
 
 -- | The arguments that readings do not show: the coercions read as the
 -- argument they coerce (#COERCION), unless that makes the two sides of an
