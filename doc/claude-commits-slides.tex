@@ -44,7 +44,7 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{A Hundred and Thirty-Four Commits}
+\title{A Hundred and Thirty-Six Commits}
 \subtitle{What Claude Code has contributed to Informath, July--November 2026}
 \author{Aarne Ranta}
 \date{November 2026}
@@ -56,7 +56,7 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 1,000 commits since 2024, almost all by hand.
-    \item \textbf{134} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{136} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,10 +68,10 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--45
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--46
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
-  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774}
-  and this version).
+  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774},
+  \commit{93cb23a} and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -1815,7 +1815,7 @@ example/           divisibility.tex, formalized
 % =====================================================================
 \section{Part XI: Verbose Lean, and the readings it asked for}
 
-\begin{frame}{Since 10 November: 2 more commits as 2 tasks}
+\begin{frame}{Since 10 November: 3 more commits as 3 tasks}
   \footnotesize
   \begin{tabular}{rllr}
     \toprule
@@ -1823,11 +1823,12 @@ example/           divisibility.tex, formalized
     \midrule
     44 & Bounded quantifiers, after a comparison with Verbose Lean & 11 Nov & 1 \\
     45 & Function kinds: ``function from $A$ to $B$'' & 11 Nov & 1 \\
+    46 & Bounded quantifiers over a symbol: ``for all $\varepsilon > 0$ in $\mathbb{R}$'' & 11 Nov & 1 \\
     \bottomrule
   \end{tabular}
 
   \vspace{0.5em}
-  Plus one for these slides. The Mathlib side (structures on one set, the comparison with
+  Plus two for these slides. The Mathlib side (structures on one set, the comparison with
   Verbose Lean, a Verbose output of tactic proofs) is in
   \texttt{informalizing-mathlib-slides.pdf}, steps 37--40.
 \end{frame}
@@ -1871,6 +1872,26 @@ example/           divisibility.tex, formalized
           showed; the examples asked for made that visible. One reading came out as
           \bad{\texttt{[FunExpKind]}}: a run without \texttt{INFORMATH\_ROOT} had used another
           checkout's older grammar.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 46: Bounded quantifiers over a symbol}
+  \commit{580b75f} (11 Nov)
+  \begin{itemize}\small
+    \item On the Mathlib pages $\mathbb{R}$ is a symbol, and Task 44 gave \bad{``for all elements
+          $\varepsilon > 0$ of $\mathbb{R}$''} (64 statements). Claude asked which of three:
+          ``in $\mathbb{R}$'', the verbal kind, or no kind.
+  \end{itemize}
+  \prompt{the first one}
+  \begin{itemize}\small
+    \item \texttt{BoundedInAllProp}, \texttt{BoundedInExistProp}: \ok{``for all $\varepsilon > 0$ in
+          $\mathbb{R}$, there exists $\delta > 0$ in $\mathbb{R}$ such that \ldots''}, ``pour tout
+          $\varepsilon > 0$ dans $\mathbb{R}$'', ``för alla $\varepsilon > 0$ i $\mathbb{R}$'', ``pro
+          každé $\varepsilon > 0$ v $\mathbb{R}$''; with a noun kind still ``for all real numbers
+          $\varepsilon > 0$''.
+    \item Swedish and Czech need exceptions for the universal, as \texttt{all\_Predet} with a
+          singular symbol gives \bad{``för allt''}, \bad{``pro všechno''}, which
+          \texttt{BareAllProp} still does.
   \end{itemize}
 \end{frame}
 
