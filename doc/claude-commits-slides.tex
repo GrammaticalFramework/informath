@@ -44,7 +44,7 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{A Hundred and Thirty-One Commits}
+\title{A Hundred and Thirty-Four Commits}
 \subtitle{What Claude Code has contributed to Informath, July--November 2026}
 \author{Aarne Ranta}
 \date{November 2026}
@@ -55,8 +55,8 @@
 
 \begin{frame}{This talk}
   \begin{itemize}
-    \item Informath: over 900 commits since 2024, almost all by hand.
-    \item \textbf{131} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item Informath: over 1,000 commits since 2024, almost all by hand.
+    \item \textbf{134} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,9 +68,10 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--43
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--45
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
-  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f} and this version).
+  \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774}
+  and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -1808,6 +1809,68 @@ example/           divisibility.tex, formalized
           readings. But the suite had \bad{not been run for six commits}, and it found that
           6,771 Mathlib \emph{formulas} showed \bad{\texttt{[AppPredicateFormula]}} since
           Task 42. Fixed, 23 cases reviewed and accepted: 52 pass.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part XI: Verbose Lean, and the readings it asked for}
+
+\begin{frame}{Since 10 November: 2 more commits as 2 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    44 & Bounded quantifiers, after a comparison with Verbose Lean & 11 Nov & 1 \\
+    45 & Function kinds: ``function from $A$ to $B$'' & 11 Nov & 1 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  Plus one for these slides. The Mathlib side (structures on one set, the comparison with
+  Verbose Lean, a Verbose output of tactic proofs) is in
+  \texttt{informalizing-mathlib-slides.pdf}, steps 37--40.
+\end{frame}
+
+\begin{frame}{Task 44: Bounded quantifiers}
+  \commit{6a81736} (11 Nov)
+  \prompt{I'm interested in the relation between mathlib-informath and Verbose Lean \ldots\ if
+  adding the Informath grammar to Verbose Lean would result in a nicer output}
+  \begin{itemize}\small
+    \item Verbose Lean is Lean \emph{input} in a controlled language. Informath read the
+          formulas of a Verbose proof as \bad{``for all elements $\mathrm{eps1}$ of
+          $\mathbb{R}$, if $\mathrm{eps1} > 0$, then \ldots''} for $\forall \varepsilon > 0$.
+  \end{itemize}
+  \prompt{Save the findings you stated, and try 1 and 5.}
+  \begin{itemize}\small
+    \item \texttt{FormulaArgKind}: a variable with its condition as one formula, made by
+          \texttt{aggregate}, taken back by \texttt{addParenth}: \ok{``for all real numbers
+          $\varepsilon > 0$, there exists a real number $\delta > 0$ such that''}, ``pour tous
+          les nombres réels $\varepsilon > 0$'', ``pro všechna reálná čísla $\varepsilon > 0$''.
+    \item The first version dropped the kind, as Verbose does; the regression suite showed
+          \bad{``there exists $q \neq 0$''} for rational numbers (and Swedish \bad{``för
+          allt''}). Four cases accepted; readback passes.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 45: Function kinds}
+  \commit{0359e14} (11 Nov)
+  \prompt{Look at all those cases where FunKind is used, e.g.\ isOpen\_iUnion \ldots\ ``function from
+  elements of A to elements of B''. I would like to have a variant \ldots\ giving ``function from A
+  to B'' \ldots\ I would also like to use FunTypeTerm from Terms.gf, whenever A and B are
+  symbolic.}
+  \prompt{I think the type could be simply FunExpKind \ldots\ A generalization could be of type
+  [Exp] -> Kind, but this is much less common and can wait.}
+  \prompt{Simply implement ``fonction dans'' with a function exception}
+  \begin{itemize}\small
+    \item \texttt{FunExpKind : Exp -> Exp -> Kind}, by \texttt{funKinds}, reduced back to
+          \texttt{FunKind}: \ok{``let $f$ be a function from $I$ to $\wp X$''}, ``soit $f$ une
+          fonction de $I$ dans $\wp X$''; $f \in I \rightarrow \wp X$ as a variant, and the only
+          form for more symbolic arguments, $f \in \mathbb{N} \rightarrow R \rightarrow S$.
+    \item Claude's first version put the symbolic type first, so ``function from'' never
+          showed; the examples asked for made that visible. One reading came out as
+          \bad{\texttt{[FunExpKind]}}: a run without \texttt{INFORMATH\_ROOT} had used another
+          checkout's older grammar.
   \end{itemize}
 \end{frame}
 
