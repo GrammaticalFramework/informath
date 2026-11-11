@@ -848,9 +848,13 @@ Definition. Let $x$ be a real number. Then $x$ is rational, if there exist eleme
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q \neq 0$ and $x$ and $\frac{ p}{q}$ are equal.
 
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x = \frac{ p}{q}$.
+
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q$ is distinct from $0$ and $x$ is equal to the quotient of $p$ and $q$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q$ and $0$ are distinct and $x$ is equal to the quotient of $p$ and $q$.
+
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x = \frac{ p}{q}$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q$ is distinct from $0$ and $x$ and the quotient of $p$ and $q$ are equal.
 
@@ -862,9 +866,13 @@ Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ is equal to $\frac{ p}{q}$.
 
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x = \frac{ p}{q}$.
+
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q$ is distinct from $0$ and $x$ is equal to the quotient of $p$ and $q$.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist integers $p$ and $q$, such that $q$ and $0$ are distinct and $x$ is equal to the quotient of $p$ and $q$.
+
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x = \frac{ p}{q}$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q \neq 0$ and $x$ and the quotient of $p$ and $q$ are equal.
 
@@ -888,21 +896,29 @@ Definition. Let $x$ be a real number. Then $x$ is rational, if there exist eleme
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ and $\frac{ p}{q}$ are equal.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x = \frac{ p}{q}$.
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ is equal to $\frac{ p}{q}$.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x = \frac{ p}{q}$.
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ is equal to $\frac{ p}{q}$.
+
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ and $\frac{ p}{q}$ are equal.
+
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ and $\frac{ p}{q}$ are equal.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x$ is equal to the quotient of $p$ and $q$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ is equal to the quotient of $p$ and $q$.
 
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ is equal to $\frac{ p}{q}$.
+
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ is equal to $\frac{ p}{q}$.
+
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x$ and the quotient of $p$ and $q$ are equal.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ and the quotient of $p$ and $q$ are equal.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x = \frac{ p}{q}$.
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ and $\frac{ p}{q}$ are equal.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x = \frac{ p}{q}$.
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ and $\frac{ p}{q}$ are equal.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x$ is equal to the quotient of $p$ and $q$.
 
@@ -912,41 +928,37 @@ Definition. Let $x$ be a real number. Then $x$ is rational, if there exist eleme
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exist elements $p$ and $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ and the quotient of $p$ and $q$ are equal.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ is equal to $\frac{ p}{q}$.
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ is equal to the quotient of $p$ and $q$.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ is equal to $\frac{ p}{q}$.
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ is equal to the quotient of $p$ and $q$.
+
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ and the quotient of $p$ and $q$ are equal.
+
+Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ and the quotient of $p$ and $q$ are equal.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x = \frac{ p}{q}$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ and $0$ are distinct and $x = \frac{ p}{q}$.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ and $\frac{ p}{q}$ are equal.
-
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x = \frac{ p}{q}$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x = \frac{ p}{q}$.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ and $\frac{ p}{q}$ are equal.
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ is equal to the quotient of $p$ and $q$.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ is equal to $\frac{ p}{q}$.
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ is equal to the quotient of $p$ and $q$.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ is equal to $\frac{ p}{q}$.
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q \neq 0$, such that $x$ and the quotient of $p$ and $q$ are equal.
+
+Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q \neq 0$ of $\Integer$, such that $x$ and the quotient of $p$ and $q$ are equal.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x = \frac{ p}{q}$.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ and $0$ are distinct and $x = \frac{ p}{q}$.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ and $\frac{ p}{q}$ are equal.
-
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x = \frac{ p}{q}$.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x = \frac{ p}{q}$.
-
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ and $\frac{ p}{q}$ are equal.
-
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ is equal to the quotient of $p$ and $q$.
-
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ is equal to the quotient of $p$ and $q$.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x$ is equal to $\frac{ p}{q}$.
 
@@ -956,10 +968,6 @@ Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer 
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ is equal to $\frac{ p}{q}$.
 
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ and the quotient of $p$ and $q$ are equal.
-
-Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ and the quotient of $p$ and $q$ are equal.
-
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x$ and $\frac{ p}{q}$ are equal.
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ and $0$ are distinct and $x$ and $\frac{ p}{q}$ are equal.
@@ -968,10 +976,6 @@ Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer 
 
 Definition. Let $x \in \Real$. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ and $\frac{ p}{q}$ are equal.
 
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ is equal to the quotient of $p$ and $q$.
-
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ is equal to the quotient of $p$ and $q$.
-
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x$ is equal to $\frac{ p}{q}$.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ and $0$ are distinct and $x$ is equal to $\frac{ p}{q}$.
@@ -979,10 +983,6 @@ Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an e
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ is distinct from $0$ and $x$ is equal to $\frac{ p}{q}$.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q$ and $0$ are distinct and $x$ is equal to $\frac{ p}{q}$.
-
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q \neq 0$ and $x$ and the quotient of $p$ and $q$ are equal.
-
-Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an integer $p$, such that there exists an element $q$ of $\Integer$, such that $q \neq 0$ and $x$ and the quotient of $p$ and $q$ are equal.
 
 Definition. Let $x$ be a real number. Then $x$ is rational, if there exists an element $p$ of $\Integer$, such that there exists an integer $q$, such that $q$ is distinct from $0$ and $x$ and $\frac{ p}{q}$ are equal.
 
@@ -1866,41 +1866,41 @@ Definition. Let $A$ be a set. Let $a$ be an element of the universal set. Then $
 
 Definition. Let $A$ be a set. Let $a$ be an element of the universal set. Then $A$ contains $a$, if $a$ is an element of $A$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of $\mathbb{ U}$, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x$ is an element of $B$.
-
 Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x$ is an element of $B$.
-
 Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x \in A$ and $x$ is an element of $B$.
-
 Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of the universal set, such that $x \in A$ and $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 

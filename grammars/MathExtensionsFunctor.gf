@@ -79,6 +79,7 @@ lin
     simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet idents.np)) (partProp prop)) ;
   BareExistProp idents prop =
     simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP idents.np)) such_that_Subj (partProp prop)) ;
+  FormulaArgKind kind formula = {cn = mkCN kind.cn (latexNP (mkSymb formula.s)) ; adv = kind.adv ; isPl = False} ;
 
   NotAdjProp adj exp = simpleProp (mkS negPol (mkCl exp adj)) ;
   NotAdj2Prop adj x y = simpleProp (mkS negPol (mkCl x (Grammar.AdvAP adj.ap (Syntax.mkAdv adj.prep y)))) ;

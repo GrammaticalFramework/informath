@@ -63,15 +63,23 @@ addParenth t = case t of
   GOrProp (GListProp props) -> foldl1 GCoreOrProp (map addParenth props)
   GIfProp a b -> GCoreIfProp (addParenth a) (addParenth b)
   GIffProp a b -> GCoreIffProp (addParenth a) (addParenth b)
+  -- a variable with a condition (FormulaArgKind) has it as the premiss of an
+  -- implication (for all) or the first conjunct (there exists)
   GAllProp (GListArgKind argkinds) prop ->
-    foldr (\ (var, exp) y -> GCoreAllProp exp var y)
+    foldr (\ (var, exp, cond) y -> GCoreAllProp exp var (maybe y (\c -> GCoreIfProp c y) cond))
         (addParenth prop)
-        (concatMap semArgkind argkinds)
+        (concatMap semArgkindCond argkinds)
   GExistProp (GListArgKind argkinds) prop ->
-    foldr (\ (var, exp) y -> GCoreExistProp exp var y)
+    foldr (\ (var, exp, cond) y -> GCoreExistProp exp var (maybe y (\c -> GCoreAndProp c y) cond))
         (addParenth prop)
-        (concatMap semArgkind argkinds)
+        (concatMap semArgkindCond argkinds)
   _ -> composOp addParenth t
+
+-- | The variables of an argkind with their kinds and conditions
+semArgkindCond :: GArgKind -> [(GIdent, GKind, Maybe GProp)]
+semArgkindCond argkind = case argkind of
+  GFormulaArgKind kind f | Just x <- boundVar f -> [(x, kind, Just (GFormulaProp f))]
+  _ -> [(x, k, Nothing) | (x, k) <- semArgkind argkind]
 
 semArgkind :: GArgKind -> [(GIdent, GKind)]
 semArgkind argkind = case argkind of
@@ -405,3 +413,9 @@ extensionStructure label kind parent x args props =
   conjuncts p = case p of
     GAndProp (GListProp ps) -> ps
     _ -> [p]
+
+-- | The variable of a bounded quantifier, the left side of its comparison
+boundVar :: GFormula -> Maybe GIdent
+boundVar f = case f of
+  GEquationFormula (GBinaryEquation _ (GIdentTerm x) _) -> Just x
+  _ -> Nothing

@@ -114,6 +114,16 @@ aggregate t = case t of
     case groupProps "or" props of
       [p] -> p
       pp -> GOrProp (GListProp pp)
+  -- a variable with a condition on it, a comparison: "for all real numbers
+  -- $\\epsilon > 0$, P", "there exists a real number $\\delta > 0$ such that P"
+  GCoreAllProp kind x (GIfProp cond body) | Just f <- bounding x cond ->
+    GAllProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+  GCoreAllProp kind x (GCoreIfProp cond body) | Just f <- bounding x cond ->
+    GAllProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+  GCoreExistProp kind x (GAndProp (GListProp [cond, body])) | Just f <- bounding x cond ->
+    GExistProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+  GCoreExistProp kind x (GCoreAndProp cond body) | Just f <- bounding x cond ->
+    GExistProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
   GCoreAllProp kind x prop -> case getAlls kind prop of
     (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
   GCoreExistProp kind x prop -> case getExists kind prop of
@@ -280,6 +290,18 @@ getAdjArgs props a = case props of
     (exps, ps) <- getAdjArgs pp a
     return (y : exps, ps)
   _ -> return ([], props)
+
+-- | The condition of a bounded quantifier over x: a comparison of x with a
+-- term without x (x > 0, n \\geq N, x \\in s)
+bounding :: GIdent -> GProp -> Maybe GFormula
+bounding x cond = case cond of
+  GFormulaProp f@(GEquationFormula (GBinaryEquation c (GIdentTerm y) t))
+    | y == x, notElem x (identsIn t), boundingCompar c -> Just f
+  _ -> Nothing
+ where
+  boundingCompar :: GCompar -> Bool
+  boundingCompar (LexCompar c) = elem c ["Lt_Compar", "Gt_Compar", "Leq_Compar", "Geq_Compar",
+    "Neq_Compar", "element_Compar", "subset_Compar", "subseteq_Compar"]
 
 getExists :: GKind -> GProp -> ([GIdent], GProp)
 getExists kind prop = case prop of

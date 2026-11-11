@@ -30,5 +30,6 @@ lin
   AllProp argkinds prop = mkPrec 0 (argkinds.q ++ top prop) ;
   BareAllProp idents prop = mkPrec 0 ("\\forall" ++ idents ++ "." ++ top prop) ;
   BareExistProp idents prop = mkPrec 0 ("\\exists" ++ idents ++ "." ++ top prop) ;
+  FormulaArgKind kind formula = {q = "\\forall" ++ top formula ++ "." ; d = kind} ;
 
 }
