@@ -86,7 +86,7 @@ Definition. Let $X$ and $I$ be sets. Let $U \in \mathrm{Family} (X , I)$. Let $i
 
 Definition. Let $X$ and $I$ be sets. Let $U \in \mathrm{Family} (X , I)$. Then $\famCup {I}{U}$ is a set.
 
-By cases: \begin{itemize} \item for $X$, the set of elements of $\wp X$ is the set of sets. \item for $X$ and $Y$, the set of elements of $\F {X}{Y}$ is the set of functions from elements of $X$ to elements of $Y$. \end{itemize}
+By cases: \begin{itemize} \item for $X$, the set of elements of $\wp X$ is the set of sets. \item for $X$ and $Y$, the set of elements of $\F {X}{Y}$ is the set of functions from $X$ to $Y$. \end{itemize}
 
 Definition. Let $X$ and $T$ be sets. Then $T$ is closed under finite intersection, if for all elements $A$ and $B$ of $\wp X$, if $A \in T$ and $B \in T$, then $A \cap B \in T$.
 

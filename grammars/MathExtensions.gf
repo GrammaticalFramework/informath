@@ -54,6 +54,10 @@ fun
   -- comparison, as one formula: "for all real numbers $\epsilon > 0$, P",
   -- "there exists an integer $q \neq 0$ such that P"
   FormulaArgKind : Kind -> Formula -> ArgKind ;
+  -- a function kind whose argument and value kinds are sets given by
+  -- expressions: "function from A to B" rather than "function from elements
+  -- of A to elements of B" (FunKind)
+  FunExpKind : Exp -> Exp -> Kind ;
 
   NotAdjProp : Adj -> Exp -> Prop ;
   NotAdj2Prop : Adj2 -> Exp -> Exp -> Prop ;

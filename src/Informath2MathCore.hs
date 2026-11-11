@@ -154,6 +154,9 @@ sem env t = case t of
 
   GListHypo hypos -> GListHypo (concatMap (semHypo . sem env) hypos)
 
+  -- "function from A to B" is the function kind of the sets A and B
+  GFunExpKind a b ->
+    sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) (GExpKind b))
   GIfProp cond prop -> case getAndProps cond of
     Just props -> sem env (foldr (\a b -> GIfProp a b) prop props)
     _ -> GIfProp (sem env cond) (sem env prop)
@@ -419,3 +422,4 @@ boundVar :: GFormula -> Maybe GIdent
 boundVar f = case f of
   GEquationFormula (GBinaryEquation _ (GIdentTerm x) _) -> Just x
   _ -> Nothing
+

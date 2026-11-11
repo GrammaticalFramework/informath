@@ -21,7 +21,7 @@ nlg env tree = case () of
   ---- TODO more option combinations
  where
    t = unparenth tree
-   ut = uncoerce t
+   ut = funKinds (uncoerce t)
    ft = flatten (extendStructure ut)
    afts = [aggregate ft]
    iafts = map insitu afts
@@ -99,6 +99,37 @@ gExps exps = case exps of
   [exp] -> GOneExps exp
   _ -> GManyExps (GListExp exps)
 
+
+-- | A function kind whose argument and value kinds are sets given by
+-- expressions: for one argument, "function from A to B" (FunExpKind), rather
+-- than "function from elements of A to elements of B" (FunKind), with the
+-- symbolic "$f \\in A \\rightarrow B$" as a variant when A and B are symbolic
+-- (see variations); for more arguments, when they are all symbolic, the
+-- symbolic function type $A \\rightarrow B \\rightarrow C$ (FunTypeTerm)
+funKinds :: Tree a -> Tree a
+funKinds t = case t of
+  GFunKind (GListArgKind args) val
+    | Just es <- mapM argExp args, Just v <- kindExp val ->
+      let es' = map funKinds es
+          v' = funKinds v
+      in case (es', mapM termOf es', termOf v') of
+        ([e], _, _) -> GFunExpKind e v'
+        (_, Just ts, Just tv) -> GExpKind (GTermExp (foldr GFunTypeTerm tv ts))
+        _ -> GFunKind (GListArgKind (map funKinds args)) (GExpKind v')
+  _ -> composOp funKinds t
+ where
+  argExp :: GArgKind -> Maybe GExp
+  argExp a = case a of
+    GKindArgKind k -> kindExp k
+    _ -> Nothing
+  kindExp :: GKind -> Maybe GExp
+  kindExp k = case k of
+    GExpKind e -> Just e
+    _ -> Nothing
+  termOf :: GExp -> Maybe GTerm
+  termOf e = case e of
+    GTermExp tm -> Just tm
+    _ -> Nothing
 
 aggregate :: Tree a -> Tree a
 aggregate t = case t of
@@ -491,6 +522,11 @@ variations tree = case tree of
           ]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term), tree]
+  -- "let f be a function from A to B" or "let $f \\in A \\rightarrow B$"
+  GVarsHypo (GListIdent xs) (GFunExpKind (GTermExp a) (GTermExp b)) ->
+    [tree, GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) (GFunTypeTerm a b))]
+  GFunExpKind (GTermExp a) (GTermExp b) ->
+    tree : [GExpKind (GTermExp (GFunTypeTerm a b))]
   GAllProp (GListArgKind [argkind]) prop ->
     tree : [GPostQuantProp prop exp | exp <- allQuantVariations argkind]
   GExistProp (GListArgKind [argkind]) prop ->

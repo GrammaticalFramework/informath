@@ -31,5 +31,6 @@ lin
   BareAllProp idents prop = mkPrec 0 ("\\forall" ++ idents ++ "." ++ top prop) ;
   BareExistProp idents prop = mkPrec 0 ("\\exists" ++ idents ++ "." ++ top prop) ;
   FormulaArgKind kind formula = {q = "\\forall" ++ top formula ++ "." ; d = kind} ;
+  FunExpKind a b = mkPrec 0 (usePrec 1 a ++ "\\rightarrow" ++ top b) ;
 
 }

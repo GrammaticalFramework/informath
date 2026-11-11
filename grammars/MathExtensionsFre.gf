@@ -1,7 +1,7 @@
 concrete MathExtensionsFre of MathExtensions =
   CategoriesFre,
   TermsLatex **
-  MathExtensionsFunctor  - [AllKindExp, AllIdentsKindExp, AllKindQuant, BothAndProp, EitherOrProp]
+  MathExtensionsFunctor  - [AllKindExp, AllIdentsKindExp, AllKindQuant, BothAndProp, EitherOrProp, FunExpKind]
 
   with
     (Syntax = SyntaxFre),
@@ -11,6 +11,8 @@ concrete MathExtensionsFre of MathExtensions =
     (Utilities = UtilitiesFre)
   ** open
     ParadigmsFre,
+    (S=SyntaxFre),
+    UtilitiesFre,
     Formal,
     Prelude
 in {
@@ -24,5 +26,11 @@ lin
   -- are rare in mathematical French
   BothAndProp x y = simpleProp (mkS (lin Conj {s1 = "à la fois" ; s2 = "et" ; n = plural}) x.s y.s) ;
   EitherOrProp x y = simpleProp (mkS (lin Conj {s1 = "soit" ; s2 = "," ++ "soit" ; n = singular}) x.s y.s) ;
+
+  -- "une fonction de A dans B", as French mathematics says it, not "de A à B"
+  FunExpKind a b = {
+    cn = mkCN function_N ;
+    adv = ccAdv (S.mkAdv from_Prep a) (S.mkAdv (mkPrep "dans") b)
+    } ;
 
 }
