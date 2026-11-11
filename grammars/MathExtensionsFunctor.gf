@@ -80,6 +80,10 @@ lin
   BareExistProp idents prop =
     simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP idents.np)) such_that_Subj (partProp prop)) ;
   FormulaArgKind kind formula = {cn = mkCN kind.cn (latexNP (mkSymb formula.s)) ; adv = kind.adv ; isPl = False} ;
+  BoundedInAllProp formula set prop =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet (boundedInNP formula.s set))) (partProp prop)) ;
+  BoundedInExistProp formula set prop =
+    simpleProp (Grammar.SSubjS (mkS (Extend.ExistsNP (boundedInNP formula.s set))) such_that_Subj (partProp prop)) ;
   FunExpKind a b = {
     cn = mkCN function_N ;
     adv = ccAdv (Syntax.mkAdv from_Prep a) (Syntax.mkAdv to_Prep b)
@@ -191,5 +195,9 @@ lin
   Noun1Pred noun = mkVP noun ;
   KindPredKind kind pred = {cn = mkCN kind.cn (mkRS (mkRCl which_RP pred)) ; adv = kind.adv} ;
 -}
+
+oper
+  -- "$\epsilon > 0$ in $\mathbb{R}$"
+  boundedInNP : Str -> NP -> NP = \f, set -> mkNP (latexNP (mkSymb f)) (Syntax.mkAdv in_Prep set) ;
 
 }

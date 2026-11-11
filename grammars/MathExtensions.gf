@@ -54,6 +54,10 @@ fun
   -- comparison, as one formula: "for all real numbers $\epsilon > 0$, P",
   -- "there exists an integer $q \neq 0$ such that P"
   FormulaArgKind : Kind -> Formula -> ArgKind ;
+  -- the same over a set given by a symbol: "for all $\epsilon > 0$ in $\mathbb{R}$, P",
+  -- "there exists $\delta > 0$ in $\mathbb{R}$ such that P"
+  BoundedInAllProp : Formula -> Exp -> Prop -> Prop ;
+  BoundedInExistProp : Formula -> Exp -> Prop -> Prop ;
   -- a function kind whose argument and value kinds are sets given by
   -- expressions: "function from A to B" rather than "function from elements
   -- of A to elements of B" (FunKind)

@@ -148,13 +148,13 @@ aggregate t = case t of
   -- a variable with a condition on it, a comparison: "for all real numbers
   -- $\\epsilon > 0$, P", "there exists a real number $\\delta > 0$ such that P"
   GCoreAllProp kind x (GIfProp cond body) | Just f <- bounding x cond ->
-    GAllProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+    boundedAll kind f (aggregate body)
   GCoreAllProp kind x (GCoreIfProp cond body) | Just f <- bounding x cond ->
-    GAllProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+    boundedAll kind f (aggregate body)
   GCoreExistProp kind x (GAndProp (GListProp [cond, body])) | Just f <- bounding x cond ->
-    GExistProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+    boundedExist kind f (aggregate body)
   GCoreExistProp kind x (GCoreAndProp cond body) | Just f <- bounding x cond ->
-    GExistProp (GListArgKind [GFormulaArgKind kind f]) (aggregate body)
+    boundedExist kind f (aggregate body)
   GCoreAllProp kind x prop -> case getAlls kind prop of
     (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
   GCoreExistProp kind x prop -> case getExists kind prop of
@@ -321,6 +321,18 @@ getAdjArgs props a = case props of
     (exps, ps) <- getAdjArgs pp a
     return (y : exps, ps)
   _ -> return ([], props)
+
+-- | A bounded quantifier: over a set given by a symbol, "for all $\\epsilon > 0$ in
+-- $\\mathbb{R}$"; else with its kind, "for all real numbers $\\epsilon > 0$"
+boundedAll :: GKind -> GFormula -> GProp -> GProp
+boundedAll kind f body = case kind of
+  GExpKind e@(GTermExp _) -> GBoundedInAllProp f e body
+  _ -> GAllProp (GListArgKind [GFormulaArgKind kind f]) body
+
+boundedExist :: GKind -> GFormula -> GProp -> GProp
+boundedExist kind f body = case kind of
+  GExpKind e@(GTermExp _) -> GBoundedInExistProp f e body
+  _ -> GExistProp (GListArgKind [GFormulaArgKind kind f]) body
 
 -- | The condition of a bounded quantifier over x: a comparison of x with a
 -- term without x (x > 0, n \\geq N, x \\in s)

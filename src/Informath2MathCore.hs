@@ -154,6 +154,11 @@ sem env t = case t of
 
   GListHypo hypos -> GListHypo (concatMap (semHypo . sem env) hypos)
 
+  -- "for all $x > 0$ in $A$", "there exists $x > 0$ in $A$ such that"
+  GBoundedInAllProp f set prop | Just x <- boundVar f ->
+    sem env (GCoreAllProp (GExpKind set) x (GIfProp (GFormulaProp f) prop))
+  GBoundedInExistProp f set prop | Just x <- boundVar f ->
+    sem env (GCoreExistProp (GExpKind set) x (GAndProp (GListProp [GFormulaProp f, prop])))
   -- "function from A to B" is the function kind of the sets A and B
   GFunExpKind a b ->
     sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) (GExpKind b))
