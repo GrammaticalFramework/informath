@@ -586,6 +586,13 @@ it: F5, F7 (`ClassKind`), F12, and `FunCCollExp` of F13; the variants of the
 test corpora are all exact or equivalent, and of 87,537 variants of eight
 Mathlib modules 45 are lost (a table wording with "an").
 
+Decided on 12 November: the specification is taken **modulo the
+normalization** of `NLGCheck.normalize` (t is in the semantics of t' up to
+it), and `ClassKind` stays. A proof of the specification is then a proof,
+pass by pass, that the semantics undoes each NLG rule up to the
+normalization, together with a proof that each step of the normalization
+preserves meaning.
+
 ## Part 4. Next steps
 
 1. **An empirical check.** A mode of `RunInformath` that, for each judgement

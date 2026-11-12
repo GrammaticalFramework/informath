@@ -102,7 +102,8 @@ The regression suite: 51 pass, 2 known failures; `insitu-dedukti` changed,
    such that G is a monoid with it", rather than as the name of the
    constant. A question about such wordings: keep them, or word them without
    a quantifier.
-2. **Equivalent, not exact.** 86,500 of the Mathlib variants are equivalent
+2. **Equivalent, not exact** (decided 12 November: the specification is
+   taken modulo the normalization, and `ClassKind` is kept). 86,500 of the Mathlib variants are equivalent
    only modulo the normalization (F1-F4, F6, F8-F11, F14, F17 of
    nlg-and-semantics.md). Either the specification is taken modulo this
    normalization, or the semantics is made to undo them exactly (fold ∧ to
