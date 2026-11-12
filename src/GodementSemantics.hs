@@ -222,6 +222,7 @@ godementSem t = case t of
 kindPred :: GKind -> GExp -> GProp
 kindPred kind x = case kind of
   GNounKind noun -> GNoun1Prop (GNounNoun1 noun) x
+  GClassKind noun -> GNoun1Prop (GNounNoun1 noun) x
   GDepKind dep y -> GNoun2Prop (dep2noun2 dep) x y
   GDep2Kind dep y z -> GNoun3Prop (dep22noun3 dep) x y z
   GExpKind set -> GNoun2Prop (LexNoun2 "element_Noun2") x set

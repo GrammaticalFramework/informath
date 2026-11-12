@@ -18,7 +18,7 @@ parseJmt env cat s =
   let
      gr = grammar env
      eng = fromLang env
-     notspur =  if isFlag "-include-unreachable" env then (const True) else (not . isSpurious env)
+     notspur t = (isFlag "-include-unreachable" env || not (isSpurious env t)) && not (hasNLGOnly t)
   in
   case (fst (parse_ gr eng cat (Just 4) s)) of  --- Just 4 is default in PGF.parse
     ParseOk ps -> 
@@ -33,6 +33,14 @@ parseJmt env cat s =
          (Nothing, "# FAILURE INCOMPLETE")
 
 ---------------
+
+-- | A tree with a function that only NLG makes, to record what it did for
+-- the semantics (ClassKind: "let G be a group" for a set G that is a group);
+-- a parse of a text is read without it, as the same text without it
+hasNLGOnly :: Expr -> Bool
+hasNLGOnly expr = case unApp expr of
+  Just (f, args) -> showCId f == "ClassKind" || any hasNLGOnly args
+  Nothing -> False
 
 -- spurious tree: containing lexical functions not mapped to/from Dedukti
 isSpurious :: Env -> Expr -> Bool

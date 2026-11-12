@@ -52,6 +52,7 @@ executable RunInformath
     SpecialConstants
     Semantics
     ProofText
+    NLGCheck
 
   hs-source-dirs:      app src web src/typetheory
   ghc-options:         -O2

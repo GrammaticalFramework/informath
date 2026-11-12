@@ -578,6 +578,14 @@ semantics rule (S1) that undoes it.
 
 ---
 
+## Status
+
+The empirical check of Part 4 is `RunInformath -check-nlg-semantics`, and its
+results are in [nlg-semantics-check.md](nlg-semantics-check.md). Fixed after
+it: F5, F7 (`ClassKind`), F12, and `FunCCollExp` of F13; the variants of the
+test corpora are all exact or equivalent, and of 87,537 variants of eight
+Mathlib modules 45 are lost (a table wording with "an").
+
 ## Part 4. Next steps
 
 1. **An empirical check.** A mode of `RunInformath` that, for each judgement

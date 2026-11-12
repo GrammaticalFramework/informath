@@ -173,13 +173,14 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
    -- a set variable of which a later hypothesis predicates a noun gets the
    -- noun as its kind, and the hypothesis goes: the class assumptions of
    -- Lean come after all the types ("let R be a semiring" instead of "let R
-   -- be a set ... assume that R is a semiring")
+   -- be a set ... assume that R is a semiring"); the kind is ClassKind, so
+   -- that the semantics gives back the set and the assumption
    nounKinds :: [GHypo] -> [GHypo]
    nounKinds hs = case hs of
      GVarsHypo xs@(GListIdent [x]) kind : rest | kind == setKind ->
        case break (isNounHypo x) rest of
          (before, h : after) | Just (GNoun1Prop (GNounNoun1 n) _) <- propOfHypo h ->
-           GVarsHypo xs (GNounKind n) : nounKinds (before ++ after)
+           GVarsHypo xs (GClassKind n) : nounKinds (before ++ after)
          _ -> GVarsHypo xs kind : nounKinds rest
      h : rest -> h : nounKinds rest
      [] -> []
@@ -240,7 +241,7 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
      -- sets of which a noun is predicated have it as their kind: "let $G$ be
      -- a monoid", not "let $G$ be a set such that $G$ is a monoid"
      _ | kind == GNounKind (LexNoun "set_Noun"), Just (n, rest) <- nounOf vars props ->
-       attached xs (GNounKind n) rest
+       attached xs (GClassKind n) rest
      [] -> GVarsHypo xs kind
      -- "let $p$ and $q$ be prime natural numbers", also from "p and q are
      -- prime" as one hypothesis; not with a set given by a formula ("prime

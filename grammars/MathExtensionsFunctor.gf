@@ -53,6 +53,7 @@ oper
 lin
 
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
+  ClassKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
   AdjKindHypo idents adj kind = Grammar.ImpP3 idents.np (mkVP (mkCN adj (useKind kind))) ; 
 

@@ -29,6 +29,10 @@ fun
       -- let R be a semiring. a module over R is an additive commutative monoid M with ... such that P
     
   VarsHypo : [Ident] -> Kind -> Hypo ;
+  -- a noun of a class of sets as a kind, as NLG says "let G be a group" for a
+  -- set G of which "G is a group" is assumed: read like NounKind, but its
+  -- semantics is the set and the assumption, not a variable of the kind
+  ClassKind : Noun -> Kind ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
   AdjKindHypo : [Ident] -> Adj -> Kind -> Hypo ;
   SuchThatHypo : [Ident] -> Prop -> Kind -> Hypo ;

@@ -28,6 +28,8 @@ import qualified Dedukti2MathCore as DMC
 import qualified MathCore2Informath as MCI
 import qualified Informath2MathCore as IMC
 import qualified MathCore2Dedukti as MCD
+import qualified NLGCheck as NC
+import Semantics (appNLGDefs)
 import Utils (commaSepInts, setnub, unindexString)
 import Utils (encodeJSON, mkJSONObject, mkJSONField, stringJSON, mkJSONListField)
 import Utils (toLatexDoc, transInEnv, frequencyTable, escapeTextUnderscores)
@@ -267,6 +269,45 @@ processJmt env djmt =
       nlgResults = nlgranks,
       backToDedukti = setnub (concatMap (gjmt2dedukti env) exts)
       }
+
+-- | The empirical check of doc/nlg-and-semantics.md: for each judgement and
+-- each of its MathCore trees t (at most four annotations), every NLG variant
+-- t', attributed to the first stage that makes it, with the semantics of t'.
+-- A semantics that fails (an error in the Haskell code) gives no trees, and
+-- the variant counts as lost.
+checkNLGSemantics :: Env -> Module -> IO String
+checkNLGSemantics env (MJmts jmts) = do
+  results <- mapM one [(jmtName j, t) | j <- includedDefs env jmts, t <- cores j]
+  return (NC.report results)
+ where
+  one (name, t) = do
+    vs <- mapM (\(s, v) -> do
+                 r <- try (evaluate (forceAll (ext2core env v))) :: IO (Either SomeException [GJmt])
+                 let (sems, note) = either (\e -> ([], " [semantics failed: " ++ take 100 (show e) ++ "]")) (\x -> (x, "")) r
+                 return (s, v, gftree2nat env (toLang env) (gf v) ++ note, sems))
+               (firstStage (NC.nlgStages (appNLGDefs (nlgTable (symbolTable env))) bare t))
+    return (name, t, vs)
+  forceAll xs = length (concatMap (showExpr [] . gf) xs) `seq` xs
+  bare = MCI.bareQuantifiers (implicitKinds env)
+  cores dj =
+    let cjmt = applyDeduktiConversions env dj
+        js = take 4 (annotateDedukti env (dropImplicitHypos env cjmt))
+        hidden = implicitPositions env cjmt
+    in [DMC.hideHypoVars (hypoVarsAt hidden j) (dedukti2core j) | j <- js]
+  firstStage :: [(NC.Stage, [GJmt])] -> [(NC.Stage, GJmt)]
+  firstStage stages = go [] [(s, v) | (s, vs) <- stages, v <- vs]
+   where
+    go seen svs = case svs of
+      (s, v) : rest | notElem v seen -> (s, v) : go (v : seen) rest
+                    | otherwise -> go seen rest
+      [] -> []
+  jmtName :: Jmt -> String
+  jmtName j = case j of
+    JStatic (QIdent c) _ -> c
+    JDef (QIdent c) _ _ -> c
+    JThm (QIdent c) _ _ -> c
+    JInj (QIdent c) _ _ -> c
+    _ -> "(rules)"
 
 -- | The kinds of the implicit types (#IMPLICIT), as MathCore says them
 implicitKinds :: Env -> [GKind]

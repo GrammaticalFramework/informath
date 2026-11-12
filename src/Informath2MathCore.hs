@@ -23,7 +23,7 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   
 semantics :: SemDefs -> GJmt -> [GJmt]
 semantics defs =
-  concatMap (inSituResults . addCoercions . addParenth . sem initSEnv . godementSem)
+  concatMap (map classKinds . inSituResults . addCoercions . addParenth . sem initSEnv . godementSem)
   . godementExpand . removeFonts . appSemDefs defs
 
 addCoercions :: Tree a -> Tree a
@@ -79,6 +79,9 @@ addParenth t = case t of
 semArgkindCond :: GArgKind -> [(GIdent, GKind, Maybe GProp)]
 semArgkindCond argkind = case argkind of
   GFormulaArgKind kind f | Just x <- boundVar f -> [(x, kind, Just (GFormulaProp f))]
+  -- "for all groups G": for all sets G, if G is a group
+  GIdentsArgKind (GClassKind n) (GListIdent xs) ->
+    [(x, GNounKind (LexNoun "set_Noun"), Just (GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm x)))) | x <- xs]
   _ -> [(x, k, Nothing) | (x, k) <- semArgkind argkind]
 
 semArgkind :: GArgKind -> [(GIdent, GKind)]
@@ -95,12 +98,36 @@ semArgkind argkind = case argkind of
 
 
 semHypo :: GHypo -> [GHypo]
-semHypo hypo = case hypo of
+semHypo hypo = concatMap classHypo $ case hypo of
   GAdjKindHypo xs@(GListIdent xx) adj kind ->
     GVarsHypo xs kind : [GPropHypo (GAdjProp adj (GTermExp (GIdentTerm x))) | x <- xx]
   GSuchThatHypo xs prop kind ->
     [GVarsHypo xs kind, GPropHypo prop]
   _ -> [hypo]
+
+-- | Quantifiers over a class of sets (ClassKind), wherever sem, addParenth or
+-- the storage of in situ quantifiers made them: "for all sets G, if G is a
+-- group, then P", "there exists a set G such that G is a group and P"
+classKinds :: Tree a -> Tree a
+classKinds t = case t of
+  GCoreAllProp (GClassKind n) x p ->
+    GCoreAllProp setKind x (GCoreIfProp (classProp n x) (classKinds p))
+  GCoreExistProp (GClassKind n) x p ->
+    GCoreExistProp setKind x (GCoreAndProp (classProp n x) (classKinds p))
+  _ -> composOp classKinds t
+ where
+  setKind = GNounKind (LexNoun "set_Noun")
+  classProp n x = GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm x))
+
+-- | Variables of a class of sets (ClassKind): sets, and the assumptions that
+-- they are of the class, "G is a group"
+classHypo :: GHypo -> [GHypo]
+classHypo h = case h of
+  GVarsHypo xs@(GListIdent xx) (GClassKind n) ->
+    GVarsHypo xs setKind : [GPropHypo (GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm x))) | x <- xx]
+  _ -> [h]
+ where
+  setKind = GNounKind (LexNoun "set_Noun")
 
 
 sem :: SEnv -> Tree a -> Tree a
@@ -131,7 +158,7 @@ sem env t = case t of
   -- "let $x, y \\in A$", as MathCore2Informath generates it for variables of A
   GLetDeclarationHypo decl -> case (sem env decl) of
     GElemDeclaration (GListTerm terms) term | length xs == length terms ->
-      GVarsHypo (GListIdent xs) (GExpKind (GTermExp term))
+      GVarsHypo (GListIdent xs) (sem env (GExpKind (GTermExp term)))
         where xs = [x | GIdentTerm x <- terms]
     d -> GLetDeclarationHypo d
   -- "let $x, y \\in A$ such that P", as MathCore2Informath generates it
@@ -159,6 +186,11 @@ sem env t = case t of
     sem env (GCoreAllProp (GExpKind set) x (GIfProp (GFormulaProp f) prop))
   GBoundedInExistProp f set prop | Just x <- boundVar f ->
     sem env (GCoreExistProp (GExpKind set) x (GAndProp (GListProp [GFormulaProp f, prop])))
+  -- "$A \rightarrow B \rightarrow C$" as a kind is the function kind of the
+  -- sets A and B to C, as MathCore2Informath.funKinds makes it
+  GExpKind (GTermExp t@(GFunTypeTerm _ _)) ->
+    let (args, val) = funTypeArgs t
+    in sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind (GTermExp a)) | a <- args]) (GExpKind (GTermExp val)))
   -- "function from A to B" is the function kind of the sets A and B
   GFunExpKind a b ->
     sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) (GExpKind b))
@@ -268,12 +300,16 @@ sem env t = case t of
   GNotAdvCProp adv exps -> GCoreNotProp (sem env (GAdvCCollProp adv exps))
 
   GPluralKindExp kind -> GKindExp kind
+  -- "the sum of a, b and c" (MathCore2Informath.collectivize)
+  GFunCCollExp f (GListExp exps) -> foldl1 (GFunCExp f) (map (sem env) exps)
 
   GKindArgKind kind -> 
     let (var, nenv) = newVar env
     in GIdentsArgKind (sem nenv kind) (GListIdent [var])
 
   GDisplayFormulaProp formula -> sem env (GFormulaProp formula)
+  -- "A implies B" between propositions made formulas (MathCore2Informath.implied)
+  GFormulaProp f | Just p <- formulaProp f -> sem env p
   
   GFormulaProp (GEquationFormula equation@(GChainEquation _ _ _)) -> case chainedEquations equation of
     triples -> GAndProp (GListProp
@@ -421,6 +457,28 @@ extensionStructure label kind parent x args props =
   conjuncts p = case p of
     GAndProp (GListProp ps) -> ps
     _ -> [p]
+
+-- | The arguments and the value of a symbolic function type A -> B -> C
+funTypeArgs :: GTerm -> ([GTerm], GTerm)
+funTypeArgs t = case t of
+  GFunTypeTerm a b -> let (as, v) = funTypeArgs b in (a : as, v)
+  _ -> ([], t)
+
+-- | A formula built from propositions by MathCore2Informath.implied, as the
+-- proposition: $\neg A$, $A \Rightarrow B$, a propositional variable;
+-- Nothing for a formula of its own (an equation, a macro with a backslash)
+formulaProp :: GFormula -> Maybe GProp
+formulaProp f = case f of
+  GNotFormula a -> Just (GCoreNotProp (asProp a))
+  GAndFormula a b -> Just (GAndProp (GListProp [asProp a, asProp b]))
+  GOrFormula a b -> Just (GOrProp (GListProp [asProp a, asProp b]))
+  GIfFormula a b -> Just (GIfProp (asProp a) (asProp b))
+  GIffFormula a b -> Just (GIffProp (asProp a) (asProp b))
+  GMacroFormula (GStringMacro (GString "\\bot")) -> Just GFalseProp
+  GMacroFormula (GStringMacro s@(GString (c : _))) | c /= '\\' -> Just (GIdentProp (GStrIdent s))
+  _ -> Nothing
+ where
+  asProp g = maybe (GFormulaProp g) id (formulaProp g)
 
 -- | The variable of a bounded quantifier, the left side of its comparison
 boundVar :: GFormula -> Maybe GIdent

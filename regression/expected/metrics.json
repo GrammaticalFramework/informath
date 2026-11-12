@@ -136,8 +136,8 @@
   "latex_errors": 0
  },
  "insitu-dedukti": {
-  "lines": 50,
-  "undefined": 25,
+  "lines": 38,
+  "undefined": 13,
   "seconds": 0.1
  },
  "lean-exx": {

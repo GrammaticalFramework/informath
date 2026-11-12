@@ -78,8 +78,12 @@ tryParseConstantTableEntry pgf lang s = do
 
 parseExample :: PGF -> Language -> String -> [FunProfile]
 parseExample pgf lang =
-    map extract . parse pgf lang (maybe undefined id (readType "Example")) . lexex
+    map extract . filter (not . nlgOnly) . parse pgf lang (maybe undefined id (readType "Example")) . lexex
   where
+   -- the functions that only NLG makes (ClassKind), as in ParseInformath
+   nlgOnly t = case unApp t of
+     Just (f, args) -> showCId f == "ClassKind" || any nlgOnly args
+     Nothing -> False
    extract t = case unApp t of
      Just (_, ex:args) -> case getProfile args of
        Just p -> (ex, p)

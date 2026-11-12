@@ -33,6 +33,9 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
     Just (file, "json") | elem "-tactic-proof" args -> do
       s <- readFile file
       putStrLn (showTacticProofs env s)
+    Just (file, "dk") | elem "-check-nlg-semantics" args -> do
+      mo <- readDeduktiModule [file]
+      checkNLGSemantics env mo >>= putStr
     Just (file, "dk") | elem "-proof-text" args -> do
       mo <- readDeduktiModule [file]
       let base = baseConstantModule env
@@ -143,6 +146,7 @@ helpMsg4 = [
   just "-test-ambiguity" "test ambiguity when ranking NLG results (can be very slow)",
   just "-parallel-data" "print complete parallel data in jsonl",
   just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
+  just "-check-nlg-semantics" "check that the semantics of each NLG variant of each statement includes the statement (doc/nlg-and-semantics.md)",
   just "-tactic-proof" "print proof texts of proofs given as lists of proof units in a .json file (from tactic proofs)",
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
   just "-proof-text-dedukti" "with -proof-text, also show the lines of the proof text with their formulas in Dedukti",
