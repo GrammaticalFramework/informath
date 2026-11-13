@@ -23,7 +23,7 @@
 -- All combinations of these are returned; the caller chooses among them, e.g. the
 -- one closest to Godement's own sentence.
 
-module GodementNLG (godementVariants) where
+module GodementNLG (godementVariants, godementVariantsSafe) where
 
 import Informath
 import Data.List (nub)
@@ -33,6 +33,15 @@ godementVariants jmt = nub (foldl step [jmt] transformations)
   where
     step ts f = ts ++ [t' | t <- ts, Just t' <- [f t], notElem t' ts]
     transformations = [typedHypos, typedDefinition, calledDefinition, definedExp, typedQuantifiers, adjKinds, necSuff]
+
+-- | For -roundtrip-safe: only the transformations that the semantics undoes
+-- (doc/nlg-and-semantics.md, Part 5); typedHypos and typedQuantifiers change
+-- the types of variables, typedDefinition moves a conjunct of the definiens
+-- into the hypotheses, definedExp loses the kind of the definiendum (F16).
+godementVariantsSafe :: GJmt -> [GJmt]
+godementVariantsSafe jmt = nub (foldl step [jmt] [calledDefinition, adjKinds, necSuff])
+  where
+    step ts f = ts ++ [t' | t <- ts, Just t' <- [f t], notElem t' ts]
 
 ------------------------------------------------------------
 -- typed variables: "let g be a mathematical object. assume that g is a group"

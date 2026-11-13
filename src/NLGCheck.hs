@@ -27,9 +27,10 @@ import qualified Data.Map as M
 type Stage = String
 
 -- | The stages of NLG, each with its trees (as with -more-variants); the
--- user's #NLG rules and the implicit kinds are given by the caller.
-nlgStages :: (GJmt -> [GJmt]) -> (GJmt -> GJmt) -> GJmt -> [(Stage, [GJmt])]
-nlgStages userNLG bare tree =
+-- user's #NLG rules and the implicit kinds are given by the caller; with
+-- safe (-roundtrip-safe), the stages as MathCore2Informath.nlg makes them then.
+nlgStages :: Bool -> (GJmt -> [GJmt]) -> (GJmt -> GJmt) -> GJmt -> [(Stage, [GJmt])]
+nlgStages safe userNLG bare tree =
   [ ("flatten (passes 1-5)", [ft])
   , ("aggregate", afts)
   , ("insitu", iafts)
@@ -39,18 +40,18 @@ nlgStages userNLG bare tree =
   , ("letDeclared (default output)", map MCI.letDeclared ncviafts)
   , ("bareQuantifiers", map (bare . MCI.letDeclared) ncviafts)
   , ("variations", take 200 vncviafts)
-  , ("#NLG rules", take 200 (concatMap userNLG vncviafts))
+  , ("#NLG rules", if safe then [] else take 200 (concatMap userNLG vncviafts))
   ]
  where
    t = MCI.unparenth tree
    ut = MCI.funKinds (MCI.uncoerce t)
    ft = MCI.flatten (MCI.extendStructure ut)
-   afts = [MCI.aggregate ft]
+   afts = [(if safe then MCI.aggregateSafe else MCI.aggregate) ft]
    iafts = map MCI.insitu afts
    viafts = map MCI.varless iafts
-   cviafts = concatMap MCI.collectivize viafts
+   cviafts = concatMap (if safe then MCI.collectivizeSafe else MCI.collectivize) viafts
    ncviafts = map (MCI.scoped . MCI.implied . MCI.negated) cviafts
-   vncviafts = concatMap MCI.variations ncviafts
+   vncviafts = concatMap (\u -> [v | v <- MCI.variations u, not safe || MCI.restorableVariation u v]) ncviafts
 
 data Verdict = Exact | Equivalent | Lost
   deriving (Eq, Ord, Show)

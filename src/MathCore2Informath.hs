@@ -3,13 +3,14 @@
 
 module MathCore2Informath where
 
-import GodementNLG (godementVariants)
+import GodementNLG (godementVariants, godementVariantsSafe)
 import Informath
 import Environment
 import BuildConstantTable (nlgTable)
 import Semantics (appNLGDefs)
 
 import Data.List (nub)
+import Data.Monoid (Any(..))
 
 type Opts = [String]
 
@@ -20,17 +21,21 @@ nlg env tree = case () of
   _  -> sample chosenVariants
   ---- TODO more option combinations
  where
+   -- -roundtrip-safe: no step whose loss of information the semantics cannot
+   -- restore (doc/nlg-and-semantics.md, Part 5)
+   safe = isFlag "-roundtrip-safe" env
    t = unparenth tree
    ut = funKinds (uncoerce t)
    ft = flatten (extendStructure ut)
-   afts = [aggregate ft]
+   afts = [(if safe then aggregateSafe else aggregate) ft]
    iafts = map insitu afts
    viafts = map varless iafts
-   cviafts = concatMap collectivize viafts
+   cviafts = concatMap (if safe then collectivizeSafe else collectivize) viafts
    ncviafts = map (scoped . implied . negated) cviafts  -- better do this at this late stage
-   vncviafts = concatMap variations ncviafts
-   uservariants = concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
-   godementvariants = concatMap godementVariants ncviafts
+   vncviafts = concatMap (\u -> filter (not safe ||| restorableVariation u) (variations u)) ncviafts
+   uservariants = if safe then [] else concatMap (appNLGDefs (nlgTable (symbolTable env))) vncviafts
+   godementvariants = concatMap (if safe then godementVariantsSafe else godementVariants) ncviafts
+   (|||) a b x = a || b x
 
    sample ts = [t | (t, i) <- zip ts [0 ..], mod i fact == 0]
    fact = samplingFactor env
@@ -132,12 +137,20 @@ funKinds t = case t of
     _ -> Nothing
 
 aggregate :: Tree a -> Tree a
-aggregate t = case t of
-  GCoreNotProp prop -> case aggregate prop of
+aggregate = aggregateWith False
+
+-- | aggregate for -roundtrip-safe: the hypotheses keep their order and number
+-- (aggregateHyposSafe), as they are the arguments of the constant in Dedukti.
+aggregateSafe :: Tree a -> Tree a
+aggregateSafe = aggregateWith True
+
+aggregateWith :: Bool -> Tree a -> Tree a
+aggregateWith safe t = case t of
+  GCoreNotProp prop -> case aggregateWith safe prop of
     GAdjProp adj x -> GNotAdjProp adj x
     aprop -> GCoreNotProp aprop
   GAndProp (GListProp props) ->
-    case groupProps "and" (map aggregate props) of
+    case groupProps "and" (map (aggregateWith safe) props) of
       [p] -> p
       pp -> GAndProp (GListProp pp)
   GOrProp (GListProp props) ->
@@ -148,19 +161,19 @@ aggregate t = case t of
   -- a variable with a condition on it, a comparison: "for all real numbers
   -- $\\epsilon > 0$, P", "there exists a real number $\\delta > 0$ such that P"
   GCoreAllProp kind x (GIfProp cond body) | Just f <- bounding x cond ->
-    boundedAll kind f (aggregate body)
+    boundedAll kind f (aggregateWith safe body)
   GCoreAllProp kind x (GCoreIfProp cond body) | Just f <- bounding x cond ->
-    boundedAll kind f (aggregate body)
+    boundedAll kind f (aggregateWith safe body)
   GCoreExistProp kind x (GAndProp (GListProp [cond, body])) | Just f <- bounding x cond ->
-    boundedExist kind f (aggregate body)
+    boundedExist kind f (aggregateWith safe body)
   GCoreExistProp kind x (GCoreAndProp cond body) | Just f <- bounding x cond ->
-    boundedExist kind f (aggregate body)
+    boundedExist kind f (aggregateWith safe body)
   GCoreAllProp kind x prop -> case getAlls kind prop of
-    (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
+    (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWith safe body)
   GCoreExistProp kind x prop -> case getExists kind prop of
-    (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregate body)
-  GListHypo hypos -> GListHypo (aggregateHypos hypos)
-  _ -> composOp aggregate t
+    (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWith safe body)
+  GListHypo hypos -> GListHypo ((if safe then aggregateHyposSafe else aggregateHypos) hypos)
+  _ -> composOp (aggregateWith safe) t
 
 -- | Hypotheses aggregated: variables of the same kind are brought together,
 -- as far as the type dependencies allow, and the propositions about them are
@@ -168,7 +181,22 @@ aggregate t = case t of
 -- variable has the same adjective, "let $x$ and $y$ be numbers such that $x >
 -- y$" (SuchThatHypo) otherwise. Two remaining propositions are conjoined.
 aggregateHypos :: [GHypo] -> [GHypo]
-aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap splitVars
+aggregateHypos = aggregateHyposWith False
+
+-- | For -roundtrip-safe, the hypotheses are aggregated only so that the
+-- semantics gives back the same hypotheses in the same order: no reordering
+-- of variables (reorderVar), no pairing of propositions (pairProps), a class
+-- assumption made a ClassKind only right after its variable, and to a
+-- variable only one proposition attached ("such that P"), or an adjective
+-- when each variable has its own hypothesis with it, in the order of the
+-- variables ("let x, y be even numbers").
+aggregateHyposSafe :: [GHypo] -> [GHypo]
+aggregateHyposSafe = aggregateHyposWith True
+
+aggregateHyposWith :: Bool -> [GHypo] -> [GHypo]
+aggregateHyposWith safe
+  | safe = map aggregate . attachProps . groupVars . nounKinds . concatMap splitVars
+  | otherwise = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap splitVars
  where
    -- a set variable of which a later hypothesis predicates a noun gets the
    -- noun as its kind, and the hypothesis goes: the class assumptions of
@@ -179,7 +207,7 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
    nounKinds hs = case hs of
      GVarsHypo xs@(GListIdent [x]) kind : rest | kind == setKind ->
        case break (isNounHypo x) rest of
-         (before, h : after) | Just (GNoun1Prop (GNounNoun1 n) _) <- propOfHypo h ->
+         (before, h : after) | Just (GNoun1Prop (GNounNoun1 n) _) <- propOfHypo h, not safe || null before ->
            GVarsHypo xs (GClassKind n) : nounKinds (before ++ after)
          _ -> GVarsHypo xs kind : nounKinds rest
      h : rest -> h : nounKinds rest
@@ -226,6 +254,18 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
    -- the propositions right after variables that mention some of them
    attachProps :: [GHypo] -> [GHypo]
    attachProps hs = case hs of
+     GVarsHypo xs@(GListIdent vars) kind : rest | safe ->
+       let (hs, rest') = span (\h -> maybe False (any (`elem` vars) . identsIn) (propOfHypo h)) rest
+           props = [p | Just p <- map propOfHypo hs]
+           single = [GAdjProp a e | p@(GAdjProp a e) <- props, [p] == conjunctsOf p]
+       in case props of
+            [] -> GVarsHypo xs kind : attachProps rest'
+            _ | length single == length props, not (isTermKind kind),
+                GAdjProp adj _ : _ <- single,
+                Just ys <- mapM (adjOf adj) single, ys == vars ->
+                  GAdjKindHypo xs adj kind : attachProps rest'
+            [p] -> attached xs kind [p] : attachProps rest'
+            _ -> GVarsHypo xs kind : hs ++ attachProps rest'
      GVarsHypo xs@(GListIdent vars) kind : rest ->
        let (props, rest') = propsAbout vars rest
        in attached xs kind props : attachProps rest'
@@ -240,13 +280,13 @@ aggregateHypos = pairProps . attachProps . groupVars . foldl reorderVar [] . nou
    attached xs@(GListIdent vars) kind props = case props of
      -- sets of which a noun is predicated have it as their kind: "let $G$ be
      -- a monoid", not "let $G$ be a set such that $G$ is a monoid"
-     _ | kind == GNounKind (LexNoun "set_Noun"), Just (n, rest) <- nounOf vars props ->
+     _ | not safe, kind == GNounKind (LexNoun "set_Noun"), Just (n, rest) <- nounOf vars props ->
        attached xs (GClassKind n) rest
      [] -> GVarsHypo xs kind
      -- "let $p$ and $q$ be prime natural numbers", also from "p and q are
      -- prime" as one hypothesis; not with a set given by a formula ("prime
      -- elements of N"), which is declared "let $p, q \in N$ such that ..."
-     _ | not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
+     _ | not safe, not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
          Just ys <- mapM (adjOf adj) conjuncts, sameElems ys vars ->
        GAdjKindHypo xs adj kind
      [p] -> GSuchThatHypo xs (aggregate p) kind
@@ -523,6 +563,24 @@ getOrProps props = case props of
   _ -> return []
 
 
+-- | For -roundtrip-safe, a variation is kept if it keeps the number of
+-- hypotheses (moving them into the conclusion changes the arguments of the
+-- constant in Dedukti, F17) and makes no "\\dots" sum, which has no
+-- semantics (F13).
+restorableVariation :: Tree a -> Tree a -> Bool
+restorableVariation orig var = hypoCount orig == hypoCount var && not (hasSum3dots var)
+ where
+  hypoCount :: Tree a -> Int
+  hypoCount u = case u of
+    GAxiomJmt _ (GListHypo hs) _ -> length hs
+    _ -> -1
+  hasSum3dots :: Tree a -> Bool
+  hasSum3dots u = case u of
+    Gsum3dots_Term _ _ _ -> True
+    _ -> getAny (composOpMonoid hasSum3dots' u)
+  hasSum3dots' :: Tree a -> Any
+  hasSum3dots' = Any . hasSum3dots
+
 variations :: Tree a -> [Tree a]
 variations tree = case tree of
   GAxiomJmt label (GListHypo hypos) prop -> 
@@ -669,6 +727,23 @@ list2mexps exps = case exps of
   [e] -> return $ GOneExps e
   _ : _ -> return $ GManyExps (GListExp exps)
   [] -> Nothing
+
+-- | collectivize for -roundtrip-safe: only where the semantics gives the
+-- same tree back: "x, y and z are equivalent" for x ~ y ∧ y ~ z (a chain, as
+-- the semantics reads it), "the sum of a, b and c" for (a + b) + c (nested
+-- to the left, as the semantics folds it).
+collectivizeSafe :: Tree a -> [Tree a]
+collectivizeSafe t = case [u | u <- collectivize t, undo u == t] of
+  [] -> [t]
+  us -> us
+ where
+  undo :: Tree a -> Tree a
+  undo u = case u of
+    GAdjECollProp adjc (GListExp es) | length es > 1 ->
+      GAndProp (GListProp [GAdjEProp adjc x y | (x, y) <- zip es (tail es)])
+    GFunCCollExp func (GListExp (e : es)) ->
+      foldl (GFunCExp func) (undo e) (map undo es)
+    _ -> composOp undo u
 
 collectivize :: Tree a -> [Tree a]
 collectivize t = case t of

@@ -137,6 +137,7 @@ helpMsg4 = [
   just "-nbest=<int>" "show <int> best NLG results, default show all",
   just "-sampling=<int>" "sampling factor of NLG results before ranking, default 2 (take every 2nd)", 
   just "-more-variants" "generate some more NLG variants",
+  just "-roundtrip-safe" "only NLG steps whose loss of information the semantics restores (doc/nlg-and-semantics.md, Part 5)",
   just "-trees" "with each natural language result, print the constant and the GF tree, separated by tabs",
   just "-godement" "generate also Godement-style variants (said to be, typed variables, ...)",
   just "-force-symbolic" "use maximally symbolic variants, even if this needs verbatim Dedukti constants",

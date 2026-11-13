@@ -285,7 +285,7 @@ checkNLGSemantics env (MJmts jmts) = do
                  r <- try (evaluate (forceAll (ext2core env v))) :: IO (Either SomeException [GJmt])
                  let (sems, note) = either (\e -> ([], " [semantics failed: " ++ take 100 (show e) ++ "]")) (\x -> (x, "")) r
                  return (s, v, gftree2nat env (toLang env) (gf v) ++ note, sems))
-               (firstStage (NC.nlgStages (appNLGDefs (nlgTable (symbolTable env))) bare t))
+               (firstStage (NC.nlgStages (isFlag "-roundtrip-safe" env) (appNLGDefs (nlgTable (symbolTable env))) bare t))
     return (name, t, vs)
   forceAll xs = length (concatMap (showExpr [] . gf) xs) `seq` xs
   bare = MCI.bareQuantifiers (implicitKinds env)
@@ -311,6 +311,8 @@ checkNLGSemantics env (MJmts jmts) = do
 
 -- | The kinds of the implicit types (#IMPLICIT), as MathCore says them
 implicitKinds :: Env -> [GKind]
+-- no bare quantifiers with -roundtrip-safe: they have no semantics yet (F13)
+implicitKinds env | isFlag "-roundtrip-safe" env = []
 implicitKinds env = [DMC.cleanup (DMC.exp2kind k) |
   not (isFlag "-show-implicit-hypotheses" env),
   s <- implicitTypes (symbolTable env),

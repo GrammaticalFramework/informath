@@ -135,3 +135,14 @@ The regression suite: 51 pass, 2 known failures; `insitu-dedukti` changed,
 4. **Not checked by the normalization:** coercions. The check removes them
    on both sides, so F3 (coercions restored only in some places) is not
    tested; the back-translation to Dedukti would test it.
+
+## With -roundtrip-safe
+
+`-check-nlg-semantics -roundtrip-safe` checks the variants that NLG makes
+with the flag (nlg-and-semantics.md, Part 5):
+
+| corpus | variants | exact | equivalent | lost |
+|---|---:|---:|---:|---:|
+| `test/exx.dk` | 247 (359) | 150 | 97 | 0 |
+| `test/top100.dk` | 479 (653) | 182 | 297 | 0 |
+| `test/sets.dk` | 245 (615) | 10 | 235 | 0 |

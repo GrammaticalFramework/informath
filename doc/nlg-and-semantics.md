@@ -610,3 +610,86 @@ preserves meaning.
    undo them (`addParenth` folding to the right, no currying in S5, restoring
    coercions where `Dedukti2MathCore` puts them), or weaken the
    specification to equality modulo the normalization.
+
+---
+
+## Part 5. Information loss: what is ambiguous, what can be restored, what cannot
+
+The specification (t is among the semantics of t', modulo the normalization)
+says nothing about *how much* NLG loses. A step can lose information in four
+ways, by how it could be restored:
+
+- **E, equivalent**: t' means the same as t, but a canonical choice (the
+  normalization) is needed to get t back literally. Harmless for meaning;
+  but the Dedukti type of a constant is not the same, so its uses elsewhere
+  (proofs applying it) do not type check against the round-trip.
+- **A, ambiguous**: the text has several readings, t among them; something
+  outside the text must choose.
+- **T, restorable by type checking**: the missing information is determined
+  by the types (dependent types, the expected type of an argument): a type
+  checker with metavariables and unification, or with coercion insertion,
+  would restore it. Informath's semantics does not do this yet; Dedukti
+  needs it as explicit terms.
+- **S, restorable by the symbol tables**: a table says how (`#IMPLICIT`,
+  `#SEMANTICS`, the profiles of entries).
+- **X, impossible**: the information is gone; neither the text, nor the
+  types, nor the tables determine it.
+
+| step | what is lost | class | `-roundtrip-safe` |
+|---|---|---|---|
+| 1 unparenth, 5 flatten, `scoped` splicing (F2) | the bracketing of ∧, ∨ | E (associativity) | kept |
+| S5 currying of "if A and B" (F1) | one antecedent or two | E | kept |
+| 2 uncoerce: `ProofProp`, `ElemKind` (F3) | where `Proof`/`Elem` stand | T (the judgement form and the argument types tell) | kept |
+| 2 uncoerce: `CoercionExp` (F3; Mathlib `#COERCION`) | the cast ℕ → ℤ, `Subtype.val`, ... | T (only with coercion insertion by expected type) | kept |
+| 6 `nounKinds`/`attached` with `ClassKind` (F7) | NLG keeps it (`ClassKind`), but a *parsed* text reads "let G be a monoid" with `NounKind`: `G : Elem monoid` | T (`Elem Monoid` is ill-typed where `Monoid` is a predicate) | only when the class hypothesis is right after its variable |
+| 6 `reorderVar` (F6) | the order of the hypotheses | X (the arguments of the constant change places) | off |
+| 6 `pairProps`, `attachProps` with two or more propositions (F6) | how many hypotheses: "such that A and B" is one hypothesis A ∧ B or two | A, not decidable by types (both are well typed): X | off: one proposition attached at most |
+| 6 `AdjKindHypo` (F6) | "let x, y be even": one hypothesis per variable, or one conjunction | A → X | only from one hypothesis per variable, in their order |
+| 6 groupProps ∀ over ∧ (F10) | `∀x P ∧ ∀x Q` or `∀x (P ∧ Q)` | E | kept |
+| 7 insitu, 13 `PostQuantProp` | none in NLG, which places one quantifier; but the scope of "P for all x" after a connective, and of quantifiers in table wordings (Cooper storage, S8), is read in several ways | A (S8 gives all orders) | kept; see item 1 of nlg-semantics-check.md for table wordings |
+| 8 varless (F8, F9) | the names of bound variables and of proof labels | E for statements (alpha); X for the *names* of labels a proof cites, which are restored as positions only | kept |
+| 9 collectivize `AdjECollProp` (F14) | which pairs: "a, b and c are equivalent" for a ~ b ∧ a ~ c reads as a ~ b ∧ b ~ c | X (equivalent only by the laws of an equivalence relation) | only when the semantics gives back the same pairs (a chain) |
+| 9 collectivize `FunCCollExp` | the bracketing of a + (b + c) | X (equivalent only by associativity, which is a theorem, not a conversion) | only when nested to the left, as the semantics folds |
+| 11 implied (F12) | none since `formulaProp` | — | kept |
+| 13 `AxiomJmt` hypotheses into the conclusion (F17) | how many hypotheses | E logically, X for the type of the constant | off |
+| 13 `sum3dots_Term` (F13) | the general term of f(1) + … + f(n), guessed from three instances | X | off |
+| 14 `#NLG` rules (F18) | whatever the rule drops | S if a `#SEMANTICS` rule inverts it, else X | off (not checkable) |
+| 15 bareQuantifiers (F13) | the kind of "for all x" | S (`#IMPLICIT`), when one kind is implicit; not implemented in the semantics | off |
+| 16 GodementNLG `typedHypos`, `typedQuantifiers` (F7) | set + typing as a kind | T, as `ClassKind` | off |
+| 16 `typedDefinition` (F16) | a conjunct of the definiens moved into the hypotheses | X (a definition for groups instead of for all objects) | off |
+| 16 `definedExp` (F16) | the kind of the definiendum (`object_Noun`) | X | off |
+| 16 `calledDefinition`, `adjKinds`, `necSuff` | none | — | kept |
+| annotation: one wording for several constants (`backConstantTable`) | which constant: "is nonempty" for `Nonempty`, `Set.Nonempty`, `Finset.Nonempty`; ⊆ for `Set.Subset`, `Finset.Subset` | A, T (the types of the arguments choose) | kept (not NLG) |
+| annotation: `#HIDE`, `#DROP` and profiles that leave out arguments | the arguments | T if they are determined by the types of the others (implicit type arguments, instances); X for data or proofs that are not; `unappProfile` puts metavariables in their places | kept (not NLG) |
+| annotation: a `PermProfile` that leaves out the *last* arguments (`[1]` of a two-argument constant) | the arguments after the highest shown position | X as implemented: `unappProfile` makes a partial application, without metavariables for them; T if it added them | kept (not NLG); to be fixed |
+| `dropImplicitHypos` (`#IMPLICIT`, ProofText) | the leading hypotheses of an implicit type | S: the free variables of the statement get the implicit type | kept |
+
+### The flag `-roundtrip-safe`
+
+`RunInformath -roundtrip-safe` leaves out the steps marked "off" above and
+restricts those marked "only": the NLG output is then one whose semantics
+gives back the same hypotheses, in the same order and number, the same
+collective structures, and no construction without a semantics. What
+remains is class E (a normalization), A of quantifier scope and of
+wordings, and T and S (types and tables). It is implemented in
+`MathCore2Informath` (`aggregateSafe`, `aggregateHyposSafe`,
+`collectivizeSafe`, `restorableVariation`), `GodementNLG`
+(`godementVariantsSafe`) and `InformathAPI` (no `implicitKinds`); the check
+of nlg-semantics-check.md follows it with the flag.
+
+The effect on the test corpora (the default output, one line per judgement):
+`test/exx.dk` 1 of 18 lines differs, `test/top100.dk` 4 of 27,
+`test/sets.dk` 1 of 32; for example
+
+    Let A and B be sets such that A ∪ B = 𝕌 and A ∩ B = ∅. Then B = Aᶜ.     (default)
+    Let A and B be sets. Assume that A ∪ B = 𝕌. Assume that A ∩ B = ∅. Then B = Aᶜ.   (-roundtrip-safe)
+
+as the Dedukti statement has the two hypotheses as two arguments. The
+variants of the check (`-check-nlg-semantics`, all stages): exx 359 → 247,
+top100 653 → 479, sets 615 → 245, none lost with or without the flag; the
+exact ones are the same (150, 182, 10), as the others are still class E.
+
+To do: the semantics of bare quantifiers from `#IMPLICIT`, metavariables
+for trailing arguments in `unappProfile`, and a class-E-free round trip
+(fold ∧ to the right, no currying, coercions where `Dedukti2MathCore` puts
+them), which would make `-roundtrip-safe` give exact round trips.
