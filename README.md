@@ -297,6 +297,8 @@ Of particular interest is one that prints the JSON files produced by Informath w
 $ echo "c : Proof (and (even 2) (prime 2))." | RunInformath -v | ./scripts/indent_jsonl.py
 ```
 
+Another, `scripts/proof_folds.py`, is a Python module for showing the proof texts of `RunInformath -proof-text` (best with `-proof-indent`) in HTML with folds: the subproof of an assumption, and the derivation of a line that cites earlier lines, can be hidden and shown again, leaving the hypotheses and the conclusion. A page includes its `FOLD_CSS` and `FOLD_JS` and calls `proof_table(rows)` on the rows of each proof; the index pages of Edukera, mathlib-informath, Godement and Rijke use it.
+
 
 ## The structure of Informath
 

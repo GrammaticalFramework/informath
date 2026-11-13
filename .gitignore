@@ -11,3 +11,4 @@ stack.yaml.lock
 src/typetheory/*/
 src/typetheory/Makefile
 src/Informath.hs
+__pycache__/
