@@ -685,7 +685,7 @@ judgement): `test/top100.dk` differs in 2 of 27 lines, by the reordering of
 variables, for example
 
     Let p, k ∈ ℕ such that p is prime and p = 4k + 1. ...                     (default)
-    Let p be a prime natural number. Let k be a natural number such that p = 4k + 1. ...   (-roundtrip-safe)
+    Let p be a prime natural number. Let k be a natural number such that p is equal to 4k + 1. ...   (-roundtrip-safe)
 
 as `k` comes after the hypothesis that `p` is prime in the Dedukti statement.
 

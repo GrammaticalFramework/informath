@@ -299,7 +299,7 @@ aggregateHyposWith safe
      -- "let $p$ and $q$ be prime natural numbers", also from "p and q are
      -- prime" as one hypothesis; not with a set given by a formula ("prime
      -- elements of N"), which is declared "let $p, q \in N$ such that ..."
-     _ | not safe, not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
+     _ | not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
          Just ys <- mapM (adjOf adj) conjuncts, sameElems ys vars, not safe || ys == vars ->
        GAdjKindHypo xs adj kind
      [p] -> GSuchThatHypo xs (aggregate p) kind
