@@ -136,13 +136,23 @@ The regression suite: 51 pass, 2 known failures; `insitu-dedukti` changed,
    on both sides, so F3 (coercions restored only in some places) is not
    tested; the back-translation to Dedukti would test it.
 
-## With -roundtrip-safe
+## With -roundtrip-safe, and same hypotheses
 
 `-check-nlg-semantics -roundtrip-safe` checks the variants that NLG makes
-with the flag (nlg-and-semantics.md, Part 5):
+with the flag (nlg-and-semantics.md, Part 5). The column *same hypotheses*
+(added 14 November) counts the equivalent variants whose semantics has the
+hypotheses of t, in number and order:
 
-| corpus | variants | exact | equivalent | lost |
-|---|---:|---:|---:|---:|
-| `test/exx.dk` | 247 (359) | 150 | 97 | 0 |
-| `test/top100.dk` | 479 (653) | 182 | 297 | 0 |
-| `test/sets.dk` | 245 (615) | 10 | 235 | 0 |
+| corpus | flag | variants | exact | same hypotheses | equivalent | lost |
+|---|---|---:|---:|---:|---:|---:|
+| `test/exx.dk` | | 343 | 150 | 81 | 112 | 0 |
+| `test/exx.dk` | safe | 231 | 150 | 81 | 0 | 0 |
+| `test/top100.dk` | | 615 | 182 | 203 | 230 | 0 |
+| `test/top100.dk` | safe | 443 | 182 | 261 | 0 | 0 |
+| `test/sets.dk` | | 609 | 10 | 237 | 362 | 0 |
+| `test/sets.dk` | safe | 245 | 10 | 235 | 0 | 0 |
+| Mathlib sample | | 86,557 | 969 | 34,225 | 51,318 | 45 |
+| Mathlib sample | safe | 40,355 | 969 | 39,283 | 103 | 0 |
+
+Without the flag, most "equivalent" variants are variations that move
+hypotheses into the conclusion (F17) or reorder variables.

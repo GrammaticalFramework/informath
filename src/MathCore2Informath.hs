@@ -185,19 +185,37 @@ aggregateHypos = aggregateHyposWith False
 
 -- | For -roundtrip-safe, the hypotheses are aggregated only so that the
 -- semantics gives back the same hypotheses in the same order: no reordering
--- of variables (reorderVar), no pairing of propositions (pairProps), a class
--- assumption made a ClassKind only right after its variable, and to a
--- variable only one proposition attached ("such that P"), or an adjective
--- when each variable has its own hypothesis with it, in the order of the
--- variables ("let x, y be even numbers").
+-- of variables (reorderVar), a class assumption made a ClassKind only right
+-- after its variable and only for one variable, and an adjective kind only
+-- with the variables in the order of their hypotheses. Propositions are
+-- attached and paired, as the semantics splits "and" (semHypo), and a
+-- hypothesis that is a conjunction is "both A and B".
 aggregateHyposSafe :: [GHypo] -> [GHypo]
 aggregateHyposSafe = aggregateHyposWith True
 
 aggregateHyposWith :: Bool -> [GHypo] -> [GHypo]
 aggregateHyposWith safe
-  | safe = map aggregate . attachProps . groupVars . nounKinds . concatMap splitVars
-  | otherwise = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap splitVars
+  | safe = pairProps . attachProps . groupVars . nounKinds . concatMap (splitVars . oneConjunction)
+  | otherwise = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap (splitVars . oneConjunction)
  where
+   -- a hypothesis that is a conjunction is "both A and B", as the semantics
+   -- reads a conjunction with "and" as several hypotheses (semHypo)
+   oneConjunction :: GHypo -> GHypo
+   oneConjunction h = case h of
+     GPropHypo p -> GPropHypo (both p)
+     GPropVarHypo x p -> GPropVarHypo x (both p)
+     _ -> h
+   both :: GProp -> GProp
+   both p = case p of
+     -- "both x and y are A", "x is both A and B"
+     GAndProp (GListProp [_, _]) | GAdjProp adj (GAndExp (GListExp [x, y])) <- aggregate p ->
+       GAdjProp adj (GBothAndExp x y)
+     GAndProp (GListProp [_, _]) | GAdjProp (GAndAdj (GListAdj [a, b])) e <- aggregate p ->
+       GAdjProp (GBothAndAdj a b) e
+     GAndProp (GListProp [a, b]) -> GBothAndProp a b
+     GAndProp (GListProp (a : bs@(_ : _))) -> GBothAndProp a (GAndProp (GListProp bs))
+     _ -> p
+
    -- a set variable of which a later hypothesis predicates a noun gets the
    -- noun as its kind, and the hypothesis goes: the class assumptions of
    -- Lean come after all the types ("let R be a semiring" instead of "let R
@@ -240,6 +258,10 @@ aggregateHyposWith safe
 
    groupVars :: [GHypo] -> [GHypo]
    groupVars hs = case hs of
+     -- for -roundtrip-safe, not variables of a class, which the semantics
+     -- gives as sets first and then their class assumptions
+     GVarsHypo (GListIdent [x]) kind@(GClassKind _) : rest | safe ->
+       GVarsHypo (GListIdent [x]) kind : groupVars rest
      GVarsHypo (GListIdent [x]) kind : rest ->
        let (ys, rest') = sameKind kind rest
        in GVarsHypo (GListIdent (x : ys)) kind : groupVars rest'
@@ -254,21 +276,12 @@ aggregateHyposWith safe
    -- the propositions right after variables that mention some of them
    attachProps :: [GHypo] -> [GHypo]
    attachProps hs = case hs of
-     GVarsHypo xs@(GListIdent vars) kind : rest | safe ->
-       let (hs, rest') = span (\h -> maybe False (any (`elem` vars) . identsIn) (propOfHypo h)) rest
-           props = [p | Just p <- map propOfHypo hs]
-           single = [GAdjProp a e | p@(GAdjProp a e) <- props, [p] == conjunctsOf p]
-       in case props of
-            [] -> GVarsHypo xs kind : attachProps rest'
-            _ | length single == length props, not (isTermKind kind),
-                GAdjProp adj _ : _ <- single,
-                Just ys <- mapM (adjOf adj) single, ys == vars ->
-                  GAdjKindHypo xs adj kind : attachProps rest'
-            [p] -> attached xs kind [p] : attachProps rest'
-            _ -> GVarsHypo xs kind : hs ++ attachProps rest'
      GVarsHypo xs@(GListIdent vars) kind : rest ->
        let (props, rest') = propsAbout vars rest
-       in attached xs kind props : attachProps rest'
+       in case props of
+            -- "such that not A and B" would be "both not A and B", one hypothesis
+            p : _ : _ | isNegation p -> GVarsHypo xs kind : take (length props) rest ++ attachProps rest'
+            _ -> attached xs kind props : attachProps rest'
      h : rest -> h : attachProps rest
      [] -> []
    propsAbout :: [GIdent] -> [GHypo] -> ([GProp], [GHypo])
@@ -287,7 +300,7 @@ aggregateHyposWith safe
      -- prime" as one hypothesis; not with a set given by a formula ("prime
      -- elements of N"), which is declared "let $p, q \in N$ such that ..."
      _ | not safe, not (isTermKind kind), GAdjProp adj _ : _ <- conjuncts,
-         Just ys <- mapM (adjOf adj) conjuncts, sameElems ys vars ->
+         Just ys <- mapM (adjOf adj) conjuncts, sameElems ys vars, not safe || ys == vars ->
        GAdjKindHypo xs adj kind
      [p] -> GSuchThatHypo xs (aggregate p) kind
      _ -> GSuchThatHypo xs (aggregate (GAndProp (GListProp props))) kind
@@ -328,10 +341,17 @@ aggregateHyposWith safe
 
    pairProps :: [GHypo] -> [GHypo]
    pairProps hs = case hs of
-     GPropHypo a : GPropHypo b : rest ->
+     -- not after a negation, which scoped would make "both not A and B",
+     -- one hypothesis for the semantics
+     GPropHypo a : GPropHypo b : rest | not (isNegation a) ->
        GPropHypo (aggregate (GAndProp (GListProp [a, b]))) : pairProps rest
      h : rest -> aggregate h : pairProps rest
      [] -> []
+
+isNegation :: GProp -> Bool
+isNegation p = case p of
+  GCoreNotProp _ -> True
+  _ -> False
 
 -- | The identifiers occurring in a tree: its variables, and bound ones too.
 identsIn :: Tree a -> [GIdent]
@@ -591,6 +611,12 @@ variations tree = case tree of
           prop2 <- variations prop,
           hypoprop <- concatMap variations (hypoProp hypos2 prop2)
           ]
+  -- a conjunction of hypotheses stays one with "and", not "both A and B",
+  -- which the semantics reads as one hypothesis (semHypo)
+  GPropHypo (GAndProp (GListProp ps)) ->
+    [GPropHypo (GAndProp (GListProp ps')) | ps' <- mapM variations ps]
+  GSuchThatHypo xs (GAndProp (GListProp ps)) kind ->
+    [GSuchThatHypo xs (GAndProp (GListProp ps')) kind' | ps' <- mapM variations ps, kind' <- variations kind]
   GVarsHypo (GListIdent xs) (GExpKind (GTermExp term)) ->
     [GLetDeclarationHypo (GElemDeclaration (GListTerm [GIdentTerm x | x <- xs]) term), tree]
   -- "let f be a function from A to B" or "let $f \\in A \\rightarrow B$"

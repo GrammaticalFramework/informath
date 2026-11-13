@@ -8,6 +8,7 @@ prop70 : Proof (odd (nd 1)) .
 prop80 : Proof (even (nd 2)) .
 prop90 : n : Elem Nat -> Proof (if (and (even n) (prime n)) (Eq n (nd 2))) .
 prop100 : a : Elem Int -> b : Elem Int -> c : Elem Int -> Proof (Eq (plus (plus a b) c) (nd 0)) -> Proof (Lt (times (times a b) c) (nd 0)) .
+prop110 : a : Elem Int -> c : Elem Int -> Proof (and (odd a) (odd c)) -> Proof (forall Int (b => even (plus (times a b) (times b c)))) .
 prop110 : a : Elem Int -> c : Elem Int -> Proof (odd a) -> Proof (odd c) -> Proof (forall Int (b => even (plus (times a b) (times b c)))) .
 prop120 : a : Elem Int -> b : Elem Int -> Proof (iff (even (times a b)) (or (even a) (even b))) .
 prop130 : x : Elem Int -> y : Elem Int -> Proof (if (odd (times x y)) (and (odd x) (odd y))) .

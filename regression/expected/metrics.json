@@ -27,9 +27,9 @@
   "seconds": 4.7
  },
  "dk-roundtrip": {
-  "lines": 56,
+  "lines": 55,
   "undefined": 0,
-  "seconds": 1.8
+  "seconds": 1.9
  },
  "dk-sets": {
   "lines": 0,
@@ -49,7 +49,7 @@
  "embedded-sigma": {
   "lines": 44,
   "undefined": 0,
-  "seconds": 0.2
+  "seconds": 0.1
  },
  "exx-agda": {
   "lines": 19,
@@ -64,7 +64,7 @@
  "exx-fre": {
   "lines": 18,
   "undefined": 0,
-  "seconds": 1.0
+  "seconds": 0.9
  },
  "exx-ger": {
   "lines": 15,
@@ -84,7 +84,7 @@
  "exx-roundtrip": {
   "lines": 71,
   "undefined": 0,
-  "seconds": 1.5
+  "seconds": 1.6
  },
  "exx-roundtrip-failures": {
   "lines": 1,
@@ -92,14 +92,14 @@
   "seconds": 0.7
  },
  "exx-roundtrip-typecheck": {
-  "lines": 17,
+  "lines": 18,
   "undefined": 0,
   "seconds": 2.4
  },
  "exx-swe": {
   "lines": 18,
   "undefined": 0,
-  "seconds": 0.7
+  "seconds": 0.6
  },
  "fermat": {
   "lines": 0,
@@ -173,10 +173,10 @@
   "seconds": 1.3
  },
  "naproche-interpret": {
-  "lines": 1855,
+  "lines": 2114,
   "undefined": 0,
-  "seconds": 7.1,
-  "latex_pages": 116,
+  "seconds": 7.8,
+  "latex_pages": 134,
   "latex_errors": 0
  },
  "naproche-translate": {
@@ -222,7 +222,7 @@
  "proof-text-lemmas": {
   "lines": 58,
   "undefined": 0,
-  "seconds": 0.0,
+  "seconds": 0.1,
   "latex_pages": 5,
   "latex_errors": 0
  },
@@ -254,7 +254,7 @@
   "lines": 146,
   "undefined": 0,
   "seconds": 0.1,
-  "latex_pages": 10,
+  "latex_pages": 11,
   "latex_errors": 0
  },
  "symboltable-check": {
@@ -277,19 +277,19 @@
  "top100-force-symbolic": {
   "lines": 50,
   "undefined": 0,
-  "seconds": 0.0,
+  "seconds": 0.1,
   "latex_pages": 2,
   "latex_errors": 0
  },
  "top100-godement-trees": {
   "lines": 615,
   "undefined": 0,
-  "seconds": 0.3
+  "seconds": 0.5
  },
  "top100-latex": {
   "lines": 1746,
   "undefined": 0,
-  "seconds": 0.7,
+  "seconds": 0.8,
   "latex_pages": 134,
   "latex_errors": 0
  },

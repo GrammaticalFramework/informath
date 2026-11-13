@@ -23,7 +23,7 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Assume that $A$ and $B$. &  \\
+1. & Assume that both $A$ and $B$. &  \\
 2. & $A$. & \texttt{andEl} 1  \\
 3. & If $A$ and $B$, then $A$. & \texttt{ifI} 2 (1) \\
 \end{tabular}
@@ -59,7 +59,7 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Assume that $A$ and $B$. &  \\
+1. & Assume that both $A$ and $B$. &  \\
 2. & $B$. & \texttt{andEr} 1  \\
 3. & $A$. & \texttt{andEl} 1  \\
 4. & $B$ and $A$. & \texttt{andI} 2, 3  \\
@@ -98,7 +98,7 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Assume that $A$ and $B$. &  \\
+1. & Assume that both $A$ and $B$. &  \\
 2. & Assume that it is not the case that $A$. &  \\
 3. & $A$. & \texttt{andEl} 1  \\
 4. & By notE, we have a contradiction. & \texttt{notE} 3, 2  \\

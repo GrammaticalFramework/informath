@@ -23,7 +23,7 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Assume that $P$ and $P$. &  \\
+1. & Assume that both $P$ and $P$. &  \\
 2. & $P$. & \texttt{andEl} 1  \\
 3. & $Q$. & \texttt{lem} 2  \\
 \end{tabular}
@@ -94,7 +94,7 @@
 
 
 \begin{tabular}{rp{0.62\textwidth}l}
-1. & Assume that $P$, $Q$ and $R$. &  \\
+1. & Assume that both $P$ and $Q$ and $R$. &  \\
 2. & $Q$ and $R$. & \texttt{andEr} 1  \\
 3. & $R$. & \texttt{andEr} 2  \\
 4. & $Q$. & \texttt{andEl} 2  \\

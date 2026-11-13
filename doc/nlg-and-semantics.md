@@ -643,8 +643,9 @@ ways, by how it could be restored:
 | 2 uncoerce: `CoercionExp` (F3; Mathlib `#COERCION`) | the cast ℕ → ℤ, `Subtype.val`, ... | T (only with coercion insertion by expected type) | kept |
 | 6 `nounKinds`/`attached` with `ClassKind` (F7) | NLG keeps it (`ClassKind`), but a *parsed* text reads "let G be a monoid" with `NounKind`: `G : Elem monoid` | T (`Elem Monoid` is ill-typed where `Monoid` is a predicate) | only when the class hypothesis is right after its variable |
 | 6 `reorderVar` (F6) | the order of the hypotheses | X (the arguments of the constant change places) | off |
-| 6 `pairProps`, `attachProps` with two or more propositions (F6) | how many hypotheses: "such that A and B" is one hypothesis A ∧ B or two | A, not decidable by types (both are well typed): X | off: one proposition attached at most |
-| 6 `AdjKindHypo` (F6) | "let x, y be even": one hypothesis per variable, or one conjunction | A → X | only from one hypothesis per variable, in their order |
+| 6 `pairProps`, `attachProps` with two or more propositions (F6) | how many hypotheses: "such that A and B" is one hypothesis A ∧ B or two | was A → X; now none: "and" is always separate hypotheses, a hypothesis that is one conjunction is "both A and B" (see "Conjunctions of hypotheses" below) | kept, except "such that not A and B" (which `scoped` would make "both") |
+| 6 `AdjKindHypo` (F6) | "let x, y be even": one hypothesis per variable, or one conjunction | as the row above: one conjunction is "such that both x and y are even" | only with the variables in the order of their hypotheses |
+| 6 `groupVars` of class variables | "let G and H be groups": the semantics gives the two sets first, then the two assumptions | X (order) | not for `ClassKind` |
 | 6 groupProps ∀ over ∧ (F10) | `∀x P ∧ ∀x Q` or `∀x (P ∧ Q)` | E | kept |
 | 7 insitu, 13 `PostQuantProp` | none in NLG, which places one quantifier; but the scope of "P for all x" after a connective, and of quantifiers in table wordings (Cooper storage, S8), is read in several ways | A (S8 gives all orders) | kept; see item 1 of nlg-semantics-check.md for table wordings |
 | 8 varless (F8, F9) | the names of bound variables and of proof labels | E for statements (alpha); X for the *names* of labels a proof cites, which are restored as positions only | kept |
@@ -669,7 +670,9 @@ ways, by how it could be restored:
 `RunInformath -roundtrip-safe` leaves out the steps marked "off" above and
 restricts those marked "only": the NLG output is then one whose semantics
 gives back the same hypotheses, in the same order and number, the same
-collective structures, and no construction without a semantics. What
+collective structures, and no construction without a semantics. Since the
+semantics splits "and" (below), what it forbids in the aggregation of
+hypotheses is only reordering. What
 remains is class E (a normalization), A of quantifier scope and of
 wordings, and T and S (types and tables). It is implemented in
 `MathCore2Informath` (`aggregateSafe`, `aggregateHyposSafe`,
@@ -677,17 +680,61 @@ wordings, and T and S (types and tables). It is implemented in
 (`godementVariantsSafe`) and `InformathAPI` (no `implicitKinds`); the check
 of nlg-semantics-check.md follows it with the flag.
 
-The effect on the test corpora (the default output, one line per judgement):
-`test/exx.dk` 1 of 18 lines differs, `test/top100.dk` 4 of 27,
-`test/sets.dk` 1 of 32; for example
+The effect on the test corpora (the default output, one line per
+judgement): `test/top100.dk` differs in 2 of 27 lines, by the reordering of
+variables, for example
 
-    Let A and B be sets such that A ∪ B = 𝕌 and A ∩ B = ∅. Then B = Aᶜ.     (default)
-    Let A and B be sets. Assume that A ∪ B = 𝕌. Assume that A ∩ B = ∅. Then B = Aᶜ.   (-roundtrip-safe)
+    Let p, k ∈ ℕ such that p is prime and p = 4k + 1. ...                     (default)
+    Let p be a prime natural number. Let k be a natural number such that p = 4k + 1. ...   (-roundtrip-safe)
 
-as the Dedukti statement has the two hypotheses as two arguments. The
-variants of the check (`-check-nlg-semantics`, all stages): exx 359 → 247,
-top100 653 → 479, sets 615 → 245, none lost with or without the flag; the
-exact ones are the same (150, 182, 10), as the others are still class E.
+as `k` comes after the hypothesis that `p` is prime in the Dedukti statement.
+
+### Conjunctions of hypotheses
+
+Merging hypotheses ("let x be such that A and B", "assume that A and B") was
+the most frequent loss of the default output: the semantics read "A and B"
+as one hypothesis, while it usually came from two. Rather than giving both
+readings, which would multiply the readings of a statement (2^(k-1) for k
+conjuncts) without any difference in meaning, there is now one reading, the
+Lean convention:
+
+- **semantics** (`Informath2MathCore.semHypo`): a conjunction with "and" in
+  a "such that" or in an assumption is split into separate hypotheses, as
+  the antecedents "if A and B, then C" already were (S5);
+- **NLG** (`aggregateHypos`, `oneConjunction`): a hypothesis that is one
+  conjunction in the source is said **"both A and B"** ("such that both p and
+  q are prime", "assume that both A and B"); the semantics reads
+  `BothAndProp`, and "both x and y are A" (`BothAndExp`, `BothAndAdj`), as a
+  `CoreAndProp`, one hypothesis;
+- the variations do not make "both A and B" of a conjunction of hypotheses,
+  and `pairProps` does not pair a negation with what follows (which `scoped`
+  would say with "both").
+
+`-check-nlg-semantics` now has the column *same hypotheses*: equivalent
+modulo the normalization, but without splitting, sorting or moving
+hypotheses (`normalizeKeepingHypos`), so that the constant has the same
+arguments. Measured on the Mathlib sample of nlg-semantics-check.md (8
+modules, 5,109 MathCore trees), the default output (`letDeclared`, 3,764
+variants):
+
+| | exact or same hypotheses | other hypotheses |
+|---|---:|---:|
+| before | 3,219 | 545 |
+| after | 3,465 | 299 |
+| after, `-roundtrip-safe` | **3,764** | **0** |
+| before, `-roundtrip-safe` (the first version of the flag) | 3,732 | 32 |
+
+On the test corpora, `test/top100.dk`: 48 of 56 (44 before), all 8 others
+reorderings; `test/sets.dk`, the aggregation stage: 13 of 13 (9 before).
+With the flag, all variants of all stages keep their hypotheses on the
+test corpora, and 39,283 + 969 exact of 40,355 on the Mathlib sample (103
+variations remain). The default output changes in two judgements of the
+test corpora, whose sources have one conjunctive hypothesis: "Let $p, q \in
+\mathbb{N}$ such that both $p$ and $q$ are prime" (Thm07, before "let $p$ and
+$q$ be prime natural numbers", which now reads as two hypotheses), and
+Prop110. In proof texts, an assumption that is one conjunction is "assume
+that both A and B"; in Naproche texts, "assume that A ⊆ B ⊆ A" is two
+hypotheses.
 
 To do: the semantics of bare quantifiers from `#IMPLICIT`, metavariables
 for trailing arguments in `unappProfile`, and a class-E-free round trip

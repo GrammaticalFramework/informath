@@ -488,77 +488,93 @@ PropositionSubseteqRefl. $A \subseteq A$.
 
 PropositionSubseteqRefl. $A$ is a subset of $A$.
 
-PropositionSubseteqAntisymmetric. Assume that $A \subseteq B \subseteq A$. Then $A = B$.
+PropositionSubseteqAntisymmetric. Assume that $A \subseteq B$. Assume that $B \subseteq A$. Then $A = B$.
 
-PropositionSubseteqAntisymmetric. Assume that $A \subseteq B \subseteq A$. Then $A$ is equal to $B$.
+PropositionSubseteqAntisymmetric. Assume that $A \subseteq B$. Assume that $B \subseteq A$. Then $A$ is equal to $B$.
 
-PropositionSubseteqAntisymmetric. Assume that $A$ is a subset of $B$ and $B$ is a subset of $A$. Then $A = B$.
+PropositionSubseteqAntisymmetric. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $A$. Then $A = B$.
 
-PropositionSubseteqAntisymmetric. Assume that $A$ is a subset of $B$ and $B$ is a subset of $A$. Then $A$ is equal to $B$.
+PropositionSubseteqAntisymmetric. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $A$. Then $A$ is equal to $B$.
 
-PropositionElemSubseteq. Assume that $a \in A \subseteq B$. Then $a \in B$.
+PropositionElemSubseteq. Assume that $a \in A$. Assume that $A \subseteq B$. Then $a \in B$.
 
-PropositionElemSubseteq. Assume that $a \in A \subseteq B$. Then $a$ is an element of $B$.
+PropositionElemSubseteq. Assume that $a \in A$. Assume that $A$ is a subset of $B$. Then $a \in B$.
 
-PropositionElemSubseteq. Assume that $a \in A$ and $A$ is a subset of $B$. Then $a \in B$.
+PropositionElemSubseteq. Assume that $a$ is an element of $A$. Assume that $A \subseteq B$. Then $a \in B$.
 
-PropositionElemSubseteq. Assume that $a$ is an element of $A$ and $A \subseteq B$. Then $a \in B$.
+PropositionElemSubseteq. Assume that $a \in A$. Assume that $A \subseteq B$. Then $a$ is an element of $B$.
 
-PropositionElemSubseteq. Assume that $a$ is an element of $A$ and $A$ is a subset of $B$. Then $a \in B$.
+PropositionElemSubseteq. Assume that $a$ is an element of $A$. Assume that $A$ is a subset of $B$. Then $a \in B$.
 
-PropositionElemSubseteq. Assume that $a \in A$ and $A$ is a subset of $B$. Then $a$ is an element of $B$.
+PropositionElemSubseteq. Assume that $a \in A$. Assume that $A$ is a subset of $B$. Then $a$ is an element of $B$.
 
-PropositionElemSubseteq. Assume that $a$ is an element of $A$ and $A \subseteq B$. Then $a$ is an element of $B$.
+PropositionElemSubseteq. Assume that $a$ is an element of $A$. Assume that $A \subseteq B$. Then $a$ is an element of $B$.
 
-PropositionElemSubseteq. Assume that $a$ is an element of $A$ and $A$ is a subset of $B$. Then $a$ is an element of $B$.
+PropositionElemSubseteq. Assume that $a$ is an element of $A$. Assume that $A$ is a subset of $B$. Then $a$ is an element of $B$.
 
-PropositionNotInSubseteq. Assume that $A \subseteq B$ and $c \notin B$. Then $c \notin A$.
+PropositionNotInSubseteq. Assume that both $A \subseteq B$ and $c \notin B$. Then $c \notin A$.
 
-PropositionNotInSubseteq. Assume that $A$ is a subset of $B$ and $c \notin B$. Then $c \notin A$.
+PropositionNotInSubseteq. Assume that both $A$ is a subset of $B$ and $c \notin B$. Then $c \notin A$.
 
-PropositionNotInSubseteq. Assume that $A \subseteq B$ and $c$ is a non-element of $B$. Then $c \notin A$.
+PropositionNotInSubseteq. Assume that both $A \subseteq B$ and $c$ is a non-element of $B$. Then $c \notin A$.
 
-PropositionNotInSubseteq. Assume that $A \subseteq B$ and $c \notin B$. Then $c$ is a non-element of $A$.
+PropositionNotInSubseteq. Assume that both $A \subseteq B$ and $c \notin B$. Then $c$ is a non-element of $A$.
 
-PropositionNotInSubseteq. Assume that $A$ is a subset of $B$ and $c$ is a non-element of $B$. Then $c \notin A$.
+PropositionNotInSubseteq. Assume that both $A$ is a subset of $B$ and $c$ is a non-element of $B$. Then $c \notin A$.
 
-PropositionNotInSubseteq. Assume that $A$ is a subset of $B$ and $c \notin B$. Then $c$ is a non-element of $A$.
+PropositionNotInSubseteq. Assume that both $A$ is a subset of $B$ and $c \notin B$. Then $c$ is a non-element of $A$.
 
-PropositionNotInSubseteq. Assume that $A \subseteq B$ and $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
+PropositionNotInSubseteq. Assume that both $A \subseteq B$ and $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
 
-PropositionNotInSubseteq. Assume that $A$ is a subset of $B$ and $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
+PropositionNotInSubseteq. Assume that both $A$ is a subset of $B$ and $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionNotInSubseteq. Assume that $A \subseteq B$. Assume that $c \notin B$. Then $c \notin A$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionNotInSubseteq. Assume that $A$ is a subset of $B$. Assume that $c \notin B$. Then $c \notin A$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionNotInSubseteq. Assume that $A \subseteq B$. Assume that $c$ is a non-element of $B$. Then $c \notin A$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionNotInSubseteq. Assume that $A \subseteq B$. Assume that $c \notin B$. Then $c$ is a non-element of $A$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq C$.
+PropositionNotInSubseteq. Assume that $A$ is a subset of $B$. Assume that $c$ is a non-element of $B$. Then $c \notin A$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
+PropositionNotInSubseteq. Assume that $A$ is a subset of $B$. Assume that $c \notin B$. Then $c$ is a non-element of $A$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq C$.
+PropositionNotInSubseteq. Assume that $A \subseteq B$. Assume that $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
+PropositionNotInSubseteq. Assume that $A$ is a subset of $B$. Assume that $c$ is a non-element of $B$. Then $c$ is a non-element of $A$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq C$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq C$. Then $A \subseteq C$.
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq C$.
 
-PropositionSubseteqTransitive. Assume that $A \subseteq B \subseteq C$. Then $A$ is a subset of $C$.
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A \subseteq C$.
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq C$.
 
-PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A$ is a subset of $C$.
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
+
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A \subseteq \mathrm{complex\_Const}$.
+
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A \subseteq \mathrm{complex\_Const}$.
+
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A \subseteq C$.
+
+PropositionSubseteqTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A$ is a subset of $C$.
+
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A \subseteq C$.
+
+PropositionSubseteqTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A$ is a subset of $C$.
 
 DefinitionSubset. $A \subset B$, if and only if $A \subseteq B$ and $A \neq B$.
 
@@ -582,37 +598,37 @@ PropositionSubsetIrrefl. $A \times \mathrm{'\\not'}$ is a proper subset of $A$.
 
 PropositionSubsetIrrefl. The product of $A$ and $\mathrm{'\\not'}$ is a proper subset of $A$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq C$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \subseteq C$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq C$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \subseteq C$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A$ is a subset of $C$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq C$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A \subseteq \mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A \subseteq \mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq C$. Then $A \subseteq C$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A \subseteq C$.
 
-PropositionSubsetTransitive. Assume that $A \subseteq B \subseteq C$. Then $A$ is a subset of $C$.
+PropositionSubsetTransitive. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $A$ is a subset of $C$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A \subseteq C$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A \subseteq C$.
 
-PropositionSubsetTransitive. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $A$ is a subset of $C$.
+PropositionSubsetTransitive. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $A$ is a subset of $C$.
 
 Proof. $A \subseteq B$ and $A \neq B$.
 
@@ -714,37 +730,37 @@ PropositionConsRight. If $y$ is an element of $X$, then $y \in \mathrm{'\\cons'}
 
 PropositionConsRight. If $y$ is an element of $X$, then $y$ is an element of $\mathrm{'\\cons'} (x , X)$.
 
-PropositionUnionsIntro. Assume that $A \in B \in \mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in \mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A \in B \in \mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in \mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $\mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $\mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $\mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $\mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A \in B \in \mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in \mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A \in B \in \mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in \mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $\mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $\mathrm{complex\_Const}$. Then $A \in \mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $\mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $\mathrm{complex\_Const}$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A \in B \in C$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in C$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A \in B \in C$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in C$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $C$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $C$. Then $A \in \mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $C$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $C$. Then $A$ is an element of $\mathrm{'\\unions'} (\mathrm{complex\_Const})$.
 
-PropositionUnionsIntro. Assume that $A \in B \in C$. Then $A \in \mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in C$. Then $A \in \mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A \in B \in C$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A \in B$. Assume that $B \in C$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $C$. Then $A \in \mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $C$. Then $A \in \mathrm{'\\unions'} (C)$.
 
-PropositionUnionsIntro. Assume that $A$ is an element of $B$ and $B$ is an element of $C$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
+PropositionUnionsIntro. Assume that $A$ is an element of $B$. Assume that $B$ is an element of $C$. Then $A$ is an element of $\mathrm{'\\unions'} (C)$.
 
 PropositionUnionsEmptyset. $\mathrm{'\\unions'} (\emptyset)= \emptyset$.
 
@@ -852,133 +868,261 @@ PropositionUnionIdempotent. The product of $A \times \mathrm{'\\union'}$ and $A$
 
 PropositionUnionIdempotent. The product of $A$, $\mathrm{'\\union'}$ and $A$ is equal to $A$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A \subseteq C$ and $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
-PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+PropositionUnionSubsetsIsSubset. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const}$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B \subseteq C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A \subseteq C$. Assume that $B \subseteq C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C$.
+
+PropositionUnionSubsetsIsSubset. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $C$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C$.
 
 PropositionSubseteqUnionIff. $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const}$, if and only if $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq \mathrm{complex\_Const}$.
 
@@ -1316,165 +1460,325 @@ PropositionUnionUpperRight. $B$ is a subset of the product of $A \times \mathrm{
 
 PropositionUnionUpperRight. $B$ is a subset of the product of $A$, $\mathrm{'\\union'}$ and $B$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq \mathrm{complex\_Const}$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $\mathrm{complex\_Const}$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A \subseteq C$ and $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
 
-PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+PropositionUnionSubseteqUnion. Assume that both $A$ is a subset of $C$ and $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq \mathrm{complex\_Const}$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $\mathrm{complex\_Const}$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq \mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $\mathrm{complex\_Const} \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const} \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $\mathrm{complex\_Const}$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B \subseteq C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A \subseteq C$. Assume that $B \subseteq D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of $C \times \mathrm{'\\union'} \times D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then $A \times \mathrm{'\\union'} \times B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C \times \mathrm{'\\union'}$ and $D$.
+
+PropositionUnionSubseteqUnion. Assume that $A$ is a subset of $C$. Assume that $B$ is a subset of $D$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is a subset of the product of $C$, $\mathrm{'\\union'}$ and $D$.
 
 PropositionUnionEmptyset. $A \times \mathrm{'\\union'} \times \emptyset = A$.
 
@@ -1488,75 +1792,145 @@ PropositionUnionEmptyset. The product of $A$, $\mathrm{'\\union'}$ and $\emptyse
 
 PropositionUnionEmptyset. The product of $A$, $\mathrm{'\\union'}$ and the empty set is equal to $A$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to the empty set and $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A$ is equal to $\emptyset$ and $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
-PropositionUnionEmptysetIntro. Assume that $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+PropositionUnionEmptysetIntro. Assume that both $A = \emptyset$ and $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to the empty set. Assume that $B$ is equal to the empty set. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B = \emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then $A \times \mathrm{'\\union'} \times B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to $\emptyset$.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A = \emptyset$. Assume that $B$ is equal to $\emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then the product of $A \times \mathrm{'\\union'}$ and $B$ is equal to the empty set.
+
+PropositionUnionEmptysetIntro. Assume that $A$ is equal to $\emptyset$. Assume that $B = \emptyset$. Then the product of $A$, $\mathrm{'\\union'}$ and $B$ is equal to the empty set.
 
 PropositionUnionEmptysetElimLeft. Assume that $A \times \mathrm{'\\union'} \times B = \emptyset$. Then $A = \emptyset$.
 
@@ -3088,149 +3462,293 @@ PropositionSetminusEqEmptysetIffSubseteq. The difference of $A$ and $B$ is equal
 
 PropositionSetminusEqEmptysetIffSubseteq. The difference of $A$ and $B$ is equal to the empty set, if and only if $A$ is a subset of $B$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus \mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B \subseteq A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of $A \setminus C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
-PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+PropositionSubseteqSetminusConsIntro. Assume that both $B$ is a subset of the difference of $A$ and $C$ and $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus \mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $\mathrm{complex\_Const}$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , \mathrm{complex\_Const})$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B \subseteq A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B \subseteq A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of $A \setminus \mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c \notin B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of $A \setminus C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
+
+PropositionSubseteqSetminusConsIntro. Assume that $B$ is a subset of the difference of $A$ and $C$. Assume that $c$ is a non-element of $B$. Then $B$ is a subset of the difference of $A$ and $\mathrm{'\\cons'} (c , C)$.
 
 PropositionSubseteqSetminusConsElim. Assume that $B \subseteq A \setminus \mathrm{'\\cons'} (c , \mathrm{complex\_Const})$. Then $B \subseteq A \setminus \mathrm{complex\_Const}$ and $c \notin B$.
 
@@ -3472,69 +3990,69 @@ PropositionSubseteqUnionSetminus. $A$ is a subset of the product of $B$ and $\ma
 
 PropositionSubseteqUnionSetminus. $A$ is a subset of the product of $B$ and $\mathrm{apply\_Oper2}$ applied to $\mathrm{'\\union'}$ and the difference of $A$ and $B$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then $B \setminus (C \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq \mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $\mathrm{complex\_Const}$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $B \setminus (\mathrm{complex\_Const} \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then the difference of $B$ and $\mathrm{complex\_Const} \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then the difference of $B$ and the difference of $\mathrm{complex\_Const}$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then $B \setminus (C \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $B \setminus (C \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then $B \setminus (C \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then $B \setminus (C \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $B \setminus (C \setminus A)= A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $B \setminus (C \setminus A)= A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A \subseteq B \subseteq C$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then $B \setminus (C \setminus A)$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then $B \setminus (C \setminus A)$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A \subseteq B$. Assume that $B \subseteq C$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then the difference of $B$ and $C \setminus A$ is equal to $A$.
 
-PropositionDoubleComplement. Assume that $A$ is a subset of $B$ and $B$ is a subset of $C$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
+PropositionDoubleComplement. Assume that $A$ is a subset of $B$. Assume that $B$ is a subset of $C$. Then the difference of $B$ and the difference of $C$ and $A$ is equal to $A$.
 
 PropositionTimesEmptyLeft. $\emptyset \times Y = \emptyset$.
 

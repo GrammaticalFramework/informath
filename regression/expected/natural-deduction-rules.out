@@ -36,11 +36,11 @@ FalseE. Let $C$ be a proposition. Assume that we have a contradiction. Then $C$.
 
 AndI. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $A$ and $B$.
 
-AndEl. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $A$.
+AndEl. Let $A$ and $B$ be propositions such that both $A$ and $B$. Then $A$.
 
 By cases: \begin{itemize} \item for $A$, $B$ and $a$, $\mathrm{andEl} (_ , _ , \mathrm{andI} (A , B , a , _))$ is $a$. \end{itemize}
 
-AndEr. Let $A$ and $B$ be propositions such that $A$ and $B$. Then $B$.
+AndEr. Let $A$ and $B$ be propositions such that both $A$ and $B$. Then $B$.
 
 By cases: \begin{itemize} \item for $A$, $B$ and $b$, $\mathrm{andEr} (_ , _ , \mathrm{andI} (A , B , _ , b))$ is $b$. \end{itemize}
 

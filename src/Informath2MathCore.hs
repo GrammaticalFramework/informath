@@ -97,13 +97,22 @@ semArgkind argkind = case argkind of
   _ -> error ("semArgKind failure")
 
 
+-- | The hypotheses of a hypothesis. A conjunction said with "and" is
+-- several hypotheses, as in Lean and Mathlib ("let x be such that A and B",
+-- "assume that A and B"); a conjunction that is one hypothesis is said "both A
+-- and B" (BothAndProp, which sem makes a CoreAndProp, not split here).
 semHypo :: GHypo -> [GHypo]
 semHypo hypo = concatMap classHypo $ case hypo of
   GAdjKindHypo xs@(GListIdent xx) adj kind ->
     GVarsHypo xs kind : [GPropHypo (GAdjProp adj (GTermExp (GIdentTerm x))) | x <- xx]
   GSuchThatHypo xs prop kind ->
-    [GVarsHypo xs kind, GPropHypo prop]
+    GVarsHypo xs kind : map GPropHypo (conjuncts prop)
+  GPropHypo prop -> map GPropHypo (conjuncts prop)
   _ -> [hypo]
+ where
+  conjuncts p = case p of
+    GAndProp (GListProp ps) -> concatMap conjuncts ps
+    _ -> [p]
 
 -- | Quantifiers over a class of sets (ClassKind), wherever sem, addParenth or
 -- the storage of in situ quantifiers made them: "for all sets G, if G is a
@@ -254,6 +263,12 @@ sem env t = case t of
       (GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent [x])])
         (GNotAdjProp adj (GTermExp (GIdentTerm x))))
 
+  -- "both x and y are A", "x is both A and B": one conjunction (see semHypo)
+  GAdjProp (GBothAndAdj a b) exp ->
+    GCoreAndProp (sem env (GAdjProp a exp)) (sem env (GAdjProp b exp))
+  GAdjProp adj (GBothAndExp x y) ->
+    GCoreAndProp (sem env (GAdjProp adj x)) (sem env (GAdjProp adj y))
+
   GAdjProp adj exp -> case sem env adj of
     GAndAdj (GListAdj adjs)  ->
       let sx = sem env exp
@@ -278,7 +293,8 @@ sem env t = case t of
   GAdjECollProp adj (GListExp xs) ->
     GAndProp (GListProp [GAdjEProp adj x y | (x, y) <- subsequentPairs (map (sem env) xs)])
 
-  GBothAndProp a b -> GAndProp (GListProp [sem env a, sem env b])
+  -- one conjunction, not split into hypotheses by semHypo
+  GBothAndProp a b -> GCoreAndProp (sem env a) (sem env b)
   GBothAndAdj a b -> GAndAdj (GListAdj [sem env a, sem env b])
   GBothAndExp a b -> GAndExp (GListExp [sem env a, sem env b])
 

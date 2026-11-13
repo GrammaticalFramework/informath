@@ -42,7 +42,7 @@ Thm03a. $| \Natural | = | \Rational |$.
 
 Thm04. Let $u$ and $v$ be vectors such that $u \perp v$. Then $\| u + v \| = \sqrt{ \| u \| ^{ 2}+ \| v \| ^{ 2}}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
 Thm09. Let $c$ be a circle. Let $r \in \Real$ such that $r = \mathrm{radius} (c)$. Then $\mathrm{area} (c)= \pi \times r ^ {2}$.
 

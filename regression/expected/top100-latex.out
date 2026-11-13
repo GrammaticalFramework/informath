@@ -380,429 +380,429 @@ Thm04. Let $u$ and $v$ be vectors such that $u$ is orthogonal to $v$. Then the l
 
 Thm04. Let $u$ and $v$ be vectors such that $u$ is orthogonal to $v$. Then the length of the sum of $u$ and $v$ is equal to the square root of the sum of the square of the length of $u$ and the square of the length of $v$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right) = (- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to $(- 1)^ {\frac{ p - 1}{2}\times \frac{ q - 1}{2}}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to $\frac{ p - 1}{2}\times \frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and $\frac{ q - 1}{2}$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of $\frac{ p - 1}{2}$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then $\left(\frac{ p }{ q }\right) \times \left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p$ and $q$ be prime natural numbers. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of $q - 1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of $p - 1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of $- 1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and $\left(\frac{ q }{ p }\right)$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of $\left(\frac{ p }{ q }\right)$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p , q \in \Natural$ such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
-Thm07. Let $p , q \in \Natural$ such that $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
+Thm07. Let $p$ and $q$ be natural numbers such that both $p$ and $q$ are prime. Then the product of the Legendre symbol of $p$ over $q$ and the Legendre symbol of $q$ over $p$ is equal to the exponentiation of the negation of $1$ to the product of the quotient of the difference between $p$ and $1$ and $2$ and the quotient of the difference between $q$ and $1$ and $2$.
 
 Thm09. Let $c$ be a circle. Let $r \in \Real$ such that $r$ is equal to the radius of $c$. Then the area of $c$ is equal to $\pi \times r ^ {2}$.
 

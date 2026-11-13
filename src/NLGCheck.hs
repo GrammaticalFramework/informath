@@ -53,13 +53,16 @@ nlgStages safe userNLG bare tree =
    ncviafts = map (MCI.scoped . MCI.implied . MCI.negated) cviafts
    vncviafts = concatMap (\u -> [v | v <- MCI.variations u, not safe || MCI.restorableVariation u v]) ncviafts
 
-data Verdict = Exact | Equivalent | Lost
+-- | SameHypotheses: equivalent with the hypotheses as in t, in number and
+-- order (normalizeKeepingHypos), so that the constant has the same arguments
+data Verdict = Exact | SameHypotheses | Equivalent | Lost
   deriving (Eq, Ord, Show)
 
 -- | The verdict for t and the semantics of a variant
 classify :: GJmt -> [GJmt] -> Verdict
 classify t sems
   | elem t sems = Exact
+  | elem (normalizeKeepingHypos t) (map normalizeKeepingHypos sems) = SameHypotheses
   | elem (normalize t) (map normalize sems) = Equivalent
   | otherwise = Lost
 
@@ -68,6 +71,23 @@ classify t sems
 
 normalize :: GJmt -> GJmt
 normalize = alpha . hypos . canonicalHypoVars . distributeAll . pullConclusion . props . forms . IMC.addParenth . MCI.uncoerce
+
+-- | The normalization without what changes the hypotheses: they are not split
+-- into one proposition each, not sorted, and the quantifiers of the
+-- conclusion stay there; only the variables of one VarsHypo are separated
+-- (as they are separate arguments) and labels dropped.
+normalizeKeepingHypos :: GJmt -> GJmt
+normalizeKeepingHypos = alpha . varHypos . distributeAll . props . forms . IMC.addParenth . MCI.uncoerce
+ where
+  varHypos :: Tree a -> Tree a
+  varHypos t = case t of
+    GListHypo hs -> GListHypo (concatMap one (map varHypos hs))
+    _ -> composOp varHypos t
+  one :: GHypo -> [GHypo]
+  one h = case h of
+    GVarsHypo (GListIdent xs) k -> [GVarsHypo (GListIdent [x]) k | x <- xs]
+    GPropVarHypo _ p -> [GPropHypo p]
+    _ -> [h]
 
 -- | Forms that the semantics rewrites to equivalent ones: an adjective kind as
 -- a such-that kind, a plural kind as the kind, a nested collective function
@@ -231,13 +251,17 @@ report results = unlines $
   , ""
   , show (length results) ++ " MathCore trees, " ++ show (length checked) ++ " variants checked."
   , ""
-  , "| stage | variants | exact | equivalent | lost |"
-  , "|---|---:|---:|---:|---:|"
+  , "Same hypotheses: equivalent, with the hypotheses of t in number and order."
+  , ""
+  , "| stage | variants | exact | same hypotheses | equivalent | lost |"
+  , "|---|---:|---:|---:|---:|---:|"
   ] ++
   [ "| " ++ s ++ " | " ++ show (n s Nothing) ++ " | " ++ show (n s (Just Exact)) ++ " | "
+      ++ show (n s (Just SameHypotheses)) ++ " | "
       ++ show (n s (Just Equivalent)) ++ " | " ++ show (n s (Just Lost)) ++ " |"
   | s <- stages ] ++
   [ "| **all** | " ++ show (length checked) ++ " | " ++ show (total Exact) ++ " | "
+      ++ show (total SameHypotheses) ++ " | "
       ++ show (total Equivalent) ++ " | " ++ show (total Lost) ++ " |"
   , ""
   , "## Where the lost ones differ"
@@ -261,7 +285,20 @@ report results = unlines $
                     , "* semantics of t' (" ++ show (length sems) ++ "), the first: `"
                         ++ concat [showExpr [] (gf (normalize x)) | x <- take 1 sems] ++ "`"
                     , "" ]
-                  | (name, t, s, lin, sems) <- lost ])
+                  | (name, t, s, lin, sems) <- lost ]) ++
+  [ ""
+  , "## Examples of the default output with other hypotheses"
+  , ""
+  , "Equivalent, but the hypotheses of the semantics differ from those of t in number or order."
+  , ""
+  ] ++
+  concat (take 20 [ [ "### " ++ name, ""
+                    , "* t': " ++ lin
+                    , "* t: `" ++ showExpr [] (gf (normalizeKeepingHypos t)) ++ "`"
+                    , "* semantics of t': `"
+                        ++ concat [showExpr [] (gf (normalizeKeepingHypos x)) | x <- take 1 sems] ++ "`"
+                    , "" ]
+                  | (name, t, s, _, lin, sems, Equivalent) <- checked, take 11 s == "letDeclared" ])
  where
    checked = [(name, t, s, t', lin, sems, classify t sems) | (name, t, vs) <- results, (s, t', lin, sems) <- vs]
    stages = nub [s | (_, _, s, _, _, _, _) <- checked]
