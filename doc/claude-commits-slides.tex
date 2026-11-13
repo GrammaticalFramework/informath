@@ -56,7 +56,7 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 1,000 commits since 2024, almost all by hand.
-    \item \textbf{136} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{145} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,10 +68,10 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--46
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--51
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
   \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774},
-  \commit{93cb23a} and this version).
+  \commit{93cb23a}, \commit{90a1fb4} and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -1892,6 +1892,123 @@ example/           divisibility.tex, formalized
     \item Swedish and Czech need exceptions for the universal, as \texttt{all\_Predet} with a
           singular symbol gives \bad{``för allt''}, \bad{``pro všechno''}, which
           \texttt{BareAllProp} still does.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part XII: Does the semantics undo the generation?}
+
+\begin{frame}{Since 11 November: 8 more commits as 5 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    47 & NLG and semantics as rewrite rules, paired against a specification & 12 Nov & 1 \\
+    48 & An empirical check of the specification, and its counterexamples fixed & 12--13 Nov & 3 \\
+    49 & Proof texts with folds, for all projects & 13 Nov & 1 \\
+    50 & What NLG loses, and \texttt{-roundtrip-safe} & 13 Nov & 1 \\
+    51 & ``and'' as separate hypotheses, ``both A and B'' as one & 14 Nov & 2 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  The specification: \textbf{if NLG produces $t'$ from $t$, the semantics of $t'$ includes
+  $t$}. Plus one commit for these slides.
+\end{frame}
+
+\begin{frame}{Task 47: NLG and semantics as rewrite rules}
+  \commit{d466253} (12 Nov)
+  \prompt{I would like to compare the semantics as defined in Informath2MathCore and
+  MathCore2Dedukti, to the generation as defined in Dedukti2MathCore and MathCore2Informath
+  \ldots\ if NLG produces a tree t' from t, then the semantics of t' includes t \ldots\ A
+  preparatory step would be to extract a more declarative view of semantics and NLG, in some
+  kind of tree rewrite notation}
+  \begin{itemize}\small
+    \item \texttt{doc/nlg-and-semantics.md}: the 16 NLG passes and the 8 semantic passes as
+          rules, \texttt{AndProp [p1, ..., AndProp qs, ..., pn] ==> ...}, read off the
+          Haskell.
+    \item Each NLG rule paired with the rule that undoes it: \ok{exact}, \emph{equivalent}
+          (associativity, currying, renaming), or \bad{lost}. 18 findings, F1--F18.
+    \item The most important: \bad{``let G be a monoid''} made \texttt{G : Elem monoid} of
+          \texttt{G : Set, Proof (Monoid G)} (F7): right for a reader, a different
+          formalization.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 48: An empirical check, and its counterexamples}
+  \commit{6b111e8}, \commit{4046c8f}, \commit{074d62d} (12--13 Nov)
+  \prompt{yes, build the empirical check}
+  \begin{itemize}\small
+    \item \texttt{RunInformath -check-nlg-semantics}: every NLG variant of every judgement,
+          its semantics, verdict by stage, the smallest subtrees that differ.
+    \item Mathlib sample (8 modules, 87,537 variants): \bad{47,698 lost} at first, then
+          \ok{45}. Fixed: F7 by \texttt{ClassKind} (reads as \texttt{NounKind}, means a set
+          and a class assumption), F5 symbolic function types, F12 ``A implies B'', F13
+          collective functions.
+  \end{itemize}
+  \prompt{keep ClassKind and use the specification modulo normalization}
+  \prompt{We can follow alternative 1 now, but actually 3 would be the best option.}
+  \begin{itemize}\small
+    \item The 45: ``monoid with \bad{an} inverse operation'', a table wording read with a
+          quantifier; reworded for now, the better fix (no Cooper storage inside table
+          wordings) written down.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 49: Proof texts with folds}
+  \commit{ee2b4b2} (13 Nov)
+  \prompt{show proof texts in html in such a way that parts of the proof (corresponding to
+  subtrees) can be toggled visible and hidden. If hidden, only the hypothesis and the
+  conclusion are shown.}
+  \prompt{try folding by cited lines too}
+  \prompt{Is the script for collapsing in edukera? I think it should be available generally.}
+  \begin{itemize}\small
+    \item \texttt{scripts/proof\_folds.py}: a toggle at each assumption folds its subproof; a
+          line that cites others folds its derivation, keeping open assumptions and the
+          theorem's hypotheses.
+    \item Used by edukera, mathlib-informath, godement-index (English and French) and the
+          Rijke index; 1,596 subproof and 2,962 derivation folds in Mathlib's 7,658 proofs.
+    \item The longest Mathlib proof, folded, showed a \bad{\texttt{hiota}} cited as a hypothesis:
+          an instance \texttt{[h$\iota$ : Nonempty $\iota$]} dropped from the statement but used by the
+          proof. Fixed in the exporter.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 50: What NLG loses, and \texttt{-roundtrip-safe}}
+  \commit{cb49efd} (13 Nov)
+  \prompt{Can you give a list of those NLG transformations that lose information in a way that
+  either creates ambiguities or is impossible to restore \ldots\ There could also be a flag
+  forbidding the use of transformations that destroy roundtrips in an impossible way.}
+  \begin{itemize}\small
+    \item Every step classified: \emph{equivalent} (a normalization), \emph{ambiguous},
+          restorable by \emph{types} (coercions, hidden arguments), by \emph{tables}
+          (\texttt{\#IMPLICIT}), or \bad{impossible}: reordered or merged hypotheses,
+          hypotheses moved into the conclusion, ``a, b, c are equivalent'' from $a \sim b
+          \wedge a \sim c$, $f(1) + \dots + f(n)$, Godement's moved definientia.
+    \item \texttt{-roundtrip-safe} leaves those out: \ok{``Let A and B be sets. Assume that
+          A $\cup$ B = U. Assume that A $\cap$ B = $\emptyset$.''}
+    \item Found on the way: a profile that drops the \emph{last} arguments comes back as a
+          partial application, with no metavariables.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 51: ``and'' as separate hypotheses, ``both A and B'' as one}
+  \commit{5dffed3}, \commit{752363c} (14 Nov)
+  \prompt{One way to deal with this problem would be to split ``such that'' and ``and'' to distinct
+  hypotheses as an alternative semantics \ldots\ But this might lead to an explosion of
+  ambiguities; what do you think?}
+  \begin{itemize}\small
+    \item Claude: not as alternatives ($2^{k-1}$ readings, no difference in meaning), but one
+          canonical reading, the Lean one, and \ok{``both A and B''} for the rare hypothesis
+          that is one conjunction.
+    \item A new verdict, \emph{same hypotheses}. Mathlib sample, default output: hypotheses
+          kept in \bad{3,219} $\to$ \ok{3,465} of 3,764; \ok{all} with
+          \texttt{-roundtrip-safe}, which now forbids only reordering.
+    \item Thm07 changes: \ok{``Let $p, q \in \mathbb{N}$ such that both $p$ and $q$ are
+          prime''}, as its source has one hypothesis $p$ prime $\wedge$ $q$ prime.
+    \item A leftover guard of the first flag had removed \bad{``let $n$ be an even natural
+          number''}; seen in the comparison of outputs, fixed.
   \end{itemize}
 \end{frame}
 
