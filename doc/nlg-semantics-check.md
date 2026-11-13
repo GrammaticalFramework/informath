@@ -102,6 +102,23 @@ The regression suite: 51 pass, 2 known failures; `insitu-dedukti` changed,
    such that G is a monoid with it", rather than as the name of the
    constant. A question about such wordings: keep them, or word them without
    a quantifier.
+
+   *Decided 13 November:* for now, the wording is changed
+   (mathlib-informath `structures.dkgf`: "#1 is a monoid with inversion",
+   which parses without a quantifier). **The better solution, to be done:**
+   the semantics should not read a quantifier compositionally inside a
+   wording that names a constant. The wording of a table entry is one
+   lexical unit: "an inverse operation" in "a monoid with an inverse
+   operation" is part of the name of `DivInvMonoid`, not a quantifier over
+   operations, and the Cooper storage of `Semantics.inSituResults` (and the
+   in-situ rules of `sem`) should leave it in place. This needs the trees of
+   table wordings to be recognizable in the semantics: for instance by
+   marking the noun phrases that come from symbol table entries (a function
+   that wraps them, as `ClassKind` marks what NLG did), or by looking them up
+   in the back table (`backConstantTable`) before storage. It would cover
+   the ~90 generated wordings of `definitions.dkgf` with "a/an" inside a noun
+   as well ("the limit of a Cauchy sequence of #1", "the orthogonal projection
+   onto a subspace of #1"), which are not reworded.
 2. **Equivalent, not exact** (decided 12 November: the specification is
    taken modulo the normalization, and `ClassKind` is kept). 86,500 of the Mathlib variants are equivalent
    only modulo the normalization (F1-F4, F6, F8-F11, F14, F17 of

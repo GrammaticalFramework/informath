@@ -81,6 +81,10 @@ my_grammar:
 full_grammar:
 	cd grammars ; "$(GF)" --make -optimize-pgf --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf InformathGer.gf next/InformathCze.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
+# the full grammar without German, whose compilation is the slowest
+nogerman_grammar:
+	cd grammars ; "$(GF)" --make -optimize-pgf --probs=Informath.probs InformathEng.gf InformathSwe.gf InformathFre.gf next/InformathCze.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
+
 next_grammar:
 	cd grammars ; "$(GF)" --make -optimize-pgf --probs=Informath.probs InformathEng.gf next/InformathFin.gf next/InformathCze.gf next/InformathPol.gf InformathLatex.gf ; mv Informath.pgf ../share/InformathFull.pgf
 
