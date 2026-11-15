@@ -2012,6 +2012,67 @@ example/           divisibility.tex, formalized
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Since 15 November: 3 more commits as 2 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    52 & Coq files informalized; words, and proofs shortened by rules & 15 Nov & 1 \\
+    53 & The article with its verified code attached, proofs outlined & 15 Nov & 1 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  A new source language: \textbf{Coq} (Rocq 9.3), von Plato's files on Gödel's independence
+  proofs (\texttt{\textasciitilde/claude/kgah}), read in the same way as Mathlib.
+  Plus one commit for these slides.
+\end{frame}
+
+\begin{frame}{Task 52: Coq files, words, and proofs shortened by rules}
+  \commit{f2f257a} (15 Nov)
+  \prompt{I would like to informalize the Coq files in \textasciitilde/claude/kgah/Coq/ using the
+  verbalizations in vonPlato...tex and Informath, in the same way as in mathlib-informath}
+  \prompt{I'm very interested in the proofs as well.}
+  \begin{itemize}\small
+    \item An exporter outside Informath: Rocq prints each declaration fully elaborated
+          (\texttt{Set Printing All}), a Python parser translates it; a \texttt{Fixpoint}
+          becomes rewrite rules, read one at a time. Each tactic replayed between two
+          \texttt{Show}s: the goals, in Mathlib's tactic-unit format.
+    \item 139 declarations, all read in English and as formulas; 84 proof texts.
+  \end{itemize}
+  \prompt{Add the missing words to the English grammar. Then shorten the proofs, but with a set
+  of reusable rules. What do you mean by trivial, is it generalizable?}
+  \begin{itemize}\small
+    \item \texttt{KgahWords}: ``real'', ``set of reals'', ``force'', ``closed downwards''.
+    \item Trivial: a step that changes only the \emph{form} of a goal or a hypothesis, or
+          repeats the line before. \texttt{scripts/proof\_shortening.py}: five rules on proof
+          units, not on tactics, so Lean's units too. \ok{707 lines $\to$ 545}.
+    \item A rule merging assumptions first \bad{ran two cases of an induction together}:
+          assumptions that open a case are now kept apart.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 53: The article with its verified code attached}
+  \commit{b7f188b} (15 Nov)
+  \prompt{\ldots\ where the Informath informalizations are attached to relevant parts of the
+  article, and shown in some recognizable way, e.g.\ on a pale grey background}
+  \prompt{use $\tau_{j,j'}$ and make the proof sentences more symbolic. If possible, shorten the
+  proofs by keeping steps that correspond to proof lines in the article. But don't drop proofs.}
+  \begin{itemize}\small
+    \item After each result verified in Coq, a grey box: the Coq names, the statements as
+          formulas, the proofs. A paragraph at the beginning explains the boxes.
+    \item \bad{\texttt{-force-symbolic} does not reach proof texts}: the lines are written from
+          formulas in sentence frames instead, ``Let $j' \in \mathbb{N}$ such that
+          $j' \neq j$ \ldots'', with $\notin$, $\neq$ for negated relations.
+    \item \texttt{outline}: each claim (\texttt{assert}) without the steps of its own proof.
+          Gödel's topological lemma: \ok{57 lines $\to$ 11}, one for each line of the article's
+          proof.
+    \item New rule \emph{by-assumption}: a merged step had stated \bad{``$j = j'$''} where it
+          derives the contradiction.
+  \end{itemize}
+\end{frame}
+
 % =====================================================================
 \section{Observations and the future}
 
