@@ -28,6 +28,11 @@ R4 restatement:  conclusion P, conclusion P                ->  conclusion P
 R5 assumptions:  hypos A, hypos B, both made by tactics     ->  hypos A, B
                  "Let x be ... . Assume that ..." made by consecutive intros;
                  the assumptions of a case (made by no tactic) are kept apart
+R6 by-assumption: hypos A (to show G), conclusion A        ->  hypos A, conclusion G
+                 a step closing the goal G with the assumption just made
+                 (after goal-chain and goal-closed merged the steps from G
+                 to A) proves G, not A: "to derive a contradiction, assume
+                 j = j'. A contradiction."
 
 A unit that a rule drops gives its tactics to the unit that stays; the
 method of a merged unit ("by rewriting") is kept only if all its steps have
@@ -38,12 +43,15 @@ one, and is the method of the last of them.
 
 `units` is the list of proof units of one proof ({'unit': ..., 'prop': ...,
 'by': ..., 'depth': ...}); `counts` tells how many times each rule applied.
+outline(units) keeps only the main line of a proof: each claim without the
+steps of its own proof (for an informal text that follows the script).
+
 Used by kgah (von Plato's Coq files).
 """
 
 import re
 
-RULES = ['goal-chain', 'goal-closed', 'fact-chain', 'restatement', 'assumptions']
+RULES = ['goal-chain', 'goal-closed', 'fact-chain', 'restatement', 'assumptions', 'by-assumption']
 BINDER = re.compile(r"([A-Za-z_][A-Za-z0-9_']*)\s*=>")
 
 
@@ -126,6 +134,15 @@ def step(units, counts):
             counts['restatement'] += 1
             changed = True
             continue
+        # R6 by-assumption
+        if a == 'hypos' and b == 'conclusion' and prev.get('goal') and \
+                normal(u['prop']) in [normal(t[len('Proof '):]) for _, t in prev.get('hypos', [])
+                                      if t.startswith('Proof ')] and \
+                normal(u['prop']) != normal(prev['goal']):
+            out.append(dict(u, prop=prev['goal']))
+            counts['by-assumption'] += 1
+            changed = True
+            continue
         # R5 assumptions
         if a == 'hypos' and b == 'hypos' and prev.get('by') and u.get('by'):
             h = dict(u)
@@ -147,3 +164,31 @@ def shorten(units):
     while changed:
         units, changed = step(units, counts)
     return units, counts
+
+
+def outline(units):
+    """The outline of a proof: each claim (a verify unit: assert (H : P) in
+    Coq, have h : P := by ... in Lean) is kept, the steps of its own proof are
+    left out. These steps are the units in the block of the script that
+    follows the claim (their 'path', the bullets and braces they are in,
+    extends the claim's), or without paths, those deeper than the claim up
+    to the next unit at its depth. What is left are the steps of the main
+    line of the proof, which are what an informal proof writes; the claims
+    are marked 'outlined'."""
+    out = []
+    skip = None          # the claim whose steps are being left out
+    for u in units:
+        if skip is not None:
+            p, q = skip.get('path'), u.get('path')
+            if p is not None and q is not None:
+                inside = len(q) > len(p) and q[:len(p)] == p
+            else:
+                inside = u['depth'] > skip['depth']
+            if inside:
+                continue
+            skip = None
+        if u['unit'] == 'verify':
+            u = dict(u, outlined=True)
+            skip = u
+        out.append(u)
+    return out

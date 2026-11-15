@@ -299,6 +299,8 @@ $ echo "c : Proof (and (even 2) (prime 2))." | RunInformath -v | ./scripts/inden
 
 Another, `scripts/proof_folds.py`, is a Python module for showing the proof texts of `RunInformath -proof-text` (best with `-proof-indent`) in HTML with folds: the subproof of an assumption, and the derivation of a line that cites earlier lines, can be hidden and shown again, leaving the hypotheses and the conclusion. A page includes its `FOLD_CSS` and `FOLD_JS` and calls `proof_table(rows)` on the rows of each proof; the index pages of Edukera, mathlib-informath, Godement and Rijke use it.
 
+A third, `scripts/proof_shortening.py`, shortens the proof texts of tactic proofs, given as proof units (`RunInformath -tactic-proof`), by rules on the units that do not depend on the prover: a chain of goals each enough for the previous one becomes its last goal (goal-chain), a goal followed by its proof becomes the proof (goal-closed), successive new forms of one hypothesis become the last (fact-chain), a repeated proposition is dropped (restatement), consecutive assumptions are merged (assumptions), and a step closing a goal with the assumption just made states the goal (by-assumption). A merged line keeps the tactics of its steps as its justification. `outline(units)` keeps of a proof only its main line: each claim (`assert` in Coq, `have` in Lean) without the steps of its own proof. The informalization of von Plato's Coq files on Gödel's independence proofs (kgah) uses both: on its 84 proofs the rules make 707 lines 545, and in the version of the article with the informalizations attached, the outlines follow the article's proofs (Lemma 7.3, Gödel's topological lemma: 57 lines, outlined 11).
+
 
 ## The structure of Informath
 
