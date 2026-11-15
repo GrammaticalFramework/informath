@@ -9,7 +9,7 @@ of RunInformath -to-symbolic-latex, and each unit into a sentence:
 
     hypos        Let $x \\in A$ such that $P$.   /   Assume $P$.
                  (with its goal: To show $G$, ...; To derive a contradiction, ...)
-    conclusion   $P$.   By computation, $P$.   A contradiction.
+    conclusion   $P$.   By computation, $P$.   By Lemma 5, $P$.   A contradiction.
     enough       It suffices to show $P$.
     verify       We have $P$. (an outlined claim)   First we show $P$.
     cases        By cases.        induction  By induction.
@@ -72,12 +72,42 @@ METHOD_WORDS = {'computation': 'By computation', 'definition': 'By definition', 
 FALSE = ('false', '(false)')
 
 
+def set_of(t):
+    """The set of a variable's Dedukti type Elem A: A."""
+    t = t.strip()
+    return '(%s)' % t[len('Elem '):] if t.startswith('Elem ') else '(%s)' % t
+
+
+def and_list(xs):
+    return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' and ' + xs[-1]
+
+
+def citations(names, label=None):
+    """A cite function for SymbolicProofs: the declarations (names) that a
+    step's tactics mention, each as label(name) (an article's "Lemma 5"),
+    or as its name in typewriter type; each result once, in order."""
+    label = label or (lambda n: None)
+
+    def cite(by):
+        out = []
+        for w in re.findall(r"[A-Za-z_][A-Za-z0-9_']*", by):
+            if w in names:
+                c = label(w) or '\\texttt{%s}' % w.replace('_', '\\_')
+                if c not in out:
+                    out.append(c)
+        return out
+    return cite
+
+
 class SymbolicProofs:
-    def __init__(self, run, table, workdir, negated=None, fix=None, env=None):
+    def __init__(self, run, table, workdir, negated=None, fix=None, env=None, cite=None):
         """run: RunInformath; table: the symbol table (.dkgf); workdir: where
         the formulas' Dedukti file is written; negated: relation -> its
-        negation's constant; fix: a function applied to each formula."""
+        negation's constant; fix: a function applied to each formula; cite:
+        a function from a step's tactics to the results it uses, as they are
+        to be named in the text ("Lemma 5")."""
         self.runinformath, self.table, self.workdir = run, table, workdir
+        self.cite = cite or (lambda by: [])
         self.negated = negated or {}
         self.fix = fix or (lambda f: f)
         self.env = env
@@ -166,16 +196,19 @@ class SymbolicProofs:
         for u in units:
             k = u['unit']
             if k == 'hypos':
-                vs = [(n, t) for n, t in u['hypos'] if not t.startswith('Proof ')]
+                defs = u.get('defs') or {}
+                # local definitions as equations, k = v
+                dis = [self.prop('Eqt %s %s (%s)' % (set_of(t), n, defs[n])) for n, t in u['hypos'] if n in defs]
+                vs = [(n, t) for n, t in u['hypos'] if not t.startswith('Proof ') and n not in defs]
                 ps = [t[len('Proof '):] for n, t in u['hypos'] if t.startswith('Proof ')]
                 ci = self.context(vs) if vs else None
                 pis = [self.prop(p) for p in ps]
                 goal = (u.get('goal') or '').strip()
                 gi = self.prop(goal) if goal and goal not in FALSE else None
-                plan.append((u['depth'], ('hypos', ci, pis, gi, goal in FALSE)))
+                plan.append((u['depth'], ('hypos', ci, pis, gi, goal in FALSE, dis)))
             elif k in ('conclusion', 'enough', 'verify'):
                 plan.append((u['depth'], (k, self.prop(u['prop']), u.get('method'), u.get('outlined'),
-                                          u['prop'].strip() in FALSE)))
+                                          u['prop'].strip() in FALSE, self.cite(u.get('by') or ''))))
             elif k in ('cases', 'induction'):
                 plan.append((u['depth'], (k,)))
         return plan
@@ -183,10 +216,11 @@ class SymbolicProofs:
     def sentence(self, step):
         k = step[0]
         if k == 'hypos':
-            _, ci, pis, gi, contra = step
+            _, ci, pis, gi, contra, dis = step
             props = ' and '.join('$%s$' % self.get(i) for i in pis)
-            if ci is not None:
-                s = 'Let $%s$' % self.get(ci, 'context') + (' such that %s' % props if props else '')
+            lets = (['$%s$' % self.get(ci, 'context')] if ci is not None else []) + ['$%s$' % self.get(i) for i in dis]
+            if lets:
+                s = 'Let %s' % ', '.join(lets) + (' such that %s' % props if props else '')
             else:
                 s = 'Assume %s' % props
             if contra:
@@ -196,16 +230,17 @@ class SymbolicProofs:
             return s + '.'
         if k in ('cases', 'induction'):
             return 'By induction.' if k == 'induction' else 'By cases.'
-        _, i, method, outlined, false = step
+        _, i, method, outlined, false, cites = step
         f = 'a contradiction' if false else '$%s$' % self.get(i)
+        by = 'By %s' % and_list(cites) if cites else METHOD_WORDS.get(method)
         if k == 'enough':
-            return 'It suffices to show %s.' % f
+            return ('%s, it suffices to show %s.' % (by, f)) if cites else 'It suffices to show %s.' % f
         if k == 'verify':
             return ('We have %s.' if outlined else 'First we show %s.') % f
         if false:
-            return '%s, a contradiction.' % METHOD_WORDS[method] if method in METHOD_WORDS else 'A contradiction.'
-        if method in METHOD_WORDS:
-            return '%s, %s.' % (METHOD_WORDS[method], f)
+            return '%s, a contradiction.' % by if by else 'A contradiction.'
+        if by:
+            return '%s, %s.' % (by, f)
         return f + '.'
 
     def lines(self, plan):

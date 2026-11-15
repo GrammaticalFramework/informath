@@ -35,6 +35,20 @@ R6 by-assumption: hypos A (to show G), conclusion A        ->  hypos A, conclusi
                  to A) proves G, not A: "to derive a contradiction, assume
                  j = j'. A contradiction."
 
+R7 one-step-introduction:  enough G, hypos H, conclusion C, ending the scope
+                 ->  conclusion: "it suffices to show that for all n, P(n).
+                 Let n be given. P(n)." proves the goal for which G was enough
+                 ('from'), or else G
+R8 conjunction:  enough A & B, conclusion A, conclusion B   ->  conclusion: the
+                 goal for which A & B was enough ('from'), or else A & B
+R11 definition:  hypos k = v (local definitions only), enough G restating the
+                 goal in their terms  ->  hypos k = v
+R9 repeated-fact: an assumption or a derived fact that a line still in scope
+                 has stated is left out (one that closes its case is kept)
+R10 unfolding:   conclusion P by unfolding definitions (method 'definition'),
+                 followed by a step in its scope: the step alone, with both
+                 tactics; the unfolded form is what the step uses
+
 A unit that a rule drops gives its tactics to the unit that stays; the
 method of a merged unit ("by rewriting") is kept only if all its steps have
 one, and is the method of the last of them.
@@ -52,7 +66,8 @@ Used by kgah (von Plato's Coq files).
 
 import re
 
-RULES = ['goal-chain', 'goal-closed', 'fact-chain', 'restatement', 'assumptions', 'by-assumption']
+RULES = ['goal-chain', 'goal-closed', 'fact-chain', 'restatement', 'assumptions', 'by-assumption',
+         'one-step-introduction', 'conjunction', 'repeated-fact', 'unfolding', 'definition']
 BINDER = re.compile(r"([A-Za-z_][A-Za-z0-9_']*)\s*=>")
 
 
@@ -155,6 +170,8 @@ def step(units, counts):
         if a == 'hypos' and b == 'hypos' and prev.get('by') and u.get('by'):
             h = dict(u)
             h['hypos'] = prev['hypos'] + u['hypos']
+            if prev.get('defs') or u.get('defs'):
+                h['defs'] = dict(prev.get('defs') or {}, **(u.get('defs') or {}))
             h['by'] = joined(prev.get('by'), u.get('by'))
             out[-1] = h
             counts['assumptions'] += 1
@@ -164,6 +181,137 @@ def step(units, counts):
     return out, changed
 
 
+def conjuncts(prop):
+    """and A (and B C) as [A, B, C], normalized."""
+    p = normal(prop)
+    m = re.match(r'and (.*)$', p)
+    if not m:
+        return [p]
+    args = top_args(m.group(1))
+    if len(args) != 2:
+        return [p]
+    return [normal(args[0])] + conjuncts(args[1])
+
+
+def top_args(s):
+    """The arguments of an application as written: 'A (B C) D' -> ['A', '(B C)', 'D']."""
+    out, depth, cur = [], 0, ''
+    for ch in s.strip():
+        if ch == ' ' and depth == 0:
+            if cur:
+                out.append(cur)
+            cur = ''
+            continue
+        depth += ch == '('
+        depth -= ch == ')'
+        cur += ch
+    if cur:
+        out.append(cur)
+    return out
+
+
+def same_scope(a, b):
+    """Whether units a and b are in the same scope: the same depth, and the
+    same cases of the script (path) if the units have them."""
+    if a['depth'] != b['depth']:
+        return False
+    if a.get('path') is not None and b.get('path') is not None:
+        return a['path'] == b['path']
+    return True
+
+
+def in_scope(fact, u):
+    """Whether a fact stated by unit fact is still open at unit u."""
+    if fact.get('path') is not None and u.get('path') is not None:
+        p, q = fact['path'], u['path']
+        return q[:len(p)] == p and fact['depth'] <= u['depth']
+    return fact['depth'] <= u['depth']
+
+
+def props_of(u):
+    if u['unit'] == 'hypos':
+        return [normal(t[len('Proof '):]) for _, t in u.get('hypos', []) if t.startswith('Proof ')]
+    if u['unit'] in ('conclusion', 'verify'):
+        return [normal(u['prop'])]
+    return []
+
+
+def passes(units, counts):
+    """The rules that look further than the next unit; whether one applied."""
+    # R7 one-step-introduction:  enough G, hypos H (intro), conclusion C, and the
+    # scope ends  ->  conclusion G: "it suffices to show for all n, P(n). Let n.
+    # P(n)." is "for all n, P(n)"
+    for i in range(len(units) - 2):
+        e, h, c = units[i:i + 3]
+        # (not for a conjunction G, whose other parts follow)
+        if e['unit'] == 'enough' and h['unit'] == 'hypos' and c['unit'] == 'conclusion' and h.get('by') \
+                and len(conjuncts(e['prop'])) == 1 \
+                and h['depth'] == c['depth'] == e['depth'] + 1 and same_scope(h, c) \
+                and (i + 3 == len(units) or units[i + 3]['depth'] <= e['depth']):
+            u = {'unit': 'conclusion', 'prop': e.get('from') or e['prop'], 'depth': e['depth'],
+                 'by': joined(e.get('by'), h.get('by'), c.get('by'))}
+            if e.get('path') is not None:
+                u['path'] = e['path']
+            if c.get('method'):
+                u['method'] = c['method']
+            counts['one-step-introduction'] += 1
+            return units[:i] + [u] + units[i + 3:], True
+    # R8 conjunction:  enough A1 & ... & Ak, conclusion A1, ..., conclusion Ak  ->  conclusion A1 & ... & Ak
+    for i, e in enumerate(units):
+        if e['unit'] != 'enough':
+            continue
+        parts = conjuncts(e['prop'])
+        k = len(parts)
+        cs = units[i + 1:i + 1 + k]
+        if k >= 2 and len(cs) == k and all(c['unit'] == 'conclusion' and c['depth'] == e['depth']
+                                           and normal(c['prop']) == p for c, p in zip(cs, parts)):
+            u = merged(e, cs[-1])
+            u['unit'], u['prop'] = 'conclusion', e.get('from') or e['prop']
+            u.pop('from', None)
+            u['by'] = joined(e.get('by'), *[c.get('by') for c in cs])
+            if not all(c.get('method') for c in cs):
+                u.pop('method', None)
+            counts['conjunction'] += 1
+            return units[:i] + [u] + units[i + 1 + k:], True
+    # R11 definition:  hypos of local definitions only (set k := v), then the
+    # goal restated in their terms  ->  the definitions alone
+    for i, u in enumerate(units[:-1]):
+        nxt = units[i + 1]
+        if u['unit'] == 'hypos' and u.get('defs') and all(n in u['defs'] for n, _ in u['hypos']) \
+                and nxt['unit'] == 'enough' and same_scope(u, nxt):
+            counts['definition'] += 1
+            return units[:i] + [dict(u, by=joined(u.get('by'), nxt.get('by')))] + units[i + 2:], True
+    # R9 repeated-fact:  an assumption or derived fact that a line still in
+    # scope has stated: left out (a fact that closes its case is kept)
+    for i, u in enumerate(units):
+        known = {p for f in units[:i] if in_scope(f, u) for p in props_of(f)}
+        if u['unit'] == 'hypos':
+            keep = [(n, t) for n, t in u.get('hypos', [])
+                    if not (t.startswith('Proof ') and normal(t[len('Proof '):]) in known)]
+            if len(keep) < len(u.get('hypos', [])):
+                counts['repeated-fact'] += 1
+                if keep:
+                    return units[:i] + [dict(u, hypos=keep)] + units[i + 1:], True
+                if i + 1 < len(units):
+                    nxt = dict(units[i + 1], by=joined(u.get('by'), units[i + 1].get('by')))
+                    return units[:i] + [nxt] + units[i + 2:], True
+                return units[:i], True
+        if u['unit'] == 'conclusion' and normal(u['prop']) in known and normal(u['prop']) != 'false' \
+                and i + 1 < len(units) and same_scope(u, units[i + 1]):
+            nxt = dict(units[i + 1], by=joined(u.get('by'), units[i + 1].get('by')))
+            counts['repeated-fact'] += 1
+            return units[:i] + [nxt] + units[i + 2:], True
+    # R10 unfolding:  a fact derived by unfolding definitions, followed by a step
+    # in its scope that uses it: the two in one line, the step's
+    for i, u in enumerate(units[:-1]):
+        if u['unit'] == 'conclusion' and u.get('method') == 'definition' and normal(u['prop']) != 'false' \
+                and same_scope(u, units[i + 1]):
+            nxt = dict(units[i + 1], by=joined(u.get('by'), units[i + 1].get('by')))
+            counts['unfolding'] += 1
+            return units[:i] + [nxt] + units[i + 2:], True
+    return units, False
+
+
 def shorten(units):
     """The units of a proof with the rules applied until none applies, and
     how many times each rule applied."""
@@ -171,6 +319,8 @@ def shorten(units):
     changed = True
     while changed:
         units, changed = step(units, counts)
+        if not changed:
+            units, changed = passes(units, counts)
     return units, counts
 
 
