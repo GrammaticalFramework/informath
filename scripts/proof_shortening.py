@@ -16,8 +16,9 @@ next to each other at the same depth (the same scope of assumptions):
 
 R1 goal-chain:   enough P1, enough P2, ..., enough Pn      ->  enough Pn
                  the goal transformed step by step: only the last form matters
-R2 goal-closed:  enough P, conclusion P                    ->  conclusion P
-                 "it is enough to show P. P." is "P"
+R2 goal-closed:  enough P, conclusion P                    ->  conclusion G
+                 "it is enough to show P. P." proves the goal G that P was
+                 enough for (the unit's 'from', if the units have it), else P
 R3 fact-chain:   conclusion P1, ..., conclusion Pn, each a new form of the
                  same hypothesis (rewrite ... in H, simp at h) ->  conclusion Pn
 R4 restatement:  conclusion P, conclusion P                ->  conclusion P
@@ -92,9 +93,12 @@ def joined(*bys):
 
 
 def merged(first, last):
-    """last, with the tactics of first before its own, and a method only if both have one."""
+    """last, with the tactics of first before its own, and a method only if
+    both have one; the goal that first is enough for ('from') is kept."""
     u = dict(last)
     u['by'] = joined(first.get('by'), last.get('by'))
+    if first.get('from'):
+        u['from'] = first['from']
     if not (first.get('method') and last.get('method')):
         u.pop('method', None)
     return u
@@ -119,6 +123,10 @@ def step(units, counts):
         # R2 goal-closed
         if a == 'enough' and b == 'conclusion' and normal(prev['prop']) == normal(u['prop']):
             out[-1] = merged(prev, u)
+            # what the steps prove is the goal the first of them was enough for
+            if prev.get('from'):
+                out[-1]['prop'] = prev['from']
+                del out[-1]['from']
             counts['goal-closed'] += 1
             changed = True
             continue
