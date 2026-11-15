@@ -12,6 +12,7 @@ abstract UserExtensions =
   GodementExamples,
   MytextWords,
   KgahWords,
+  KgbWords,
   Mathlib
   ;
 

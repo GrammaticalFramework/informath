@@ -12,5 +12,6 @@ concrete UserExtensionsEng of UserExtensions =
   GodementExamplesEng,
   MytextWordsEng,
   KgahWordsEng,
+  KgbWordsEng,
   MathlibEng
   ;
