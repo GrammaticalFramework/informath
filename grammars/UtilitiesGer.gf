@@ -41,7 +41,7 @@ oper
   strPrep : Str -> Prep = \s -> mkPrep s dative ; ---
 
 
-  define_V2 : V2 = mkV2 (mkV "definieren") (mkPrep "als" nominative) ;
+  define_V2 : V2 = mkV2 (mkV "definieren") (mkPrep "als" accusative) ;
   assume_VS : VS = mkVS (mkV "an" I.nehmen_V) ;
   type_CN : CN = mkCN (mkN "Typ") ;
   case_N : N = mkN "Fall" "Fälle" masculine ;
@@ -59,11 +59,11 @@ oper
   toArgKindNP : NP -> ArgKindNP = \np -> np ;
   fromArgKindNP : ArgKindNP -> NP = \np -> np ;
   applied_to_Prep : Prep = mkPrep "angewandt auf" accusative ;
-  defined_as_Prep : Prep = mkPrep "definiert als" nominative ;
+  defined_as_Prep : Prep = mkPrep "definiert als" accusative ; --- nominative not valid in RGL 2026-11-16
   function_N : N = mkN "Funktion" ;
   basic_type_CN : CN = mkCN (mkN "Grundtyp") ;
   algebraic_structure_CN : CN = mkCN (mkA "algebraisch") (mkN "Struktur" "Strukturen" feminine) ;
-  map_V3 = mkV3 (mkV "ab" (mkV "bilden")) (mkPrep accusative) as_Prep ;
+  map_V3 = mkV3 (mkV "ab" (mkV "bilden")) (mkPrep "" accusative) as_Prep ;
   say_VS = mkVS (mkV "sagen") ;
   hold_V2 = mkV2 I.halten_V for_Prep ;
   form_V2 = mkV2 (mkV "bilden") ;
@@ -85,7 +85,7 @@ oper
   instance_N = mkN "Instanz" "Instanzen" feminine ;
   prove_VS = mkVS (mkV "beweisen") ;
   
-  as_Prep : Prep = mkPrep "als" nominative ;
+  as_Prep : Prep = mkPrep "als" accusative ; ---- RGL 2026-11-16 nominative
   at_Prep : Prep = anDat_Prep ;
   over_Prep : Prep = mkPrep "über" accusative ; --- dative?
 

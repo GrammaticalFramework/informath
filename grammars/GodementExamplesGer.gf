@@ -5,8 +5,8 @@ concrete GodementExamplesGer of GodementExamples = CategoriesGer **
 
 open UtilitiesGer, ParadigmsGer in {
 
-lin and_Prep = mkPrep "und" nominative ;
-lin of_order_Prep = mkPrep "der Ordnung" nominative ;
+lin and_Prep = mkPrep "und" accusative ;  ---- from Claude: nominative; bogus anyway
+lin of_order_Prep = mkPrep "der Ordnung" accusative ;
 lin with_respect_to_Prep = mkPrep "bezüglich" genitive ;
 
 }

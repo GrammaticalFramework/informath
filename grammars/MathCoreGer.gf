@@ -1,7 +1,7 @@
 concrete MathCoreGer of MathCore =
   CategoriesGer
   **
-  MathCoreFunctor - [Adj3Prop] with
+  MathCoreFunctor - [Adj3Prop, CoercionExp] with
     (Utilities=UtilitiesGer),
     (Syntax=SyntaxGer),
     (Grammar=GrammarGer),

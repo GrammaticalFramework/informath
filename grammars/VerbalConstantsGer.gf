@@ -88,8 +88,8 @@ lin congruent_Adj3 = mkAdj3 (mkAP (mkA "kongruent")) with_Prep (mkPrep "modulo" 
 
 
 
-lin combinationsFromSet_Fun2 = mkFun2 (mkCN (mkN "An" zahl_N) (SyntaxGer.mkAdv (mkPrep genitive) (mkNP thePl_Det (mkN "Kombination")))) ;
-lin combinations_Fun2 = mkFun2 (mkCN menge_N (SyntaxGer.mkAdv (mkPrep genitive) (mkNP aPl_Det (mkN "Kombination")))) ;
+lin combinationsFromSet_Fun2 = mkFun2 (mkCN (mkN "An" zahl_N) (SyntaxGer.mkAdv (mkPrep genitive "") (mkNP thePl_Det (mkN "Kombination")))) ;
+lin combinations_Fun2 = mkFun2 (mkCN menge_N (SyntaxGer.mkAdv (mkPrep genitive "") (mkNP aPl_Det (mkN "Kombination")))) ;
 lin binomial_Fun2 = mkFun2 (mkCN (mkN "Binomialkoeffizient")) ;
 
 lin area_Fun = mkFun "Fläche" ;

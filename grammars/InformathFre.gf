@@ -1,4 +1,4 @@
---# -path=.:morphodict:extraction
+--# -path=.:present:morphodict:extraction
 
 concrete InformathFre of Informath =
   MathCoreFre,
