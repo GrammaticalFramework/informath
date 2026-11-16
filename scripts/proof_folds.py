@@ -141,24 +141,111 @@ def derivations(rows, folds=None):
     return out
 
 
+def _rule_and_numbers(just):
+    "the rule of a justification (its first word, \\texttt{} and \\_ removed), its premisses and its discharged lines"
+    j = re.sub(r'\\texttt\{([^}]*)\}', r'\1', just).replace('\\_', '_').strip()
+    parts = j.split(None, 1)
+    if not parts:
+        return '', [], []
+    rest = parts[1] if len(parts) > 1 else ''
+    discharged = [int(x) for p in re.findall(r'\(([^)]*)\)', rest) for x in re.findall(r'\b(\d+)\b', p)]
+    premisses = [int(x) for x in re.findall(r'\b(\d+)\b', re.sub(r'\([^)]*\)', '', rest))]
+    return parts[0], premisses, discharged
+
+
+INTRO_RULES = ('ifI', 'forallI')
+ELIM_RULES = ('ifE', 'forallE')
+
+
+def inductions(rows, is_induction=lambda r: r.startswith('ind_'), intro_rules=INTRO_RULES, elim_rules=ELIM_RULES):
+    """The inductions of a proof text that can be collapsed to one line, as a
+    book writes them ("by induction on p, (p . q) . r = p . (q . r)"): an
+    induction whose motive is generalized over later hypotheses ("if q : y = z
+    then ...") is spelled out by Informath with introductions of them in its
+    cases (intro_rules, cited by the induction line through each other) and
+    eliminations after it (elim_rules, each citing the line before, with the
+    hypotheses reassumed). Collapsed, the last of the eliminations stays,
+    cited from the lines that prove the cases, and the rest is hidden: the
+    introductions, the goal assumptions that they discharge, the induction
+    line itself, the eliminations and the reassumed hypotheses.
+    Returns {index of the last line: (hidden indices, induction line index,
+    indices of the case lines)}; inductions without such scaffolding are left
+    out."""
+    rows, depth, sentence, no_just, header = _lines(rows)
+    index = {}
+    for i, r in enumerate(rows):
+        m = re.match(r'(\d+)\.?$', r[0].strip())
+        if m:
+            index[int(m.group(1))] = i
+    info = [_rule_and_numbers(r[2]) for r in rows]
+    prem = [[index[x] for x in ps if x in index] for _, ps, _ in info]
+    disch = [[index[x] for x in ds if x in index] for _, _, ds in info]
+    out = {}
+    for i in range(len(rows)):
+        if no_just[i] or not is_induction(info[i][0]):
+            continue
+        hidden, cases = set(), []
+        for c in prem[i]:
+            x = c
+            while not no_just[x] and info[x][0] in intro_rules and prem[x]:
+                hidden.add(x)
+                # the goal assumptions it discharges, not the first line, which
+                # has the theorem's hypotheses (-proof-merge-hypos merges into
+                # it a case's hypothesis written the same)
+                hidden |= {a for a in disch[x] if a > 0}
+                # and the line introducing its variable (forallI 2, 4: let v be ...)
+                hidden |= {a for a in prem[x][:-1] if a > 0 and no_just[a]}
+                x = prem[x][-1]                  # its body: ifI 3 (2), forallI 1, 3
+            if x != c:
+                if x not in hidden:
+                    cases.append(x)
+            elif not no_just[c]:
+                cases.append(c)          # a case proved without introductions
+        # the eliminations after the induction line, and the hypotheses they reassume
+        last, cur, pending, k = i, i, [], i + 1
+        while k < len(rows):
+            if no_just[k] and not header[k]:
+                pending.append(k)
+            elif info[k][0] in elim_rules and cur in prem[k]:
+                hidden |= set(pending)
+                hidden.add(cur)
+                pending, cur, last = [], k, k
+            else:
+                break
+            k += 1
+        if last == i or not hidden:
+            continue
+        out[last] = (sorted(h for h in hidden if h != last), i, sorted(set(cases) - hidden))
+    return out
+
+
 LABELS = {
     'Eng': {'fold all': 'fold all', 'unfold all': 'unfold all', 'line': 'line %s', 'lines': 'lines %s-%s',
             'folded': ' (%s folded)', 'derivation': ' (its derivation, %d lines, folded)',
-            'toggle': 'fold or unfold %s', 'toggle derivation': 'fold or unfold the derivation of this line'},
+            'toggle': 'fold or unfold %s', 'toggle derivation': 'fold or unfold the derivation of this line',
+            'toggle induction': 'show or hide the steps of the induction',
+            'induction': ' (%d steps of the induction hidden)'},
     'Fre': {'fold all': 'tout replier', 'unfold all': 'tout déplier', 'line': 'ligne %s', 'lines': 'lignes %s-%s',
             'folded': ' (%s repliées)', 'derivation': ' (sa dérivation, %d lignes, repliée)',
-            'toggle': 'replier ou déplier %s', 'toggle derivation': 'replier ou déplier la dérivation de cette ligne'},
+            'toggle': 'replier ou déplier %s', 'toggle derivation': 'replier ou déplier la dérivation de cette ligne',
+            'toggle induction': 'montrer ou cacher les étapes de la récurrence',
+            'induction': ' (%d étapes de la récurrence cachées)'},
 }
 
 
 def proof_table(rows, sentence_html=None, justification_html=None, number_html=None,
                 cells=('n', 's', 'j'), table_class='proof', fold_links=True, derivation_folds=True,
-                lang='Eng'):
+                lang='Eng', collapses=None):
     """A proof text as an HTML table with folds, preceded by "fold all ·
     unfold all" if it has subproofs. sentence_html(sentence, row) renders a
     sentence without its indentation, justification_html(j) and
     number_html(n) the other cells (all by default escaped as text). The
-    labels are in English, or with lang='Fre' in French (LABELS)."""
+    labels are in English, or with lang='Fre' in French (LABELS).
+
+    collapses = {index of a line: (hidden indices, short justification html)}
+    (from inductions()): the line is shown with the short justification and
+    the hidden lines folded away, under a symbol (⊕, ⊖ when open) that shows
+    them and the line's own justification."""
     w = LABELS.get(lang, LABELS['Eng'])
     esc = lambda t, *_: html.escape(t, quote=False)
     sentence_html = sentence_html or esc
@@ -174,6 +261,11 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
     for n, hidden in derived.items():
         for k in hidden:
             inside.setdefault(k, []).append('d%d' % n)
+    collapses = collapses or {}
+    for n, (hidden, _) in collapses.items():
+        derived.pop(n, None)
+        for k in hidden:
+            inside.setdefault(k, []).append('c%d' % n)
     out = ['<div class="foldable">']
     if folds and fold_links:
         out.append('<div class="folds"><a href="#" data-fold="all">%s</a> · '
@@ -182,13 +274,21 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
     cn, cs, cj = cells
     for k, r in enumerate(rows):
         num, sentence, just = r
-        attrs = ''
+        attrs, classes = '', []
         if k in inside:
             attrs += ' data-in="%s"' % ' '.join(inside[k])
-        if k in folds:
+            if any(c.startswith('c') for c in inside[k]):
+                classes.append('hid')          # inside a collapse, which starts closed
+        if k in collapses:
+            attrs += ' data-scope="c%d"' % k
+            classes += ['coll', 'closed']
+        elif k in folds:
             attrs += ' data-scope="%d"' % k
         elif k in derived:
-            attrs += ' data-scope="d%d" class="deriv"' % k
+            attrs += ' data-scope="d%d"' % k
+            classes.append('deriv')
+        if classes:
+            attrs += ' class="%s"' % ' '.join(classes)
         depth, sentence = depth_of(sentence)
         style = ' style="--depth:%d"' % depth if depth else ''
         body = sentence_html(sentence, r)
@@ -201,11 +301,18 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
                 folded = folded.replace('repliées', 'repliée')
             body = ('<span class="tog" title="%s"></span>' % (w['toggle'] % lines)
                     + body + '<span class="folded">%s</span>' % folded)
+        if k in collapses:
+            body = ('<span class="tog" title="%s"></span>' % w['toggle induction']
+                    + body + '<span class="folded">%s</span>' % (w['induction'] % len(collapses[k][0])))
+            jhtml = ('<span class="short">%s</span><span class="long">%s</span>'
+                     % (collapses[k][1], justification_html(just)))
         elif k in derived:
             body = ('<span class="tog" title="%s"></span>' % w['toggle derivation']
                     + body + '<span class="folded">%s</span>' % (w['derivation'] % len(derived[k])))
+        if k not in collapses:
+            jhtml = justification_html(just)
         out.append('<tr%s><td class="%s">%s</td><td class="%s"%s>%s</td><td class="%s">%s</td></tr>'
-                   % (attrs, cn, number_html(num), cs, style, body, cj, justification_html(just)))
+                   % (attrs, cn, number_html(num), cs, style, body, cj, jhtml))
     out.append('</table></div>')
     return '\n'.join(out)
 
@@ -220,6 +327,9 @@ FOLD_CSS = """
  .folded{display:none;color:var(--muted,#888);font-size:.85em}
  tr.closed .folded{display:inline}
  tr.hid{display:none}
+ tr.coll .tog::before{content:"\\2296"}
+ tr.coll.closed .tog::before{content:"\\2295"}
+ tr.coll.closed .long,tr.coll:not(.closed) .short{display:none}
 """
 
 FOLD_JS = """
@@ -242,7 +352,7 @@ FOLD_JS = """
       ev.preventDefault();
       // "fold all" folds the subproofs, "unfold all" everything
       var table = t.closest('.foldable').querySelector('table');
-      var rows = t.dataset.fold === 'all' ? 'tr[data-scope]:not(.deriv)' : 'tr[data-scope]';
+      var rows = t.dataset.fold === 'all' ? 'tr[data-scope]:not(.deriv):not(.coll)' : 'tr[data-scope]';
       table.querySelectorAll(rows).forEach(function (r) {
         r.classList.toggle('closed', t.dataset.fold === 'all');
       });

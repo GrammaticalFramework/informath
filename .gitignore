@@ -12,3 +12,6 @@ src/typetheory/*/
 src/typetheory/Makefile
 src/Informath.hs
 __pycache__/
+
+# the Agda backend build (scripts/agda)
+dist-newstyle/

@@ -44,10 +44,11 @@ import proof_shortening
 
 
 def blocks_of(mod):
-    """Coq name -> its Dedukti block, from out/<M>.dk."""
+    """Source name -> its Dedukti block, from out/<M>.dk (//COQ: from
+    rocq-export.py, //AGDA: from agda-export.py)."""
     text = open(os.path.join(OUT, mod + '.dk')).read()
     out = {}
-    for m in re.finditer(r'\(; //COQ:(\S+) ;\)\n(.*?)(?=\n\n\(; //COQ:|\Z)', text, re.S):
+    for m in re.finditer(r'\(; //(?:COQ|AGDA):(\S+) ;\)\n(.*?)(?=\n\n\(; //(?:COQ|AGDA):|\Z)', text, re.S):
         out[m.group(1)] = m.group(2).strip()
     return out
 
@@ -238,9 +239,16 @@ def drop_side_conditions(steps):
 def tactic_proofs(mod):
     """The proof texts of a module's tactic proofs, all steps and shortened
     (Informath's scripts/proof_shortening.py), and the rules applied."""
+    units_file = os.path.join(OUT, mod + '-tactic-units.json')
+    if not os.path.exists(os.path.join(OUT, mod + '-tactics.json')):
+        # no tactic proofs (agda-export.py): only the macros of the symbol table,
+        # from a run on no proofs, which numbers them as the readings do
+        empty = os.path.join(TMP, 'no-units.json')
+        open(empty, 'w').write('[]')
+        _, macros = proof_texts([], empty)
+        return {}, {}, macros, {}
     subprocess.run([sys.executable, os.path.join(HERE, 'rocq-tactic-units.py'), mod, OUT], check=True,
                    capture_output=True)
-    units_file = os.path.join(OUT, mod + '-tactic-units.json')
     units = json.load(open(units_file))
     full, macros = proof_texts(units, units_file)
     short_units, counts = [], {}
@@ -255,7 +263,56 @@ def tactic_proofs(mod):
     return full, short, macros, counts
 
 
+# the proof texts of proof terms (agda-export.py: out/<M>-proofs.dk), as
+# mathlib-informath's term proofs: each theorem by a RunInformath -proof-text
+# of its own, with the eliminators and all the statements as its base
+TERM_PROOF_FLAGS = ['-proof-indent', '-proof-goals', '-proof-merge-hypos', '-proof-no-cite']
+
+
+def term_proofs(modules):
+    """Dedukti name -> language -> proof text rows, for the proof terms of the modules."""
+    files = [os.path.join(OUT, m + '-proofs.dk') for m in modules]
+    blocks = []
+    for f in files:
+        if os.path.exists(f):
+            blocks += [b.strip() for b in re.split(r'\n\n(?=def )', open(f).read()) if b.strip().startswith('def ')]
+    if not blocks:
+        return {}
+    base = os.path.join(TMP, 'proof-base.dk')
+    # the statements in the reading that the proofs use (out/<M>-prop.dk), if there is one
+    parts = [os.path.join(OUT, 'eliminators.dk')] + [
+        os.path.join(OUT, m + '-prop.dk') if os.path.exists(os.path.join(OUT, m + '-prop.dk'))
+        else os.path.join(OUT, m + '.dk') for m in modules]
+    open(base, 'w').write('\n\n'.join(open(f).read() for f in parts if os.path.exists(f)) + '\n')
+
+    def one(b):
+        name = b.split()[1]
+        f = os.path.join(TMP, 'proof-%s.dk' % re.sub(r'[^A-Za-z0-9_]', '_', name))
+        open(f, 'w').write(b + '\n')
+        try:
+            r = subprocess.run([RUN, '-proof-text'] + TERM_PROOF_FLAGS + ['-languages=' + ','.join(LANGUAGES),
+                                '-base=' + base, '-add-symboltables=' + TABLE, f],
+                               capture_output=True, text=True, timeout=TIMEOUT)
+        except subprocess.TimeoutExpired:
+            return name, None
+        t = proof_tables(r.stdout, LANGUAGES)
+        return name, t[0] if t else None
+    out = {}
+    with concurrent.futures.ThreadPoolExecutor(8) as ex:
+        for name, t in ex.map(one, blocks):
+            out[name] = t
+    return out
+
+
 def main():
+    global TABLE
+    # the symbol table with the implicit arguments of the export hidden
+    # (out/<M>-hide.dkgf, written by agda-export.py)
+    hides = [os.path.join(OUT, m + '-hide.dkgf') for m in MODULES if os.path.exists(os.path.join(OUT, m + '-hide.dkgf'))]
+    if hides:
+        combined = os.path.join(TMP, 'table.dkgf')
+        open(combined, 'w').write(''.join(open(f).read() + '\n' for f in [TABLE] + hides))
+        TABLE = combined
     decls, pieces = [], []
     for mod in MODULES:
         blocks = blocks_of(mod)
@@ -293,6 +350,14 @@ def main():
         for lang in (p or {}):
             for r in p[lang]:
                 r[1] = fix_macros(r[1], macros)
+    terms = term_proofs(MODULES)
+    for t in terms.values():
+        for lang in (t or {}):
+            for r in t[lang]:
+                r[1] = fix_macros(r[1], macros)
+    for d in decls:
+        if d.get('dk') in terms:
+            d['proof'] = terms[d['dk']]
     for d in decls:
         n = d['coq']
         d['readings'] = results.get((n, 'stmt'), {})

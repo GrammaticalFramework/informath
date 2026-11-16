@@ -19,7 +19,7 @@ in {
 -- functor exceptions
 lin
   PropHypo prop = lets_Utt (mkVP assume_VS (topProp prop)) ;
-  PropVarHypo ident prop = lin Utt {s = (lets_Utt (mkVP assume_VS (topProp prop))).s ++  "(" ++ ident ++ ")"} ; 
+  PropVarHypo ident prop = lin Utt {s = (lets_Utt (mkVP assume_VS (topProp prop))).s ++ "(" ++ BIND ++ "$" ++ BIND ++ ident ++ BIND ++ "$" ++ BIND ++ ")"} ; 
   -- "pour tous les objets x", not "pour tous des objets x" (allNP)
   CoreAllProp kind ident prop =
     simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP all_Predet (mkNP thePl_Det (identKindCN ident kind)))) (partProp prop)) ;

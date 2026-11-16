@@ -9,7 +9,7 @@ Definition. Let $u$ and $v$ be instances of vectors. Then $u + v$ is an instance
 Definition. $\mathrm{square}$ is defined as the function that maps $x$ to $x ^ {2}$.
 Definition. Let $x$ and $y$ be instances of natural numbers. Then $x + y$ is an instance of natural numbers.
 By cases: \begin{itemize} \item for $m$, $m + \mathrm{Zero}$ is $m$. \item for $m$ and $n$, $m + \mathrm{Succ} (n)$ is the successor of $m + n$. \end{itemize}
-PropHypo. Assume that we can prove that $1 = 0$ ( x) . then we can prove that we have a contradiction.
+PropHypo. Assume that we can prove that $1 = 0$ ($x$). Then we can prove that we have a contradiction.
 VarHypo. Let $n$ be an instance of natural numbers. Then we can prove that $n$ is even or $n$ is odd.
 LocalHypo. Let $m$ be an instance of natural numbers. Let the instance $n$ of natural numbers be $m + m$. Then we can prove that $n \geq m$.
 Definition. Let $n$ be an instance of natural numbers. Then $\mathrm{CoreAbsExp} (n)$ is an instance of natural numbers defined as $n \times n$.

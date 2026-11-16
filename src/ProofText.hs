@@ -90,7 +90,7 @@ proofDemoPieces env base (MJmts proofs) informalizes trees =
 oneProof :: Env -> M.Map QIdent Exp -> S.Set QIdent -> [GUnit -> String] -> Maybe (Exp -> String) -> Exp -> Exp -> String
 oneProof env dkmap theorems lins trees typ exp = unlines $ intersperse "\n\n" (
     [ "\\subsection*{" ++ verbatimInline (printTree typ) ++ "}" ] ++
-    [ prls (\(depth, ln) -> prlu lin depth (dkline2unitline env theorems ln)) (textLines pls) | lin <- lins ] ++
+    [ prls (\(depth, ln) -> prlu lin depth (dkline2unitline env theorems (labelsUsed (textLines pls)) ln)) (textLines pls) | lin <- lins ] ++
     [ proofTree latex (rawLines pls) (lineNumber pls) | Just latex <- [trees] ] ++
     (if isFlag "-proof-text-dedukti" env
        then [ "The proof text in Dedukti"
@@ -193,10 +193,25 @@ line2dkline env dkmap line = line {
    hypo h = if catExp (head (annotateDkIdents env fla)) == "Prop" then DkProp h fla else DkVars [h] fla
    constant h = maybe False (const True) (M.lookup h dkmap)
 
+-- | The identifiers that the formulas of a proof text mention: a hypothesis
+-- h : A whose label is among them keeps it, "assume that A (h)", as in a
+-- proof about identifications (p : x = y, then p . q = ...)
+labelsUsed :: [(Int, Line DkUnit)] -> S.Set QIdent
+labelsUsed lns = S.fromList (concatMap (unitIdents . formula . step . snd) lns
+                             ++ concat [identsInTree g | (_, l) <- lns, Just g <- [goal l]])
+ where
+   unitIdents u = case u of
+     DkCases _ -> []
+     DkCase _ _ a -> identsInTree a
+     DkConclusion a -> identsInTree a
+     DkHypos hs g -> concat [identsInTree k | DkVars _ k <- hs] ++ concat [identsInTree a | DkProp _ a <- hs]
+                     ++ maybe [] identsInTree g
+
 -- | A line in words; a line that applies a theorem (one of the set) without
--- words in the symbol table names it by its Dedukti name
-dkline2unitline :: Env -> S.Set QIdent -> Line DkUnit -> Line GUnit
-dkline2unitline env theorems line = line {
+-- words in the symbol table names it by its Dedukti name; the labels of the
+-- hypotheses that the proof refers to (the second set) are kept
+dkline2unitline :: Env -> S.Set QIdent -> S.Set QIdent -> Line DkUnit -> Line GUnit
+dkline2unitline env theorems used line = line {
   step = (step line){formula = unit}
   }
  where
@@ -217,7 +232,10 @@ dkline2unitline env theorems line = line {
    prop a = exp2prop (annotated a)
    hypo h = case h of
      DkVars xs k -> hypos2hypos [HVarExp x (annotated k) | x <- xs]
-     DkProp x a -> hypos2hypos [HVarExp x (annotated a)]
+     DkProp x a -> map (unlabel x) (hypos2hypos [HVarExp x (annotated a)])
+   unlabel x h = case h of
+     GPropVarHypo _ p | not (S.member x used) -> GPropHypo p
+     _ -> h
 
    caseNumber k = [Gone_CaseNumber, Gtwo_CaseNumber, Gthree_CaseNumber, Gfour_CaseNumber,
                    Gfive_CaseNumber, Gsix_CaseNumber, Gseven_CaseNumber, Geight_CaseNumber,
@@ -242,8 +260,7 @@ dkline2unitline env theorems line = line {
      [] -> []
    gprop :: GHypo -> Maybe GProp
    gprop h = case h of
-     GPropHypo p -> Just p
-     GPropVarHypo _ p -> Just p
+     GPropHypo p -> Just p     -- not a labelled one, whose label the proof uses
      _ -> Nothing
 
 -- merge consecutive lines introducing variables of the same kind into one,

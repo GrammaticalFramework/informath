@@ -419,13 +419,19 @@ subst gamma bs e = case e of
     EFun (HVarExp x' (subst gamma bs ty)) (subst ((x, EIdent x') : gamma) (x' : bs) a)
   EFun (HParVarExp x ty) a | Just x' <- captured x a ->
     EFun (HParVarExp x' (subst gamma bs ty)) (subst ((x, EIdent x') : gamma) (x' : bs) a)
-  EAbs (BTyped x ty) a -> EAbs (BTyped x (subst gamma bs ty)) (subst gamma (x : bs) a)
-  EAbs b a -> EAbs b (subst gamma (bind2ident b : bs) a)
-  EFun (HVarExp x ty) a -> EFun (HVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
-  EFun (HParVarExp x ty) a -> EFun (HParVarExp x (subst gamma bs ty)) (subst gamma (x : bs) a)
+  -- a variable bound here is not substituted in its scope (the n of a rule's
+  -- premiss (n : Elem N) -> Proof (P n) is not the rule's last argument n)
+  EAbs (BTyped x ty) a -> EAbs (BTyped x (subst gamma bs ty)) (subst (unbind x) (x : bs) a)
+  EAbs b a -> EAbs b (subst (unbind (bind2ident b)) (bind2ident b : bs) a)
+  EFun (HVarExp x ty) a -> EFun (HVarExp x (subst gamma bs ty)) (subst (unbind x) (x : bs) a)
+  EFun (HParVarExp x ty) a -> EFun (HParVarExp x (subst gamma bs ty)) (subst (unbind x) (x : bs) a)
+  -- an unnamed premiss, as the induction hypothesis Proof (P n) of a rule:
+  -- its type is substituted too, so that P n becomes the motive applied to n
+  EFun (HExp ty) a -> EFun (HExp (subst gamma bs ty)) (subst gamma bs a)
   EFun h a -> EFun h (subst gamma (hypo2vars h ++ bs) a)
   _ -> e
  where
+  unbind x = [kv | kv@(k, _) <- gamma, k /= x]
   -- a fresh name for x, if x is free in the value of a variable free in the body
   captured x body
     | x `elem` concat [identsInTree v | (k, v) <- gamma, k /= x, k `elem` free] =

@@ -27,9 +27,14 @@ nlg env tree = case () of
    t = unparenth tree
    ut = funKinds (uncoerce t)
    ft = flatten (extendStructure ut)
-   afts = [(if safe then aggregateSafe else aggregate) ft]
+   -- a line of a proof text (-proof-labels) with a labelled hypothesis, which
+   -- ProofText keeps when the proof refers to the label ("assume that x = y
+   -- (p)"): neither aggregated (which would attach or pair the proposition)
+   -- nor varless (which drops the labels)
+   labelled = isFlag "-proof-labels" env && hasPropLabel t
+   afts = if labelled then [ft] else [(if safe then aggregateSafe else aggregate) ft]
    iafts = map insitu afts
-   viafts = map varless iafts
+   viafts = if labelled then iafts else map varless iafts
    cviafts = concatMap (if safe then collectivizeSafe else collectivize) viafts
    ncviafts = map (scoped . implied . negated) cviafts  -- better do this at this late stage
    vncviafts = concatMap (\u -> filter (not safe ||| restorableVariation u) (variations u)) ncviafts
@@ -742,6 +747,12 @@ varless t = case t of
   GIndefIdentKindQuant _ kind -> GIndefKindQuant kind
   GPropVarHypo _ prop -> GPropHypo prop
   _ -> composOp varless t
+
+-- | Whether a tree has a labelled hypothesis, "assume that A (h)"
+hasPropLabel :: Tree a -> Bool
+hasPropLabel t = case t of
+  GPropVarHypo _ _ -> True
+  _ -> getAny (composOpMonoid (Any . hasPropLabel) t)
 
 exps2list :: GExps -> [GExp]
 exps2list exps = case exps of

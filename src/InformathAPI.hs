@@ -894,6 +894,8 @@ proofLinearizers env = map unit2nat proofLangs
    unit2nat :: Language -> GUnit -> String
    unit2nat lang u = unlex env (gftree2nat env lang (gf (best u)))
 
-   best u = MCI.bareQuantifiers kinds (head [u | GUnitJmt u <- core2ext env (GUnitJmt u)])
+   -- the lines keep the labels that ProofText kept, those the proof refers to
+   best u = MCI.bareQuantifiers kinds (head [u | GUnitJmt u <- core2ext lenv (GUnitJmt u)])
+   lenv = env{flags = "-proof-labels" : flags env}
    kinds = implicitKinds env
 
