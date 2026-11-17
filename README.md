@@ -518,6 +518,19 @@ at the head of $T$ has a noun for its elements, given by the directive
 the conclusion is "then there is an identification $c : x = y$", as in
 homotopy type theory, where an identity type is both a proposition and a type.
 
+When a constant has both verbal and symbolic forms, the least verbal one is
+preferred. The directive
+```
+#VERBAL is_contr center
+```
+makes the listed constants read in words wherever a sentence allows it ("let
+$A$ be a contractible type", "the center of contraction of $A$"), and with
+their symbolic forms only inside formulas. A constant whose verbal form is an
+adjective or another proposition makes the type it builds a proposition too:
+an element of `Elem (is_contr A)` is a proof that $A$ is contractible, so a
+hypothesis `(x : Elem (is_contr A))` reads "assume that $A$ is contractible",
+and a declaration of that type is a theorem.
+
 Instead of symbolic expressions between dollars, a symbol table can contain a macro symbol and a separate directive
 ```
 #MACRO <latex_newcommand>

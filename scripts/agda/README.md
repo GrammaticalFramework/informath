@@ -54,6 +54,11 @@ the explicit arguments only (`concat : $#1 \cdot #2$`), and `agda-export.py`
 renumbers it to count all arguments (`$#5 \cdot #6$`), as Informath's
 argument profiles do; a constant without an entry gets one made of its
 Agda name and its explicit arguments, `\mathsf{left\text{-}unit\text{-}law\text{-}add}_{\mathbb{N}}(#1)`.
+`#{k}` refers to the k'th argument counting all of them, implicit ones too,
+for wordings that mention an implicit argument: `center : "the center of
+contraction of #{1}"`, where #{1} is the type $A$ of `center : {A : UU l} →
+is-contr A → A`. A constant marked `#VERBAL` whose entry has no symbolic form
+gets the generated one added, for use inside formulas.
 (Informath's `#HIDE` would hide them in terms, but not in the head of a
 declaration, which Informath builds from the declaration's hypotheses.)
 Anonymous binders (`_`) are named by their types: `p`, `q` for

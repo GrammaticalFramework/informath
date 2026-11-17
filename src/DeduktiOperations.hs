@@ -189,6 +189,9 @@ list2enum xs = case xs of
 -- to begin with, to decide how to render a hypo
 catExp :: Exp -> String
 catExp e = case e of
+  -- an element of a type that the symbol table makes a proposition (an
+  -- adjective: is-contr A as "A is contractible"), as in propositions as types
+  EApp (EIdent f) x | isElemIdent f && catExp x == "Prop" && not (isProofApp x) -> "Prop"
   EApp _ _ -> case splitApp e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
       -- a comparison (Leq x y as x \leq y) is a proposition too
@@ -451,3 +454,13 @@ plainIdentName s = case s of
     ("\x2192", "to"), ("\x2194", "iff"), ("\x2229", "cap"), ("\x222a", "cup"),
     ("\x2208", "in"), ("\x2286", "subseteq"), ("\x2282", "subset"), ("\x207b\x00b9", "inv")
     ]
+
+-- | Proof A: already a proposition's proof, not a proposition-type to read as one
+isProofApp :: Exp -> Bool
+isProofApp e = case splitApp e of
+  (EIdent f, _) -> f == identProof
+  _ -> False
+
+-- | Elem, also as annotated (Elem#Kind#ElemKind#Kind#)
+isElemIdent :: QIdent -> Bool
+isElemIdent (QIdent c) = QIdent (takeWhile (/= '#') c) == identElem

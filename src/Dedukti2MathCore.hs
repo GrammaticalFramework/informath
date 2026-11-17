@@ -62,6 +62,10 @@ jmt2jmt jmt = case jmt of
         _ -> id
       definiendum = approf (foldl EApp (EIdent ident) (map EIdent hvars))
     in case cat of
+      -- an element of a proposition-type (is-contr unit, is-contr an adjective):
+      -- a theorem, whatever the constant's own entry
+      -- (its definiens, a term, is not read as a proof text)
+      _ | isPropType kind -> GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
       _ | S.member cat proofCats -> case meexp of
        MEExp exp -> GThmJmt   (ident2label ident) ghypos (exp2prop kind) (exp2proof exp)
        _ ->         GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
@@ -72,7 +76,8 @@ jmt2jmt jmt = case jmt of
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
 
       _ | S.member cat kindCats -> case meexp of
-       MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind exp)
+       -- the definiens without the abstractions over the hypotheses, as for an Exp
+       MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind (stripAbs hypos exp))
        _ | isStructureType kind -> GStructureJmt definitionLabel (GListClause (map hypo2clause hypos))
                                      (exp2kind definiendum)
        _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum) (exp2kind kind)
@@ -303,7 +308,14 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
 
 
 exp2prop :: Exp -> GProp
-exp2prop exp = case specialDedukti2Informath callBacks exp of
+exp2prop exp = case exp of
+  -- an element of a proposition-type (catExp: is-contr A, with is-contr an
+  -- adjective), read as a proof of the proposition: "A is contractible"
+  EApp (EIdent f) x | isElemIdent f && catExp exp == "Prop" -> GProofProp (exp2prop x)
+  _ -> exp2propSpecial exp
+
+exp2propSpecial :: Exp -> GProp
+exp2propSpecial exp = case specialDedukti2Informath callBacks exp of
   Just (expr, "Prop") -> fg expr
   Just (expr, "Kind") -> GExistKindProp (fg expr)
   _ -> case exp of
@@ -498,3 +510,8 @@ bind2coreHypo bind = case bind of
   BVar var ->  
     GBareVarsHypo (GListIdent [ident2ident var])
 
+-- | Elem P, where P is a proposition by its symbol table entry (an adjective)
+isPropType :: Exp -> Bool
+isPropType e = case e of
+  EApp (EIdent f) _ -> isElemIdent f && catExp e == "Prop"
+  _ -> False

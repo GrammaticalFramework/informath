@@ -235,6 +235,10 @@ annotateDkIdentsFb fallback env =
 
   annotId c = case M.lookup c table of
     Just entry | symbolic_latex -> symbolicLatexId c entry
+    -- #VERBAL: the verbal forms only; inside a formula, where they do not fit,
+    -- the fallback (rawId) gives the symbolic ones
+    Just entry | S.member c (verbalSet (symbolTable env)) && not force_symbolic ->
+      [annotIdent c (maybe 0 id (M.lookup c drops)) fpt | fpt <- tkSyns (primary entry : synonyms entry)]
     Just entry -> [annotIdent c (maybe 0 id (M.lookup c drops)) fpt |
                        let symbs = tkSymbs (symbolics entry),
                        fpt <- symbs ++

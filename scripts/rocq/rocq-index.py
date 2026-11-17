@@ -75,9 +75,16 @@ def run(args, dk, timeout=TIMEOUT):
     return r.stdout if r.returncode == 0 else None
 
 
+# flags for every statement reading, from the project (config.py): e.g.
+# ['-statement-labels'], so that a hypothesis read as a proposition ("A is
+# contractible") keeps its label when the statement mentions it
+STATEMENT_FLAGS = list(project.get('STATEMENT_FLAGS', []))
+
+
 def reading(key, dk, flags=()):
     """language -> reading, and the formula, of one piece."""
     out = {}
+    flags = STATEMENT_FLAGS + [f for f in flags if f not in STATEMENT_FLAGS]
     js = run(['-json', '-no-back-to-dedukti', '-languages=' + ','.join(LANGUAGES), '-add-symboltables=' + TABLE]
              + list(flags), dk)
     if js:

@@ -130,7 +130,11 @@ data SymbolTable = SymbolTable {
   coercionTable :: M.Map QIdent Int,
   -- #TYPENOUN c n: an element of a type c ... is called an n (Id: an
   -- identification), with -typing; keyed by c and by the LaTeX macros of c
-  typeNounTable :: M.Map String String
+  typeNounTable :: M.Map String String,
+  -- #VERBAL c ...: constants read in words wherever a sentence allows it ("A is
+  -- contractible", "the center of contraction of A"), their symbolic forms only
+  -- inside formulas; without it the least verbal form is preferred
+  verbalSet :: S.Set QIdent
   }
 
 -- conversion from Dk to GF, with synonyms and category information
@@ -233,6 +237,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
   typeNounTable = M.fromList ([(c, n) | ["#TYPENOUN", c, n] <- entrylines] ++
                               [(m, n) | ["#TYPENOUN", c, n] <- entrylines,
                                         (qid:_, macros) <- numberedlines, qid == c, m <- macros]),
+  verbalSet = S.fromList [QIdent c | "#VERBAL":cs <- entrylines, c <- cs],
   excludedConstants = S.fromList [QIdent c | line <- filter isExclude (entrylines), c <- tail line]
   }
  where
@@ -328,19 +333,22 @@ mkMacro name s = (name, (length used, renumberLatexArgs used body))
    body = init (tail s)
    used = latexArgs body
 
--- | The distinct arguments #k of a LaTeX form, in increasing order.
+-- | The distinct arguments #k of a LaTeX form, in increasing order. k may
+-- have several digits (#10, the tenth argument of a constant with implicit
+-- arguments): it is a position, renumbered #1, #2, ... in the macro
 latexArgs :: String -> [Int]
 latexArgs = S.toList . S.fromList . go
  where
    go s = case s of
-     '#':c:cs | isDigit c -> read [c] : go cs --- only one-digit arguments
+     '#':cs@(c:_) | isDigit c -> let (ds, rest) = span isDigit cs in read ds : go rest
      _:cs -> go cs
      _ -> []
 
 -- | #k becomes #i where k is the i'th of the used arguments.
 renumberLatexArgs :: [Int] -> String -> String
 renumberLatexArgs used s = case s of
-  '#':c:cs | isDigit c -> '#' : show (position (read [c])) ++ renumberLatexArgs used cs
+  '#':cs@(c:_) | isDigit c -> let (ds, rest) = span isDigit cs
+                              in '#' : show (position (read ds)) ++ renumberLatexArgs used rest
   c:cs -> c : renumberLatexArgs used cs
   [] -> []
  where
@@ -523,6 +531,8 @@ guessGFCat (QIdent c) typ =
       (EIdent (QIdent f), _) -> case takeWhile (/='#') f of
         k | QIdent k == identProp -> "Prop"
         k | elem (QIdent k) [identSet, identType] -> "Kind"
+        -- an element of a type that the symbol table makes a proposition: a theorem
+        k | QIdent k == identElem, [arg] <- snd (splitApp val), catExp arg == "Prop" -> "Label"
         k | QIdent k == identElem -> "Exp"
         k | QIdent k == identProof -> "Label"
         _ -> "Label" 
