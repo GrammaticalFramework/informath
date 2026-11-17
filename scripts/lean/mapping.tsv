@@ -29,3 +29,17 @@ False	false
 Odd	odd
 Even	even
 Set	powerset
+# Lean's logical rules -> the rules of share/nd.dk, which take all the arguments
+# (the propositions as well as the proofs): "all" in the third column
+And.intro	andI	all
+And.left	andEl	all
+And.right	andEr	all
+Or.inl	orIl	all
+Or.inr	orIr	all
+Or.elim	orE	all
+Exists.intro	existsI	all
+Exists.elim	existsE	all
+Iff.intro	iffI	all
+Iff.mp	iffEl	all
+Iff.mpr	iffEr	all
+False.elim	falseE	all

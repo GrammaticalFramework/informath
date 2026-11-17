@@ -10,6 +10,14 @@ import Utils (showFreqs, fileSuffix, dictValues)
 ---- import InformathServer --- TODO-server
 
 import System.Environment (getArgs, getEnv)
+import System.Directory (doesFileExist)
+import System.FilePath ((</>), takeBaseName, takeFileName)
+import Control.Monad (filterM)
+import System.Process (readProcessWithExitCode)
+import Data.List (intercalate)
+import qualified Data.Map as M
+import qualified HtmlDoc as H
+import Dedukti.AbsDedukti
 import System.IO (stdout, stderr, hFlush, hPutStrLn)
 import Dedukti.PrintDedukti (printTree)
 
@@ -24,11 +32,15 @@ main = do
     _ ->  main4 xx
 
 main4 :: [String] -> IO ()
-main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else
+main4 args0 = if elem "-help" args0 then mapM_ putStrLn helpMsg4 else
   case (argValue "-from-formalism" "NONE" args, inputFileArg args) of
     ("NONE", _) -> readEnv args >>= \env -> runWith env args
     (formalism, Just (file, _)) -> fromFormalism formalism file args
     _ -> putStrLn "-from-formalism needs a source file"
+ where
+  -- an HTML document shows the languages of -to-lang
+  args = if elem "-to-html-doc" args0 && not (flagHasValue "-languages" args0)
+         then args0 ++ ["-languages=" ++ intercalate "," (htmlLanguages args0)] else args0
 
 -- | -from-formalism: the source file is exported to Dedukti by a script in
 -- scripts/<formalism>/, its identifiers are converted by the #CONV lines read
@@ -40,17 +52,71 @@ fromFormalism formalism file args = do
   dir <- if flagHasValue "-export-dir" args then return (argValue "-export-dir" "." args)
          else freshExportDir file
   (dk, tables) <- exportFromFormalism root formalism file dir
-  let args1 = addSymbolTableFlags tables [a | a <- args, a /= file, takeWhile (/= '=') a /= "-from-formalism"]
-  env <- readEnv args1
+  let proofsWanted = any (`elem` args) ["-proof-text", "-to-html-doc"]
+      -- the proof texts as on the index pages, unless some of these is given
+      pflags = words "-proof-indent -proof-goals -proof-merge-hypos -proof-no-cite"
+      proofFlags = if proofsWanted && not (any (`elem` args) pflags) then pflags else []
+      args1 = addSymbolTableFlags tables
+                ([a | a <- args, a /= file, takeWhile (/= '=') a /= "-from-formalism"] ++ proofFlags)
+  env0 <- readEnv args1
   mo <- readDeduktiModule [dk]
-  let mo' = fromFormalismConversion env formalism mo
-  -- the converted module in a file of its own, if the conversion changed it
-  dk' <- if mo' == mo then return dk else do
-    let f = take (length dk - 3) dk ++ "-converted.dk"
-    writeFile f (printTree mo')
-    return f
-  hPutStrLn stderr ("-from-formalism: " ++ dk' ++ (if null tables then "" else " with " ++ unwords tables))
-  runWith env (args1 ++ [dk'])
+  let conv = fromFormalismConversion env0 formalism
+      mo' = conv mo
+      stem = take (length dk - 3) dk
+  -- the base of the proof terms: natural deduction, the eliminators of Agda's data
+  -- types, the constants used, and the statements (as propositions, if the export has them)
+  env <- if not proofsWanted then return env0 else do
+    prop <- doesFileExist (stem ++ "-prop.dk")
+    extra <- filterM doesFileExist [root </> "share" </> "nd.dk", dir </> "eliminators.dk", stem ++ "-deps.dk",
+                                    if prop then stem ++ "-prop.dk" else dk]
+    MJmts more <- if null extra then return (MJmts []) else fmap conv (readDeduktiModule extra)
+    let MJmts base = baseConstantModule env0
+    return env0 { baseConstantModule = MJmts (base ++ more) }
+  if proofsWanted then fromFormalismProofs env formalism file dir stem conv mo' args1 else do
+    -- the converted module in a file of its own, if the conversion changed it
+    dk' <- if mo' == mo then return dk else do
+      let f = take (length dk - 3) dk ++ "-converted.dk"
+      writeFile f (printTree mo')
+      return f
+    hPutStrLn stderr ("-from-formalism: " ++ dk' ++ (if null tables then "" else " with " ++ unwords tables))
+    runWith env (args1 ++ [dk'])
+
+-- | With -proof-text, the proof texts of the theorems; with -to-html-doc, an HTML
+-- document of the declarations and their proofs. The proofs are the proof terms
+-- of the export (<M>-proofs.dk), or its tactic proofs (<M>-tactics.json, Rocq) as
+-- proof units by scripts/rocq/rocq-tactic-units.py.
+fromFormalismProofs :: Env -> String -> FilePath -> FilePath -> FilePath -> (Module -> Module) -> Module -> [String] -> IO ()
+fromFormalismProofs env formalism file dir stem conv (MJmts jmts) args = do
+  root <- getEnv "INFORMATH_ROOT"
+  let mod = takeBaseName stem
+  hasTerms <- doesFileExist (stem ++ "-proofs.dk")
+  terms <- if not hasTerms then return [] else do
+    pm <- fmap conv (readDeduktiModule [stem ++ "-proofs.dk"])
+    rs <- termProofTexts env pm
+    sequence_ [hPutStrLn stderr ("no proof text: " ++ c ++ " (failed or over the time limit)") | (QIdent c, Nothing) <- rs]
+    return [(c, l) | (QIdent c, Just l) <- rs]
+  hasTactics <- doesFileExist (stem ++ "-tactics.json")
+  tactics <- if not hasTactics then return [] else do
+    _ <- readProcessWithExitCode "python3" [root </> "scripts" </> "rocq" </> "rocq-tactic-units.py", mod, dir] ""
+    let units = dir </> (mod ++ "-tactic-units.json")
+    ok <- doesFileExist units
+    if not ok then return [] else do
+      s <- readFile units
+      native <- readNativeNames (stem ++ ".json")
+      return [(M.findWithDefault n n native, l) | (n, l) <- tacticProofTexts env s]
+  let proofs = terms ++ tactics
+  if elem "-to-html-doc" args then do
+    sources <- readSourceInfo (stem ++ ".json")
+    let title = takeBaseName file
+        intro = "Informalized by RunInformath from " ++ takeFileName file ++ " (-from-formalism=" ++ formalism ++
+                "): its declarations exported to Dedukti, read in " ++ intercalate ", " (map languageNameOf (htmlLanguages args)) ++
+                " and as formulas, and the proofs of its theorems as proof texts."
+    page <- htmlDocument env title intro (Just formalism) sources (M.fromList proofs)
+              (includedDefs env jmts)
+    putStr page
+  else putStr (proofTextDocument env (map snd proofs))
+ where
+  languageNameOf = H.languageName
 
 runWith :: Env -> [String] -> IO ()
 runWith env args = do
@@ -69,6 +135,12 @@ runWith env args = do
       mo <- readDeduktiModule [file]
       let base = baseConstantModule env
       showProofDemoSafe env base mo >>= putStrLn
+    Just (file, "dk") | elem "-to-html-doc" args -> do
+      MJmts jmts <- readDeduktiModule [file]
+      page <- htmlDocument env (takeBaseName file)
+                ("Informalized by RunInformath from " ++ takeFileName file ++ ".") Nothing M.empty M.empty
+                (includedDefs env jmts)
+      putStr page
     Just (file, "dk") | elem (toFormalism env) ["agda", "lean", "rocq"] -> do
       mo <- readDeduktiModule [file]
       mapM_ putStrLn (printFormalismModule env (toFormalism env) mo)
@@ -162,7 +234,8 @@ helpMsg4 = [
   "",
   "* Translating from Agda, Lean and Rocq (source files exported to Dedukti by scripts/<formalism>/):",
   "",
-  just "-from-formalism=<formalism>" "read the file as agda, lean or rocq, exported to Dedukti and then read as a .dk file; its identifiers converted by the #CONV lines of the symbol tables, read backwards",
+  just "-from-formalism=<formalism>" "read the file as agda, lean or rocq, exported to Dedukti and then read as a .dk file; its identifiers converted by the #CONV lines of the symbol tables, read backwards; with -proof-text, the proof texts of its theorems (proof terms of Lean and Agda, tactic proofs of Rocq)",
+  just "-proof-timeout=<seconds>" "with -from-formalism and -proof-text or -to-html-doc, the time limit of each proof text, default 30",
   just "-export-dir=<dir>" "with -from-formalism, write the export (the .dk file, its symbol table of hidden arguments, ...) in <dir>, default a temporary directory",
   "",
   "* Translating from Dedukti:",
@@ -180,6 +253,7 @@ helpMsg4 = [
   just "-godement" "generate also Godement-style variants (said to be, typed variables, ...)",
   just "-force-symbolic" "use maximally symbolic variants, even if this needs verbatim Dedukti constants",
   just "-to-latex-doc" "print valid LaTeX doc with preamble",
+  just "-to-html-doc" "print an HTML document: each declaration with its Dedukti, its readings in the languages of -to-lang (a list: -to-lang=Eng,Fre), its formula, and with -from-formalism its source and the proof texts of theorems, with folds",
   just "-weights=<ints>" "weights of scores, default 1,1,1,1,1,1,1",
   just "-no-ranking" "do not rank the NLG results (which can be expensive)",
   just "-test-ambiguity" "test ambiguity when ranking NLG results (can be very slow)",

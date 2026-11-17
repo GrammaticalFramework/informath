@@ -1,0 +1,69 @@
+(; Natural deduction for Informath's base constants.
+
+   share/baseconstants.dk declares the logical operators but gives no way of
+   reasoning with them.  These are their introduction and elimination rules,
+   in the shape of informath's test/natdedrules.dk, so that theorems can
+   carry proofs that dk check verifies and that RunInformath -proof-text
+   writes out as numbered lines of English: each step is justified by the
+   rule it applies, and the premisses of a rule are read off its type.
+
+   Nothing here is specific to a document: it is the predicate calculus.
+   Copied from godement-index/nd.dk (also in mathlib-informath); the base of
+   the proof texts of RunInformath -from-formalism (scripts/lean, scripts/agda).
+;)
+
+falseE : (C : Prop) -> Proof false -> Proof C.
+
+andI : (A : Prop) -> (B : Prop) -> (a : Proof A) -> (b : Proof B) -> Proof (and A B).
+
+def andEl : (A : Prop) -> (B : Prop) -> (c : Proof (and A B)) -> Proof A.
+[A, B, a] andEl _ _ (andI A B a _) --> a.
+
+def andEr : (A : Prop) -> (B : Prop) -> (c : Proof (and A B)) -> Proof B.
+[A, B, b] andEr _ _ (andI A B _ b) --> b.
+
+orIl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (or A B).
+orIr : (A : Prop) -> (B : Prop) -> Proof B -> Proof (or A B).
+
+def orE : (A : Prop) -> (B : Prop) -> (C : Prop) -> Proof (or A B) ->
+  (d : ((x : Proof A) -> Proof C)) -> (e : ((y : Proof B) -> Proof C)) -> Proof C.
+[a, d] orE _ _ _ (orIl _ _ a) d _ --> d a
+[b, e] orE _ _ _ (orIr _ _ b) _ e --> e b.
+
+ifI : (A : Prop) -> (B : Prop) -> (b : ((x : Proof A) -> Proof B)) -> Proof (if A B).
+
+def ifE : (A : Prop) -> (B : Prop) -> Proof (if A B) -> Proof A -> Proof B.
+[c, a] ifE _ _ (ifI _ _ c) a --> c a.
+
+def notI : (A : Prop) -> (b : ((x : Proof A) -> Proof false)) -> Proof (not A) := A => b => ifI A false b.
+def notE : (A : Prop) -> Proof A -> Proof (not A) -> Proof false := A => a => b => ifE A false b a.
+
+forallI : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  (b : ((x : Elem A) -> Proof (B x))) -> Proof (forall A (x => B x)).
+
+def forallE : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  Proof (forall A (x => B x)) -> (a : Elem A) -> Proof (B a).
+[c, a] forallE _ _ (forallI _ _ c) a --> c a.
+
+existsI : (A : Set) -> (B : ((x : Elem A) -> Prop)) ->
+  (a : Elem A) -> (b : Proof (B a)) -> Proof (exists A (x => B x)).
+
+def existsE : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> (C : Prop) ->
+  Proof (exists A (x => B x)) ->
+    (d : ((x : Elem A) -> (y : Proof (B x)) -> Proof C)) -> Proof C.
+[a, b, c] existsE _ _ _ (existsI _ _ a b) c --> c a b.
+
+(; the two halves of an equivalence, which is a conjunction of implications ;)
+def iffEl : (A : Prop) -> (B : Prop) -> Proof (iff A B) -> Proof A -> Proof B :=
+  A => B => c => a => ifE A B (andEl (if A B) (if B A) c) a.
+def iffEr : (A : Prop) -> (B : Prop) -> Proof (iff A B) -> Proof B -> Proof A :=
+  A => B => c => b => ifE B A (andEr (if A B) (if B A) c) b.
+def iffI : (A : Prop) -> (B : Prop) ->
+  (d : ((x : Proof A) -> Proof B)) -> (e : ((y : Proof B) -> Proof A)) -> Proof (iff A B) :=
+  A => B => d => e => andI (if A B) (if B A) (ifI A B d) (ifI B A e).
+
+(; Rewriting a proposition by an equation between propositions, as rw and
+   simp leave it in proof terms (Eq.mpr, Eq.mp); RunInformath -proof-text
+   collapses such steps into one, "by rewriting, A". ;)
+Eq__mpr : (A : Prop) -> (B : Prop) -> (h : Proof (Eqt Prop A B)) -> (b : Proof B) -> Proof A.
+Eq__mp : (A : Prop) -> (B : Prop) -> (h : Proof (Eqt Prop A B)) -> (a : Proof A) -> Proof B.

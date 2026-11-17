@@ -357,7 +357,7 @@ def single_file(path):
 
 
 def main():
-    global AGDA_ROOT, MODULES, OUT
+    global AGDA_ROOT, MODULES, OUT, PROPOSITIONS
     # a single file, without a project: agda-export.py File.agda [-out=<dir>]
     files = [a for a in sys.argv[1:] if not a.startswith('-')]
     for a in sys.argv[1:]:
@@ -368,6 +368,10 @@ def main():
             sys.exit(__doc__)
         AGDA_ROOT, module = single_file(files[0])
         MODULES = [module]
+        # without a project's PROPOSITIONS, the identity types are propositions,
+        # so that their proofs get proof texts
+        if not hasattr(project.config, 'PROPOSITIONS'):
+            PROPOSITIONS = ['_≡_', 'Id', '_＝_']
     os.makedirs(os.path.join(OUT, 'agda'), exist_ok=True)
     for m in MODULES:
         run_backend(m)

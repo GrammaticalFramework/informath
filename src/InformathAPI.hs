@@ -53,7 +53,9 @@ import System.Directory (getTemporaryDirectory, removeFile, createDirectoryIfMis
 import System.IO (openTempFile, hClose, hPutStr, stderr)
 import System.FilePath ((</>), takeBaseName, dropExtension)
 import Control.Exception (try, evaluate, SomeException)
-import Control.Monad (foldM)
+import Control.Monad (foldM, forM)
+import System.Timeout (timeout)
+import qualified HtmlDoc as H
 
 
 -- * The environment
@@ -97,7 +99,8 @@ readEnv args = do
     langs = if flagHasValue "-languages" args
             then relevantLanguages gr args
             else filter (/= latexLanguage) (languages gr),
-    toLang = mkLanguage gr (argValue "-to-lang" english args),
+    -- the first of -to-lang, which can be a list for -to-html-doc
+    toLang = mkLanguage gr (head (argValues "-to-lang" english args ++ [english])),
     toFormalism = argValue "-to-formalism" "NONE" args,
     fromLang = fro,
     symbolTableLang = sym,
@@ -625,6 +628,184 @@ fromFormalismConversion env formalism = alphaConvert inverse
   table = M.findWithDefault M.empty formalism (conversionTableEnv env)
   inverse = M.fromList [(n, d) | (d, n) <- M.toList table, notElem d framework, notElem n framework]
   framework = map QIdent ["Set", "Elem", "Prop", "Proof", "Type", "_"]
+
+-- * Proof texts and HTML documents of exported source files
+
+-- | The proof texts of the proof terms of a module (its definitions), each made
+-- on its own within a time limit (-proof-timeout=<seconds>, default 30): the
+-- LaTeX of each, or Nothing if it fails or takes too long. The base of the proofs
+-- is the -base of the environment.
+termProofTexts :: Env -> Module -> IO [(QIdent, Maybe String)]
+termProofTexts env (MJmts jmts) = forM [(c, j) | j <- jmts, Just c <- [proofName j]] $ \(c, j) -> do
+  let pieces = proofDemoPieces env (baseConstantModule env) (MJmts [j]) (proofLinearizers env) (proofTreePrinter env)
+      s = concatMap snd pieces
+  r <- timeout (seconds * 1000000) (try (evaluate (length s)) :: IO (Either SomeException Int))
+  return (c, case r of
+    Just (Right _) | not (null pieces) -> Just s
+    _ -> Nothing)
+ where
+  seconds = maybe 30 id (argValueMaybeInt "-proof-timeout" (flags env))
+  proofName :: Jmt -> Maybe QIdent
+  proofName j = case j of
+    JDef c _ (MEExp _) -> Just c
+    JThm c _ (MEExp _) -> Just c
+    _ -> Nothing
+
+-- | The proof texts of the tactic proofs of a file of proof units (-tactic-proof),
+-- one for each proof, by its name ("coq", "lean" or "name").
+tacticProofTexts :: Env -> String -> [(String, String)]
+tacticProofTexts env s = case J.decode s of
+  J.Ok (J.JSArray proofs) -> [(nameOf p, showTacticProofs env (J.encode (J.JSArray [p]))) | p <- proofs]
+  _ -> []
+ where
+  nameOf p = case p of
+    J.JSObject o -> case [J.fromJSString v | k <- ["dk", "coq", "lean", "name"],
+                                              Just (J.JSString v) <- [lookup k (J.fromJSObject o)]] of
+      v : _ -> v
+      [] -> ""
+    _ -> ""
+
+-- | The native names of the declarations of an export (<M>.json of scripts/*/):
+-- native name ("coq", "lean" or "agda") -> Dedukti name.
+readNativeNames :: FilePath -> IO (M.Map String String)
+readNativeNames file = do
+  exists <- doesFileExist file
+  if not exists then return M.empty else do
+    s <- readFile file
+    return $ case J.decode s of
+      J.Ok (J.JSArray ds) -> M.fromList [(J.fromJSString n, J.fromJSString dk) |
+        J.JSObject o <- ds, Just (J.JSString dk) <- [lookup "dk" (J.fromJSObject o)],
+        k <- ["coq", "lean", "agda"], Just (J.JSString n) <- [lookup k (J.fromJSObject o)]]
+      _ -> M.empty
+
+-- | A LaTeX document of proof texts.
+proofTextDocument :: Env -> [String] -> String
+proofTextDocument = proofDemoFile
+
+-- | What the export of a source file says of a declaration: its kind, docstring,
+-- and source text.
+data SourceInfo = SourceInfo {
+  siKind :: String,
+  siDoc :: String,
+  siSource :: String
+  }
+
+-- | The declarations of the JSON file of an export (<M>.json of scripts/*/), by Dedukti name.
+readSourceInfo :: FilePath -> IO (M.Map QIdent SourceInfo)
+readSourceInfo file = do
+  exists <- doesFileExist file
+  if not exists then return M.empty else do
+    s <- readFile file
+    return $ case J.decode s of
+      J.Ok (J.JSArray ds) -> M.fromList [(QIdent dk, SourceInfo (field "kind" o) (field "doc" o) (field "source" o)) |
+                                          J.JSObject o <- ds, let dk = field "dk" o, not (null dk)]
+      _ -> M.empty
+ where
+  field k o = case lookup k (J.fromJSObject o) of
+    Just (J.JSString v) -> J.fromJSString v
+    _ -> ""
+
+-- | The languages of an HTML document: those of -to-lang, which may be a list (Eng,Fre).
+htmlLanguages :: [Flag] -> [String]
+htmlLanguages args = argValues "-to-lang" english args
+
+-- | An HTML document of a module (-to-html-doc): its declarations with their
+-- source (if the export gives it), Dedukti, readings in the languages of
+-- -to-lang, formula, and proof texts (by the names of the declarations, as LaTeX
+-- of -proof-text or -tactic-proof), the proofs with folds by scripts/proof_folds.py.
+htmlDocument :: Env -> String -> String -> Maybe String -> M.Map QIdent SourceInfo -> M.Map String String
+             -> [Jmt] -> IO String
+htmlDocument env title intro formalism sources proofs jmts = do
+  let groups = grouped jmts
+      langCodes = [drop (length informathPrefix) (showCId l) | l <- langs env]
+      entries0 = map (entry langCodes) groups
+      -- the proof tables of the entries: (entry, language, rows)
+      tables = [(i, l, rows) | (i, g) <- zip [0 :: Int ..] groups,
+                               Just latex <- [M.lookup (groupName g) proofs],
+                               (l, rows) <- zip langCodes (H.latexTableRows latex), not (null rows)]
+  (htmlTables, css, js) <- foldTables (informathRoot env) [(l, rows) | (_, l, rows) <- tables]
+  let withProofs = [e { H.deProofs = [(l, t) | ((k, l, _), t) <- zip tables htmlTables, k == i] } |
+                    (i, e) <- zip [0 ..] entries0]
+  return (H.htmlPage title intro macrosJson css js withProofs)
+ where
+  -- a declaration with the rules that follow it for the same constant
+  grouped :: [Jmt] -> [[Jmt]]
+  grouped js = case js of
+    j : rest -> let (rs, others) = span (isRulesOf (declName j)) rest in (j : rs) : grouped others
+    [] -> []
+  isRulesOf :: Maybe QIdent -> Jmt -> Bool
+  isRulesOf c j = case j of
+    JRules rules -> c /= Nothing && all (\r -> ruleHead r == c) rules
+    _ -> False
+  declName :: Jmt -> Maybe QIdent
+  declName j = case j of
+    JStatic c _ -> Just c
+    JDef c _ _ -> Just c
+    JThm c _ _ -> Just c
+    JInj c _ _ -> Just c
+    JRules (r : _) -> ruleHead r
+    _ -> Nothing
+  groupName :: [Jmt] -> String
+  groupName g = maybe "" (\(QIdent c) -> c) (declName (head g))
+
+  entry langCodes g =
+    let c = declName (head g)
+        info = c >>= flip M.lookup sources
+        results = map (processJmt env) g
+        reading l = unwords [r | res <- results, Just ((_, r) : _) <- [lookup l [(lc, map fst rs) |
+                              (lang, rs) <- nlgResults res, let lc = drop (length informathPrefix) (showCId lang)]]]
+    in H.DocEntry {
+      H.deName = maybe "" (\(QIdent n) -> n) c,
+      H.deKind = maybe (kindOf (head g)) siKind info,
+      H.deDoc = maybe "" siDoc info,
+      H.deSource = case (formalism, info) of
+        (Just f, Just i) | not (null (siSource i)) -> Just (f, siSource i)
+        _ -> Nothing,
+      H.deDedukti = unlines (map (printDeduktiEnv env) g),
+      H.deReadings = [(l, reading l) | l <- langCodes],
+      H.deFormula = unwords (concatMap (take 1 . printSymbolicLatex env) results),
+      H.deProofs = []
+      }
+  kindOf :: Jmt -> String
+  kindOf j = case j of
+    JThm _ _ _ -> "theorem"
+    JDef _ _ (MEExp _) -> "definition"
+    JDef _ _ _ -> "definition"
+    JStatic _ t | isProofType t -> "axiom"
+    _ -> "declaration"
+  isProofType :: Exp -> Bool
+  isProofType t = case snd (splitType t) of
+    EApp (EIdent (QIdent "Proof")) _ -> True
+    _ -> False
+
+  -- MathJax macros from the symbol tables' \newcommand lines
+  macrosJson = J.encode (J.makeObj [(drop 1 c, if n == 0 then J.showJSON d else J.showJSON [J.showJSON d, J.showJSON n]) |
+                                    (c, (n, d)) <- M.assocs (macroTable (symbolTable env))])
+
+-- | Proof tables with folds, by python3 scripts/proof_folds.py --json: the HTML of
+-- each, and the CSS and JavaScript of the folds.
+foldTables :: FilePath -> [(String, [[String]])] -> IO ([String], String, String)
+foldTables root proofs = do
+  let input = J.encode (J.makeObj [("proofs", J.JSArray [J.makeObj [("lang", J.showJSON l), ("rows", J.showJSON rows)] |
+                                                          (l, rows) <- proofs])])
+  res <- try (readProcessWithExitCode "python3" [root </> "scripts" </> "proof_folds.py", "--json"] input)
+           :: IO (Either SomeException (ExitCode, String, String))
+  case res of
+    Right (ExitSuccess, out, _) -> case J.decode out of
+      J.Ok (J.JSObject o) -> return (strings "tables" o, string "css" o, string "js" o)
+      _ -> fallback
+    Right (_, _, err) -> hPutStr stderr err >> fallback
+    Left e -> hPutStr stderr (show e) >> fallback
+ where
+  strings k o = case lookup k (J.fromJSObject o) of
+    Just (J.JSArray vs) -> [J.fromJSString v | J.JSString v <- vs]
+    _ -> []
+  string k o = case lookup k (J.fromJSObject o) of
+    Just (J.JSString v) -> J.fromJSString v
+    _ -> ""
+  -- without python3: the rows as a plain table
+  fallback = return ([plain rows | (_, rows) <- proofs], "", "")
+  plain rows = "<table class=\"proof\">" ++ concat ["<tr>" ++ concat ["<td>" ++ H.escapeHtml c ++ "</td>" | c <- r] ++ "</tr>" | r <- rows] ++ "</table>"
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool

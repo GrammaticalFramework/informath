@@ -232,6 +232,11 @@ from_formalism_tests:
 	  for t in agda lean rocq ; do \
 	    $(RUN) -from-formalism=$$form -export-dir=$$form Example.$$suf -to-formalism=$$t >$$form-to-$$t.txt 2>/dev/null || exit 1 ; \
 	  done ; \
+	  $(RUN) -from-formalism=$$form -export-dir=$$form Example.$$suf -proof-text >$$form-proofs.tex 2>/dev/null || exit 1 ; \
+	  grep -q "tabular" $$form-proofs.tex || exit 1 ; \
+	  $(RUN) -from-formalism=$$form -export-dir=$$form Example.$$suf -to-html-doc -to-lang=Eng,Fre >$$form.html 2>/dev/null || exit 1 ; \
+	  grep -q 'class="foldable"' $$form.html || exit 1 ; \
+	  echo "$$form: $$(grep -c 'class="entry"' $$form.html) entries, $$(grep -c 'class="foldable"' $$form.html) proof texts -> out/from-formalism/$$form.html" ; \
 	done
 
 top100:

@@ -49,6 +49,8 @@ def mangle (n : Name) : String :=
 
 structure St where
   mapping : Std.HashMap Name String := {}
+  keepAll : Std.HashSet Name := {}   -- mapped to rules of nd.dk, which take all their arguments
+  proofMode : Bool := false          -- translating a proof term
   used : Std.HashSet Name := {}      -- constants referred to, not mapped
   names : Std.HashSet String := {}   -- variable names in use
 
@@ -130,23 +132,61 @@ partial def tr (e : Expr) : M String := do
     match e.getAppFn with
     | .const c _ => app c e.getAppArgs
     | f => do
-      let as ← e.getAppArgs.mapM tr
+      let args := e.getAppArgs
+      if (← get).proofMode && f.isFVar && (← isProp (← inferType e)) then
+        -- a hypothesis applied: an elimination rule for each argument
+        let mut cur ← tr f
+        let mut ty ← inferType f
+        for a in args do
+          ty ← whnf ty
+          match ty with
+          | .forallE n A B _ =>
+            if (← isProp A) then
+              cur := s!"ifE {paren (← tr A)} {paren (← tr (B.instantiate1 a))} {paren cur} {paren (← tr a)}"
+            else
+              let nm ← freshName n false
+              let bs ← withLocalDecl (Name.mkSimple nm) .default A fun x => tr (B.instantiate1 x)
+              cur := s!"forallE {paren (← tr A)} ({nm} => {bs}) {paren cur} {paren (← tr a)}"
+            ty := B.instantiate1 a
+          | _ => cur := s!"{paren cur} {paren (← tr a)}"
+        return cur
+      let as ← args.mapM tr
       return " ".intercalate (paren (← tr f) :: (as.map paren).toList)
   | .lam n t b bi => binder n t b bi true
   | .forallE n t b bi => binder n t b bi false
   | .letE _ _ v b _ => tr (b.instantiate1 v)
-  | .proj s i b => return s!"{mangle s}__proj{i} {paren (← tr b)}"
+  | .proj s i b => do
+    -- the projections of a conjunction and an equivalence: their elimination rules
+    if (s == ``And || s == ``Iff) && i < 2 then
+      let as := (← whnf (← inferType b)).getAppArgs
+      if as.size == 2 then
+        let r := if s == ``And then (if i == 0 then "andEl" else "andEr")
+                 else (if i == 0 then "iffEl" else "iffEr")
+        return s!"{r} {paren (← tr as[0]!)} {paren (← tr as[1]!)} {paren (← tr b)}"
+    return s!"{mangle s}__proj{i} {paren (← tr b)}"
   | _ => return "UNSUPPORTED"
 
 /-- A λ, or a Π / ∀: a quantifier or an implication in a proposition, a
-function type elsewhere. -/
-partial def binder (n : Name) (t b : Expr) (bi : BinderInfo) (isLam : Bool) : M String := do
+function type elsewhere. In a proof, a λ that proves an implication or a ∀
+is its introduction rule, ifI or forallI; but not the λs that rules take as
+arguments (plain: how many of them, nested). -/
+partial def binder (n : Name) (t b : Expr) (bi : BinderInfo) (isLam : Bool) (plain : Nat := 0) :
+    M String := do
   let prop ← isProp t
   let nm ← freshName n prop (sortish t)
+  let intro ← if isLam && plain == 0 && (← get).proofMode then isProp (← inferType (.lam n t b bi))
+              else pure false
   withLocalDecl (Name.mkSimple nm) bi t fun y => do
     let body := b.instantiate1 y
-    let bs ← tr body
-    if isLam then return s!"{nm} => {bs}"
+    let bs ← match body with
+      | .lam n2 t2 b2 bi2 => if plain > 1 then binder n2 t2 b2 bi2 true (plain - 1) else tr body
+      | _ => tr body
+    if isLam then
+      if intro then
+        let bodyTy ← inferType body
+        if prop then return s!"ifI {paren (← tr t)} {paren (← tr bodyTy)} ({nm} => {bs})"
+        return s!"forallI {paren (← tr t)} ({nm} => {← tr bodyTy}) ({nm} => {bs})"
+      return s!"{nm} => {bs}"
     if ← isProp body then
       if prop && !b.hasLooseBVars then return s!"if {paren (← tr t)} {paren bs}"
       if prop then return s!"forall (Proof {paren (← tr t)}) ({nm} => {bs})"
@@ -166,6 +206,30 @@ partial def hypoType (t : Expr) : M String := do
 
 /-- An application of a constant. -/
 partial def app (c : Name) (args : Array Expr) : M String := do
+  -- pattern matching on a conjunction or an existential, which Lean compiles to
+  -- a matcher or casesOn: And.left and And.right in the body, or Exists.elim
+  if ← Meta.isMatcher c then
+    if let some m ← Meta.matchMatcherApp? (mkAppN (← mkConstWithLevelParams c) args) then
+      if m.discrs.size == 1 && m.alts.size == 1 && m.remaining.isEmpty then
+        let d := m.discrs[0]!
+        let dty ← whnfR (← inferType d)
+        let alt := m.alts[0]!
+        if dty.isAppOfArity ``And 2 then
+          let (a, b) := (dty.appFn!.appArg!, dty.appArg!)
+          return ← tr (← Core.betaReduce (mkApp2 alt (mkApp3 (.const ``And.left []) a b d)
+                                                      (mkApp3 (.const ``And.right []) a b d)))
+        if dty.isAppOfArity ``Exists 2 then
+          let (α, p) := (dty.appFn!.appArg!, dty.appArg!)
+          let motive ← inferType (mkAppN (← mkConstWithLevelParams c) args)
+          return ← tr (mkApp5 (.const ``Exists.elim [← getLevel α]) α p motive d alt)
+  if c == ``And.casesOn && args.size == 5 then
+    let (a, b, t, f) := (args[0]!, args[1]!, args[3]!, args[4]!)
+    return ← tr (← Core.betaReduce (mkApp2 f (mkApp3 (.const ``And.left []) a b t)
+                                              (mkApp3 (.const ``And.right []) a b t)))
+  if c == ``Exists.casesOn && args.size == 5 then
+    let (α, p, t, f) := (args[0]!, args[1]!, args[3]!, args[4]!)
+    let motive : Expr ← (try inferType (mkAppN (← mkConstWithLevelParams c) args) catch _ => pure (Expr.sort .zero))
+    return ← tr (mkApp5 (.const ``Exists.elim [← getLevel α]) α p motive t f)
   -- numerals: OfNat.ofNat α n inst
   if c == ``OfNat.ofNat && args.size ≥ 2 then
     if let .lit (.natVal n) := args[1]!.consumeMData then return numeral n
@@ -185,16 +249,25 @@ partial def app (c : Name) (args : Array Expr) : M String := do
     return s!"Eqt {paren (← tr args[0]!)} {paren a} {paren b}"
   let infos ← try argInfos c catch _ => pure #[]
   let info (i : Nat) : BinderInfo := infos.getD i .default
+  -- a rule of nd.dk (And.intro as andI): all its arguments
+  let all := (← get).keepAll.contains c
   let (name, keep) ← match (← get).mapping.get? c with
     -- a mapped constant: its explicit arguments
-    | some m => pure (m, fun i => info i == .default)
+    | some m => pure (m, fun i => all || info i == .default)
     -- any other: all but the instances
     | none => do
       modify fun s => { s with used := s.used.insert c }
       pure (mangle c, fun i => info i != .instImplicit)
   let mut as := #[]
   for i in [0:args.size] do
-    if keep i then as := as.push (paren (← tr args[i]!))
+    if keep i then
+      -- the function arguments of the rules: of one argument, or of two for
+      -- Exists.elim (the witness and the proof that it is one)
+      if all then
+        if let .lam n t b bi := args[i]!.consumeMData then
+          as := as.push s!"({← binder n t b bi true (if c == ``Exists.elim then 2 else 1)})"
+          continue
+      as := as.push (paren (← tr args[i]!))
   return " ".intercalate (name :: as.toList)
 
 end
@@ -218,17 +291,21 @@ partial def statementGo (isThm : Bool) (t : Expr) : M String := do
 partial def statement (t : Expr) : M String := do
   statementGo (← isProp t) t
 
-/-- The definiens of a definition, its λs matching the binders of its type. -/
-partial def value (t v : Expr) : M String := do
+/-- The definiens of a definition, its λs matching the binders of its type;
+a theorem's (isThm) keeps those of the instances, as its statement does. -/
+partial def valueGo (isThm : Bool) (t v : Expr) : M String := do
   match t, v with
   | .forallE n ty b bi, .lam _ _ vb _ =>
     let nm ← freshName n (← isProp ty) (sortish ty)
     withLocalDecl (Name.mkSimple nm) bi ty fun y => do
-      let rest ← value (b.instantiate1 y) (vb.instantiate1 y)
+      let rest ← valueGo isThm (b.instantiate1 y) (vb.instantiate1 y)
       -- the instances are not arguments of a definition (see statement)
-      if bi == .instImplicit then return rest
+      if bi == .instImplicit && !isThm then return rest
       return s!"{nm} => {rest}"
   | _, _ => tr v
+
+partial def value (t v : Expr) : M String := do
+  valueGo (← isProp t) t v
 
 /-- An equation lemma ∀ xs, lhs = rhs as a rewrite rule [xs] lhs --> rhs. -/
 partial def rule (t : Expr) (vars : Array String := #[]) : M String := do
@@ -267,15 +344,19 @@ def strip (s : String) : String :=
   String.ofList (s.toList.dropWhile Char.isWhitespace |>.reverse.dropWhile Char.isWhitespace |>.reverse)
 
 /-- mapping.tsv: Lean constant, tab, Informath constant; # starts a comment line. -/
-def readMapping (path : System.FilePath) : IO (Std.HashMap Name String) := do
+def readMapping (path : System.FilePath) : IO (Std.HashMap Name String × Std.HashSet Name) := do
   let mut m := {}
-  if !(← path.pathExists) then return m
+  let mut all := {}
+  if !(← path.pathExists) then return (m, all)
   for l in ← IO.FS.lines path do
     if l.startsWith "#" || l.all Char.isWhitespace then continue
     match l.splitOn "\t" with
     | [a, b] => m := m.insert (strip a).toName (strip b)
+    | [a, b, k] =>
+      m := m.insert (strip a).toName (strip b)
+      if strip k == "all" then all := all.insert (strip a).toName
     | _ => pure ()
-  return m
+  return (m, all)
 
 /-- Elaborate a Lean file: the environment it makes and its messages. -/
 def elaborate (path : System.FilePath) : IO (Environment × MessageLog) := do
@@ -325,8 +406,38 @@ def declDk (env : Environment) (n : Name) (ci : ConstantInfo) : M (String × Str
     return (header ++ s!"def {mangle n} : {t} :=\n  {v}.", "def")
   | _ => return (s!"(; //LEAN:{n} ;)\n{← decl n ci.type}", kindOf ci)
 
-def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap Name String) :
-    IO UInt32 := do
+/-- Whether the source of a declaration gives its proof as a term: its text
+after the first := does not begin with `by` (a tactic proof), and there is
+one (not equations). -/
+def termProof (src : Array String) (r : DeclarationRanges) : Bool :=
+  let lines := (List.range (r.range.endPos.line - r.range.pos.line + 1)).map fun k =>
+    src.getD (r.range.pos.line - 1 + k) ""
+  let text := "\n".intercalate lines
+  match text.splitOn ":=" with
+  | _ :: rest@(_ :: _) =>
+    let after := String.ofList ((":=".intercalate rest).toList.dropWhile Char.isWhitespace)
+    !(after.startsWith "by") && !(after.startsWith "|")
+  | _ => false
+
+/-- The source text of a declaration. -/
+def sourceText (src : Array String) (r : DeclarationRanges) : String :=
+  "\n".intercalate ((List.range (r.range.endPos.line - r.range.pos.line + 1)).map fun k =>
+    src.getD (r.range.pos.line - 1 + k) "")
+
+/-- The proof term of a theorem as a definition, def thm : statement := proof. -/
+def proofDk (n : Name) (ci : ConstantInfo) : M String := do
+  let some v := ci.value? (allowOpaque := true) | throwError "no proof"
+  modify fun s => { s with names := {} }
+  let t ← statement ci.type
+  modify fun s => { s with names := {}, proofMode := true }
+  let p ← value ci.type v
+  modify fun s => { s with proofMode := false }
+  if ["UNSUPPORTED", "match_", "casesOn", "__rec ", "_private"].any (fun w => (p.splitOn w).length > 1) then
+    throwError "compiled pattern matching"
+  return s!"(; //LEAN:{n} ;)\ndef {mangle n} : {t} :=\n  {p}."
+
+def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap Name String)
+    (keepAll : Std.HashSet Name) : IO UInt32 := do
   let (env, messages) ← elaborate path
   let mut errors := 0
   for m in messages.toList do
@@ -346,12 +457,22 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
     | _ => pure ()
   let decls := found.qsort fun (_, _, a) (_, _, b) => a.range.pos.line < b.range.pos.line ||
     (a.range.pos.line == b.range.pos.line && a.range.pos.column < b.range.pos.column)
+  let src ← IO.FS.lines path
+  let mut proofs : Array String := #[]
   let mut dk := s!"(; {mod}: declarations exported from {path.fileName.getD ""} by scripts/lean/Export.lean ;)\n\n"
   let mut json := #[]
   let mut used : Std.HashSet Name := {}
   let mut exported : Std.HashSet Name := {}
   for (n, ci, r) in decls do
-    let res ← (((declDk env n ci).run {mapping}).run' {} {}).toIO ctx st |>.toBaseIO
+    let res ← (((declDk env n ci).run {mapping, keepAll}).run' {} {}).toIO ctx st |>.toBaseIO
+    -- the proof, if the source gives it as a term
+    if (ci matches .thmInfo _) && termProof src r then
+      let pres ← (((proofDk n ci).run {mapping, keepAll}).run' {} {}).toIO ctx st |>.toBaseIO
+      match pres with
+      | .ok ((p, pst), _) =>
+        proofs := proofs.push p
+        used := pst.used.fold (fun acc c => acc.insert c) used
+      | .error _ => pure ()
     let doc ← findDocString? env n
     let pp ← ((Meta.ppExpr ci.type).run' {} {}).toIO ctx st |>.toBaseIO
     let ppStr := match pp with | .ok (f, _) => toString f | .error _ => ""
@@ -364,7 +485,7 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
         for c in ii.ctors do exported := exported.insert c
         if isStructure env n then
           for f in getStructureFields env n do exported := exported.insert (n ++ f)
-      json := json.push s!"\{\"lean\": {jsonStr n.toString}, \"dk\": {jsonStr (mangle n)}, \"kind\": {jsonStr kind}, \"doc\": {jsonStr (doc.getD "")}, \"statement\": {jsonStr ppStr}, \"line\": {r.range.pos.line}, \"endLine\": {r.range.endPos.line}}"
+      json := json.push s!"\{\"lean\": {jsonStr n.toString}, \"dk\": {jsonStr (mangle n)}, \"kind\": {jsonStr kind}, \"doc\": {jsonStr (doc.getD "")}, \"statement\": {jsonStr ppStr}, \"line\": {r.range.pos.line}, \"endLine\": {r.range.endPos.line}, \"source\": {jsonStr (sourceText src r)}}"
     | .error e =>
       dk := dk ++ s!"(; //LEAN:{n} ;)\n(; NOT EXPORTED: {toString e} ;)\n\n"
   -- the constants used but neither exported nor mapped, with their types
@@ -372,7 +493,7 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
   for c in used.toList.toArray.qsort (·.toString < ·.toString) do
     if exported.contains c then continue
     let some ci := env.find? c | continue
-    let res ← (((do modify fun s => { s with names := {} }; statement ci.type : M String).run {mapping}).run' {} {}).toIO ctx st |>.toBaseIO
+    let res ← (((do modify fun s => { s with names := {} }; statement ci.type : M String).run {mapping, keepAll}).run' {} {}).toIO ctx st |>.toBaseIO
     match res with
     | .ok ((s, _), _) => deps := deps ++ s!"(; //LEAN:{c} ;)\n{mangle c} : {s}.\n\n"
     | .error _ => deps := deps ++ s!"(; NOT EXPORTED: {c} ;)\n\n"
@@ -395,8 +516,11 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
   IO.FS.writeFile s!"{outDir}/{mod}.dk" dk
   IO.FS.writeFile s!"{outDir}/{mod}-deps.dk" deps
   IO.FS.writeFile s!"{outDir}/{mod}-hide.dkgf" hide
+  IO.FS.writeFile s!"{outDir}/{mod}-proofs.dk"
+    (s!"(; {mod}: the proof terms of its theorems, for RunInformath -proof-text with share/nd.dk ;)\n\n" ++
+     "\n\n".intercalate proofs.toList ++ "\n")
   IO.FS.writeFile s!"{outDir}/{mod}.json" ("[\n" ++ ",\n".intercalate json.toList ++ "\n]\n")
-  IO.println s!"{mod}: {decls.size} declarations -> {outDir}/{mod}.dk, .json, -hide.dkgf, -deps.dk"
+  IO.println s!"{mod}: {decls.size} declarations, {proofs.size} proof terms -> {outDir}/{mod}.dk, .json, -hide.dkgf, -deps.dk, -proofs.dk"
   return if errors > 0 then 1 else 0
 
 unsafe def main (args : List String) : IO UInt32 := do
@@ -408,5 +532,5 @@ unsafe def main (args : List String) : IO UInt32 := do
       return 1
   initSearchPath (← findSysroot)
   enableInitializersExecution
-  let mapping ← readMapping (mappingFile.getD "mapping.tsv")
-  exportFile path outDir mapping
+  let (mapping, keepAll) ← readMapping (mappingFile.getD "mapping.tsv")
+  exportFile path outDir mapping keepAll

@@ -7,13 +7,15 @@ mathlib-informath's exporter, it needs neither Mathlib nor a Lake project
 of its own, only Lean.
 
     python3 $INFORMATH/scripts/lean/lean-export.py File.lean -out=<dir>
-    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk   (default <dir>: out)
+    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk, File-proofs.dk   (default <dir>: out)
 
 or, reading the result in English at once (see `RunInformath -help`):
 
     RunInformath -from-formalism=lean File.lean
     RunInformath -from-formalism=lean -export-dir=<dir> File.lean     # keeping the export
     RunInformath -from-formalism=lean File.lean -to-formalism=agda    # to Agda, via Dedukti
+    RunInformath -from-formalism=lean File.lean -proof-text           # the proof texts of its theorems
+    RunInformath -from-formalism=lean File.lean -to-html-doc -to-lang=Eng,Fre >File.html
 
 ## How it works
 
@@ -51,9 +53,17 @@ The dialect is the one of the other exports and of mathlib-informath:
 * an inductive type is a `Set` (or a predicate) with its constructors, a
   structure also with its fields as functions (`Point__x`).
 
+A theorem whose source gives its proof as a term (not `by` and tactics) gets
+its proof term in `File-proofs.dk`, as mathlib-informath's exporter writes
+them: a λ that proves an implication or a ∀ is its introduction rule (`ifI`,
+`forallI`), a hypothesis applied is its elimination (`ifE`, `forallE`), and
+Lean's logical rules (`And.intro`, `Or.elim`, `Exists.elim`, ...) are those of
+Informath's `share/nd.dk` (the third column `all` of `mapping.tsv`), which
+`RunInformath -proof-text` reads the proof with.
+
 Each declaration is preceded by `(; //LEAN:<name> ;)`. `File.json` lists them
-with their Lean names, Dedukti names, kinds, docstrings, Lean's statements
-and lines; `File-deps.dk` declares the constants that the file uses but
+with their Lean names, Dedukti names, kinds, docstrings, Lean's statements,
+lines and source texts; `File-deps.dk` declares the constants that the file uses but
 neither defines nor maps, with their types translated in the same way.
 
 ## Limits
@@ -61,8 +71,8 @@ neither defines nor maps, with their types translated in the same way.
 * The Dedukti is for reading, not for checking: universes and instances are
   left out, and the patterns of the rules are what Lean's equation lemmas
   have.
-* Proofs are not exported: neither proof terms nor tactic proofs (which
-  mathlib-informath's exporter replays for Mathlib's proofs).
+* Tactic proofs are not exported (mathlib-informath's exporter replays them
+  step by step for Mathlib's proofs); proof terms are, as above.
 * Instances, the functions of derived instances (`deriving Repr`), recursors
   and other generated declarations are left out; mutual and nested inductive
   types are declared as the others, classes as structures.

@@ -417,3 +417,51 @@ FOLD_JS = """
   });
 })();
 """
+
+
+# ---------------------------------------------------------------- command line
+
+def latex_html(t):
+    """A sentence or a justification of RunInformath's LaTeX proof tables as HTML
+    for MathJax: the formulas ($...$) kept, \\texttt and \\verb as code."""
+    t = html.escape(t, quote=False)
+    t = re.sub(r'\\verb#(.*?)#', lambda m: '<code>%s</code>' % m.group(1), t)
+    t = re.sub(r'\\texttt\{((?:[^{}]|\{[^{}]*\})*)\}', lambda m: '<code>%s</code>' % m.group(1).replace('\\_', '_'), t)
+    t = re.sub(r'\\textbf\{([^{}$]*)\}', r'<b>\1</b>', t)
+    t = t.replace('\\begin{itemize}', '<ul>').replace('\\end{itemize}', '</ul>')
+    return re.sub(r'\\item\b\s*', '<li>', t)
+
+
+def collapsed(rows):
+    "the collapses of the inductions of a proof (inductions()), with a short justification"
+    out = {}
+    for last, (hidden, ind, cases) in inductions(rows).items():
+        rule = _rule_and_numbers(rows[ind][2])[0].partition('@')[0]
+        nums = ', '.join(rows[c][0].rstrip('.') for c in cases)
+        out[last] = (hidden, 'by <code>%s</code>%s' % (html.escape(rule), ', ' + nums if nums else ''))
+    return out
+
+
+def main():
+    """python3 proof_folds.py --json: on standard input {"proofs": [{"rows": [[n, sentence,
+    justification], ...], "lang": "Eng"}, ...]}, the rows as RunInformath's LaTeX tables
+    have them; on standard output {"tables": [html, ...], "css": FOLD_CSS, "js": FOLD_JS}.
+    Used by RunInformath -to-html-doc."""
+    import json, sys
+    if sys.argv[1:] != ['--json']:
+        sys.exit(main.__doc__)
+    data = json.load(sys.stdin)
+    tables = []
+    for p in data.get('proofs', []):
+        rows = [(list(r) + ['', '', ''])[:3] for r in p['rows']]
+        try:
+            coll = collapsed(rows)
+        except Exception:
+            coll = {}
+        tables.append(proof_table(rows, sentence_html=lambda t, row: latex_html(t),
+                                  justification_html=latex_html, lang=p.get('lang', 'Eng'), collapses=coll))
+    json.dump({'tables': tables, 'css': FOLD_CSS, 'js': FOLD_JS}, sys.stdout, ensure_ascii=False)
+
+
+if __name__ == '__main__':
+    main()

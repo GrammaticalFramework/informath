@@ -22,6 +22,7 @@ executable RunInformath
     DeduktiOperations
     DeduktiRules
     DeduktiStructures
+    HtmlDoc
     Environment
     Informath
     Lexing

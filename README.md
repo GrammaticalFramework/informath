@@ -411,7 +411,14 @@ $ RunInformath -from-formalism=rocq test/formalisms/sources/Example.v           
 $ RunInformath -from-formalism=lean -export-dir=out/lean File.lean                     # keeping the Dedukti in out/lean
 $ RunInformath -from-formalism=agda test/formalisms/sources/Example.agda -to-formalism=lean   # Agda to Lean via Dedukti
 ```
-The `#CONV <formalism> <Dedukti> <native>` lines of the symbol tables are read backwards, renaming native identifiers to Dedukti ones, and the symbol table of hidden implicit arguments that the export makes is added to the symbol tables. The Agda export needs its backend, built once with `cabal build agda-export` in `scripts/agda`. `make from_formalism_tests` runs the examples of [test/formalisms/sources](./test/formalisms/sources).
+The `#CONV <formalism> <Dedukti> <native>` lines of the symbol tables are read backwards, renaming native identifiers to Dedukti ones, and the symbol table of hidden implicit arguments that the export makes is added to the symbol tables. The Agda export needs its backend, built once with `cabal build agda-export` in `scripts/agda`.
+
+With `-proof-text`, the output is the proof texts of the theorems: of their proof terms in Lean (exported when the source gives a term, not a tactic proof) and Agda (the proofs into the identity types, by the eliminators of the data types), read with the natural deduction rules of [share/nd.dk](share/nd.dk), and of their tactic proofs in Rocq, replayed step by step. With `-to-html-doc`, the output is an HTML document like the index pages of mathlib-informath, Edukera and HoTT: each declaration with its source, its Dedukti, its readings in the languages of `-to-lang` (a list, default English), its formula, and the proof text of a theorem in each language, whose subproofs and derivations fold (with [scripts/proof_folds.py](scripts/proof_folds.py)). `-to-html-doc` also works on a `.dk` file, without sources and proofs.
+```
+$ RunInformath -from-formalism=rocq test/formalisms/sources/Example.v -proof-text           # LaTeX
+$ RunInformath -from-formalism=lean File.lean -to-html-doc -to-lang=Eng,Fre >File.html
+```
+`make from_formalism_tests` runs the examples of [test/formalisms/sources](./test/formalisms/sources).
 
 ## Symbol tables
 
