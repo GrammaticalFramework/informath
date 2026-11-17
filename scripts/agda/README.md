@@ -66,11 +66,16 @@ that a project can put each definition under the item of its text.
   exported only as declarations or not shown; cubical features are not
   handled.
 * Proof texts are made for the theorems (with `PROPOSITIONS = ['Id']` in
-  `config.py`, an identification is a proof) whose definition is one clause
-  of variables or matches on one argument (`agdaproof.py`): the matching
-  becomes the data type's generated induction rule (`out/eliminators.dk`)
-  with a motive, and the recursive calls induction hypotheses; the proof
-  terms are in `out/<M>-proofs.dk`, read by `rocq-index.py`. Matching on two
-  arguments or on nested patterns keeps its rewrite rules. In HTML,
+  `config.py`, an identification is a proof) defined by one clause of
+  variables or by pattern matching (`agdaproof.py`): each split becomes the
+  data type's generated induction rule, or its case analysis where no
+  recursive call needs an induction hypothesis (`out/eliminators.dk`:
+  `ind_D_P`, `cases_D_P`), with a motive; recursive calls become induction
+  hypotheses; type definitions such as `ℤ = coprod ℕ (coprod unit ℕ)` are
+  unfolded. The proof terms are in `out/<M>-proofs.dk`, read by
+  `rocq-index.py`. A definition whose recursive calls are not induction
+  hypotheses, or which splits on an argument that a later one depends on
+  inside other splits, keeps its rewrite rules (`AGDAPROOF_DEBUG=1` says
+  why). In HTML,
   `proof_folds.inductions` collapses an induction with a generalized motive
   to one line, "by path induction on $p$", which ⊕ unfolds.

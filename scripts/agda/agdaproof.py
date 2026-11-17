@@ -22,14 +22,38 @@ A definition that does not have this shape (matching on two arguments,
 nested patterns, a later argument whose type depends on the matched one)
 keeps its rewrite rules.
 """
+import os, sys
 from agdaterm import paren, short
 
 
-def elim_name(names, dqname):
-    """The Dedukti name of D's eliminator into propositions: ind_D_P."""
-    key = dqname + '.ind-prop'
+def is_recursive(d, env):
+    """Whether a data type has a constructor with an argument of the type itself."""
+    for c in d.get('constructors', []):
+        t = env.get(c, {}).get('type')
+        while t and t[0] == 'pi':
+            if t[3][0] == 'def' and t[3][1] == d['name']:
+                return True
+            t = t[4]
+    return False
+
+
+def elim_kinds(tr, d, env):
+    """The eliminators made for a data type: 'ind' (induction, with induction
+    hypotheses) for a recursive type and for the PROPOSITIONS (path
+    induction), 'cases' (case analysis) for every type but the PROPOSITIONS."""
+    out = []
+    if is_recursive(d, env) or short(d['name']) in tr.propositions:
+        out.append('ind')
+    if short(d['name']) not in tr.propositions:
+        out.append('cases')
+    return out
+
+
+def elim_name(names, dqname, kind='ind'):
+    """The Dedukti name of D's eliminator into propositions: ind_D_P, or cases_D_P."""
+    key = dqname + '.%s-prop' % kind
     if key not in names.dk:
-        n = 'ind_%s_P' % names(dqname)
+        n = '%s_%s_P' % (kind, names(dqname))
         names.dk[key] = n
         names.taken.add(n)
     return names.dk[key]
@@ -55,8 +79,9 @@ def binders(tr, t, ctx=None):
     return out, t, ctx
 
 
-def eliminator(tr, names, d, env):
-    """The Dedukti declaration of D's eliminator into propositions, or None."""
+def eliminator(tr, names, d, env, kind='ind'):
+    """The Dedukti declaration of D's eliminator into propositions, or None;
+    kind 'cases' leaves out the induction hypotheses."""
     pars = d.get('pars', 0)
     bs, res, ctx = binders(tr, d['type'])
     params, indices = bs[:pars], bs[pars:]
@@ -84,7 +109,7 @@ def eliminator(tr, names, d, env):
             if lev:
                 continue
             parts.append('(%s : %s)' % (v, rename_str(tr.binder_type(dom, cctx), ren)))
-            if dom[0] == 'def' and dom[1] == d['name']:
+            if dom[0] == 'def' and dom[1] == d['name'] and kind == 'ind':
                 ih_idx = [rename_str(tr.term(e[2], cctx), ren) for e in dom[2][pars:] if e[0] == 'app'
                           and not tr.is_level(e[2], cctx)]
                 ihs.append('Proof (%s)' % ' '.join([P] + [paren(i) for i in ih_idx] + [v]))
@@ -97,7 +122,7 @@ def eliminator(tr, names, d, env):
                      + ['(%s : (%s))' % (P, motive_ty)] + cases
                      + ['(%s : %s)' % (v, tr.binder_type(dom, ctx)) for _, v, dom, _, lev in indices if not lev]
                      + ['(%s : %s)' % (z, zt), 'Proof (%s)' % ' '.join([P] + iv + [z])])
-    return '%s : %s.' % (elim_name(names, d['name']), ty)
+    return '%s : %s.' % (elim_name(names, d['name'], kind), ty)
 
 
 def rename_str(s, ren):
@@ -273,7 +298,267 @@ def proof_term(tr, names, d, env, clauses):
     if len(cases) != len(D.get('constructors', [])):
         return None
     params = [paren(tr.arg(e[2], ctx)) for e in pargs if not tr.is_level(e[2], ctx)]
-    term = ' '.join([elim_name(names, D['name'])] + params + ['(%s)' % motive] + ['(%s)' % c for c in cases]
+    term = ' '.join([elim_name(names, D['name'], elim_kinds(tr, D, env)[0])] + params + ['(%s)' % motive] + ['(%s)' % c for c in cases]
                     + [bs[k][1] for k in idx_pos] + [bs[i][1]])
-    tr.induction_on = bs[i][1]          # the variable of the induction, for the proof texts
+    tr.induction_on = [bs[i][1]]        # the variable of the induction, for the proof texts
     return ''.join('%s => ' % b[1] for b in bs if not b[4]) + eliminate(term)
+
+
+# ---------------------------------------------------------------------------
+# Pattern matching on several arguments and nested patterns: a case tree.
+#
+# Agda splits the arguments one at a time, in the order of the first clause's
+# constructor patterns. Each split becomes the eliminator of the argument's
+# data type, with the statement (the arguments as the patterns so far have
+# them) as its motive: a case analysis, or an induction if the type is
+# recursive. A recursive call whose arguments are those of the current
+# pattern with an argument of the constructor in place of the split one is
+# the induction hypothesis of that argument. So ap-binary f refl refl is
+# path induction on p and then on q, and a proof on the integers matching
+# inr (inr (succ n)) is cases on z and on its inr part, and induction on n
+# with the motive "the statement for inr (inr n)".
+
+class NoProof(Exception):
+    pass
+
+
+def subst_json(t, s):
+    """A JSON term with variables replaced by JSON terms (s: name -> term)."""
+    if not s or not isinstance(t, list) or not t:
+        return t
+    if t[0] == 'var' and t[1] in s:
+        new, elims = s[t[1]], [subst_json(e, s) for e in t[2]]
+        if not elims:
+            return new
+        if new[0] in ('var', 'def', 'con'):
+            return new[:2] + [new[2] + elims]
+        raise NoProof('applied substitution')
+    if t[0] == 'lam':
+        s2 = {k: v for k, v in s.items() if k != t[2]}
+        return t[:3] + [subst_json(t[3], s2)]
+    if t[0] == 'pi':
+        s2 = {k: v for k, v in s.items() if k != t[2]}
+        return t[:3] + [subst_json(t[3], s), subst_json(t[4], s2)]
+    return [subst_json(u, s) for u in t]
+
+
+def free_in(v, t):
+    if isinstance(t, list) and t:
+        if t[0] == 'var' and t[1] == v:
+            return True
+        if t[0] == 'lam' and t[2] == v:
+            return False
+        if t[0] == 'pi' and t[2] == v:
+            return free_in(v, t[3])
+        return any(free_in(v, u) for u in t)
+    return False
+
+
+def unfold(T, env):
+    """A type defined as another (Z = coprod N (coprod unit N)) unfolded to a data type."""
+    for _ in range(20):
+        if T[0] != 'def' or T[1] not in env:
+            return T
+        d = env[T[1]]
+        cs = d.get('clauses') or []
+        if d['kind'] != 'function' or len(cs) != 1 or cs[0].get('body') is None:
+            return T
+        pats = cs[0]['pats']
+        args = [e for e in T[2] if e[0] == 'app']
+        if len(args) != len(T[2]) or len(pats) != len(args) or any(p[1][0] != 'var' for p in pats):
+            return T
+        T = subst_json(cs[0]['body'], {p[1][1]: a[2] for p, a in zip(pats, args)})
+    return T
+
+
+def _norm(s):
+    return ' '.join(s.replace('(', ' ').replace(')', ' ').split())
+
+
+def case_tree_proof(tr, names, d, env, clauses):
+    """A proof term of a definition by pattern matching (any arguments, nested
+    patterns) as nested eliminators, or None."""
+    try:
+        return _case_tree(tr, names, d, env, clauses)
+    except (NoProof, KeyError, IndexError, ValueError) as e:
+        if os.environ.get('AGDAPROOF_DEBUG'):
+            sys.stderr.write('no proof term: %s: %s %s\n' % (short(d['name']), type(e).__name__, e))
+        return None
+
+
+def _case_tree(tr, names, d, env, clauses):
+    if not clauses:
+        return None
+    bs, res, ctx = binders(tr, d['type'])
+    n = len(bs)
+    if any(len(c['pats']) != n for c in clauses):
+        return None
+    taken = dict(ctx)
+    real = [j for j in range(n) if not bs[j][4]]
+    # the arguments as the patterns so far have them (original binder -> JSON)
+    val = {bs[j][1]: ['var', bs[j][1], []] for j in range(n)}
+    types = {bs[j][1]: bs[j][2] for j in range(n)}
+    kinds = {bs[j][1]: ctx[bs[j][1]] for j in range(n)}
+    rows = []
+    for c in clauses:
+        pats = {bs[j][1]: c['pats'][j][1] for j in range(n)}
+        rows.append({'pats': pats, 'body': c['body'], 'ren': {}})
+    opened = [bs[j][1] for j in range(n)]
+    splits = []
+
+    def fresh(x, kind):
+        v = tr.fresh(tr.var(x, taken) if x and x != '_' else 'x', taken)
+        taken[v] = kind
+        return v
+
+    def settle(rows, opened):
+        """Variable and dot patterns recorded: a row's variable is the open one."""
+        for r in rows:
+            for v in opened:
+                p = r['pats'].get(v)
+                if p and p[0] == 'var':
+                    r['ren'][p[1]] = ['var', v, []]
+
+    def args_key(vals):
+        return tuple(_norm(tr.term(vals[bs[j][1]], taken)) for j in real)
+
+    def leaf(rows, val, ihs):
+        r = rows[0]
+        body = subst_json(r['body'], r['ren'])
+
+        def repl(t):
+            if isinstance(t, list) and t:
+                if t[0] == 'def' and t[1] == d['name']:
+                    args = [e for e in t[2] if e[0] == 'app']
+                    if len(args) == n and len(t[2]) == n:
+                        key = tuple(_norm(tr.term(args[j][2], taken)) for j in real)
+                        for k, ih in ihs:
+                            if k == key:
+                                return ['var', ih, []]
+                    raise NoProof('recursive call not an induction hypothesis')
+                return [repl(u) for u in t]
+            return t
+        return tr.term(repl(body), taken)
+
+    def build(rows, opened, val, types, ihs):
+        settle(rows, opened)
+        # the split: the first constructor pattern of the first row
+        r0 = rows[0]
+        v = next((v for v in opened if r0['pats'].get(v, ['var'])[0] == 'con'), None)
+        if v is None:
+            return leaf(rows, val, ihs)
+        T = unfold(types[v], env)
+        if T[0] != 'def' or T[1] not in env or env[T[1]]['kind'] != 'data':
+            raise NoProof('not a data type')
+        D = env[T[1]]
+        pars = D.get('pars', 0)
+        elims = [e for e in T[2] if e[0] == 'app']
+        dbs = binders(tr, D['type'])[0]
+        if len(elims) != len(dbs):
+            raise NoProof('partial type')
+        pargs = elims[:pars]
+        idx = []
+        for (x, dv, ddom, h, lev), e in zip(dbs[pars:], elims[pars:]):
+            if lev:
+                continue
+            if e[2][0] != 'var' or e[2][2] or e[2][1] not in opened or e[2][1] == v:
+                raise NoProof('index not a variable')
+            idx.append(e[2][1])
+        if len(set(idx)) != len(idx) or any(free_in(y, e[2]) for y in idx for e in pargs):
+            raise NoProof('indices')
+        # no other open argument may depend on the split one or its indices
+        for u in opened:
+            if u != v and u not in idx and any(free_in(w, types[u]) for w in [v] + idx):
+                raise NoProof('dependent argument')
+        rest = [u for u in opened if u != v and u not in idx]
+        goal = tr.term(subst_json(res, val), taken)
+        motive = ' => '.join(idx + [v]) + ' => ' + goal
+        cases = []
+        for c in D.get('constructors', []):
+            cd = env[c]
+            cbs, cres, _ = binders(tr, cd['type'])
+            cpar, cargs = cbs[:pars], cbs[pars:]
+            s = {}
+            for (x, cv, cdom, h, lev), e in zip(cpar, pargs):
+                s[cv] = e[2]
+            my = [r for r in rows if r['pats'][v][0] != 'con' or r['pats'][v][1] == c]
+            if not my:
+                raise NoProof('absurd case')
+            first = next((r for r in my if r['pats'][v][0] == 'con'), None)
+            fsub = [p for h, p in first['pats'][v][2]] if first else []
+            new, lams, recs, atypes = [], [], [], {}
+            kept = [b for b in cargs if not b[4]]
+            if first and len(fsub) != len(kept):
+                if len(fsub) == len(cargs):
+                    fsub = [p for p, b in zip(fsub, cargs) if not b[4]]
+                else:
+                    raise NoProof('constructor arity')
+            for k, (x, cv, cdom, h, lev) in enumerate(kept):
+                hint = fsub[k][1] if fsub and fsub[k][0] == 'var' else x
+                ty = subst_json(cdom, s)
+                kind = 'proof' if tr.is_prop_family(ty) else ('type' if tr.is_kind(ty) else 'elem')
+                a = fresh(hint, kind)
+                s[cv] = ['var', a, []]
+                new.append(a)
+                atypes[a] = ty
+                if cdom[0] == 'def' and cdom[1] == D['name']:      # as declared, not as substituted
+                    recs.append(a)
+            con = ['con', c, [['app', b[3], ['var', a, []]] for b, a in zip(kept, new)]]
+            # the indices as the constructor gives them
+            cidx = [e[2] for e, b in zip([e for e in cres[2] if e[0] == 'app'][pars:], dbs[pars:]) if not b[4]] \
+                if cres[0] == 'def' else []
+            sub = {v: con}
+            for y, t in zip(idx, [subst_json(t, s) for t in cidx]):
+                sub[y] = t
+            val2 = {k: subst_json(t, sub) for k, t in val.items()}
+            types2 = {k: subst_json(t, sub) for k, t in types.items() if k not in sub}
+            types2.update(atypes)
+            ihs2 = list(ihs)
+            ihnames = []
+            for a in recs:
+                # the induction hypothesis: the statement for the recursive argument
+                at = atypes[a]
+                aidx = [e[2] for e, b in zip([e for e in at[2] if e[0] == 'app'][pars:], dbs[pars:]) if not b[4]]
+                s2 = {v: ['var', a, []]}
+                for y, t in zip(idx, aidx):
+                    s2[y] = t
+                ih = fresh('ih', 'proof')
+                ihnames.append(ih)
+                ihs2.append((args_key({k: subst_json(t, s2) for k, t in val.items()}), ih))
+            rows2 = []
+            for r in my:
+                p = r['pats'][v]
+                pats = {u: q for u, q in r['pats'].items() if u != v}
+                ren = {k: subst_json(t, sub) for k, t in r['ren'].items()}
+                if p[0] == 'con':
+                    sp = [q for h, q in p[2]]
+                    if len(sp) != len(kept):
+                        sp = [q for q, b in zip(sp, cargs) if not b[4]]
+                    for a, q in zip(new, sp):
+                        pats[a] = q
+                for y in idx:
+                    q = r['pats'].get(y)
+                    if q and q[0] == 'con':
+                        raise NoProof('pattern on an index')
+                    if q and q[0] == 'var':
+                        ren[q[1]] = sub[y]
+                rows2.append({'pats': pats, 'body': r['body'], 'ren': ren})
+            pos = opened.index(v)
+            opened2 = [u for u in opened[:pos] if u not in idx] + new + [u for u in opened[pos + 1:] if u not in idx]
+            body = build(rows2, opened2, val2, types2, ihs2)
+            cases.append((new, ihnames, body))
+        splits.append(v)
+        params = [paren(tr.arg(subst_json(e[2], {}), taken)) for e in pargs if not tr.is_level(e[2], taken)]
+        import re as _re
+        used = any(_re.search(r'(?<![\w\'])%s(?![\w\'])' % _re.escape(ih), b) for _, ihs_, b in cases for ih in ihs_)
+        kinds = elim_kinds(tr, D, env)
+        kind = 'ind' if used or 'cases' not in kinds else 'cases'
+        cases = [''.join('%s => ' % l for l in new + (ihs_ if kind == 'ind' else [])) + b for new, ihs_, b in cases]
+        return ' '.join([elim_name(names, D['name'], kind)] + params + ['(%s)' % motive]
+                        + ['(%s)' % c for c in cases] + idx + [v])
+
+    term = build(rows, opened, val, types, [])
+    # the variables of the splits, in the order of their lines in the proof
+    # text (inner splits before outer ones, cases left to right)
+    tr.induction_on = splits
+    return ''.join('%s => ' % b[1] for b in bs if not b[4]) + term

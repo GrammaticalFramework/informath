@@ -170,7 +170,8 @@ def function(tr, d, dn, ty, env=None, proofs=None):
             term = ''.join('%s => ' % x for x in xs) + tr.term(c['body'], ctx)
         else:
             tr.induction_on = None
-            term = agdaproof.proof_term(tr, tr.names, d, env, cs)
+            term = agdaproof.proof_term(tr, tr.names, d, env, cs) or \
+                agdaproof.case_tree_proof(tr, tr.names, d, env, cs)
             if term and tr.induction_on:
                 INDUCTION_ON[dn] = tr.induction_on
         if term:
@@ -385,12 +386,13 @@ def main():
         for q, d in env.items():
             if d['kind'] == 'data':
                 tr.declaring = None
-                try:
-                    e = agdaproof.eliminator(tr, names, d, env)
-                except Exception as ex:
-                    e = None
-                if e:
-                    elims.append(e)
+                for kind in agdaproof.elim_kinds(tr, d, env):
+                    try:
+                        e = agdaproof.eliminator(tr, names, d, env, kind)
+                    except Exception as ex:
+                        e = None
+                    if e:
+                        elims.append(e)
         open(os.path.join(OUT, 'eliminators.dk'), 'w').write(
             '(; the eliminators into propositions of the data types (agdaproof.py), and the rules\n'
             '   of natural deduction that generalized motives use ;)\n\n' + ND_RULES + '\n\n'.join(elims) + '\n')
