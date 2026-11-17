@@ -99,6 +99,26 @@ lin
   App5MacroTerm ident x y z t u =
     mconstant (ident ++ curly (mtop x) ++ curly (mtop y) ++ curly (mtop z) ++ curly (mftop t) ++ curly (mtop u)) ** {isNumber = False} ; --- False impossible to know
 
+  App6MacroFormula ident a b c d e f =
+    mconstant (ident ++ curly (mftop a) ++ curly (mftop b) ++ curly (mftop c) ++ curly (mftop d) ++ curly (mftop e) ++ curly (mftop f)) ;
+  App6MacroTerm ident a b c d e f =
+    mconstant (ident ++ curly (mtop a) ++ curly (mtop b) ++ curly (mtop c) ++ curly (mtop d) ++ curly (mtop e) ++ curly (mtop f)) ** {isNumber = False} ;
+
+  App7MacroFormula ident a b c d e f g =
+    mconstant (ident ++ curly (mftop a) ++ curly (mftop b) ++ curly (mftop c) ++ curly (mftop d) ++ curly (mftop e) ++ curly (mftop f) ++ curly (mftop g)) ;
+  App7MacroTerm ident a b c d e f g =
+    mconstant (ident ++ curly (mtop a) ++ curly (mtop b) ++ curly (mtop c) ++ curly (mtop d) ++ curly (mtop e) ++ curly (mtop f) ++ curly (mtop g)) ** {isNumber = False} ;
+
+  App8MacroFormula ident a b c d e f g h =
+    mconstant (ident ++ curly (mftop a) ++ curly (mftop b) ++ curly (mftop c) ++ curly (mftop d) ++ curly (mftop e) ++ curly (mftop f) ++ curly (mftop g) ++ curly (mftop h)) ;
+  App8MacroTerm ident a b c d e f g h =
+    mconstant (ident ++ curly (mtop a) ++ curly (mtop b) ++ curly (mtop c) ++ curly (mtop d) ++ curly (mtop e) ++ curly (mtop f) ++ curly (mtop g) ++ curly (mtop h)) ** {isNumber = False} ;
+
+  App9MacroFormula ident a b c d e f g h i =
+    mconstant (ident ++ curly (mftop a) ++ curly (mftop b) ++ curly (mftop c) ++ curly (mftop d) ++ curly (mftop e) ++ curly (mftop f) ++ curly (mftop g) ++ curly (mftop h) ++ curly (mftop i)) ;
+  App9MacroTerm ident a b c d e f g h i =
+    mconstant (ident ++ curly (mtop a) ++ curly (mtop b) ++ curly (mtop c) ++ curly (mtop d) ++ curly (mtop e) ++ curly (mtop f) ++ curly (mtop g) ++ curly (mtop h) ++ curly (mtop i)) ** {isNumber = False} ;
+
   StringMacro s = s.s ;
   
 oper

@@ -71,6 +71,16 @@ fun
 
   App5MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Formula ;
   App5MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term ;
+
+  -- up to nine arguments, as constants with many implicit arguments have
+  App6MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
+  App6MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
+  App7MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
+  App7MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
+  App8MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
+  App8MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
+  App9MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
+  App9MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
   
   StringMacro : String -> Macro ;
   

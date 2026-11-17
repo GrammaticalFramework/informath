@@ -192,6 +192,9 @@ catExp e = case e of
   -- an element of a type that the symbol table makes a proposition (an
   -- adjective: is-contr A as "A is contractible"), as in propositions as types
   EApp (EIdent f) x | isElemIdent f && catExp x == "Prop" && not (isProofApp x) -> "Prop"
+  -- a function into such a type (f : A -> is-decidable B): a proposition too,
+  -- "for all elements of A, B is decidable"
+  EFun _ _ | (_, body) <- splitType e, isElemPropApp body -> "Prop"
   EApp _ _ -> case splitApp e of
     (EIdent f@(QIdent c), _) -> case lookupConstant c of
       -- a comparison (Leq x y as x \leq y) is a proposition too
@@ -464,3 +467,9 @@ isProofApp e = case splitApp e of
 -- | Elem, also as annotated (Elem#Kind#ElemKind#Kind#)
 isElemIdent :: QIdent -> Bool
 isElemIdent (QIdent c) = QIdent (takeWhile (/= '#') c) == identElem
+
+-- | Elem P with P a proposition by its constant (catExp), not Proof A
+isElemPropApp :: Exp -> Bool
+isElemPropApp e = case e of
+  EApp (EIdent f) x -> isElemIdent f && catExp x == "Prop" && not (isProofApp x)
+  _ -> False

@@ -167,6 +167,11 @@ funListTerm ident exps = case ident of
     (Just ("MACRO", c), [x, y]) -> GApp2MacroTerm (macroIdent c) x y
     (Just ("MACRO", c), [x, y, z]) -> GApp3MacroTerm (macroIdent c) x y z
     (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroTerm (macroIdent c) x y z u
+    (Just ("MACRO", c), [a, b, x, y, z]) -> GApp5MacroTerm (macroIdent c) a b x y z
+    (Just ("MACRO", c), [a, b, d, x, y, z]) -> GApp6MacroTerm (macroIdent c) a b d x y z
+    (Just ("MACRO", c), [a, b, d, e, x, y, z]) -> GApp7MacroTerm (macroIdent c) a b d e x y z
+    (Just ("MACRO", c), [a, b, d, e, f, x, y, z]) -> GApp8MacroTerm (macroIdent c) a b d e f x y z
+    (Just ("MACRO", c), [a, b, d, e, f, g, x, y, z]) -> GApp9MacroTerm (macroIdent c) a b d e f g x y z
     _ -> case exps of
       [] -> GIdentTerm (ident2ident ident)
       _:_ -> GAppFunctionTerm (GIdentFunction (ident2ident ident)) (GListTerm (map exp2term exps))
@@ -228,6 +233,11 @@ funListFormula ident exps = case ident of
     (Just ("MACRO", c), [x, y]) -> GApp2MacroFormula (macroIdent c) x y
     (Just ("MACRO", c), [x, y, z]) -> GApp3MacroFormula (macroIdent c) x y z
     (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroFormula (macroIdent c) x y z u
+    (Just ("MACRO", c), [a, b, x, y, z]) -> GApp5MacroFormula (macroIdent c) a b x y z
+    (Just ("MACRO", c), [a, b, d, x, y, z]) -> GApp6MacroFormula (macroIdent c) a b d x y z
+    (Just ("MACRO", c), [a, b, d, e, x, y, z]) -> GApp7MacroFormula (macroIdent c) a b d e x y z
+    (Just ("MACRO", c), [a, b, d, e, f, x, y, z]) -> GApp8MacroFormula (macroIdent c) a b d e f x y z
+    (Just ("MACRO", c), [a, b, d, e, f, g, x, y, z]) -> GApp9MacroFormula (macroIdent c) a b d e f g x y z
     _ -> GMacroFormula (GStringMacro (GString ("NOTYET"++s)))
     
 hypoIdents :: GHypo -> [GIdent]
