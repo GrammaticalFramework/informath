@@ -8,6 +8,10 @@
 
 #### LATEST NEWS
 
+17 November 2026: conversions between Dedukti and Agda, Lean and Rocq.
+*From Dedukti* (`-to-formalism=agda|lean|rocq`), extended: rewrite rules are translated (Agda `REWRITE`, Rocq `Rewrite Rules`, Lean equations), and structures become Agda records, Lean structures and Rocq records; see [the informalization pipeline, 2.1](./doc/informalization-pipeline.md) and the tests in [test/formalisms](./test/formalisms) (`make formalism_tests`).
+*To Dedukti*, created: `RunInformath -from-formalism=agda|lean|rocq <file>` informalizes Agda, Lean and Rocq source files directly, via the exports of [scripts/agda](./scripts/agda/README.md), [scripts/lean](./scripts/lean/README.md) (new: any Lean file, no Mathlib needed) and [scripts/rocq](./scripts/rocq/README.md), with `#CONV` lines of symbol tables read backwards; combined with `-to-formalism`, it converts between the formalisms. See [the usage](#formalisms-to-dedukti) and the examples in [test/formalisms/sources](./test/formalisms/sources) (`make from_formalism_tests`).
+
 23 October 2026: informalization of Lean Mathlib: [Examples](https://aarneranta.github.io/mathlib-informath/mathlib-informath.html), [Code](https://github.com/aarneranta/mathlib-informath)
 
 23 October 2026: repeatable autoformalization experiments with Claude code: see [instructions](./autoformalize)
@@ -394,6 +398,20 @@ $ cat BaseConstants.lean exx.lean >bexx.lean
 $ lean bexx.lean
 ```
 This should be made less cumbersome in the future.
+
+### Rewrite rules and structures
+
+A `.dk` file is translated as a whole module, so that its rewrite rules can be translated too: as Agda `REWRITE` rules, Rocq `Rewrite Rules` (compile with `rocq compile -allow-rewrite-rules`), and Lean equations (Lean has no conversion modulo them). A rule that defines a constant on variables becomes a definition. Structures in the style of [test/algebra.dk](test/algebra.dk) become Agda records, Lean structures and Rocq records, their selectors the fields. The details are in [the informalization pipeline, 2.1](./doc/informalization-pipeline.md), and `make formalism_tests` checks the examples of [test/formalisms](./test/formalisms) in all three systems.
+
+### Formalisms to Dedukti
+
+`RunInformath -from-formalism=agda|lean|rocq <file>` reads a source file of Agda, Lean or Rocq: the file is exported to Dedukti by [scripts/agda](./scripts/agda/README.md), [scripts/lean](./scripts/lean/README.md) or [scripts/rocq](./scripts/rocq/README.md), and the Dedukti is read as a `.dk` file, with all the usual flags:
+```
+$ RunInformath -from-formalism=rocq test/formalisms/sources/Example.v                 # in English
+$ RunInformath -from-formalism=lean -export-dir=out/lean File.lean                     # keeping the Dedukti in out/lean
+$ RunInformath -from-formalism=agda test/formalisms/sources/Example.agda -to-formalism=lean   # Agda to Lean via Dedukti
+```
+The `#CONV <formalism> <Dedukti> <native>` lines of the symbol tables are read backwards, renaming native identifiers to Dedukti ones, and the symbol table of hidden implicit arguments that the export makes is added to the symbol tables. The Agda export needs its backend, built once with `cabal build agda-export` in `scripts/agda`. `make from_formalism_tests` runs the examples of [test/formalisms/sources](./test/formalisms/sources).
 
 ## Symbol tables
 
