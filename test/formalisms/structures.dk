@@ -1,0 +1,126 @@
+(; Test cases for translating structures to records (Agda), structures (Lean)
+   and records (Rocq). Uses Set, Elem, Prop, Proof from share/baseconstants.dk.
+   The structures are as in test/algebra.dk: a kind K : Structure, and
+   constructors with values in Str K. The selectors are made by
+   scripts/structure_selectors.py and put after their structures.
+   Semigroup' is a second constructor of SemigroupS, CommSemigroup' the only
+   constructor of CommSemigroupS, which extends SemigroupS.
+;)
+
+Structure : Type.
+Str : Structure -> Type.
+
+MagmaS : Structure.
+SemigroupS : Structure.
+MonoidS : Structure.
+
+Same : (A : Set) -> Elem A -> Elem A -> Prop.
+same : (A : Set) -> (a : Elem A) -> Proof (Same A a a).
+
+All : (A : Set) -> (Elem A -> Prop) -> Prop.
+
+def Op : Set -> Type := A => Elem A -> Elem A -> Elem A.
+
+def associative : (A : Set) -> ({|*|} : Op A) -> Prop :=
+  A => {|*|} => All A (x => All A (y => All A (z =>
+    Same A ({|*|} x ({|*|} y z)) ({|*|} ({|*|} x y) z)))).
+
+Magma : (S : Set) -> ({|*|} : Op S) -> Str MagmaS.
+
+def S_Magma : (m : Str MagmaS) -> Set.
+[S, {|*|}] S_Magma (Magma S {|*|}) --> S.
+
+def star_Magma : (m : Str MagmaS) -> Op (S_Magma m).
+[S, {|*|}] star_Magma (Magma S {|*|}) --> {|*|}.
+
+Semigroup : (S : Set) -> ({|*|} : Op S) -> (assoc : Proof (associative S {|*|})) -> Str SemigroupS.
+
+def S_Semigroup : (m : Str SemigroupS) -> Set.
+[S, {|*|}, assoc] S_Semigroup (Semigroup S {|*|} assoc) --> S.
+
+def star_Semigroup : (m : Str SemigroupS) -> Op (S_Semigroup m).
+[S, {|*|}, assoc] star_Semigroup (Semigroup S {|*|} assoc) --> {|*|}.
+
+def assoc_Semigroup : (m : Str SemigroupS) -> Proof (associative (S_Semigroup m) (star_Semigroup m)).
+[S, {|*|}, assoc] assoc_Semigroup (Semigroup S {|*|} assoc) --> assoc.
+
+Monoid : (S : Set) -> ({|*|} : Op S) -> (assoc : Proof (associative S {|*|})) ->
+  (e : Elem S) ->
+  ((x : Elem S) -> Proof (Same S ({|*|} x e) x)) ->
+  ((x : Elem S) -> Proof (Same S ({|*|} e x) x)) ->
+  Str MonoidS.
+
+def S_Monoid : (m : Str MonoidS) -> Set.
+[S, {|*|}, assoc, e, x5, x6] S_Monoid (Monoid S {|*|} assoc e x5 x6) --> S.
+
+def star_Monoid : (m : Str MonoidS) -> Op (S_Monoid m).
+[S, {|*|}, assoc, e, x5, x6] star_Monoid (Monoid S {|*|} assoc e x5 x6) --> {|*|}.
+
+def assoc_Monoid : (m : Str MonoidS) -> Proof (associative (S_Monoid m) (star_Monoid m)).
+[S, {|*|}, assoc, e, x5, x6] assoc_Monoid (Monoid S {|*|} assoc e x5 x6) --> assoc.
+
+def e_Monoid : (m : Str MonoidS) -> Elem (S_Monoid m).
+[S, {|*|}, assoc, e, x5, x6] e_Monoid (Monoid S {|*|} assoc e x5 x6) --> e.
+
+def arg5_Monoid : (m : Str MonoidS) -> (x : Elem (S_Monoid m)) -> Proof (Same (S_Monoid m) (star_Monoid m x (e_Monoid m)) x).
+[S, {|*|}, assoc, e, x5, x6] arg5_Monoid (Monoid S {|*|} assoc e x5 x6) --> x5.
+
+def arg6_Monoid : (m : Str MonoidS) -> (x : Elem (S_Monoid m)) -> Proof (Same (S_Monoid m) (star_Monoid m (e_Monoid m) x) x).
+[S, {|*|}, assoc, e, x5, x6] arg6_Monoid (Monoid S {|*|} assoc e x5 x6) --> x6.
+
+Semigroup' : (M : Str MagmaS) -> (assoc : Proof (associative (S_Magma M) (star_Magma M))) -> Str SemigroupS.
+
+def S_Semigroup' : (m : Str SemigroupS) -> Set.
+[M, assoc] S_Semigroup' (Semigroup' M assoc) --> S_Magma M.
+
+def star_Semigroup' : (m : Str SemigroupS) -> Op (S_Semigroup' m).
+[M, assoc] star_Semigroup' (Semigroup' M assoc) --> star_Magma M.
+
+def M_Semigroup' : (m : Str SemigroupS) -> Str MagmaS.
+[M, assoc] M_Semigroup' (Semigroup' M assoc) --> M.
+
+def assoc_Semigroup' : (m : Str SemigroupS) -> Proof (associative (S_Semigroup' m) (star_Semigroup' m)).
+[M, assoc] assoc_Semigroup' (Semigroup' M assoc) --> assoc.
+
+def commutative : (A : Set) -> ({|*|} : Op A) -> Prop :=
+  A => {|*|} => All A (x => All A (y => Same A ({|*|} x y) ({|*|} y x))).
+
+CommSemigroupS : Structure.
+CommSemigroup' : (M : Str SemigroupS) ->
+  (comm : Proof (commutative (S_Semigroup M) (star_Semigroup M))) ->
+  Str CommSemigroupS.
+
+def S_CommSemigroup' : (m : Str CommSemigroupS) -> Set.
+[M, comm] S_CommSemigroup' (CommSemigroup' M comm) --> S_Semigroup M.
+
+def star_CommSemigroup' : (m : Str CommSemigroupS) -> Op (S_CommSemigroup' m).
+[M, comm] star_CommSemigroup' (CommSemigroup' M comm) --> star_Semigroup M.
+
+def assoc_CommSemigroup' : (m : Str CommSemigroupS) -> Proof (associative (S_CommSemigroup' m) (star_CommSemigroup' m)).
+[M, comm] assoc_CommSemigroup' (CommSemigroup' M comm) --> assoc_Semigroup M.
+
+def M_CommSemigroup' : (m : Str CommSemigroupS) -> Str SemigroupS.
+[M, comm] M_CommSemigroup' (CommSemigroup' M comm) --> M.
+
+def comm_CommSemigroup' : (m : Str CommSemigroupS) -> Proof (commutative (S_CommSemigroup' m) (star_CommSemigroup' m)).
+[M, comm] comm_CommSemigroup' (CommSemigroup' M comm) --> comm.
+
+(; using structures ;)
+
+def squareOf : (M : Str MagmaS) -> Elem (S_Magma M) -> Elem (S_Magma M) :=
+  M => x => star_Magma M x x.
+
+NatS : Set.
+zero : Elem NatS.
+plusNat : Elem NatS -> Elem NatS -> Elem NatS.
+
+def natMagma : Str MagmaS := Magma NatS plusNat.
+
+(; type-checks only when the selector computes ;)
+def zeroInMagma : Elem (S_Magma natMagma) := zero.
+
+thm squareZero : Proof (Same NatS (squareOf natMagma zero) (plusNat zero zero)) :=
+  same NatS (plusNat zero zero).
+
+def underlyingMagma : Str CommSemigroupS -> Str MagmaS :=
+  M => Magma (S_CommSemigroup' M) (star_CommSemigroup' M).

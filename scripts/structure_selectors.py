@@ -2,6 +2,7 @@
 """Selectors for the structures of a Dedukti file.
 
     python3 scripts/structure_selectors.py X.dk     # -> X_selectors.dk, X_selectors.dkgf
+    python3 scripts/structure_selectors.py X.dk -combined=Y.dk  # also Y.dk: X.dk with the selectors
 
 A structure is declared as a constant whose type ends in Structure, or in
 Str K, the structures of kind K, as in test/algebra.dk:
@@ -451,10 +452,13 @@ def main():
             f.write('%s : %s\n' % (s, e))
     print('%d structures, %d selectors -> %s_selectors.dk, %s_selectors.dkgf'
           % (len(structures), len(sels), base, base))
+    # X_selectors.dk uses the constants of X.dk, and the extensions of X.dk
+    # use the selectors of their parents: each structure's selectors after it
+    both_text = ''.join(j + ('\n\n' + after[n] if n in after else '') for j, n in judgements(text))
+    for a in sys.argv[1:]:
+        if a.startswith('-combined='):
+            open(a[len('-combined='):], 'w').write(both_text + '\n')
     if '-no-check' not in sys.argv:
-        # X_selectors.dk uses the constants of X.dk, and the extensions of X.dk
-        # use the selectors of their parents: each structure's selectors after it
-        both_text = ''.join(j + ('\n\n' + after[n] if n in after else '') for j, n in judgements(text))
         with tempfile.TemporaryDirectory() as d:
             both = os.path.join(d, 'selectors_check.dk')
             open(both, 'w').write(both_text + '\n')

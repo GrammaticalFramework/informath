@@ -9,7 +9,9 @@ import Dedukti.LexDedukti (prToken)
 import CommonConcepts (lookupConstant, propCats)
 import DeduktiTheoryAPI
 
-import Data.Char (isDigit)
+import Data.Char (isDigit, isAscii, isAlphaNum, toUpper)
+import Data.List (intercalate)
+import Numeric (showHex)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
@@ -419,3 +421,33 @@ unappProfile prof exp = case prof of
     pexp -> pexp ---- TODO restore HOAS abstractions
 
 
+
+-- | An identifier {|...|} spelled out as a plain identifier, as in
+-- scripts/structure_selectors.py: the common symbols by their names
+-- ({|*|} as star), other characters by their code points (u2218).
+-- Other identifiers are returned as they are.
+plainIdentName :: String -> String
+plainIdentName s = case s of
+  '{' : '|' : rest | take 2 (reverse rest) == "}|" ->
+    let sym = take (length rest - 2) rest
+    in maybe (spell sym) id (lookup sym symbolNames)
+  _ -> s
+ where
+  spell sym = intercalate "_" (parts sym)
+  parts cs = case cs of
+    [] -> []
+    c : _ | isWordChar c -> let (w, rest) = span isWordChar cs in w : parts rest
+    c : rest -> maybe (codeName c) id (lookup [c] symbolNames) : parts rest
+  isWordChar c = isAscii c && (isAlphaNum c || c == '_')
+  codeName c = 'u' : map toUpper (showHex (fromEnum c) "")
+  symbolNames = [
+    ("*", "star"), ("+", "plus"), ("-", "minus"), ("/", "slash"), ("\\", "backslash"),
+    ("<", "lt"), (">", "gt"), ("=", "eq"), ("~", "tilde"), ("^", "hat"), ("&", "amp"),
+    ("|", "bar"), ("@", "at"), ("!", "bang"), ("?", "query"), ("'", "prime"), (".", "dot"),
+    (":", "colon"), ("#", "hash"), ("%", "percent"), ("$", "dollar"),
+    ("\x00b7", "cdot"), ("\x2218", "circ"), ("\x00d7", "times"), ("\x2297", "otimes"),
+    ("\x2295", "oplus"), ("\x2264", "leq"), ("\x2265", "geq"), ("\x2260", "neq"),
+    ("\x2223", "mid"), ("\x2227", "wedge"), ("\x2228", "vee"), ("\x00ac", "neg"),
+    ("\x2192", "to"), ("\x2194", "iff"), ("\x2229", "cap"), ("\x222a", "cup"),
+    ("\x2208", "in"), ("\x2286", "subseteq"), ("\x2282", "subset"), ("\x207b\x00b9", "inv")
+    ]

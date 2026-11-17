@@ -239,8 +239,32 @@ translates the remaining rules in its own way:
 Rules between proofs are omitted with a comment. In Agda and Lean they hold by
 the definitional proof irrelevance of `Prop`. Rules whose value is a universe,
 such as `Elem (powerset X) --> Set`, cannot be translated after the erasure of
-`Elem`, and are left as comments. `make formalism_rules` checks the test
-cases in `test/formalisms/` in Dedukti, Agda, Rocq and Lean.
+`Elem`, and are left as comments. In Lean, a rule whose type depends on an
+argument matched by a non-variable pattern is stated with `HEq`, since the
+two sides may have types equal only modulo the rules.
+
+Before the rules, [DeduktiStructures](../src/DeduktiStructures.hs) translates
+structures, represented as in `test/algebra.dk` (kinds `K : Structure`,
+constructors with values in `Str K`, selectors defined by rules as made by
+`scripts/structure_selectors.py`), to Agda records, Lean structures and Rocq
+records:
+
+- the first constructor of each kind becomes the constructor of the record `K`,
+  and `Str K` becomes `K`;
+- its fields are named by their selectors, which become projections (made
+  visible by `open K public` in Agda and `export` in Lean);
+- other selectors with one rule on the constructor become definitions by the
+  projections, such as `S_CommSemigroup' m = S_Semigroup (M_CommSemigroup' m)`;
+- another constructor of the same kind, such as `Semigroup'` beside
+  `Semigroup`, becomes a definition by the record constructor if its selectors
+  give all the fields (matched by name: `S_Semigroup'` gives `S_Semigroup`);
+  its selectors become projections, and the selector of its parent rebuilds the
+  parent from the fields. Otherwise it stays a postulate with rules.
+
+The declarations of `Set`, `Elem`, `Prop` and `Proof` are dropped from a
+translated module, since the translations interpret them. `make formalism_tests`
+checks the test cases in `test/formalisms/` and the whole `test/algebra.dk`
+with its selectors in Dedukti, Agda, Rocq and Lean.
 
 ### 2.2 Implicit hypotheses
 

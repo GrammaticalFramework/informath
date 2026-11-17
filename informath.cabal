@@ -21,6 +21,7 @@ executable RunInformath
     Dedukti2Lean
     DeduktiOperations
     DeduktiRules
+    DeduktiStructures
     Environment
     Informath
     Lexing

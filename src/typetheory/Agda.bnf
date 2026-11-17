@@ -27,6 +27,13 @@ JAbs.  Jmt ::= "abstract" AIdent ":" Exp ";" ;
 JRewrite. Jmt ::= "{-#" "REWRITE" [AIdent] "#-}" ";" ;
 separator nonempty AIdent "" ;
 
+-- records, translating structures; printed with layout by Dedukti2Agda
+JRecord. Jmt ::= "record" AIdent ":" Exp "where" "{" "constructor" AIdent ";" "field" "{" [Field] "}" "}" ";" ;
+JOpenPublic. Jmt ::= "open" Exp "public" ";" ;
+
+FField. Field ::= AIdent ":" Exp ;
+separator nonempty Field ";" ;
+
 terminator Jmt "" ;
 
 --+ TTyp. Typing ::= AIdent [Hypo] ":" Exp ";" ;

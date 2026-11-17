@@ -198,20 +198,22 @@ typechecks:
 	lean out/bexx.lean
 
 
-# rewrite rules translated to Agda, Lean and Rocq: see test/formalisms/*.dk
-# rules.dk must type-check in all targets, conversion.dk in all but Lean
-formalism_rules:
+# rewrite rules and structures translated to Agda, Lean and Rocq: see test/formalisms/*.dk
+# all must type-check in all targets, except conversion.dk in Lean;
+# algebra.dk is test/algebra.dk with its selectors, by scripts/structure_selectors.py
+formalism_tests:
 	mkdir -p out/formalisms
-	for f in rules conversion ; do \
-	  cat share/baseconstants.dk test/formalisms/$$f.dk >out/formalisms/$${f}_dk.dk ; \
-	  dk check out/formalisms/$${f}_dk.dk || exit 1 ; \
-	  $(RUN) -to-formalism=agda test/formalisms/$$f.dk >out/formalisms/$$f.agda ; \
-	  (cd out/formalisms ; agda --prop $$f.agda) || exit 1 ; \
-	  $(RUN) -to-formalism=rocq test/formalisms/$$f.dk >out/formalisms/$$f.v ; \
-	  (cd out/formalisms ; rocq compile -allow-rewrite-rules -w -eta-in-pattern $$f.v) || exit 1 ; \
-	  (echo "abbrev Set := Type" ; $(RUN) -to-formalism=lean test/formalisms/$$f.dk) >out/formalisms/$$f.lean ; \
+	python3 scripts/structure_selectors.py test/algebra.dk -no-check -combined=out/formalisms/algebra.dk
+	cp test/formalisms/*.dk out/formalisms/
+	cd out/formalisms ; for f in rules conversion structures ; do \
+	  cat ../../share/baseconstants.dk $$f.dk >$${f}_dk.dk ; dk check $${f}_dk.dk || exit 1 ; \
+	done ; dk check algebra.dk || exit 1
+	cd out/formalisms ; for f in rules conversion structures algebra ; do \
+	  $(RUN) -to-formalism=agda $$f.dk >$$f.agda ; agda --prop $$f.agda || exit 1 ; \
+	  $(RUN) -to-formalism=rocq $$f.dk >$$f.v ; rocq compile -allow-rewrite-rules -w -eta-in-pattern $$f.v || exit 1 ; \
+	  (echo "abbrev Set := Type" ; $(RUN) -to-formalism=lean $$f.dk) >$$f.lean ; \
 	done
-	lean out/formalisms/rules.lean
+	cd out/formalisms ; for f in rules structures algebra ; do lean $$f.lean || exit 1 ; done
 	echo "${lightgreen}## expected to fail in Lean: conversion modulo rules${neutral}"
 	! lean out/formalisms/conversion.lean >/dev/null
 

@@ -11,6 +11,7 @@ import qualified Lean.PrintLean as PrL
 import DeduktiOperations
 import DeduktiTheoryAPI
 import DeduktiRules
+import DeduktiStructures
 
 import qualified Data.Map as M
 import Dedukti.PrintDedukti (printTree)
@@ -37,12 +38,32 @@ transModule t = case t of
 -- translated as equations (simp lemmas), except in the easy cases, where they
 -- become definitions (see "DeduktiRules"). Rules between proofs are omitted:
 -- they hold by the definitional proof irrelevance of Prop.
+-- Informath structures become Lean structures (see "DeduktiStructures").
 printLeanModule :: [Jmt] -> [String]
-printLeanModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+printLeanModule jmts = header ++ concatMap trans pjmts
   where
     -- definitions using axioms cannot be compiled
     header = ["noncomputable section", ""]
-    (pjmts, ctx) = prepareRules jmts
+    (sjmts, records) = prepareStructures jmts
+    (pjmts, ctx) = prepareRules sjmts
+    trans t = case t of
+      JStatic c _ | Just r <- M.lookup c records ->
+        map printLeanJmt (transStructure (levels M.! srKind r) r) ++ [""]
+      _ -> transJmtCtx ctx t
+    levels = foldl (\ ls r -> M.insert (srKind r) (recordLevel ls r) ls) M.empty
+      [r | JStatic c _ <- pjmts, Just r <- [M.lookup c records]]
+
+-- | A structure, and exporting its constructor and fields, so that they
+-- can be used as the constructor and the selectors were.
+transStructure :: Int -> StructureRecord -> [L.Jmt]
+transStructure level r = [
+    L.JStructure name universe con [L.FField (transQIdent f) (transExp t) | (f, t) <- srFields r],
+    L.JExport name (con : [transQIdent f | (f, _) <- srFields r])
+    ]
+  where
+    name = transQIdent (srKind r)
+    con = transQIdent (srConstructor r)
+    universe = if level > 0 then L.EApp (L.EIdent (L.LIdent "Type")) (L.EInt 1) else L.EIdent (L.LIdent "Type")
 
 transJmtCtx :: RuleContext -> Jmt -> [String]
 transJmtCtx ctx t = case t of
@@ -52,13 +73,26 @@ transJmtCtx ctx t = case t of
 transRuleCtx :: RuleContext -> Rule -> [String]
 transRuleCtx ctx rule = case ruleKind ctx eq of
   RKRewrite -> [printLeanJmt (
-      L.JSimpAxiom name [] (quantify (reVars eq) (L.EEq (transExp (reLhs eq)) (transExp (reRhs eq))))), ""]
+      L.JSimpAxiom name [] (quantify (reVars eq) (equation (transExp (reLhs eq)) (transExp (reRhs eq))))), ""]
   RKProof -> ["-- omitted, holds by proof irrelevance: " ++ printRule rule, ""]
   _ -> ["-- not translated, Elem erased: " ++ printRule rule, ""]
  where
   eq = ruleEquationIn ctx rule
   L.LIdent c = transQIdent (reHead eq)
   name = L.LIdent (c ++ "_" ++ show (M.findWithDefault 0 rule (rcNumbers ctx)))
+  -- if the type of the head is dependent, the two sides may have types that
+  -- are equal only modulo rules: then heterogeneous equality
+  equation a b = if isDependent then L.EApp (L.EApp (L.EIdent (L.LIdent "HEq")) a) b else L.EEq a b
+  -- (a dependency on an argument that the rule matches by a non-variable pattern)
+  isDependent = case M.lookup (reHead eq) (rcTypes ctx) of
+    Just typ -> let (hypos, val) = splitType typ
+                    args = snd (splitApp (reLhs eq))
+                in or [elem x (identsInTree val) |
+                       (h, arg) <- zip hypos args, x <- hypo2topvars h, not (isVariable arg)]
+    _ -> False
+  isVariable a = case a of
+    EIdent x -> elem x (map fst (reVars eq))
+    _ -> False
   quantify vars body = case vars of
     [] -> body
     (x, Just typ) : vs -> L.EAll [transVar x] (transExp typ) (quantify vs body)
@@ -90,6 +124,7 @@ transExp t = case t of
   EIdent qident -> L.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
     (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (f, [arg]) | isStructureKind f -> transExp arg  -- Str K is the structure K
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> L.EIdent (L.LIdent s) --- no L.EInt
         _ -> L.EApp (transExp exp0) (transExp exp1)
@@ -157,6 +192,7 @@ transHypo t = case t of
 
 transQIdent :: QIdent -> L.LIdent
 transQIdent t = case t of
+  QIdent str@('{' : '|' : _) -> L.LIdent (plainIdentName str) -- {|*|} as star
   QIdent str -> L.LIdent str ---- not quite the same ident syntax ; reserved idents in Lean!
 
 processDeduktiModule :: Module -> IO ()

@@ -15,6 +15,13 @@ JDef.   Jmt ::= "def" LIdent [Hypo] ":" Exp ":=" Exp ";" ;
 -- translation of a rewrite rule as an equation, usable by simp
 JSimpAxiom. Jmt ::= "@[simp]" "axiom" LIdent [Hypo] ":" Exp ";" ;
 
+-- structures, translating Informath structures
+JStructure. Jmt ::= "structure" LIdent ":" Exp "where" LIdent "::" [Field] ";" ;
+JExport.    Jmt ::= "export" LIdent "(" [LIdent] ")" ";" ;
+
+FField. Field ::= "(" LIdent ":" Exp ")" ;
+separator nonempty Field "" ;
+
 terminator Jmt "" ;
 
 EIdent.  Exp9 ::= LIdent ;

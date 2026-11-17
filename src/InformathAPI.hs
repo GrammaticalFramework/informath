@@ -540,7 +540,13 @@ printFormalismModule env formalism (MJmts jmts) = case formalism of
   "rocq" -> DR.printRocqModule cjmts
   _ -> concatMap (printGenResult env) (processDeduktiModule env (MJmts jmts))
  where
-  cjmts = map (convert . applyDeduktiConversions env) (includedDefs env jmts)
+  cjmts = map (convert . applyDeduktiConversions env) (filter (not . isFramework) (includedDefs env jmts))
+  -- the declarations of the framework, which the translations interpret
+  isFramework jmt = case jmt of
+    JStatic c _ -> elem c framework
+    JDef c _ _ -> elem c framework
+    _ -> False
+  framework = map QIdent ["Set", "Elem", "Prop", "Proof"]
   table = M.findWithDefault M.empty formalism (conversionTableEnv env)
   -- wildcards in rule patterns are kept, as the translations of rules treat them
   convert jmt = case jmt of

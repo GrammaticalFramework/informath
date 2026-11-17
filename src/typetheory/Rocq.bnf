@@ -19,6 +19,12 @@ separator nonempty RRule "" ;
 JThm.   Jmt ::= "Theorem" CIdent [Hypo] ":" Exp "." "Proof" Exp "." ;
 JLemma. Jmt ::= "Lemma"  CIdent [Hypo] ":" Exp "." "Proof" Exp "." ;
 
+-- records, translating Informath structures
+JRecord. Jmt ::= "Record" CIdent ":" Exp ":=" CIdent "{" [Field] "}" "." ;
+
+FField. Field ::= CIdent ":" Exp ;
+separator nonempty Field ";" ;
+
 terminator Jmt "" ;
 
 EIdent.  Exp9 ::= CIdent ;

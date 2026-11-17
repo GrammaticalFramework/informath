@@ -8,9 +8,10 @@ import qualified Agda.AbsAgda as A
 
 import qualified Agda.PrintAgda as PrA
 
-import DeduktiOperations (getNumber, splitApp, isWildIdent)
+import DeduktiOperations (getNumber, splitApp, isWildIdent, plainIdentName)
 import DeduktiTheoryAPI
 import DeduktiRules
+import DeduktiStructures
 
 import qualified Data.Map as M
 
@@ -41,13 +42,20 @@ transModule t = case t of
 -- except in the easy cases, where they become definitions (see "DeduktiRules").
 -- Rules between proofs are omitted: they hold by the definitional
 -- proof irrelevance of Prop.
+-- Structures become records (see "DeduktiStructures").
 printAgdaModule :: [Jmt] -> [String]
-printAgdaModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+printAgdaModule jmts = header ++ concatMap trans pjmts
   where
-    (pjmts, ctx) = prepareRules jmts
+    (sjmts, records) = prepareStructures jmts
+    (pjmts, ctx) = prepareRules sjmts
+    trans t = case t of
+      JStatic c _ | Just r <- M.lookup c records -> [printAgdaRecord (transRecord (levels M.! srKind r) r), ""]
+      _ -> transJmtCtx ctx t
+    levels = foldl (\ ls r -> M.insert (srKind r) (recordLevel ls r) ls) M.empty
+      [r | JStatic c _ <- pjmts, Just r <- [M.lookup c records]]
     header = if rcHasRewrites ctx
       then ["{-# OPTIONS --rewriting #-}",
-            "open import Agda.Builtin.Equality",
+            "open import Agda.Builtin.Equality using (_≡_)",
             "open import Agda.Builtin.Equality.Rewrite",
             ""]
       else []
@@ -74,6 +82,27 @@ transRuleCtx ctx rule = case ruleKind ctx eq of
     _ -> case span ((== Nothing) . snd) vars of
       (untyped, vs) -> A.EAllImpl (map (transVar . fst) untyped) (quantify vs body)
 
+transRecord :: Int -> StructureRecord -> A.Jmt
+transRecord level r = A.JRecord (transQIdent (srKind r)) (A.EIdent (A.AIdent universe))
+    (transQIdent (srConstructor r)) [A.FField (transQIdent f) (transExp t) | (f, t) <- srFields r]
+  where
+    universe = if level > 0 then "Set₁" else "Set"
+
+-- | Records are printed with layout, followed by opening them, so that the
+-- fields can be used as the selectors were.
+printAgdaRecord :: A.Jmt -> String
+printAgdaRecord t = case t of
+  A.JRecord name typ con fields -> unlines $ [
+      "record " ++ pr name ++ " : " ++ pr typ ++ " where",
+      "  constructor " ++ pr con,
+      "  field"
+    ] ++ ["    " ++ pr f ++ " : " ++ pr ft | A.FField f ft <- fields] ++
+    [printAgdaJmts [A.JOpenPublic (A.EIdent name)]]
+  _ -> printAgdaJmts [t]
+ where
+  pr :: PrA.Print a => a -> String
+  pr = unwords . words . PrA.printTree
+
 omitted :: RuleKind -> String
 omitted kind = case kind of
   RKProof -> "omitted, holds by proof irrelevance"
@@ -97,6 +126,7 @@ transExp t = case t of
   EIdent qident -> A.EIdent (transQIdent qident)
   EApp exp0 exp1 -> case splitApp t of
     (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (f, [arg]) | isStructureKind f -> transExp arg  -- Str K is the record K
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> A.EIdent (A.AIdent s) --- no A.EInt
         _ -> A.EApp (transExp exp0) (transExp exp1)
@@ -129,6 +159,7 @@ transPatt t = case t of
 
 transQIdent :: QIdent -> A.AIdent
 transQIdent t = case t of
+  QIdent str@('{' : '|' : _) -> transQIdent (QIdent (plainIdentName str)) --- {|*|} as star
   QIdent str -> A.AIdent (map (\c -> if c=='_' then '8' else c) str) --- replace _
   ---- TODO avoid clashes
 

@@ -11,6 +11,7 @@ import qualified Rocq.PrintRocq as PrC
 import DeduktiOperations
 import DeduktiTheoryAPI
 import DeduktiRules
+import DeduktiStructures
 
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -39,9 +40,15 @@ transModule t = case t of
 -- become definitions (see "DeduktiRules"). The constants in left-hand sides
 -- are declared as Symbols. Rules between proofs are omitted.
 printRocqModule :: [Jmt] -> [String]
-printRocqModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+-- Informath structures become records (see "DeduktiStructures").
+printRocqModule jmts = header ++ concatMap trans pjmts
   where
-    (pjmts, ctx) = prepareRules jmts
+    (sjmts, records) = prepareStructures jmts
+    (pjmts, ctx) = prepareRules sjmts
+    trans t = case t of
+      JStatic c _ | Just r <- M.lookup c records ->
+        [unwords (words (printRocqJmt (transRecord r))), ""]
+      _ -> transJmtCtx ctx t
     header = if rcHasRewrites ctx
       then ["(* rewrite rules: compile with rocq compile -allow-rewrite-rules *)", ""]
       else []
@@ -71,6 +78,11 @@ transJmtCtx ctx t = case t of
     RKProof -> "omitted, between proofs"
     _ -> "not translated, Elem erased"
 
+-- | A record: its fields are global projections, usable as the selectors were.
+transRecord :: StructureRecord -> C.Jmt
+transRecord r = C.JRecord (transIdent (srKind r)) (C.EIdent (C.CIdent "Type")) (transIdent (srConstructor r))
+  [C.FField (transIdent f) (transExpProp t) | (f, t) <- srFields r]
+
 printRule :: Rule -> String
 printRule = unwords . words . printTree
 
@@ -97,6 +109,7 @@ transExp t = case t of
   EIdent qident -> C.EIdent (transIdent qident)
   EApp exp0 exp1 -> case splitApp t of
     (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg
+    (f, [arg]) | isStructureKind f -> transExp arg  -- Str K is the structure K
     (fun@(EIdent (QIdent n)), args) | elem n [nn, nd] -> case getNumber fun args of
         Just s -> C.EInt (read s) --- no C.EInt
         _ -> C.EApp (transExp exp0) (transExp exp1)
@@ -120,8 +133,8 @@ transExp t = case t of
       _ -> C.EApp (transExp exp0) (transExp exp1)
     _ -> C.EApp (transExp exp0) (transExp exp1)
   EAbs bind exp -> C.EAbs [transBind bind] (transExp exp)
-  EFun hypo@(HVarExp _ _) exp -> C.EFunDep (transHypo hypo) (transExp exp)
-  EFun hypo@(HParVarExp _ _) exp -> C.EFunDep (transHypo hypo) (transExp exp)
+  EFun (HVarExp var typ) exp -> C.EAll [transIdent var] (transExp typ) (transExp exp)
+  EFun (HParVarExp var typ) exp -> C.EAll [transIdent var] (transExp typ) (transExp exp)
   EFun (HExp typ) exp -> C.EIf (transExp typ) (transExp exp)
 
 transExpProp :: Exp -> C.Exp
@@ -161,6 +174,7 @@ transHypo t = case t of
 
 transIdent :: QIdent -> C.CIdent
 transIdent t = case t of
+  QIdent str@('{' : '|' : _) -> C.CIdent (plainIdentName str) -- {|*|} as star
   QIdent str -> C.CIdent str ---- not quite the same ident syntax ; reserved idents in Rocq!
 
 processDeduktiModule :: Module -> IO ()
