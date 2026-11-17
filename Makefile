@@ -217,6 +217,23 @@ formalism_tests:
 	echo "${lightgreen}## expected to fail in Lean: conversion modulo rules${neutral}"
 	! lean out/formalisms/conversion.lean >/dev/null
 
+# RunInformath -from-formalism on the sources of test/formalisms/sources: exported
+# to Dedukti by scripts/<formalism>/ (Agda needs its backend: cd scripts/agda &&
+# cabal build agda-export), read in English, and converted to the other formalisms
+from_formalism_tests:
+	mkdir -p out/from-formalism
+	cp test/formalisms/sources/* out/from-formalism/
+	cd out/from-formalism ; for f in agda:agda lean:lean rocq:v ; do \
+	  form=$${f%%:*} ; suf=$${f##*:} ; \
+	  echo "${lightgreen}## $$form${neutral}" ; \
+	  $(RUN) -from-formalism=$$form -export-dir=$$form Example.$$suf >$$form.txt || exit 1 ; \
+	  cat $$form.txt ; \
+	  ! grep -q "NOT EXPORTED\|UNSUPPORTED" $$form/Example.dk || exit 1 ; \
+	  for t in agda lean rocq ; do \
+	    $(RUN) -from-formalism=$$form -export-dir=$$form Example.$$suf -to-formalism=$$t >$$form-to-$$t.txt 2>/dev/null || exit 1 ; \
+	  done ; \
+	done
+
 top100:
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -sampling=$(sampling) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex

@@ -1,0 +1,71 @@
+# Lean files read by Informath
+
+`lean-export.py` translates the declarations of a Lean 4 file to Informath's
+Dedukti dialect, as `../rocq/rocq-export.py` does for Rocq and
+`../agda/agda-export.py` for Agda. It works for any Lean file: unlike
+mathlib-informath's exporter, it needs neither Mathlib nor a Lake project
+of its own, only Lean.
+
+    python3 $INFORMATH/scripts/lean/lean-export.py File.lean -out=<dir>
+    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk   (default <dir>: out)
+
+or, reading the result in English at once (see `RunInformath -help`):
+
+    RunInformath -from-formalism=lean File.lean
+    RunInformath -from-formalism=lean -export-dir=<dir> File.lean     # keeping the export
+    RunInformath -from-formalism=lean File.lean -to-formalism=agda    # to Agda, via Dedukti
+
+## How it works
+
+Lean elaborates the file: `Export.lean` is a Lean program, run with
+`lean --run Export.lean File.lean <dir> <mapping>`, which processes the file
+with Lean's own front end and translates the declarations it makes from the
+environment, where every implicit argument is filled in. Nothing is compiled
+or installed: `lean` (the version of `elan`'s default toolchain, or of the
+project's `lean-toolchain`) runs it directly, in a couple of seconds for a
+file that imports Lean's own libraries only. A file in a Lake project (a
+`lakefile.lean` or `lakefile.toml` in its directory or above) is elaborated
+with `lake env`, so that its imports, Mathlib say, are found; they must be
+built, and the project's Lean must be one that `Export.lean` compiles with
+(it is written for Lean 4.36).
+
+## The translation
+
+The dialect is the one of the other exports and of mathlib-informath:
+
+* a binder `(x : α)` with `α : Type` is `(x : Elem α)`, one with `α : Prop`
+  is `(h : Proof α)`, a type `(α : Type u)` is `(α : Set)`, and an instance
+  `[C α]` is a hypothesis `(_ : Proof (C α))`; universe levels are dropped;
+* in propositions, ∀ is `forall`, → `if`, ∃ `exists`, `=` is `Eq` on numbers
+  and `Eqt` elsewhere, numerals are Informath's numerals, and the constants of
+  `mapping.tsv` are Informath's base constants (`And` is `and`, `HAdd.hAdd` is
+  `plus`, `LE.le` is `Leq`, `Nat.succ` is `succ`, ...), applied to their
+  explicit arguments; a project adds its own with `-mapping=<file.tsv>`;
+* any other constant keeps its Lean name, with `.` written `__` (`List.length`
+  is `List__length`), and all its arguments but the instances; the implicit
+  ones are listed in `File-hide.dkgf` (`#HIDE`), which hides them in the
+  readings, as the source does;
+* a theorem or an axiom is its statement; a definition by pattern matching or
+  recursion is rewrite rules, one for each of its equation lemmas (Lean's own
+  statement of each case); another definition gets its definiens;
+* an inductive type is a `Set` (or a predicate) with its constructors, a
+  structure also with its fields as functions (`Point__x`).
+
+Each declaration is preceded by `(; //LEAN:<name> ;)`. `File.json` lists them
+with their Lean names, Dedukti names, kinds, docstrings, Lean's statements
+and lines; `File-deps.dk` declares the constants that the file uses but
+neither defines nor maps, with their types translated in the same way.
+
+## Limits
+
+* The Dedukti is for reading, not for checking: universes and instances are
+  left out, and the patterns of the rules are what Lean's equation lemmas
+  have.
+* Proofs are not exported: neither proof terms nor tactic proofs (which
+  mathlib-informath's exporter replays for Mathlib's proofs).
+* Instances, the functions of derived instances (`deriving Repr`), recursors
+  and other generated declarations are left out; mutual and nested inductive
+  types are declared as the others, classes as structures.
+* mathlib-informath's exporter knows more of Mathlib (given instances as
+  named structures, classes as structure definitions, coercions); for Mathlib,
+  it is the one to use.

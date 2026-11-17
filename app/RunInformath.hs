@@ -9,8 +9,9 @@ import Utils (showFreqs, fileSuffix, dictValues)
 
 ---- import InformathServer --- TODO-server
 
-import System.Environment (getArgs)
-import System.IO (stdout, hFlush)
+import System.Environment (getArgs, getEnv)
+import System.IO (stdout, stderr, hFlush, hPutStrLn)
+import Dedukti.PrintDedukti (printTree)
 
 main :: IO ()
 main = do
@@ -23,8 +24,36 @@ main = do
     _ ->  main4 xx
 
 main4 :: [String] -> IO ()
-main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
-  env <- readEnv args 
+main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else
+  case (argValue "-from-formalism" "NONE" args, inputFileArg args) of
+    ("NONE", _) -> readEnv args >>= \env -> runWith env args
+    (formalism, Just (file, _)) -> fromFormalism formalism file args
+    _ -> putStrLn "-from-formalism needs a source file"
+
+-- | -from-formalism: the source file is exported to Dedukti by a script in
+-- scripts/<formalism>/, its identifiers are converted by the #CONV lines read
+-- backwards, and the Dedukti is processed as a .dk file would be; with the symbol
+-- tables made by the export (-hide.dkgf), into -export-dir or a temporary directory.
+fromFormalism :: String -> FilePath -> [String] -> IO ()
+fromFormalism formalism file args = do
+  root <- getEnv "INFORMATH_ROOT"
+  dir <- if flagHasValue "-export-dir" args then return (argValue "-export-dir" "." args)
+         else freshExportDir file
+  (dk, tables) <- exportFromFormalism root formalism file dir
+  let args1 = addSymbolTableFlags tables [a | a <- args, a /= file, takeWhile (/= '=') a /= "-from-formalism"]
+  env <- readEnv args1
+  mo <- readDeduktiModule [dk]
+  let mo' = fromFormalismConversion env formalism mo
+  -- the converted module in a file of its own, if the conversion changed it
+  dk' <- if mo' == mo then return dk else do
+    let f = take (length dk - 3) dk ++ "-converted.dk"
+    writeFile f (printTree mo')
+    return f
+  hPutStrLn stderr ("-from-formalism: " ++ dk' ++ (if null tables then "" else " with " ++ unwords tables))
+  runWith env (args1 ++ [dk'])
+
+runWith :: Env -> [String] -> IO ()
+runWith env args = do
   let mfile = inputFileArg args
   case mfile of
     Just (file, "dk") | any (flip elem args) ["-idents", "-unknown-idents"] -> do
@@ -117,6 +146,7 @@ helpMsg4 = [
   just ".dktex" "convert embedded Dedukti code in begin/end{dedukti} environments",
   just ".gft" "read GF trees line by line, informalize or -to-formalism=dedukti|...",
   just ".tex|.txt|.md" "parse line by line and convert to Dedukti or another formalism",
+  just ".agda|.lean|.v" "with -from-formalism, export to Dedukti and convert as a .dk file",
   "",
   "Output is written to standard output.",
   "Input is read line by line, except for .dk files",
@@ -129,6 +159,11 @@ helpMsg4 = [
   just "-add-symboltables=<file.dkgf>+" ("map from Dedukti to GF,  added to " ++ constantTableFile),
   just "-grammar=<file.pgf>" ("GF grammar used, default " ++ engGrammarFile ++ " or (if -to-lang or -for-lang or -symboltable-lang is not Eng) " ++ fullGrammarFile),
   just "-symboltable-lang=<lang>" "the language in which symbol table is parsed, default Eng",
+  "",
+  "* Translating from Agda, Lean and Rocq (source files exported to Dedukti by scripts/<formalism>/):",
+  "",
+  just "-from-formalism=<formalism>" "read the file as agda, lean or rocq, exported to Dedukti and then read as a .dk file; its identifiers converted by the #CONV lines of the symbol tables, read backwards",
+  just "-export-dir=<dir>" "with -from-formalism, write the export (the .dk file, its symbol table of hidden arguments, ...) in <dir>, default a temporary directory",
   "",
   "* Translating from Dedukti:",
   "",
@@ -214,7 +249,7 @@ invalidArgs xx =
   [x | x <- xx, head x /= '-', notElem (fileSuffix x) validFileSuffixes]
  where
   validOptions = [takeWhile (/='=') o | o:_ <- map words helpMsg4]
-  validFileSuffixes = words "dk dkgf dktex gft tex txt md json"
+  validFileSuffixes = words "dk dkgf dktex gft tex txt md json agda lean v"
 
 loopInformath :: Env -> IO b
 loopInformath env = do

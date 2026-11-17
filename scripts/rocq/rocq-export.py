@@ -4,7 +4,9 @@ Dedukti dialect, as mathlib-informath's Export.lean does for Lean.
 
     cd <project>         # its config.py, coq/, out/
     python3 $INFORMATH/scripts/rocq/rocq-export.py coq/M.v    # -> out/M.dk, .json, -tactics.json
+    python3 $INFORMATH/scripts/rocq/rocq-export.py M.v -out=<dir>   # without a project
 
+The file is compiled first if its .vo is missing or older than it.
 The file is compiled in coq/ (rocq compile); Rocq prints its declarations
 fully elaborated (Set Printing All): Check for a theorem, Print for a
 definition, an inductive type or a record. rocqterm.py parses them and
@@ -546,7 +548,10 @@ def instrumented(src, items):
     # Printing All after the imports
     m = re.search(r'Import ListNotations\.\n|Require Import [^\n]*\n', text)
     k = text.find('Require Import')
-    k = text.find('\n', k) + 1
+    if k < 0:
+        k = 0   # no imports: at the start
+    else:
+        k = text.find('\n', k) + 1
     while text[k:].startswith('Import'):
         k = text.find('\n', k) + 1
     return text[:k] + SETTINGS + text[k:], steps
@@ -712,10 +717,30 @@ def export_tactics(vdir, mod, src, items, tr):
     return out, bad
 
 
+def compile_if_needed(vfile):
+    """Compile vfile in its directory, with its load paths, unless its .vo is newer."""
+    vdir, base = os.path.split(os.path.abspath(vfile))
+    vo = os.path.join(vdir, base[:-2] + '.vo')
+    if os.path.exists(vo) and os.path.getmtime(vo) >= os.path.getmtime(vfile):
+        return
+    r = subprocess.run(['rocq', 'compile'] + loadpath(vdir) + [base], cwd=vdir, capture_output=True, text=True)
+    if r.returncode:
+        sys.stderr.write((r.stdout + r.stderr)[-3000:])
+        raise SystemExit('rocq compile %s failed' % vfile)
+
+
 def main():
-    vfile = sys.argv[1]
+    global OUT
+    args = [a for a in sys.argv[1:] if not a.startswith('-')]
+    for a in sys.argv[1:]:
+        if a.startswith('-out='):
+            OUT = os.path.abspath(a[len('-out='):])
+    if len(args) != 1 or not args[0].endswith('.v'):
+        sys.exit(__doc__)
+    vfile = args[0]
     vdir, base = os.path.split(os.path.abspath(vfile))
     mod = base[:-2]
+    compile_if_needed(vfile)
     src = open(vfile).read()
     items = scan(src)
     env, tr, blocks = export_decls(vdir, mod, items)
@@ -728,8 +753,8 @@ def main():
     json.dump(decls, open(os.path.join(OUT, mod + '.json'), 'w'), ensure_ascii=False, indent=1)
     steps, bad = export_tactics(vdir, mod, src, items, tr)
     json.dump(steps, open(os.path.join(OUT, mod + '-tactics.json'), 'w'), ensure_ascii=False, indent=1)
-    print('%s: %d declarations, %d tactic steps (%d not translated) -> out/%s.dk, .json, -tactics.json'
-          % (mod, len(items), len(steps), bad, mod))
+    print('%s: %d declarations, %d tactic steps (%d not translated) -> %s.dk, .json, -tactics.json'
+          % (mod, len(items), len(steps), bad, os.path.join(OUT, mod)))
     other = {}
     for m in OTHER.finditer(strip_comments(src)):
         k = m.group(1).split()[0]

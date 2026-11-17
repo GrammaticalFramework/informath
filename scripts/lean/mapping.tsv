@@ -1,0 +1,31 @@
+# Lean constant -> Informath base constant (share/baseconstants.dk), applied to
+# the explicit arguments of the Lean constant (its implicit and instance
+# arguments are dropped). Eq (Eq or Eqt), Exists and numerals are built in.
+# A project can give a mapping of its own: lean-export.py -mapping=<file>.
+Nat	Nat
+Int	Int
+Rat	Rat
+Real	Real
+Nat.succ	succ
+Nat.gcd	gcd
+Nat.factorial	factorial
+Nat.Prime	prime
+Dvd.dvd	divide
+HAdd.hAdd	plus
+HMul.hMul	times
+HSub.hSub	minus
+HDiv.hDiv	div
+HPow.hPow	pow
+LT.lt	Lt
+LE.le	Leq
+GT.gt	Gt
+GE.ge	Geq
+Ne	Neq
+Not	not
+And	and
+Or	or
+Iff	iff
+False	false
+Odd	odd
+Even	even
+Set	powerset

@@ -5,7 +5,8 @@ The project directory is $ROCQ_INFORMATH_PROJECT, or else the current
 directory: the scripts are run in a project's directory, which has
 config.py, the symbol table, coq/ (the Rocq files) and out/ (the export).
 
-config.py gives, all optional except MODULES and TABLE:
+config.py gives, all optional except MODULES and TABLE (which rocq-index.py
+needs; rocq-export.py works without config.py):
 
     MODULES          the Rocq modules, in coq/<M>.v
     TABLE            the symbol table (.dkgf), relative to the project
@@ -31,9 +32,16 @@ DIR = os.path.abspath(os.environ.get('ROCQ_INFORMATH_PROJECT') or os.environ.get
                       or os.getcwd())
 SHARED = os.path.dirname(os.path.abspath(__file__))
 
-_spec = importlib.util.spec_from_file_location('coq_informath_config', os.path.join(DIR, 'config.py'))
-config = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(config)
+# without config.py (a single file exported, as RunInformath -from-formalism
+# does), all the settings have their defaults
+_path = os.path.join(DIR, 'config.py')
+if os.path.exists(_path):
+    _spec = importlib.util.spec_from_file_location('coq_informath_config', _path)
+    config = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(config)
+else:
+    import types
+    config = types.SimpleNamespace()
 
 
 def get(name, default):

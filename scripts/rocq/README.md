@@ -24,6 +24,13 @@ In the project's directory (or with `ROCQ_INFORMATH_PROJECT` set to it):
     python3 $INFORMATH/scripts/rocq/rocq-export.py coq/M.v   # -> out/M.dk, .json, -tactics.json
     python3 $INFORMATH/scripts/rocq/rocq-index.py            # -> index.json
 
+A single file can also be exported without a project (without `config.py`,
+the settings have their defaults); the file is compiled first if its `.vo` is
+missing or older:
+
+    python3 $INFORMATH/scripts/rocq/rocq-export.py M.v -out=<dir>
+    RunInformath -from-formalism=rocq M.v          # read at once (see RunInformath -help)
+
 `index.json` has, for each declaration, its Rocq source and comment, its
 Dedukti, its reading in English and as a formula (a definition by cases one
 reading per case), and for a theorem the proof text of its tactic proof, all

@@ -40,7 +40,7 @@ import ProofText(proofDemo, proofDemoFile, proofDemoPieces, prLatexFile, verbati
 import Informath
 import PGF
 
-import Data.List (intersperse, sortOn, nub)
+import Data.List (intersperse, sortOn, nub, isSuffixOf, intercalate)
 import Data.Char (isDigit)
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -49,8 +49,9 @@ import qualified Text.JSON as J
 import System.Environment(getEnv)
 import System.Process (readProcessWithExitCode)
 import System.Exit (ExitCode(..))
-import System.Directory (getTemporaryDirectory, removeFile)
-import System.IO (openTempFile, hClose)
+import System.Directory (getTemporaryDirectory, removeFile, createDirectoryIfMissing, listDirectory, doesFileExist)
+import System.IO (openTempFile, hClose, hPutStr, stderr)
+import System.FilePath ((</>), takeBaseName, dropExtension)
 import Control.Exception (try, evaluate, SomeException)
 import Control.Monad (foldM)
 
@@ -552,6 +553,78 @@ printFormalismModule env formalism (MJmts jmts) = case formalism of
   convert jmt = case jmt of
     JRules _ -> alphaConvert (M.delete (QIdent "_") table) jmt
     _ -> alphaConvert table jmt
+
+-- * Reading the source code of other formalisms
+
+-- | The formalisms whose source files can be read (-from-formalism), with the
+-- scripts in scripts/ that export them to Dedukti, and their file suffixes.
+sourceFormalisms :: [(String, (FilePath, String))]
+sourceFormalisms = [
+  ("agda", ("agda/agda-export.py", ".agda")),
+  ("lean", ("lean/lean-export.py", ".lean")),
+  ("rocq", ("rocq/rocq-export.py", ".v"))
+  ]
+
+-- | Export a source file of Agda, Lean or Rocq to Dedukti in a directory, by
+-- python3 scripts/<formalism>/<formalism>-export.py <file> -out=<dir>.
+-- The result: the Dedukti file of the module, and the symbol tables made with
+-- it (<M>-hide.dkgf, the implicit arguments that the readings hide).
+-- The messages of the script go to standard error.
+exportFromFormalism :: FilePath -> String -> FilePath -> FilePath -> IO (FilePath, [FilePath])
+exportFromFormalism root formalism file dir = do
+  script <- case lookup formalism sourceFormalisms of
+    Just (s, _) -> return (root </> "scripts" </> s)
+    Nothing -> error ("-from-formalism: not available: " ++ formalism ++ ". Available values: " ++
+                      unwords (map fst sourceFormalisms))
+  createDirectoryIfMissing True dir
+  res <- try (readProcessWithExitCode "python3" [script, file, "-out=" ++ dir] "")
+           :: IO (Either SomeException (ExitCode, String, String))
+  case res of
+    Left e -> error ("-from-formalism needs python3: " ++ show e)
+    Right (code, out, err) -> do
+      hPutStr stderr (out ++ err)
+      if code /= ExitSuccess then error ("export of " ++ file ++ " failed: " ++ script) else return ()
+  -- the module is named after the file (Agda: its module name, ending with it)
+  let stem = takeBaseName file
+  files <- listDirectory dir
+  dk <- case [f | f <- files, f == stem ++ ".dk"] ++ [f | f <- files, ("." ++ stem ++ ".dk") `isSuffixOf` f] of
+    f : _ -> return (dir </> f)
+    [] -> error ("no " ++ stem ++ ".dk in " ++ dir)
+  let hide = dropExtension dk ++ "-hide.dkgf"
+  hasHide <- doesFileExist hide
+  return (dk, [hide | hasHide])
+
+-- | A fresh directory for an export, in the temporary directory.
+freshExportDir :: FilePath -> IO FilePath
+freshExportDir file = do
+  tmp <- getTemporaryDirectory
+  (path, h) <- openTempFile tmp ("informath-" ++ takeBaseName file)
+  hClose h
+  removeFile path
+  createDirectoryIfMissing True path
+  return path
+
+-- | The flags with symbol tables added to -symboltables or -add-symboltables.
+addSymbolTableFlags :: [FilePath] -> [Flag] -> [Flag]
+addSymbolTableFlags [] args = args
+addSymbolTableFlags tables args
+  | flagHasValue "-symboltables" args = map (extend "-symboltables") args
+  | flagHasValue "-add-symboltables" args = map (extend "-add-symboltables") args
+  | otherwise = args ++ ["-add-symboltables=" ++ intercalate "," tables]
+ where
+  extend flag arg =
+    if takeWhile (/= '=') arg == flag then arg ++ "," ++ intercalate "," tables else arg
+
+-- | The identifiers of a formalism converted to Dedukti's by the #CONV lines of the
+-- symbol tables, read backwards (#CONV <formalism> <Dedukti> <native>). The
+-- framework (Set, Elem, Prop, Proof, Type, _) is not converted: the exports
+-- write it as Informath has it.
+fromFormalismConversion :: Env -> String -> Module -> Module
+fromFormalismConversion env formalism = alphaConvert inverse
+ where
+  table = M.findWithDefault M.empty formalism (conversionTableEnv env)
+  inverse = M.fromList [(n, d) | (d, n) <- M.toList table, notElem d framework, notElem n framework]
+  framework = map QIdent ["Set", "Elem", "Prop", "Proof", "Type", "_"]
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool

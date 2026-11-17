@@ -31,6 +31,12 @@ In the project's directory:
     python3 $INFORMATH/scripts/agda/agda-export.py   # -> out/<M>.dk, .json, -hide.dkgf, out/table.dkgf
     python3 $INFORMATH/scripts/rocq/rocq-index.py    # -> index.json
 
+A single file can also be exported without a project: its module's root is
+its directory less the qualifiers of its `module` line:
+
+    python3 $INFORMATH/scripts/agda/agda-export.py M.agda -out=<dir>
+    RunInformath -from-formalism=agda M.agda       # read at once (see RunInformath -help)
+
 ## The translation
 
 The encoding is shallow: a type is a `Set`, its elements are `Elem A`, a

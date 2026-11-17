@@ -4,6 +4,7 @@ rocq-export.py does for Rocq.
 
     cd <project>          # its config.py (MODULES, AGDA_ROOT, AGDA_TABLE, TABLE), out/
     python3 $INFORMATH/scripts/agda/agda-export.py      # -> out/<M>.dk, .json, -hide.dkgf
+    python3 $INFORMATH/scripts/agda/agda-export.py File.agda -out=<dir>   # one file, without a project
 
 Agda type-checks each module and the Agda backend agda-export (Main.hs in
 this directory, built with cabal) writes its definitions in Agda's internal
@@ -51,7 +52,13 @@ def forallE : (A : Set) -> (B : ((x : Elem A) -> Prop)) -> Proof (forall A (x =>
 
 
 def backend():
-    """The agda-export executable, built in this directory."""
+    """The agda-export executable, built in this directory: the newest one in
+    dist-newstyle (cabal list-bin depends on the GHC on the PATH, which stack
+    exec changes), else what cabal list-bin says."""
+    built = glob.glob(os.path.join(HERE, 'dist-newstyle', 'build', '*', '*', 'agda-export-*', 'x',
+                                   'agda-export', 'build', 'agda-export', 'agda-export'))
+    if built:
+        return max(built, key=os.path.getmtime)
     r = subprocess.run(['cabal', 'list-bin', 'agda-export'], cwd=HERE, capture_output=True, text=True)
     exe = r.stdout.strip()
     if r.returncode or not os.path.exists(exe):
@@ -336,7 +343,31 @@ def full_table(source, hides, target, defaults):
     return entries
 
 
+def single_file(path):
+    """The library root and the module of an Agda file given on the command
+    line: the root is the file's directory less the module's qualifiers
+    (module A.B.C where, in A/B/C.agda)."""
+    path = os.path.abspath(path)
+    m = re.search(r'^module\s+(\S+)\s+where', open(path).read(), re.M)
+    module = m.group(1) if m else os.path.basename(path)[:-len('.agda')]
+    root = os.path.dirname(path)
+    for _ in module.split('.')[:-1]:
+        root = os.path.dirname(root)
+    return root, module
+
+
 def main():
+    global AGDA_ROOT, MODULES, OUT
+    # a single file, without a project: agda-export.py File.agda [-out=<dir>]
+    files = [a for a in sys.argv[1:] if not a.startswith('-')]
+    for a in sys.argv[1:]:
+        if a.startswith('-out='):
+            OUT = os.path.abspath(a[len('-out='):])
+    if files:
+        if len(files) != 1 or not files[0].endswith('.agda'):
+            sys.exit(__doc__)
+        AGDA_ROOT, module = single_file(files[0])
+        MODULES = [module]
     os.makedirs(os.path.join(OUT, 'agda'), exist_ok=True)
     for m in MODULES:
         run_backend(m)
@@ -379,8 +410,8 @@ def main():
         json.dump(decls, open(os.path.join(OUT, m + '.json'), 'w'), ensure_ascii=False, indent=1)
         open(os.path.join(OUT, m + '-hide.dkgf'), 'w').write(
             '# %s: the implicit arguments, hidden in the readings (agda-export.py)\n' % m + '\n'.join(hides) + '\n')
-        print('%s: %d declarations, %d proof terms -> out/%s.dk, .json, -hide.dkgf, -proofs.dk'
-              % (m, len(decls), len(proofs), m))
+        print('%s: %d declarations, %d proof terms -> %s.dk, .json, -hide.dkgf, -proofs.dk'
+              % (m, len(decls), len(proofs), os.path.join(OUT, m)))
     # the eliminators into propositions of the data types, for the proof texts
     if PROPOSITIONS:
         tr = Translator(env, names, PROPOSITIONS, VARIABLE_NAMES)
