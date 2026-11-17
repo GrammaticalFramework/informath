@@ -151,8 +151,10 @@ partial def binder (n : Name) (t b : Expr) (bi : BinderInfo) (isLam : Bool) : M 
       if prop && !b.hasLooseBVars then return s!"if {paren (← tr t)} {paren bs}"
       if prop then return s!"forall (Proof {paren (← tr t)}) ({nm} => {bs})"
       return s!"forall {paren (← tr t)} ({nm} => {bs})"
-    if !b.hasLooseBVars then return s!"{← hypoType t} -> {bs}"
-    return s!"({nm} : {← hypoType t}) -> {bs}"
+    -- a function type: its codomain a type too (Elem X, not X)
+    let cod ← hypoType body
+    if !b.hasLooseBVars then return s!"{← hypoType t} -> {cod}"
+    return s!"({nm} : {← hypoType t}) -> {cod}"
 
 /-- The type of a hypothesis or a value: Proof P, Set, Prop, or Elem α. -/
 partial def hypoType (t : Expr) : M String := do
@@ -198,18 +200,23 @@ partial def app (c : Name) (args : Array Expr) : M String := do
 end
 
 /-- The statement of a declaration as a Dedukti type: its binders as
-hypotheses, its conclusion as Proof P or as the type of what it defines. -/
-partial def statement (t : Expr) : M String := do
+hypotheses, its conclusion as Proof P or as the type of what it defines.
+A theorem keeps its instance hypotheses, as `(_ : Proof (C α))`; any other
+constant drops them, as its applications do. -/
+partial def statementGo (isThm : Bool) (t : Expr) : M String := do
   match t with
   | .forallE n ty b bi =>
     let prop ← isProp ty
     let nm ← freshName n prop (sortish ty)
     withLocalDecl (Name.mkSimple nm) bi ty fun y => do
-      let rest ← statement (b.instantiate1 y)
-      let h ← if bi == .instImplicit then pure s!"(_ : Proof {paren (← tr ty)})"
-              else pure s!"({nm} : {← hypoType ty})"
-      return s!"{h} -> {rest}"
+      let rest ← statementGo isThm (b.instantiate1 y)
+      if bi == .instImplicit then
+        if isThm then return s!"(_ : Proof {paren (← tr ty)}) -> {rest}" else return rest
+      return s!"({nm} : {← hypoType ty}) -> {rest}"
   | _ => hypoType t
+
+partial def statement (t : Expr) : M String := do
+  statementGo (← isProp t) t
 
 /-- The definiens of a definition, its λs matching the binders of its type. -/
 partial def value (t v : Expr) : M String := do
@@ -218,6 +225,8 @@ partial def value (t v : Expr) : M String := do
     let nm ← freshName n (← isProp ty) (sortish ty)
     withLocalDecl (Name.mkSimple nm) bi ty fun y => do
       let rest ← value (b.instantiate1 y) (vb.instantiate1 y)
+      -- the instances are not arguments of a definition (see statement)
+      if bi == .instImplicit then return rest
       return s!"{nm} => {rest}"
   | _, _ => tr v
 
