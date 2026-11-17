@@ -126,6 +126,7 @@ The steps of `readEnv`, with the choices made in each:
    | `#IMPLICIT A` | `implicitTypes` | variables of type A left unsaid |
    | `#SEMANTICS f = ...` | `semanticsTable` | user-defined semantics in parsing |
    | `#NLG f = ...` | `nlgTable` | user-defined variants in generation |
+   | `#TYPENOUN c n` | `typeNounTable` | with `-typing`: an element of the type family c is an n, "there is an identification $p : x = y$" |
 
    For a constant entry, the first form is the *primary* one. The others are
    *symbolic* forms (those of a symbolic category, such as the `$...$` forms

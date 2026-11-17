@@ -6,7 +6,9 @@ module MathCore2Informath where
 import GodementNLG (godementVariants, godementVariantsSafe)
 import Informath
 import Environment
-import BuildConstantTable (nlgTable)
+import BuildConstantTable (nlgTable, typeNounTable)
+import PGF (mkApp, mkCId)
+import qualified Data.Map as M
 import Semantics (appNLGDefs)
 
 import Data.List (nub)
@@ -52,7 +54,38 @@ nlg env tree = case () of
    chosenVariants = case () of
      _ | isFlag "-more-variants" env ->
        concat [[ft], afts, iafts, viafts, cviafts, ncviafts, vncviafts, uservariants]
+     _ | isFlag "-typing" env -> map (typing (typeNounTable (symbolTable env)) . letDeclared) ncviafts
      _ -> map letDeclared ncviafts
+
+-- | Typings as in type theory (-typing): "let $x, y : A$" for "let $x, y \\in A$",
+-- and a conclusion "then $c$ is an element of $T$", $T$ a formula, as "then
+-- $c : T$", or "then there is an identification $c : T$" if the head of $T$
+-- has a noun for its elements (#TYPENOUN, given here by constant or macro)
+typing :: M.Map String String -> Tree a -> Tree a
+typing nouns t = case t of
+  GElemDeclaration ts term -> GTypingDeclaration ts term
+  GAxiomExpJmt label hypos (GTermExp e) kind | Just term <- kindTerm kind ->
+    GAxiomJmt label (typing nouns hypos) (declProp term (GTypingDeclaration (GListTerm [e]) term))
+  _ -> composOp (typing nouns) t
+ where
+   kindTerm :: GKind -> Maybe GTerm
+   kindTerm k = case k of
+     GElemKind k' -> kindTerm k'
+     GExpKind (GTermExp term) -> Just term
+     _ -> Nothing
+   declProp :: GTerm -> GDeclaration -> GProp
+   declProp term decl = case headMacro term >>= flip M.lookup nouns of
+     Just n -> GThereIsDeclarationProp (fg (mkApp (mkCId n) [])) decl
+     Nothing -> GDeclarationProp decl
+   headMacro :: GTerm -> Maybe String
+   headMacro term = case term of
+     GMacroTerm (GStringMacro (GString m)) -> Just m
+     GApp1MacroTerm (GStringMacro (GString m)) _ -> Just m
+     GApp2MacroTerm (GStringMacro (GString m)) _ _ -> Just m
+     GApp3MacroTerm (GStringMacro (GString m)) _ _ _ -> Just m
+     GApp4MacroTerm (GStringMacro (GString m)) _ _ _ _ -> Just m
+     GApp5MacroTerm (GStringMacro (GString m)) _ _ _ _ _ -> Just m
+     _ -> Nothing
 
 -- | Variables of a set given by a term are declared with a formula: "let
 -- $x, y \\in G$" rather than "let $x$ and $y$ be elements of $G$", also

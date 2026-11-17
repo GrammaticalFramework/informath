@@ -473,6 +473,16 @@ is read off the constant's type: the arguments that yield a proof, which
 covers the functions that a rule discharging hypotheses takes, such as the
 step case of induction.
 
+With the flag `-typing`, statements are read with typings as in type theory:
+"let $x, y : A$" instead of "let $x, y \in A$", and a conclusion "then $c$ is an
+element of $T$", where $T$ is a formula, as "then $c : T$". If the type family
+at the head of $T$ has a noun for its elements, given by the directive
+```
+#TYPENOUN Id identification_Noun
+```
+the conclusion is "then there is an identification $c : x = y$", as in
+homotopy type theory, where an identity type is both a proposition and a type.
+
 Instead of symbolic expressions between dollars, a symbol table can contain a macro symbol and a separate directive
 ```
 #MACRO <latex_newcommand>

@@ -116,6 +116,10 @@ fun
   PostQuantProp : Prop -> Quant -> Prop ;
 
   LetDeclarationHypo : Declaration -> Hypo ;
+  -- a typing as a statement (-typing): "$c : A$", and with the noun of the
+  -- type family (#TYPENOUN Id identification_Noun): "there is an identification $c : x = y$"
+  DeclarationProp : Declaration -> Prop ;
+  ThereIsDeclarationProp : Noun -> Declaration -> Prop ;
 
   DefinedAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;
   WeDefineAdjJmt : Label -> [Hypo] -> Exp -> Adj -> Prop -> Jmt ;

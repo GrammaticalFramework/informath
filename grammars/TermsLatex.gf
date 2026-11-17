@@ -27,6 +27,7 @@ lin
   
   ElemDeclaration es e = {s = es.s ++ "\\in" ++ top e ; isPl = es.isPl} ;
   FunctionDeclaration f a b = {s = f ++ ":" ++ top a ++ "\\rightarrow" ++ top b ; isPl = False} ;
+  TypingDeclaration es e = {s = es.s ++ ":" ++ top e ; isPl = es.isPl} ;
 
   ChainEquation op x eq = {s = top x ++ op ++ eq.s} ;
   BinaryEquation op x y = {s = top x ++ op ++ top y} ;

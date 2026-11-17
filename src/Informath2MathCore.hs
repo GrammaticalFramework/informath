@@ -169,7 +169,15 @@ sem env t = case t of
     GElemDeclaration (GListTerm terms) term | length xs == length terms ->
       GVarsHypo (GListIdent xs) (sem env (GExpKind (GTermExp term)))
         where xs = [x | GIdentTerm x <- terms]
+    -- "let $x, y : A$" (-typing), the same
+    GTypingDeclaration (GListTerm terms) term | length xs == length terms ->
+      GVarsHypo (GListIdent xs) (sem env (GExpKind (GTermExp term)))
+        where xs = [x | GIdentTerm x <- terms]
     d -> GLetDeclarationHypo d
+  -- a declaration as a statement, "$a \\in A$", "$c : T$" (-typing), and "there
+  -- is an identification $c : T$": membership, the noun being only wording
+  GDeclarationProp decl -> declarationProp (sem env decl)
+  GThereIsDeclarationProp _ decl -> declarationProp (sem env decl)
   -- "let $x, y \\in A$ such that P", as MathCore2Informath generates it
   GLetFormulaSuchThatHypo formula prop -> case (sem env formula) of
     GElemFormula (GListTerm terms) term | length xs == length terms ->
@@ -502,3 +510,9 @@ boundVar f = case f of
   GEquationFormula (GBinaryEquation _ (GIdentTerm x) _) -> Just x
   _ -> Nothing
 
+-- | A declaration read as a proposition: membership, $a \\in A$
+declarationProp :: GDeclaration -> GProp
+declarationProp decl = case decl of
+  GElemDeclaration ts term -> GFormulaProp (GElemFormula ts term)
+  GTypingDeclaration ts term -> GFormulaProp (GElemFormula ts term)
+  _ -> GDeclarationProp decl

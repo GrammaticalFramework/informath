@@ -312,6 +312,10 @@ def term_proofs(modules):
 # not make it an operation, and labels that the statement mentions are kept
 # (-statement-labels): "assume that x = y (p)"
 PROP_FLAGS = ['-statement-labels']
+# with TYPING_READINGS in the project's config.py, every statement is also read
+# with typings as in type theory (-typing): "let p : x = y", "then there is an
+# identification c : T" (#TYPENOUN in the symbol table)
+TYPING_FLAGS = ['-typing']
 
 
 def prop_pieces(modules, theorems):
@@ -351,6 +355,10 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(8) as ex:
         for key, out in ex.map(lambda p: reading(*p), pieces):
             results[key] = out
+        if project.get('TYPING_READINGS', False):
+            stmts = [(k, dk) for k, dk in pieces if k[1] == 'stmt']
+            for key, out in ex.map(lambda p: reading(*p, flags=TYPING_FLAGS), stmts):
+                results[(key[0], 'typing')] = out
         theorems = {d['dk'] for d in decls if d.get('proofTerm')}
         for key, out in ex.map(lambda p: reading(*p, flags=PROP_FLAGS), prop_pieces(MODULES, theorems)):
             results[key] = out
@@ -386,6 +394,9 @@ def main():
     for d in decls:
         if d.get('dk') in terms:
             d['proof'] = terms[d['dk']]
+    for d in decls:
+        if (d['coq'], 'typing') in results:
+            d['typingReadings'] = results[(d['coq'], 'typing')]
     for d in decls:
         if (d.get('dk'), 'prop') in results:
             d['propReadings'] = results[(d['dk'], 'prop')]

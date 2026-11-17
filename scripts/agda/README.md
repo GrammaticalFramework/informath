@@ -81,10 +81,15 @@ that a project can put each definition under the item of its text.
   recursive call needs an induction hypothesis (`out/eliminators.dk`:
   `ind_D_P`, `cases_D_P`), with a motive; recursive calls become induction
   hypotheses; type definitions such as `ℤ = coprod ℕ (coprod unit ℕ)` are
-  unfolded. The proof terms are in `out/<M>-proofs.dk`, read by
-  `rocq-index.py`. A definition whose recursive calls are not induction
-  hypotheses, or which splits on an argument that a later one depends on
-  inside other splits, keeps its rewrite rules (`AGDAPROOF_DEBUG=1` says
-  why). In HTML,
+  unfolded. An argument that depends on the split one, or that a recursive
+  call changes, is generalized over in the motive ("for all y, if Eq(x, y)
+  then x = y"), introduced in each case and eliminated after; the induction
+  hypothesis is then the generalized statement, applied to the call's own
+  arguments. A case that no clause covers is impossible: an argument's type
+  computes to the empty type there (Eq-ℕ 0 (succ y)), which is eliminated.
+  The proof terms are in `out/<M>-proofs.dk`, read by `rocq-index.py`. A
+  definition whose recursive calls are not induction hypotheses, or whose
+  split argument has indices that are not variables, keeps its rewrite rules
+  (`AGDAPROOF_DEBUG=1` says why). In HTML,
   `proof_folds.inductions` collapses an induction with a generalized motive
   to one line, "by path induction on $p$", which ⊕ unfolds.

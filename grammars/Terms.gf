@@ -29,6 +29,7 @@ fun
   
   ElemDeclaration : [Term] -> Term -> Declaration ;
   FunctionDeclaration : Ident -> Term -> Term -> Declaration ;
+  TypingDeclaration : [Term] -> Term -> Declaration ;  -- x, y : A, as in type theory
 
   ChainEquation : Compar -> Term -> Equation -> Equation ;
   BinaryEquation : Compar -> Term -> Term -> Equation ;

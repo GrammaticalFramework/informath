@@ -127,7 +127,10 @@ data SymbolTable = SymbolTable {
   -- arguments of Lean), counted from 1; the entries of c count the others
   hideTable :: M.Map QIdent [Int],
   -- #COERCION c k: c is read as its k'th argument (counted before #HIDE)
-  coercionTable :: M.Map QIdent Int
+  coercionTable :: M.Map QIdent Int,
+  -- #TYPENOUN c n: an element of a type c ... is called an n (Id: an
+  -- identification), with -typing; keyed by c and by the LaTeX macros of c
+  typeNounTable :: M.Map String String
   }
 
 -- conversion from Dk to GF, with synonyms and category information
@@ -227,6 +230,9 @@ buildSymbolTable pgf lang ls = SymbolTable {
   implicitTypes = implicitTypes,
   hideTable = M.fromList [(QIdent c, map read ns) | "#HIDE":c:ns <- entrylines],
   coercionTable = M.fromList [(QIdent c, read k) | ["#COERCION", c, k] <- entrylines],
+  typeNounTable = M.fromList ([(c, n) | ["#TYPENOUN", c, n] <- entrylines] ++
+                              [(m, n) | ["#TYPENOUN", c, n] <- entrylines,
+                                        (qid:_, macros) <- numberedlines, qid == c, m <- macros]),
   excludedConstants = S.fromList [QIdent c | line <- filter isExclude (entrylines), c <- tail line]
   }
  where

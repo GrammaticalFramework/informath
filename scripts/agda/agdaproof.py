@@ -22,7 +22,7 @@ A definition that does not have this shape (matching on two arguments,
 nested patterns, a later argument whose type depends on the matched one)
 keeps its rewrite rules.
 """
-import os, sys
+import os, re, sys
 from agdaterm import paren, short
 
 
@@ -157,6 +157,17 @@ def replace_calls(t, fname, i, recvars, ihs):
                 return ['var', ihs[args[i][2][1]], []]
         return [replace_calls(u, fname, i, recvars, ihs) for u in t]
     return t
+
+
+def calls_of(t, fname):
+    """The recursive calls in a JSON term."""
+    out = []
+    if isinstance(t, list) and t:
+        if t[0] == 'def' and t[1] == fname:
+            out.append(t)
+        for u in t:
+            out += calls_of(u, fname)
+    return out
 
 
 def mentions_calls(t, fname):
@@ -327,12 +338,7 @@ def subst_json(t, s):
     if not s or not isinstance(t, list) or not t:
         return t
     if t[0] == 'var' and t[1] in s:
-        new, elims = s[t[1]], [subst_json(e, s) for e in t[2]]
-        if not elims:
-            return new
-        if new[0] in ('var', 'def', 'con'):
-            return new[:2] + [new[2] + elims]
-        raise NoProof('applied substitution')
+        return apply_json(s[t[1]], [subst_json(e, s) for e in t[2]])
     if t[0] == 'lam':
         s2 = {k: v for k, v in s.items() if k != t[2]}
         return t[:3] + [subst_json(t[3], s2)]
@@ -340,6 +346,19 @@ def subst_json(t, s):
         s2 = {k: v for k, v in s.items() if k != t[2]}
         return t[:3] + [subst_json(t[3], s), subst_json(t[4], s2)]
     return [subst_json(u, s) for u in t]
+
+
+def apply_json(f, elims):
+    """A JSON term applied to eliminations, a lambda beta-reduced (the family
+    λ a → ... of a Σ-type applied to the first component)."""
+    for k, e in enumerate(elims):
+        if f[0] in ('var', 'def', 'con'):
+            return f[:2] + [f[2] + elims[k:]]
+        if f[0] == 'lam' and e[0] == 'app':
+            f = subst_json(f[3], {f[2]: e[2]})
+            continue
+        raise NoProof('applied substitution')
+    return f
 
 
 def free_in(v, t):
@@ -369,6 +388,48 @@ def unfold(T, env):
             return T
         T = subst_json(cs[0]['body'], {p[1][1]: a[2] for p, a in zip(pats, args)})
     return T
+
+
+def match_pat(p, t, env, s):
+    """Match a clause pattern against a JSON term (computed as far as needed), binding s."""
+    if p[0] == 'var':
+        s[p[1]] = t
+        return True
+    if p[0] == 'dot':
+        return True
+    if p[0] == 'con':
+        t = whnf(t, env)
+        if t[0] != 'con' or t[1] != p[1]:
+            return False
+        args = [e[2] for e in t[2] if e[0] == 'app']
+        subs = [q for h, q in p[2]]
+        if len(args) != len(subs):
+            args = args[-len(subs):] if len(args) > len(subs) else None
+            if args is None:
+                return False
+        return all(match_pat(q, a, env, s) for q, a in zip(subs, args))
+    return False
+
+
+def whnf(t, env, fuel=50):
+    """A type or term computed by the clauses of the definitions at its head
+    (Eq-ℕ zero-ℕ (succ-ℕ y) to empty), as far as they match."""
+    while fuel > 0 and t and t[0] == 'def' and t[1] in env:
+        fuel -= 1
+        d = env[t[1]]
+        args = [e[2] for e in t[2] if e[0] == 'app']
+        if len(args) != len(t[2]):
+            return t
+        for c in d.get('clauses') or []:
+            if c.get('body') is None or len(c['pats']) != len(args):
+                continue
+            s = {}
+            if all(match_pat(p[1], a, env, s) for p, a in zip(c['pats'], args)):
+                t = subst_json(c['body'], s)
+                break
+        else:
+            return t
+    return t
 
 
 def _sub_pats(p, kept, cargs):
@@ -432,6 +493,20 @@ def _case_tree(tr, names, d, env, clauses):
     def args_key(vals):
         return tuple(_norm(tr.term(vals[bs[j][1]], taken)) for j in real)
 
+    def absurd(val, types, opened):
+        """An impossible case: an open argument whose type computes to the
+        empty type, eliminated (ex falso)."""
+        empty = next((q for q, e in env.items() if short(q) == 'empty' and e['kind'] == 'data'), None)
+        if empty is None:
+            raise NoProof('absurd case')
+        for u in opened:
+            if whnf(types[u], env)[:2] == ['def', empty]:
+                goal = tr.term(subst_json(res, val), taken)
+                z = tr.fresh('z', taken)
+                splits.append(u)
+                return '%s (%s => %s) %s' % (elim_name(names, empty, 'cases'), z, goal, u)
+        raise NoProof('absurd case')
+
     def leaf(rows, val, ihs):
         r = rows[0]
         body = subst_json(r['body'], r['ren'])
@@ -442,15 +517,27 @@ def _case_tree(tr, names, d, env, clauses):
                     args = [e for e in t[2] if e[0] == 'app']
                     if len(args) == n and len(t[2]) == n:
                         key = tuple(_norm(tr.term(args[j][2], taken)) for j in real)
-                        for k, ih in ihs:
-                            if k == key:
+                        for entry in ihs:
+                            k, ih = entry[0], entry[1]
+                            if len(k) == len(key) and all(a is None or a == b for a, b in zip(k, key)):
+                                if len(entry) > 2:
+                                    # a generalized hypothesis, applied to the call's arguments
+                                    mark = 'IHAPP%d' % len(applied)
+                                    applied[mark] = entry[2](args)
+                                    return ['var', mark, []]
                                 return ['var', ih, []]
                     raise NoProof('recursive call not an induction hypothesis')
                 return [repl(u) for u in t]
             return t
-        return tr.term(repl(body), taken)
+        applied = {}
+        out = tr.term(repl(body), dict(taken, **{m: 'proof' for m in ['IHAPP%d' % i for i in range(20)]}))
+        for mark, app in applied.items():
+            out = re.sub(r'(?<![\w\'])%s(?![\w\'])' % mark, lambda m: '(%s)' % app, out)
+        return out
 
     def build(rows, opened, val, types, ihs):
+        if not rows:
+            return absurd(val, types, opened)
         settle(rows, opened)
         # the split: the first constructor pattern of the first row
         r0 = rows[0]
@@ -476,13 +563,67 @@ def _case_tree(tr, names, d, env, clauses):
             idx.append(e[2][1])
         if len(set(idx)) != len(idx) or any(free_in(y, e[2]) for y in idx for e in pargs):
             raise NoProof('indices')
-        # no other open argument may depend on the split one or its indices
+        # the open arguments that depend on the split one or its indices (q : y = z
+        # when p : x = y is split): the motive generalizes over them ("for all
+        # q : y = z, ..."), each case introduces them (forallI, ifI), and the
+        # eliminator's result is applied to them (forallE, ifE)
+        # and, if the type is recursive, those that a recursive call changes
+        # (eq-Eq-ℕ (succ x) (succ y) e calls eq-Eq-ℕ x y e: for all y, ...)
+        changed = set()
+        if is_recursive(D, env):
+            pos = {u: j for j in real for u in [bs[j][1]] if val[u] == ['var', u, []]}
+            for r in rows:
+                for call in calls_of(r['body'], d['name']):
+                    args = [e for e in call[2] if e[0] == 'app']
+                    if len(args) != n:
+                        continue
+                    for u, j in pos.items():
+                        if u == v or u in idx or u not in opened:
+                            continue
+                        p = r['pats'].get(u, ['dot'])
+                        if not (p[0] == 'var' and args[j][2] == ['var', p[1], []]):
+                            changed.add(u)
+        gen, deps = [], set([v] + idx)
+        after = opened[opened.index(v) + 1:]
         for u in opened:
-            if u != v and u not in idx and any(free_in(w, types[u]) for w in [v] + idx):
-                raise NoProof('dependent argument')
-        rest = [u for u in opened if u != v and u not in idx]
-        goal = tr.term(subst_json(res, val), taken)
-        motive = ' => '.join(idx + [v]) + ' => ' + goal
+            if u != v and u not in idx and (any(free_in(w, types[u]) for w in deps)
+                                            or (u in changed and u in after)):
+                gen.append(u)
+                deps.add(u)
+        for u in gen:
+            if tr.is_kind(types[u]) or (tr.is_prop_family(types[u]) and not tr.is_prop_type(types[u])):
+                raise NoProof('dependent type argument')
+
+        def gen_prop(k, sub, vals):
+            if k == len(gen):
+                return tr.term(subst_json(res, vals), taken)
+            u = gen[k]
+            t = subst_json(types[u], sub)
+            if tr.is_prop_type(t):
+                return 'if (%s) (%s)' % (tr.term(t, taken), gen_prop(k + 1, sub, vals))
+            return 'forall (%s) (%s => %s)' % (tr.set(t, taken), u, gen_prop(k + 1, sub, vals))
+
+        def introduce(body, sub, vals):
+            for k in range(len(gen) - 1, -1, -1):
+                u = gen[k]
+                t = subst_json(types[u], sub)
+                rest = gen_prop(k + 1, sub, vals)
+                if tr.is_prop_type(t):
+                    body = 'ifI (%s) (%s) (%s => %s)' % (tr.term(t, taken), rest, u, body)
+                else:
+                    body = 'forallI (%s) (%s => %s) (%s => %s)' % (tr.set(t, taken), u, rest, u, body)
+            return body
+
+        def eliminate(e):
+            for k in range(len(gen)):
+                u = gen[k]
+                rest = gen_prop(k + 1, {}, val)
+                if tr.is_prop_type(types[u]):
+                    e = 'ifE (%s) (%s) (%s) %s' % (tr.term(types[u], taken), rest, e, u)
+                else:
+                    e = 'forallE (%s) (%s => %s) (%s) %s' % (tr.set(types[u], taken), u, rest, e, u)
+            return e
+        motive = ' => '.join(idx + [v]) + ' => ' + gen_prop(0, {}, val)
         cases = []
         for c in D.get('constructors', []):
             cd = env[c]
@@ -493,8 +634,6 @@ def _case_tree(tr, names, d, env, clauses):
                 s[cv] = e[2]
             saved = set(taken)
             my = [r for r in rows if r['pats'][v][0] != 'con' or r['pats'][v][1] == c]
-            if not my:
-                raise NoProof('absurd case')
             first = next((r for r in my if r['pats'][v][0] == 'con'), None)
             fsub = [p for h, p in first['pats'][v][2]] if first else []
             new, lams, recs, atypes = [], [], [], {}
@@ -540,7 +679,38 @@ def _case_tree(tr, names, d, env, clauses):
                     s2[y] = t
                 ih = fresh('ih', 'proof')
                 ihnames.append(ih)
-                ihs2.append((args_key({k: subst_json(t, s2) for k, t in val.items()}), ih))
+                if not gen:
+                    ihs2.append((args_key({k: subst_json(t, s2) for k, t in val.items()}), ih))
+                    continue
+                # with a generalized motive, the hypothesis is the generalized
+                # statement for the recursive argument; a recursive call matches it
+                # whatever its generalized arguments, and applies it to them
+                genpos = {}
+                for u in gen:
+                    js = [j for j in real if val[bs[j][1]] == ['var', u, []]]
+                    if not js:
+                        raise NoProof('generalized induction')
+                    genpos[u] = js[0]
+                s2v = {k: subst_json(t, s2) for k, t in val.items()}
+                key = tuple(None if j in genpos.values() else _norm(tr.term(s2v[bs[j][1]], taken)) for j in real)
+
+                def apply_ih(args, ih=ih, s2=dict(s2), genpos=genpos, gen=list(gen), types=dict(types),
+                             val=dict(val), gen_prop=gen_prop):
+                    e, acc = ih, dict(s2)
+                    for k, u in enumerate(gen):
+                        a = args[genpos[u]][2]
+                        t = subst_json(types[u], acc)
+                        acc2 = dict(acc, **{u: a})
+                        if tr.is_prop_type(t):
+                            rest = gen_prop(k + 1, acc2, {kk: subst_json(tt, acc2) for kk, tt in val.items()})
+                            e = 'ifE (%s) (%s) (%s) %s' % (tr.term(t, taken), rest, e, paren(tr.arg(a, taken)))
+                        else:
+                            rest = gen_prop(k + 1, acc, {kk: subst_json(tt, acc) for kk, tt in val.items()})
+                            e = 'forallE (%s) (%s => %s) (%s) %s' % (tr.set(t, taken), u, rest, e,
+                                                                       paren(tr.arg(a, taken)))
+                        acc = acc2
+                    return e
+                ihs2.append((key, ih, apply_ih))
             rows2 = []
             for r in my:
                 p = r['pats'][v]
@@ -561,7 +731,7 @@ def _case_tree(tr, names, d, env, clauses):
                 rows2.append({'pats': pats, 'body': r['body'], 'ren': ren})
             pos = opened.index(v)
             opened2 = [u for u in opened[:pos] if u not in idx] + new + [u for u in opened[pos + 1:] if u not in idx]
-            body = build(rows2, opened2, val2, types2, ihs2)
+            body = introduce(build(rows2, opened2, val2, types2, ihs2), sub, val2)
             cases.append((new, ihnames, body))
             # the names of a case are bound in it only: the next case may use them again
             for u in list(taken):
@@ -574,8 +744,8 @@ def _case_tree(tr, names, d, env, clauses):
         kinds = elim_kinds(tr, D, env)
         kind = 'ind' if used or 'cases' not in kinds else 'cases'
         cases = [''.join('%s => ' % l for l in new + (ihs_ if kind == 'ind' else [])) + b for new, ihs_, b in cases]
-        return ' '.join([elim_name(names, D['name'], kind)] + params + ['(%s)' % motive]
-                        + ['(%s)' % c for c in cases] + idx + [v])
+        return eliminate(' '.join([elim_name(names, D['name'], kind)] + params + ['(%s)' % motive]
+                                  + ['(%s)' % c for c in cases] + idx + [v]))
 
     term = build(rows, opened, val, types, [])
     # the variables of the splits, in the order of their lines in the proof

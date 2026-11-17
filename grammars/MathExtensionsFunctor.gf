@@ -147,6 +147,9 @@ lin
     simpleProp (postAdvS prop.s (Syntax.mkAdv for_Prep exp)) ; -- ambiguous: there is no complexProp in Informath
 
   LetDeclarationHypo decl = lin Utt {s = let_Str ! decl.isPl ++ "$" ++ decl.s ++ "$"} ;
+  DeclarationProp decl = simpleProp (latexS (mkSymb decl.s)) ;
+  ThereIsDeclarationProp noun decl =
+    simpleProp (mkS (mkCl (mkNP a_Det (mkCN noun (latexNP (mkSymb decl.s)))))) ;
 
   DefinedAdjJmt label hypos exp adj prop =
     labelText (label)
