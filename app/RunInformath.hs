@@ -154,6 +154,7 @@ helpMsg4 = [
   just "-proof-trees" "with -proof-text, also show the proofs as natural deduction trees (bussproofs)",
   just "-proof-indent" "with -proof-text, indent each line by the assumptions open at it",
   just "-proof-goals" "with -proof-text, state the goal of each assumption: to prove that B, assume that A",
+  just "-statement-labels" "keep the label of a hypothesis that the statement refers to: assume that x = y (p), as of an identification p",
   just "-show-implicit-hypotheses" "introduce the variables of the types that the symbol table declares #IMPLICIT, in statements and proof texts",
   just "-proof-no-cite" "with -proof-text, name no theorem in the text (\"by ex25_set, B\"): the margin cites every rule",
   just "-proof-merge-hypos" "with -proof-text, the variables and hypotheses of a scope in one line: let x be an A such that B",

@@ -75,10 +75,11 @@ def run(args, dk, timeout=TIMEOUT):
     return r.stdout if r.returncode == 0 else None
 
 
-def reading(key, dk):
+def reading(key, dk, flags=()):
     """language -> reading, and the formula, of one piece."""
     out = {}
-    js = run(['-json', '-no-back-to-dedukti', '-languages=' + ','.join(LANGUAGES), '-add-symboltables=' + TABLE], dk)
+    js = run(['-json', '-no-back-to-dedukti', '-languages=' + ','.join(LANGUAGES), '-add-symboltables=' + TABLE]
+             + list(flags), dk)
     if js:
         lines = [json.loads(l) for l in js.split('\n') if l.strip()]
         rule = len(key) == 3
@@ -96,7 +97,7 @@ def reading(key, dk):
                     out[lang] = (out[lang] + ' ' if lang in out else '') + t.strip()
             if rule:
                 break
-    tex = run(['-add-symboltables=' + TABLE, '-to-symbolic-latex'], dk)
+    tex = run(['-add-symboltables=' + TABLE, '-to-symbolic-latex'] + list(flags), dk)
     if tex:
         ls = [l for l in tex.split('\n') if l.strip()]
         if len(key) == 3:
@@ -304,6 +305,30 @@ def term_proofs(modules):
     return out
 
 
+# the statements of the theorems as propositions (agda-export.py: out/<M>-prop.dk,
+# where an identification is a proof, Proof (Id A x y)): "Then x + y = y + x",
+# besides "Then commutative-add(x, y) is an element of x + y = y + x". The
+# declared constant is renamed, so that its symbol table entry (if any) does
+# not make it an operation, and labels that the statement mentions are kept
+# (-statement-labels): "assume that x = y (p)"
+PROP_FLAGS = ['-statement-labels']
+
+
+def prop_pieces(modules, theorems):
+    """[(key, Dedukti)] for the proposition readings of the theorems (Dedukti names)."""
+    out = []
+    for m in modules:
+        f = os.path.join(OUT, m + '-prop.dk')
+        if not os.path.exists(f):
+            continue
+        for block in open(f).read().split('\n\n'):
+            line = '\n'.join(l for l in block.strip().split('\n') if not l.startswith('(;')).strip()
+            mm = re.match(r"([A-Za-z_][\w']*) :", line)
+            if mm and mm.group(1) in theorems:
+                out.append(((mm.group(1), 'prop'), mm.group(1) + '__thm' + line[len(mm.group(1)):]))
+    return out
+
+
 def main():
     global TABLE
     # the symbol table with the implicit arguments of the export hidden
@@ -325,6 +350,9 @@ def main():
     results = {}
     with concurrent.futures.ThreadPoolExecutor(8) as ex:
         for key, out in ex.map(lambda p: reading(*p), pieces):
+            results[key] = out
+        theorems = {d['dk'] for d in decls if d.get('proofTerm')}
+        for key, out in ex.map(lambda p: reading(*p, flags=PROP_FLAGS), prop_pieces(MODULES, theorems)):
             results[key] = out
     macros = {}
     proofs, shorts, counts = {}, {}, {}
@@ -358,6 +386,9 @@ def main():
     for d in decls:
         if d.get('dk') in terms:
             d['proof'] = terms[d['dk']]
+    for d in decls:
+        if (d.get('dk'), 'prop') in results:
+            d['propReadings'] = results[(d['dk'], 'prop')]
     for d in decls:
         n = d['coq']
         d['readings'] = results.get((n, 'stmt'), {})

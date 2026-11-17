@@ -32,9 +32,14 @@ nlg env tree = case () of
    -- (p)"): neither aggregated (which would attach or pair the proposition)
    -- nor varless (which drops the labels)
    labelled = isFlag "-proof-labels" env && hasPropLabel t
-   afts = if labelled then [ft] else [(if safe then aggregateSafe else aggregate) ft]
+   -- -statement-labels: a label that the statement refers to is kept, "assume
+   -- that x = y (p)", as in a statement about identifications; the others are dropped
+   keepLabels = isFlag "-statement-labels" env
+   afts | labelled = [ft]
+        | keepLabels = [aggregateKeepingLabels (unusedLabelsDropped ft)]
+        | otherwise = [(if safe then aggregateSafe else aggregate) ft]
    iafts = map insitu afts
-   viafts = if labelled then iafts else map varless iafts
+   viafts = if labelled || keepLabels then iafts else map varless iafts
    cviafts = concatMap (if safe then collectivizeSafe else collectivize) viafts
    ncviafts = map (scoped . implied . negated) cviafts  -- better do this at this late stage
    vncviafts = concatMap (\u -> filter (not safe ||| restorableVariation u) (variations u)) ncviafts
@@ -150,12 +155,21 @@ aggregateSafe :: Tree a -> Tree a
 aggregateSafe = aggregateWith True
 
 aggregateWith :: Bool -> Tree a -> Tree a
-aggregateWith safe t = case t of
-  GCoreNotProp prop -> case aggregateWith safe prop of
+aggregateWith safe = aggregateWithL safe False
+
+-- | aggregate with the labels of propositions kept (-statement-labels): a
+-- labelled hypothesis, "assume that x = y (p)", is neither attached to its
+-- variables nor paired with another one
+aggregateKeepingLabels :: Tree a -> Tree a
+aggregateKeepingLabels = aggregateWithL False True
+
+aggregateWithL :: Bool -> Bool -> Tree a -> Tree a
+aggregateWithL safe keep t = case t of
+  GCoreNotProp prop -> case aggregateWithL safe keep prop of
     GAdjProp adj x -> GNotAdjProp adj x
     aprop -> GCoreNotProp aprop
   GAndProp (GListProp props) ->
-    case groupProps "and" (map (aggregateWith safe) props) of
+    case groupProps "and" (map (aggregateWithL safe keep) props) of
       [p] -> p
       pp -> GAndProp (GListProp pp)
   GOrProp (GListProp props) ->
@@ -166,19 +180,19 @@ aggregateWith safe t = case t of
   -- a variable with a condition on it, a comparison: "for all real numbers
   -- $\\epsilon > 0$, P", "there exists a real number $\\delta > 0$ such that P"
   GCoreAllProp kind x (GIfProp cond body) | Just f <- bounding x cond ->
-    boundedAll kind f (aggregateWith safe body)
+    boundedAll kind f (aggregateWithL safe keep body)
   GCoreAllProp kind x (GCoreIfProp cond body) | Just f <- bounding x cond ->
-    boundedAll kind f (aggregateWith safe body)
+    boundedAll kind f (aggregateWithL safe keep body)
   GCoreExistProp kind x (GAndProp (GListProp [cond, body])) | Just f <- bounding x cond ->
-    boundedExist kind f (aggregateWith safe body)
+    boundedExist kind f (aggregateWithL safe keep body)
   GCoreExistProp kind x (GCoreAndProp cond body) | Just f <- bounding x cond ->
-    boundedExist kind f (aggregateWith safe body)
+    boundedExist kind f (aggregateWithL safe keep body)
   GCoreAllProp kind x prop -> case getAlls kind prop of
-    (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWith safe body)
+    (ys, body) -> GAllProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWithL safe keep body)
   GCoreExistProp kind x prop -> case getExists kind prop of
-    (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWith safe body)
-  GListHypo hypos -> GListHypo ((if safe then aggregateHyposSafe else aggregateHypos) hypos)
-  _ -> composOp (aggregateWith safe) t
+    (ys, body) -> GExistProp (GListArgKind [GIdentsArgKind kind (GListIdent (x : ys))]) (aggregateWithL safe keep body)
+  GListHypo hypos -> GListHypo (aggregateHyposWithL safe keep hypos)
+  _ -> composOp (aggregateWithL safe keep) t
 
 -- | Hypotheses aggregated: variables of the same kind are brought together,
 -- as far as the type dependencies allow, and the propositions about them are
@@ -199,7 +213,10 @@ aggregateHyposSafe :: [GHypo] -> [GHypo]
 aggregateHyposSafe = aggregateHyposWith True
 
 aggregateHyposWith :: Bool -> [GHypo] -> [GHypo]
-aggregateHyposWith safe
+aggregateHyposWith safe = aggregateHyposWithL safe False
+
+aggregateHyposWithL :: Bool -> Bool -> [GHypo] -> [GHypo]
+aggregateHyposWithL safe keep
   | safe = pairProps . attachProps . groupVars . nounKinds . concatMap (splitVars . oneConjunction)
   | otherwise = pairProps . attachProps . groupVars . foldl reorderVar [] . nounKinds . concatMap (splitVars . oneConjunction)
  where
@@ -341,7 +358,7 @@ aggregateHyposWith safe
    propOfHypo :: GHypo -> Maybe GProp
    propOfHypo h = case h of
      GPropHypo p -> Just p
-     GPropVarHypo _ p -> Just p
+     GPropVarHypo _ p | not keep -> Just p
      _ -> Nothing
 
    pairProps :: [GHypo] -> [GHypo]
@@ -747,6 +764,18 @@ varless t = case t of
   GIndefIdentKindQuant _ kind -> GIndefKindQuant kind
   GPropVarHypo _ prop -> GPropHypo prop
   _ -> composOp varless t
+
+-- | The labels of propositions that nothing else in the tree mentions,
+-- dropped (-statement-labels); a bound variable of the same name counts as
+-- a mention
+unusedLabelsDropped :: Tree a -> Tree a
+unusedLabelsDropped t = drop t
+ where
+   ids = identsIn t
+   drop :: Tree b -> Tree b
+   drop u = case u of
+     GPropVarHypo x p | length (filter (== x) ids) < 2 -> GPropHypo (drop p)
+     _ -> composOp drop u
 
 -- | Whether a tree has a labelled hypothesis, "assume that A (h)"
 hasPropLabel :: Tree a -> Bool
