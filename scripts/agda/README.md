@@ -51,7 +51,16 @@ Agda name and its explicit arguments, `\mathsf{left\text{-}unit\text{-}law\text{
 (Informath's `#HIDE` would hide them in terms, but not in the head of a
 declaration, which Informath builds from the declaration's hypotheses.)
 Anonymous binders (`_`) are named by their types: `p`, `q` for
-identifications, `n`, `m` for natural numbers, `f`, `g` for functions.
+identifications, `n`, `m` for natural numbers, `f`, `g` for functions. The
+names come from a table that a project extends in its `config.py`, keyed by
+the short Agda name of the type (or `function`, `type`, `''` for the rest),
+each a string of one-letter names or a list:
+
+    VARIABLE_NAMES = {'ℕ': 'nmkl', 'ℤ': 'klmn', 'Id': 'pqrs'}
+
+The same table names the parts of the cases in the proof texts (`inl
+(succ n)`), where a part that is split further, and so does not appear in
+the cases, gets a neutral name (`x`).
 
 The comments of the source that name its numbered items (`-- Definition
 5.1.1`) and sections (`-- Section 5.2 ...`) are kept in `out/<M>.json`, so

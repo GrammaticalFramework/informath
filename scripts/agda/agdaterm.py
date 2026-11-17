@@ -113,9 +113,11 @@ class Names:
 class Translator:
     """Agda terms to Dedukti.  ctx: variable name -> 'level' | 'type' (a type
     or a family of types) | 'elem' (an element or a function)."""
-    def __init__(self, env, names, propositions=()):
+    def __init__(self, env, names, propositions=(), variable_names=None):
         self.env = env            # qname -> definition (agda-export JSON)
         self.names = names
+        # the names of variables by their types: the defaults, extended by the project's
+        self.variable_names = dict(self.VARIABLE_NAMES, **(variable_names or {}))
         self.fresh_count = 0
         # the type families read as propositions (Curry-Howard): their elements
         # are proofs, Proof (Id A x y), and a definition into one is a theorem
@@ -147,8 +149,41 @@ class Translator:
                 return n
             i += 1
 
-    # names for anonymous variables, by their types, as a mathematician would choose them
-    NAMES_BY_TYPE = [('Id', 'pqrs'), ('N', 'nmkl'), ('Z', 'kl'), ('function', 'fgh'), ('type', 'ABCD'), ('', 'xyzuvw')]
+    # names for variables by their types, as a mathematician would choose them,
+    # keyed by the short Agda name of the type, 'function', 'type', or '' for
+    # the rest; a project extends or replaces them with VARIABLE_NAMES in its
+    # config.py (Translator(..., variable_names=...))
+    VARIABLE_NAMES = {'Id': 'pqrs', '_＝_': 'pqrs', 'ℕ': 'nmkl', 'ℤ': 'klmn',
+                      'function': 'fgh', 'type': 'ABCD', '': 'xyzuvw'}
+
+    def type_key(self, t):
+        """The key of a type in VARIABLE_NAMES: its short Agda name, 'function', 'type', or ''."""
+        if t is None:
+            return ''
+        if t[0] == 'pi':
+            return 'type' if self.is_kind(t) else 'function'
+        if self.is_universe(t):
+            return 'type'
+        if t[0] == 'def':
+            return short(t[1])
+        return ''
+
+    def has_names(self, t):
+        """Whether the names of variables of type t are given (not the default ones)."""
+        k = self.type_key(t)
+        return k != '' and k in self.variable_names
+
+    def pick(self, t, ctx, hint=None):
+        """A name for a new variable of type t: the first of its VARIABLE_NAMES
+        not in ctx, else the hint (Agda's name), else a primed or numbered one."""
+        cands = self.name_candidates(t)
+        if hint and hint not in ('_', '') and not self.has_names(t):
+            v = self.var(hint, ctx)
+            return v if v not in ctx else self.fresh(v, ctx)
+        for c in cands:
+            if c not in ctx and c not in self.env_names:
+                return c
+        return self.fresh(cands[0], ctx)
 
     def binder(self, x, ctx, typ=None):
         """A name for a new bound variable: Agda's, or for _ one chosen by its
@@ -168,19 +203,9 @@ class Translator:
     declaring = None      # the short name of the constant being declared
 
     def name_candidates(self, t):
-        cls = ''
-        if t is not None:
-            if t[0] == 'pi':
-                cls = 'type' if self.is_kind(t) else 'function'
-            elif self.is_universe(t):
-                cls = 'type'
-            elif t[0] == 'def':
-                s = short(t[1])
-                cls = 'Id' if s in ('Id', '_＝_') else ('N' if s == 'ℕ' else ('Z' if s == 'ℤ' else ''))
-        for c, names in self.NAMES_BY_TYPE:
-            if c == cls:
-                return list(names) + [n + "'" for n in names]
-        return list('xyzuvw')
+        names = self.variable_names.get(self.type_key(t)) or self.variable_names.get('', 'xyzuvw')
+        names = list(names) if isinstance(names, (list, tuple)) else list(names.replace(' ', ''))
+        return names + [n + "'" for n in names]
 
     # ---- what a term is
     def is_level_type(self, t):

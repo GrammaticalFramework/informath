@@ -219,17 +219,72 @@ def inductions(rows, is_induction=lambda r: r.startswith('ind_'), intro_rules=IN
     return out
 
 
+def case_trees(rows, is_elim=lambda r: r.startswith(('ind_', 'cases_')), skip=()):
+    """The nested case analyses and inductions of a proof text that can be
+    collapsed to their outermost line, as a book writes "by cases on k": the
+    eliminator lines that the outermost one cites through each other, and the
+    lines introducing the parts of each case ("let x be ..."), are hidden;
+    the lines proving the single cases stay, and so do the induction
+    hypotheses (the assumptions an induction discharges). Lines in skip (the
+    last lines of inductions() collapses) are left alone.
+    Returns {index of the outermost line: (hidden indices, indices of the case
+    lines, indices of the eliminator lines)}; a single eliminator, not
+    nested, is left out."""
+    rows, depth, sentence, no_just, header = _lines(rows)
+    index = {}
+    for i, r in enumerate(rows):
+        m = re.match(r'(\d+)\.?$', r[0].strip())
+        if m:
+            index[int(m.group(1))] = i
+    info = [_rule_and_numbers(r[2]) for r in rows]
+    prem = [[index[x] for x in ps if x in index] for _, ps, _ in info]
+    disch = [{index[x] for x in ds if x in index} for _, _, ds in info]
+    elim = [not no_just[i] and is_elim(info[i][0].partition('@')[0]) for i in range(len(rows))]
+    out, member = {}, set()
+    for f in range(len(rows) - 1, -1, -1):
+        if not elim[f] or f in member or f in skip:
+            continue
+        tree, todo = {f}, [f]
+        while todo:
+            e = todo.pop()
+            for p in prem[e]:
+                if elim[p] and p not in tree and p not in skip:
+                    tree.add(p)
+                    todo.append(p)
+        if len(tree) < 2:
+            continue
+        ihs = set().union(*[disch[e] for e in tree])
+        hidden = {e for e in tree if e != f}
+        cases = set()
+        for e in tree:
+            for p in prem[e]:
+                if p in tree:
+                    continue
+                if no_just[p]:
+                    if p not in ihs and depth[p] > 0:
+                        hidden.add(p)          # introducing the parts of a case, not the theorem's hypotheses
+                else:
+                    cases.add(p)
+        member |= tree
+        out[f] = (sorted(hidden), sorted(cases), sorted(tree))
+    return out
+
+
 LABELS = {
     'Eng': {'fold all': 'fold all', 'unfold all': 'unfold all', 'line': 'line %s', 'lines': 'lines %s-%s',
             'folded': ' (%s folded)', 'derivation': ' (its derivation, %d lines, folded)',
             'toggle': 'fold or unfold %s', 'toggle derivation': 'fold or unfold the derivation of this line',
             'toggle induction': 'show or hide the steps of the induction',
-            'induction': ' (%d steps of the induction hidden)'},
+            'induction': ' (%d steps of the induction hidden)',
+            'toggle cases': 'show or hide the steps of the case analysis',
+            'cases': ' (%d steps hidden)'},
     'Fre': {'fold all': 'tout replier', 'unfold all': 'tout déplier', 'line': 'ligne %s', 'lines': 'lignes %s-%s',
             'folded': ' (%s repliées)', 'derivation': ' (sa dérivation, %d lignes, repliée)',
             'toggle': 'replier ou déplier %s', 'toggle derivation': 'replier ou déplier la dérivation de cette ligne',
             'toggle induction': 'montrer ou cacher les étapes de la récurrence',
-            'induction': ' (%d étapes de la récurrence cachées)'},
+            'induction': ' (%d étapes de la récurrence cachées)',
+            'toggle cases': "montrer ou cacher les étapes de l'analyse de cas",
+            'cases': ' (%d étapes cachées)'},
 }
 
 
@@ -242,8 +297,8 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
     number_html(n) the other cells (all by default escaped as text). The
     labels are in English, or with lang='Fre' in French (LABELS).
 
-    collapses = {index of a line: (hidden indices, short justification html)}
-    (from inductions()): the line is shown with the short justification and
+    collapses = {index of a line: (hidden indices, short justification html[,
+    'induction' or 'cases'])} (from inductions() and case_trees()): the line is shown with the short justification and
     the hidden lines folded away, under a symbol (⊕, ⊖ when open) that shows
     them and the line's own justification."""
     w = LABELS.get(lang, LABELS['Eng'])
@@ -262,7 +317,7 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
         for k in hidden:
             inside.setdefault(k, []).append('d%d' % n)
     collapses = collapses or {}
-    for n, (hidden, _) in collapses.items():
+    for n, (hidden, *_) in collapses.items():
         derived.pop(n, None)
         for k in hidden:
             inside.setdefault(k, []).append('c%d' % n)
@@ -302,8 +357,9 @@ def proof_table(rows, sentence_html=None, justification_html=None, number_html=N
             body = ('<span class="tog" title="%s"></span>' % (w['toggle'] % lines)
                     + body + '<span class="folded">%s</span>' % folded)
         if k in collapses:
-            body = ('<span class="tog" title="%s"></span>' % w['toggle induction']
-                    + body + '<span class="folded">%s</span>' % (w['induction'] % len(collapses[k][0])))
+            kind = collapses[k][2] if len(collapses[k]) > 2 else 'induction'
+            body = ('<span class="tog" title="%s"></span>' % w['toggle ' + kind]
+                    + body + '<span class="folded">%s</span>' % (w[kind] % len(collapses[k][0])))
             jhtml = ('<span class="short">%s</span><span class="long">%s</span>'
                      % (collapses[k][1], justification_html(just)))
         elif k in derived:

@@ -32,6 +32,8 @@ AGDA_ROOT = os.path.expanduser(project.get('AGDA_ROOT', '.'))
 MODULES = project.get('MODULES', [])
 # the type families read as propositions (Curry-Howard): Rijke's identity types
 PROPOSITIONS = project.get('PROPOSITIONS', [])
+# the names of variables by their types (agdaterm.Translator.VARIABLE_NAMES), as the text names them
+VARIABLE_NAMES = project.get('VARIABLE_NAMES', {})
 # the comments naming the numbered items of the source (-- Definition 5.1.1):
 # a definition belongs to the last one above it in its section
 ITEM = re.compile(r'--\s*(Definition|Lemma|Proposition|Theorem|Corollary|Remark|Example|Exercise|Construction)'
@@ -199,7 +201,7 @@ def function(tr, d, dn, ty, env=None, proofs=None):
 
 
 def export(module, env, defs, names, propositions=()):
-    tr = Translator(env, names, propositions)
+    tr = Translator(env, names, propositions, VARIABLE_NAMES)
     info = source_info(module, defs)
     decls, blocks, hides, proofs = [], [], [], []
     shown = [d for d in defs if not is_generated(d) and d['kind'] != 'constructor']
@@ -259,7 +261,7 @@ def export(module, env, defs, names, propositions=()):
 def hidden_positions(env, names):
     """Dedukti name -> the positions (1-based, levels not counted) of its
     hidden arguments, for every definition and constructor of the export."""
-    tr = Translator(env, names)
+    tr = Translator(env, names, (), VARIABLE_NAMES)
     out = {}
     for d in env.values():
         try:
@@ -381,7 +383,7 @@ def main():
               % (m, len(decls), len(proofs), m))
     # the eliminators into propositions of the data types, for the proof texts
     if PROPOSITIONS:
-        tr = Translator(env, names, PROPOSITIONS)
+        tr = Translator(env, names, PROPOSITIONS, VARIABLE_NAMES)
         elims = []
         for q, d in env.items():
             if d['kind'] == 'data':

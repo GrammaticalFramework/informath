@@ -269,9 +269,9 @@ def proof_term(tr, names, d, env, clauses):
         if len(avars) != len(kept):
             return None
         for (x, v, cdom, h, lev), a in zip(kept, avars):
-            av = tr.var(a, cctx)
-            if av in cctx and cctx[av] != 'level':
-                av = tr.fresh(av, cctx)
+            # named by its type (VARIABLE_NAMES), else as in Agda, fresh
+            av = tr.pick(cdom, cctx, a)
+            if av != tr.var(a, cctx):
                 ren[a] = av
             cctx[av] = 'proof' if tr.is_prop_family(cdom) else ('type' if tr.is_kind(cdom) else 'elem')
             lams.append(av)
@@ -371,6 +371,14 @@ def unfold(T, env):
     return T
 
 
+def _sub_pats(p, kept, cargs):
+    """The patterns of a constructor pattern's arguments, levels left out."""
+    sp = [q for h, q in p[2]]
+    if len(sp) != len(kept):
+        sp = [q for q, b in zip(sp, cargs) if not b[4]]
+    return sp
+
+
 def _norm(s):
     return ' '.join(s.replace('(', ' ').replace(')', ' ').split())
 
@@ -406,8 +414,10 @@ def _case_tree(tr, names, d, env, clauses):
     opened = [bs[j][1] for j in range(n)]
     splits = []
 
-    def fresh(x, kind):
-        v = tr.fresh(tr.var(x, taken) if x and x != '_' else 'x', taken)
+    def fresh(x, kind, ty=None):
+        # a part of a case: named by its type (VARIABLE_NAMES), else as in Agda
+        v = tr.pick(ty, taken, x) if ty is not None else \
+            tr.fresh(tr.var(x, taken) if x and x != '_' else 'x', taken)
         taken[v] = kind
         return v
 
@@ -481,6 +491,7 @@ def _case_tree(tr, names, d, env, clauses):
             s = {}
             for (x, cv, cdom, h, lev), e in zip(cpar, pargs):
                 s[cv] = e[2]
+            saved = set(taken)
             my = [r for r in rows if r['pats'][v][0] != 'con' or r['pats'][v][1] == c]
             if not my:
                 raise NoProof('absurd case')
@@ -497,7 +508,12 @@ def _case_tree(tr, names, d, env, clauses):
                 hint = fsub[k][1] if fsub and fsub[k][0] == 'var' else x
                 ty = subst_json(cdom, s)
                 kind = 'proof' if tr.is_prop_family(ty) else ('type' if tr.is_kind(ty) else 'elem')
-                a = fresh(hint, kind)
+                # a part that stays in the cases is named by its type
+                # (VARIABLE_NAMES: n for a natural number); one that is split
+                # further, and disappears from them, by a neutral name (x)
+                split_further = any(r['pats'][v][0] == 'con' and len(r['pats'][v][2]) > k
+                                    and _sub_pats(r['pats'][v], kept, cargs)[k][0] == 'con' for r in my)
+                a = fresh(hint, kind, None if split_further else ty)
                 s[cv] = ['var', a, []]
                 new.append(a)
                 atypes[a] = ty
@@ -547,6 +563,10 @@ def _case_tree(tr, names, d, env, clauses):
             opened2 = [u for u in opened[:pos] if u not in idx] + new + [u for u in opened[pos + 1:] if u not in idx]
             body = build(rows2, opened2, val2, types2, ihs2)
             cases.append((new, ihnames, body))
+            # the names of a case are bound in it only: the next case may use them again
+            for u in list(taken):
+                if u not in saved:
+                    del taken[u]
         splits.append(v)
         params = [paren(tr.arg(subst_json(e[2], {}), taken)) for e in pargs if not tr.is_level(e[2], taken)]
         import re as _re
