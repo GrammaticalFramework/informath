@@ -19,6 +19,7 @@ import Lexing (lextex, indexTex, unlextex)
 import qualified Dedukti2Agda as DA
 import qualified Dedukti2Rocq as DR
 import qualified Dedukti2Lean as DL
+import DeduktiRules (emptyRuleContext)
 
 import Ranking
 import Environment
@@ -519,16 +520,32 @@ printFormalismJmt env formalism jmt = case formalism of
 -- | Notice: imports may have to be added to the generated files.
 
 dedukti2agda :: Env -> Jmt -> String
-dedukti2agda env jmt = unlines [DA.printAgdaJmts (DA.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "agda" (conversionTableEnv env))
+dedukti2agda env jmt = unlines (DA.transJmtCtx emptyRuleContext (formalismConversion env "agda" jmt))
 
 dedukti2lean :: Env -> Jmt -> String
-dedukti2lean env jmt = unlines [DL.printLeanJmt (DL.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "lean" (conversionTableEnv env))
+dedukti2lean env jmt = unlines (DL.transJmtCtx emptyRuleContext (formalismConversion env "lean" jmt))
 
 dedukti2rocq :: Env -> Jmt -> String
-dedukti2rocq env jmt = unlines [DR.printRocqJmt (DR.transJmt (conv jmt))] where
-  conv = maybe id alphaConvert (M.lookup "rocq" (conversionTableEnv env))
+dedukti2rocq env jmt = unlines (DR.transJmtCtx emptyRuleContext (formalismConversion env "rocq" jmt))
+
+formalismConversion :: Env -> String -> Jmt -> Jmt
+formalismConversion env formalism = maybe id alphaConvert (M.lookup formalism (conversionTableEnv env))
+
+-- | Converting a whole Dedukti module to a formalism. Unlike 'printFormalismJmt',
+-- this can translate rewrite rules, which need information from the rest of the module.
+printFormalismModule :: Env -> String -> Module -> [String]
+printFormalismModule env formalism (MJmts jmts) = case formalism of
+  "agda" -> DA.printAgdaModule cjmts
+  "lean" -> DL.printLeanModule cjmts
+  "rocq" -> DR.printRocqModule cjmts
+  _ -> concatMap (printGenResult env) (processDeduktiModule env (MJmts jmts))
+ where
+  cjmts = map (convert . applyDeduktiConversions env) (includedDefs env jmts)
+  table = M.findWithDefault M.empty formalism (conversionTableEnv env)
+  -- wildcards in rule patterns are kept, as the translations of rules treat them
+  convert jmt = case jmt of
+    JRules _ -> alphaConvert (M.delete (QIdent "_") table) jmt
+    _ -> alphaConvert table jmt
 
 -- | TODO: type-check a Dedukti judgement.
 checkJmt :: Jmt -> Bool

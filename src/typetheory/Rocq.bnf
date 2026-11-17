@@ -1,4 +1,4 @@
--- very minimal Lean syntax for the generated Lean
+-- very minimal Rocq syntax for the generated Rocq
 
 entrypoints Module, Jmt, Exp ;
 
@@ -9,12 +9,20 @@ MJmts. Module ::= [Jmt] ;
 JReq.   Jmt ::= "Require" "Import" CIdent "." ;
 JDef.   Jmt ::= "Definition" CIdent [Hypo] ":" Exp ":=" Exp "." ;
 JAxiom. Jmt ::= "Axiom" CIdent ":" Exp "." ;
+-- rewrite rules: rocq compile -allow-rewrite-rules
+-- the constants in their left-hand sides must be symbols
+JSymbol. Jmt ::= "Symbol" CIdent ":" Exp "." ;
+JRewrite. Jmt ::= "Rewrite" "Rules" CIdent ":=" [RRule] "." ;
+
+RRewrite. RRule ::= "|" Exp "=>" Exp ;
+separator nonempty RRule "" ;
 JThm.   Jmt ::= "Theorem" CIdent [Hypo] ":" Exp "." "Proof" Exp "." ;
 JLemma. Jmt ::= "Lemma"  CIdent [Hypo] ":" Exp "." "Proof" Exp "." ;
 
 terminator Jmt "" ;
 
 EIdent.  Exp9 ::= CIdent ;
+EMeta.   Exp9 ::= MIdent ;  -- pattern variable in a rewrite rule
 EInt.    Exp9 ::= Integer ;
 EApp.    Exp7 ::= Exp7 Exp8 ;
 EPow.    Exp6 ::= Exp6 "^" Exp7 ;
@@ -42,6 +50,8 @@ separator nonempty CIdent "" ;
 HVarExp. Hypo ::=  "(" [CIdent] ":" Exp ")" ;
 
 separator Hypo "" ;
+
+token MIdent '?' letter (letter | digit | '_' | '\'')* ;
 
 token CIdent (letter (letter | digit | '_' | '\'' | 'ℝ' | 'ℕ' | 'ℤ' | 'ℚ')*) ;
 

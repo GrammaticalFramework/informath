@@ -219,6 +219,29 @@ If the target is a formalism (`-to-formalism=agda`, `lean`, `rocq` or
 [Dedukti2Lean](../src/Dedukti2Lean.hs) or [Dedukti2Rocq](../src/Dedukti2Rocq.hs),
 renaming the constants as the `#CONV` lines say. No GF is needed.
 
+For a `.dk` file, `printFormalismModule` translates the whole module at once,
+because rewrite rules need to know about the rest of the module.
+[DeduktiRules](../src/DeduktiRules.hs) first turns the easy cases into
+definitions: a constant declared without a definition and with exactly one
+rule, `c x1 ... xn --> e` with distinct variables, becomes
+`def c : T := x1 => ... => xn => e`. Rules for `Elem (c ...)` and
+`Proof (c ...)` count as rules for `c`, since the translations erase `Elem`
+and `Proof`. Wildcards become variables, and first-order unification on the
+declared types solves the ones that typing determines. Each target then
+translates the remaining rules in its own way:
+
+| target | rewrite rule | needs |
+|---|---|---|
+| Agda | `postulate c-1 : ∀ {x} -> lhs ≡ rhs` and `{-# REWRITE c-1 #-}` | `--rewriting`, put in the output |
+| Rocq | `Symbol` declarations and `Rewrite Rules c_rules1 := \| lhs => rhs .` | `rocq compile -allow-rewrite-rules` |
+| Lean | `@[simp] axiom c_1 : ∀ x, lhs = rhs` | nothing; but no conversion: terms that type-check only modulo the rules fail |
+
+Rules between proofs are omitted with a comment. In Agda and Lean they hold by
+the definitional proof irrelevance of `Prop`. Rules whose value is a universe,
+such as `Elem (powerset X) --> Set`, cannot be translated after the erasure of
+`Elem`, and are left as comments. `make formalism_rules` checks the test
+cases in `test/formalisms/` in Dedukti, Agda, Rocq and Lean.
+
 ### 2.2 Implicit hypotheses
 
 [`dropImplicitHypos`](../src/ProofText.hs) removes the leading hypotheses of a

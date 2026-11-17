@@ -12,6 +12,8 @@ MJmts. Module ::= [Jmt] ;
 JAxiom. Jmt ::= "axiom" LIdent [Hypo] ":" Exp ";" ;
 JThm.   Jmt ::= "theorem" LIdent [Hypo] ":" Exp ":=" Exp ";" ;
 JDef.   Jmt ::= "def" LIdent [Hypo] ":" Exp ":=" Exp ";" ;
+-- translation of a rewrite rule as an equation, usable by simp
+JSimpAxiom. Jmt ::= "@[simp]" "axiom" LIdent [Hypo] ":" Exp ";" ;
 
 terminator Jmt "" ;
 
@@ -33,6 +35,7 @@ EAnd.    Exp3 ::= Exp3 "∧" Exp4 ;
 EOr.     Exp3 ::= Exp3 "∨" Exp4 ;
 EAll.    Exp3 ::= "∀" [LIdent] ":" Exp6 "," Exp3 ;
 EAllW.   Exp3 ::= "forall" [LIdent] ":" Exp6 "," Exp3 ;
+EAllU.   Exp3 ::= "∀" [LIdent] "," Exp3 ;
 EExist.  Exp3 ::= "∃" [LIdent] ":" Exp6 "," Exp3 ;
 EExistW. Exp3 ::= "exists" [LIdent] ":" Exp6 "," Exp3 ;
 EIf.     Exp2 ::= Exp3 "→" Exp2 ; 

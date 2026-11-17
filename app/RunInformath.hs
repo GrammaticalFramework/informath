@@ -40,6 +40,9 @@ main4 args = if elem "-help" args then mapM_ putStrLn helpMsg4 else do
       mo <- readDeduktiModule [file]
       let base = baseConstantModule env
       showProofDemoSafe env base mo >>= putStrLn
+    Just (file, "dk") | elem (toFormalism env) ["agda", "lean", "rocq"] -> do
+      mo <- readDeduktiModule [file]
+      mapM_ putStrLn (printFormalismModule env (toFormalism env) mo)
     Just (file, "dk") -> do
       mo <- readDeduktiModule [file]
       let results = processDeduktiModule env mo

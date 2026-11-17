@@ -1,0 +1,64 @@
+(; Test cases for translating rewrite rules to Agda, Lean and Rocq.
+   Uses Set, Elem, Prop, Proof from share/baseconstants.dk:
+     cat ../../share/baseconstants.dk rules.dk > /tmp/x.dk ; dk check /tmp/x.dk
+;)
+
+N : Set.
+z : Elem N.
+s : Elem N -> Elem N.
+
+(; rules by pattern matching: Agda REWRITE, Rocq Rewrite Rules, Lean equations ;)
+
+def add : Elem N -> Elem N -> Elem N.
+[m] add m z --> m
+[m, n] add m (s n) --> s (add m n).
+
+def mul : Elem N -> Elem N -> Elem N.
+[m] mul m z --> z
+[m, n] mul m (s n) --> add (mul m n) m.
+
+(; one rule with variable patterns: a definition in all targets ;)
+
+def double : Elem N -> Elem N.
+[n] double n --> add n n.
+
+(; a type-valued function defined by a rule ;)
+
+Cart : Set -> Set -> Set.
+pair : (A : Set) -> (B : Set) -> Elem A -> Elem B -> Elem (Cart A B).
+def Square : Set -> Set.
+[A] Square A --> Cart A A.
+
+def diag : (A : Set) -> Elem A -> Elem (Square A) := A => a => pair A A a a.
+
+(; a type-valued function by pattern matching ;)
+
+Triv : Set.
+triv : Elem Triv.
+def Vec : Elem N -> Set.
+[] Vec z --> Triv
+[n] Vec (s n) --> Cart N (Vec n).
+
+(; a rule with a typed variable and a wildcard ;)
+
+def first : (A : Set) -> (B : Set) -> Elem (Cart A B) -> Elem A.
+[A : Set, a] first A _ (pair _ _ a _) --> a.
+
+(; rules between proofs: omitted, as they hold by proof irrelevance ;)
+
+Alt : Prop -> Prop -> Prop.
+inl : (A : Prop) -> (B : Prop) -> Proof A -> Proof (Alt A B).
+inr : (A : Prop) -> (B : Prop) -> Proof B -> Proof (Alt A B).
+def orElim : (A : Prop) -> (B : Prop) -> (C : Prop) ->
+  Proof (Alt A B) -> (Proof A -> Proof C) -> (Proof B -> Proof C) -> Proof C.
+[a, d] orElim _ _ _ (inl _ _ a) d _ --> d a
+[b, e] orElim _ _ _ (inr _ _ b) _ e --> e b.
+
+(; a Tarski universe: a rule for the decoding function ;)
+
+U : Type.
+def El : U -> Type.
+nat : U.
+arr : U -> U -> U.
+[A, B] El (arr A B) --> El A -> El B.
+[] El nat --> Elem N.

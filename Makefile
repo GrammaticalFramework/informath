@@ -198,6 +198,23 @@ typechecks:
 	lean out/bexx.lean
 
 
+# rewrite rules translated to Agda, Lean and Rocq: see test/formalisms/*.dk
+# rules.dk must type-check in all targets, conversion.dk in all but Lean
+formalism_rules:
+	mkdir -p out/formalisms
+	for f in rules conversion ; do \
+	  cat share/baseconstants.dk test/formalisms/$$f.dk >out/formalisms/$${f}_dk.dk ; \
+	  dk check out/formalisms/$${f}_dk.dk || exit 1 ; \
+	  $(RUN) -to-formalism=agda test/formalisms/$$f.dk >out/formalisms/$$f.agda ; \
+	  (cd out/formalisms ; agda --prop $$f.agda) || exit 1 ; \
+	  $(RUN) -to-formalism=rocq test/formalisms/$$f.dk >out/formalisms/$$f.v ; \
+	  (cd out/formalisms ; rocq compile -allow-rewrite-rules -w -eta-in-pattern $$f.v) || exit 1 ; \
+	  (echo "abbrev Set := Type" ; $(RUN) -to-formalism=lean test/formalisms/$$f.dk) >out/formalisms/$$f.lean ; \
+	done
+	lean out/formalisms/rules.lean
+	echo "${lightgreen}## expected to fail in Lean: conversion modulo rules${neutral}"
+	! lean out/formalisms/conversion.lean >/dev/null
+
 top100:
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"
 	$(RUN) -to-latex-doc -variations -to-lang=$(lang) -sampling=$(sampling) -synonyms=$(synonyms)  -symbolics=$(symbolics) test/top100.dk >out/top100$(lang).tex

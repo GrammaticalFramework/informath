@@ -10,6 +10,11 @@ import qualified Rocq.PrintRocq as PrC
 
 import DeduktiOperations
 import DeduktiTheoryAPI
+import DeduktiRules
+
+import qualified Data.Map as M
+import qualified Data.Set as S
+import Dedukti.PrintDedukti (printTree)
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
@@ -29,6 +34,46 @@ transModule :: Module -> C.Module
 transModule t = case t of
   MJmts jmts -> C.MJmts (map transJmt jmts)
 
+-- | Translating a module: rules become Rewrite Rules, which need
+-- rocq compile -allow-rewrite-rules, except in the easy cases, where they
+-- become definitions (see "DeduktiRules"). The constants in left-hand sides
+-- are declared as Symbols. Rules between proofs are omitted.
+printRocqModule :: [Jmt] -> [String]
+printRocqModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+  where
+    (pjmts, ctx) = prepareRules jmts
+    header = if rcHasRewrites ctx
+      then ["(* rewrite rules: compile with rocq compile -allow-rewrite-rules *)", ""]
+      else []
+
+transJmtCtx :: RuleContext -> Jmt -> [String]
+transJmtCtx ctx t = case t of
+  JRules rules ->
+    let eqs = [(r, ruleEquation r) | r <- rules]
+        rewrites = [eq | (_, eq) <- eqs, ruleKind ctx eq == RKRewrite]
+        others = [(r, k) | (r, eq) <- eqs, let k = ruleKind ctx eq, k /= RKRewrite]
+        name = case [(r, eq) | (r, eq) <- eqs, ruleKind ctx eq == RKRewrite] of
+          (r, eq) : _ -> let C.CIdent c = transIdent (reHead eq) in
+            C.CIdent (c ++ "_rules" ++ show (M.findWithDefault 0 r (rcNumbers ctx)))
+          _ -> C.CIdent "rules"
+    in ["(* " ++ omitted k ++ ": " ++ printRule r ++ " *)" | (r, k) <- others] ++
+       [printRocqJmt (C.JRewrite name (map (transRewrite . metaVariables) rewrites)) | not (null rewrites)] ++
+       [""]
+  JStatic c typ | S.member c (rcSymbols ctx) -> [printRocqJmt (C.JSymbol (transIdent c) (transExpProp typ)), ""]
+  JDef c (MTExp typ) MENone | S.member c (rcSymbols ctx) -> transJmtCtx ctx (JStatic c typ)
+  JInj c (MTExp typ) MENone | S.member c (rcSymbols ctx) -> transJmtCtx ctx (JStatic c typ)
+  _ -> [printRocqJmt (transJmt t), ""]
+ where
+  -- wildcards are kept as holes _, which Rocq infers
+  transRewrite eq = C.RRewrite (transExp (holes eq (reLhs eq))) (transExp (reRhs eq))
+  holes eq = substExp (M.fromList [(QIdent ('?' : w), EIdent (QIdent "_")) | QIdent w <- reWilds eq])
+  omitted k = case k of
+    RKProof -> "omitted, between proofs"
+    _ -> "not translated, Elem erased"
+
+printRule :: Rule -> String
+printRule = unwords . words . printTree
+
 transJmt :: Jmt -> C.Jmt
 transJmt t = case t of
   JStatic qident exp ->
@@ -42,14 +87,13 @@ transJmt t = case t of
   JDef qident (MTExp typ) MENone ->
     transJmt (JStatic qident typ)
   JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)
----  JRules rules -> map transRule rules
+  JThm qident mtyp MENone -> transJmt (JDef qident mtyp MENone)
+  -- JRules need a context: see transJmtCtx
 
----transRule :: Rule -> C.Jmt
----transRule t = case t of
----  RRule qidents_ patt exp -> C.JDef (transPatt patt) (transExp exp)
 
 transExp :: Exp -> C.Exp
 transExp t = case t of
+  EIdent (QIdent s@('?' : _)) -> C.EMeta (C.MIdent s)
   EIdent qident -> C.EIdent (transIdent qident)
   EApp exp0 exp1 -> case splitApp t of
     (EIdent (QIdent c), [arg]) | elem c [dkElem, dkProof] -> transExp arg

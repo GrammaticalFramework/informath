@@ -10,6 +10,10 @@ import qualified Lean.PrintLean as PrL
 
 import DeduktiOperations
 import DeduktiTheoryAPI
+import DeduktiRules
+
+import qualified Data.Map as M
+import Dedukti.PrintDedukti (printTree)
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
@@ -29,6 +33,41 @@ transModule :: Module -> L.Module
 transModule t = case t of
   MJmts jmts -> L.MJmts (map transJmt jmts)
 
+-- | Translating a module. Lean has no rewrite rules: the rules are
+-- translated as equations (simp lemmas), except in the easy cases, where they
+-- become definitions (see "DeduktiRules"). Rules between proofs are omitted:
+-- they hold by the definitional proof irrelevance of Prop.
+printLeanModule :: [Jmt] -> [String]
+printLeanModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+  where
+    -- definitions using axioms cannot be compiled
+    header = ["noncomputable section", ""]
+    (pjmts, ctx) = prepareRules jmts
+
+transJmtCtx :: RuleContext -> Jmt -> [String]
+transJmtCtx ctx t = case t of
+  JRules rules -> concatMap (transRuleCtx ctx) rules
+  _ -> [printLeanJmt (transJmt t), ""]
+
+transRuleCtx :: RuleContext -> Rule -> [String]
+transRuleCtx ctx rule = case ruleKind ctx eq of
+  RKRewrite -> [printLeanJmt (
+      L.JSimpAxiom name [] (quantify (reVars eq) (L.EEq (transExp (reLhs eq)) (transExp (reRhs eq))))), ""]
+  RKProof -> ["-- omitted, holds by proof irrelevance: " ++ printRule rule, ""]
+  _ -> ["-- not translated, Elem erased: " ++ printRule rule, ""]
+ where
+  eq = ruleEquationIn ctx rule
+  L.LIdent c = transQIdent (reHead eq)
+  name = L.LIdent (c ++ "_" ++ show (M.findWithDefault 0 rule (rcNumbers ctx)))
+  quantify vars body = case vars of
+    [] -> body
+    (x, Just typ) : vs -> L.EAll [transVar x] (transExp typ) (quantify vs body)
+    _ -> case span ((== Nothing) . snd) vars of
+      (untyped, vs) -> L.EAllU (map (transVar . fst) untyped) (quantify vs body)
+
+printRule :: Rule -> String
+printRule = unwords . words . printTree
+
 transJmt :: Jmt -> L.Jmt
 transJmt t = case t of
   JStatic qident exp ->
@@ -42,12 +81,9 @@ transJmt t = case t of
     in L.JThm (transQIdent qident) (transHypos (MEExp exp) hypos) (transExp vtyp) (transExp (stripAbs hypos exp))
   JDef qident (MTExp typ) MENone ->
     transJmt (JStatic qident typ)
-  JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)  
----  JRules rules -> map transRule rules
-
----transRule :: Rule -> L.Jmt
----transRule t = case t of
----  RRule qidents_ patt exp -> L.JDef (transPatt patt) (transExp exp)
+  JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)
+  JThm qident mtyp MENone -> transJmt (JDef qident mtyp MENone)
+  -- JRules need a context: see transJmtCtx
 
 transExp :: Exp -> L.Exp
 transExp t = case t of

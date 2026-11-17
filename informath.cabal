@@ -20,6 +20,7 @@ executable RunInformath
     Dedukti2Rocq
     Dedukti2Lean
     DeduktiOperations
+    DeduktiRules
     Environment
     Informath
     Lexing

@@ -1,0 +1,40 @@
+(; Terms that type-check only modulo the rewrite rules.
+   The translations to Agda (REWRITE) and Rocq (Rewrite Rules) type-check,
+   the translation to Lean does not, since Lean equations are not conversions.
+   Uses Set, Elem, Prop, Proof from share/baseconstants.dk.
+;)
+
+M : Set.
+o : Elem M.
+sc : Elem M -> Elem M.
+
+def sum : Elem M -> Elem M -> Elem M.
+[m] sum m o --> m
+[m, n] sum m (sc n) --> sc (sum m n).
+
+Same : (A : Set) -> Elem A -> Elem A -> Prop.
+same : (A : Set) -> (a : Elem A) -> Proof (Same A a a).
+
+thm twoPlusTwo : Proof (Same M (sum (sc (sc o)) (sc (sc o))) (sc (sc (sc (sc o))))) :=
+  same M (sc (sc (sc (sc o)))).
+
+Both : Set -> Set -> Set.
+both : (A : Set) -> (B : Set) -> Elem A -> Elem B -> Elem (Both A B).
+Stop : Set.
+stop : Elem Stop.
+
+def Tuple : Elem M -> Set.
+[] Tuple o --> Stop
+[n] Tuple (sc n) --> Both M (Tuple n).
+
+def pairOfZeros : Elem (Tuple (sc (sc o))) :=
+  both M (Tuple (sc o)) o (both M (Tuple o) o stop).
+
+V : Type.
+def Dec : V -> Type.
+m : V.
+fn : V -> V -> V.
+[A, B] Dec (fn A B) --> Dec A -> Dec B.
+[] Dec m --> Elem M.
+
+def successor : Dec (fn m m) := sc.

@@ -23,6 +23,10 @@ JDef.  Jmt ::= Patt "=" Exp ";" ;
 JPost. Jmt ::= "postulate" AIdent ":" Exp ";" ;
 JAbs.  Jmt ::= "abstract" AIdent ":" Exp ";" ;
 
+-- rewrite rules: postulated equations declared as REWRITE (needs --rewriting)
+JRewrite. Jmt ::= "{-#" "REWRITE" [AIdent] "#-}" ";" ;
+separator nonempty AIdent "" ;
+
 terminator Jmt "" ;
 
 --+ TTyp. Typing ::= AIdent [Hypo] ":" Exp ";" ;
@@ -41,12 +45,14 @@ EEEqI.   Exp4 ::= Exp5 "=" Exp5 ;
 EGtI.    Exp4 ::= Exp5 ">" Exp5 ;
 EEqU.    Exp4 ::= Exp5 "＝" Exp5 ;
 ESimEqU. Exp4 ::= Exp5 "≃" Exp5 ;
+EIdEqU.  Exp4 ::= Exp5 "≡" Exp5 ;  -- Agda.Builtin.Equality
 EAndI.   Exp3 ::= Exp3 "/\\" Exp4 ;
 EOrI.    Exp3 ::= Exp3 "\\/" Exp4 ;
 EAbs.    Exp2 ::= "\\" Bind "->" Exp2 ;
 EFun.    Exp1 ::= Hypo "->" Exp1 ;
 EAbsU.   Exp2 ::= "λ" Bind "→" Exp2 ;
 EFunU.   Exp1 ::= Hypo [Hypo] "→" Exp1 ;
+EAllImpl. Exp1 ::= "∀" "{" [Var] "}" "->" Exp1 ;
 
 coercions Exp 50 ; --- 12 ;
 

@@ -10,10 +10,17 @@ import qualified Agda.PrintAgda as PrA
 
 import DeduktiOperations (getNumber, splitApp, isWildIdent)
 import DeduktiTheoryAPI
+import DeduktiRules
+
+import qualified Data.Map as M
 
 -- skeleton copied from bnfc-generated SkelDedukti
 
 import Dedukti.ErrM
+import Dedukti.PrintDedukti (printTree)
+
+printRule :: Rule -> String
+printRule = unwords . words . printTree
 
 baseconstants = "BaseConstants"
 
@@ -23,11 +30,54 @@ failure :: Show a => a -> Result
 failure x = Bad $ "Undefined case: " ++ show x
 
 printAgdaJmts :: [A.Jmt] -> String 
-printAgdaJmts = init . unlines . map (init . PrA.printTree) -- init to remove artefact ; and last \n
+printAgdaJmts = init . unlines . map (unwords . words . init . PrA.printTree)
+  -- init to remove artefact ; and last \n; unwords . words to remove the newlines around { }
 
 transModule :: Module -> A.Module
 transModule t = case t of
   MJmts jmts -> A.MJmts (concatMap transJmt jmts)
+
+-- | Translating a module: rules are translated as REWRITE rules
+-- except in the easy cases, where they become definitions (see "DeduktiRules").
+-- Rules between proofs are omitted: they hold by the definitional
+-- proof irrelevance of Prop.
+printAgdaModule :: [Jmt] -> [String]
+printAgdaModule jmts = header ++ concatMap (transJmtCtx ctx) pjmts
+  where
+    (pjmts, ctx) = prepareRules jmts
+    header = if rcHasRewrites ctx
+      then ["{-# OPTIONS --rewriting #-}",
+            "open import Agda.Builtin.Equality",
+            "open import Agda.Builtin.Equality.Rewrite",
+            ""]
+      else []
+
+transJmtCtx :: RuleContext -> Jmt -> [String]
+transJmtCtx ctx t = case t of
+  JRules rules -> concatMap (transRuleCtx ctx) rules
+  _ -> [printAgdaJmts (transJmt t), ""]
+
+transRuleCtx :: RuleContext -> Rule -> [String]
+transRuleCtx ctx rule = case ruleKind ctx eq of
+  RKRewrite -> [printAgdaJmts [
+      A.JPost name (quantify (reVars eq) (A.EIdEqU (transExp (reLhs eq)) (transExp (reRhs eq)))),
+      A.JRewrite [name]
+      ], ""]
+  kind -> ["-- " ++ omitted kind ++ ": " ++ printRule rule, ""]
+ where
+  eq = ruleEquationIn ctx rule
+  A.AIdent c = transQIdent (reHead eq)
+  name = A.AIdent (c ++ "-" ++ show (M.findWithDefault 0 rule (rcNumbers ctx)))
+  quantify vars body = case vars of
+    [] -> body
+    (x, Just typ) : vs -> A.EFun (A.HBracketVarExp [transVar x] (transExp typ)) (quantify vs body)
+    _ -> case span ((== Nothing) . snd) vars of
+      (untyped, vs) -> A.EAllImpl (map (transVar . fst) untyped) (quantify vs body)
+
+omitted :: RuleKind -> String
+omitted kind = case kind of
+  RKProof -> "omitted, holds by proof irrelevance"
+  _ -> "not translated, Elem erased"
 
 transJmt :: Jmt -> [A.Jmt]
 transJmt t = case t of
@@ -40,11 +90,7 @@ transJmt t = case t of
     [A.JPost (transQIdent qident) (transExp typ)]
   JInj qident mtyp mexp -> transJmt (JDef qident mtyp mexp)  
   JThm qident mtyp mexp -> transJmt (JDef qident mtyp mexp)  
-  JRules rules -> map transRule rules
-
-transRule :: Rule -> A.Jmt
-transRule t = case t of
-  RRule _ patt exp -> A.JDef (transPatt patt) (transExp exp)
+  JRules rules -> [] -- needs a context, see transJmtCtx
 
 transExp :: Exp -> A.Exp
 transExp t = case t of
