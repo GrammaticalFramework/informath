@@ -526,6 +526,15 @@ extendStructure t = case t of
       props@(_:_) <- [q | GPropClause q <- rest] ->
       GExtensionHyposJmt label (GListHypo (paramHypos params)) kind parent x
         (GListArgKind (groupFields fields)) (conj props)
+  -- with parameters that the defined kind mentions, and a structure as the
+  -- parent: "let K be a ring. a left module over K is a group M with ..."
+  GStructureJmt label (GListClause clauses) kind
+    | (params@(_:_), GVarClause x parent@(GNounKind n) : rest) <- span (inKind kind) clauses,
+      n /= LexNoun "set_Noun",
+      fields@(_:_) <- [(y, k) | GVarClause y k <- rest],
+      props@(_:_) <- [q | GPropClause q <- rest] ->
+      GExtensionHyposJmt label (GListHypo (paramHypos params)) kind parent x
+        (GListArgKind (groupFields fields)) (conj props)
   GStructureJmt label (GListClause (GVarClause x setk : GPropClause p : rest)) kind
     | Just parent <- parentKind p,
       null [y | GVarClause y k <- rest, k == setk] ->
@@ -554,6 +563,12 @@ extendStructure t = case t of
   conj ps = case ps of
     [p] -> p
     _ -> GAndProp (GListProp ps)
+  -- a variable clause whose variable occurs in the defined kind (K in "left
+  -- module over K")
+  inKind :: GKind -> GClause -> Bool
+  inKind k c = case c of
+    GVarClause y _ -> y `elem` identsIn k
+    _ -> False
   nounKind :: GIdent -> GProp -> Maybe GKind
   nounKind x prop = case prop of
     GNoun1Prop (GNounNoun1 n) (GTermExp (GIdentTerm y)) | y == x -> Just (GNounKind n)

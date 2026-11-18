@@ -532,6 +532,9 @@ class Translator:
             return 'Proof (%s)' % self.prop(a, ctx)
         if a.kind == 'var' and a.name in STRUCTURES:
             return 'Str %s' % self.env.dk.get(a.name, a.name)
+        if a.kind == 'app' and a.f.kind == 'var' and a.f.name in STRUCTURES:
+            # a structure with parameters: Str (LeftModule K)
+            return 'Str (%s)' % ' '.join([self.env.dk.get(a.f.name, a.f.name)] + [paren(self.term(x, ctx)) for x in a.args])
         return 'Elem %s' % paren(self.set(a, ctx))
 
     def set(self, a, ctx):
@@ -825,6 +828,8 @@ class Translator:
             res = 'Proof (%s)' % self.prop(ty, ctx)
         elif ty.kind == 'var' and ty.name in STRUCTURES:
             res = 'Str %s' % self.env.dk.get(ty.name, ty.name)
+        elif ty.kind == 'app' and ty.f.kind == 'var' and ty.f.name in STRUCTURES:
+            res = 'Str (%s)' % ' '.join([self.env.dk.get(ty.f.name, ty.f.name)] + [paren(self.term(x, ctx)) for x in ty.args])
         else:
             res = 'Elem %s' % paren(self.set(ty, ctx))
         return ' -> '.join(parts + [res]), ctx, ty

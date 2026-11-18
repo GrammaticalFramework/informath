@@ -441,11 +441,17 @@ def export_decls(vdir, mod, items, dep_items=()):
             elif it['kind'] == 'Record':
                 # a structure, as Informath declares them (test/algebra.dk): the
                 # kind, its constructor with the fields as arguments, the selectors
-                lines = ['%s : Structure.' % dn]
-                # the constructor's arguments named as the project says (config.py
-                # FIELD_VARIABLES: field -> the variable of the definition, X for
-                # lawSet), else by the fields
-                names = [FIELD_VARIABLES.get(f, f) for f in it['fields']]
+                # the kind, with the parameters of the record (Str Ring -> Structure)
+                kty, _, _ = tr.decl_type(env.types[n])
+                lines = ['%s : %s.' % (dn, re.sub(r'(Set|Type)$', 'Structure', kty))]
+                # the constructor's arguments: the parameters, then the fields, named
+                # as the project says (config.py FIELD_VARIABLES: field -> the
+                # variable of the definition, X for lawSet), else by the fields
+                params, t = [], env.types[n]
+                while t.kind == 'pi':
+                    params.append(t.name)
+                    t = t.body
+                names = params + [FIELD_VARIABLES.get(f, f) for f in it['fields']]
                 lines.append('%s : %s.' % (tr.const_name(it['constructor']),
                                            tr.decl_type(env.types[it['constructor']], names=names)[0]))
                 for c in it['fields']:

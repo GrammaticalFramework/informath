@@ -356,7 +356,7 @@ def main():
             d['module'] = mod
             d['dedukti'] = blocks.get(d['coq'], d.get('dedukti'))
             decls.append(d)
-            if d.get('kind') == 'structure' and '%s : Structure.' % d.get('dk') in (d['dedukti'] or ''):
+            if d.get('kind') == 'structure' and re.match(r'%s : (.* -> )?Structure\.' % re.escape(d.get('dk', '')), d['dedukti'] or ''):
                 # a record exported as a structure: read as its definition, the
                 # constructor ("A group is ... where ..."), not field by field
                 lines = d['dedukti'].split('\n')
