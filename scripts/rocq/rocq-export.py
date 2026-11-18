@@ -487,6 +487,18 @@ def contains_match_on(t, names):
     return False
 
 
+def source_binders(src):
+    """The names bound in the head of a definition's source,
+    Definition c (x y : A) (z : B) : T := ..., in order."""
+    m = re.match(r'\s*(?:\S+\s+)*?(?:Definition|Fixpoint)\s+[\w\']+\s*((?:\([^()]*(?:\([^()]*\)[^()]*)*\)\s*)*)', src)
+    if not m:
+        return []
+    out = []
+    for g in re.findall(r'\(([^:()]*):', m.group(1)):
+        out += g.split()
+    return out
+
+
 def definition(tr, it):
     body, ty = it['_body'], it['_type']
     n = it['coq']
@@ -507,7 +519,11 @@ def definition(tr, it):
     names = []
     b, rty = body, ty
     ctx = {}
+    # the binder names of the source (Rocq prints an unused one as _)
+    src_names = source_binders(it.get('source', ''))
     while b.kind == 'lam' and rty.kind == 'pi':
+        if b.name == '_' and len(names) < len(src_names) and src_names[len(names)] not in ctx:
+            b = T('lam', name=src_names[len(names)], dom=b.dom, body=b.body)
         names.append(b.name)
         ctx[b.name] = b.dom
         rty = subst(rty.body, {rty.name: Var(b.name)})
