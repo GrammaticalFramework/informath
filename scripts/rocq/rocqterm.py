@@ -291,6 +291,21 @@ def is_constructor_name(n):
     return n in CONSTRUCTORS or n in ('true', 'false', 'O', 'S', 'nil', 'cons', 'pair', 'Some', 'None', 'left', 'right', 'tt')
 
 
+def beta(t):
+    """t with its beta-redexes (fun x => b) a reduced, as Rocq leaves them in
+    the hypotheses that `pose proof` makes from a lemma applied to a lambda."""
+    k = t.kind
+    if k == 'app':
+        f, args = beta(t.f), [beta(a) for a in t.args]
+        while f.kind == 'lam' and args:
+            f = beta(subst(f.body, {f.name: args[0]}))
+            args = args[1:]
+        return App(f, args) if args else f
+    if k in ('lam', 'pi'):
+        return T(k, name=t.name, dom=beta(t.dom), body=beta(t.body))
+    return t
+
+
 def subst(t, s):
     """t with the variables of s (a dict name -> term) replaced, capture ignored
     (Coq's printed names are distinct enough for the terms of these files)."""

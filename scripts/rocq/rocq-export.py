@@ -753,7 +753,8 @@ def goal_dk(tr, goal, base_ctx, sec=None):
     """A goal in Dedukti: hypotheses [name, type, false], target."""
     ctx = {}
     hyps = []
-    fix = (lambda t: resection(tr, defix(t), sec)) if sec else defix
+    fix0 = (lambda t: resection(tr, defix(t), sec)) if sec else defix
+    fix = lambda t: coqterm.beta(fix0(t))
     if goal['hyps'] is not None:
         for names, ty, val in goal['hyps']:
             t = fix(parse(ty))
