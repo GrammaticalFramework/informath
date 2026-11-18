@@ -85,6 +85,7 @@ typing nouns t = case t of
      GApp3MacroTerm (GStringMacro (GString m)) _ _ _ -> Just m
      GApp4MacroTerm (GStringMacro (GString m)) _ _ _ _ -> Just m
      GApp5MacroTerm (GStringMacro (GString m)) _ _ _ _ _ -> Just m
+     GAppMacroTerm (GStringMacro (GString m)) _ -> Just m
      _ -> Nothing
 
 -- | Variables of a set given by a term are declared with a formula: "let

@@ -3,6 +3,7 @@
 abstract Terms = Identifiers ** {
 
 cat
+  MacroArgs ;
   Formula ;
   Declaration ;
   Equation ;
@@ -72,15 +73,13 @@ fun
   App5MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Formula ;
   App5MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term ;
 
-  -- up to nine arguments, as constants with many implicit arguments have
-  App6MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
-  App6MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
-  App7MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
-  App7MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
-  App8MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
-  App8MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
-  App9MacroFormula : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Formula ;
-  App9MacroTerm : Macro -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term -> Term ;
+  -- more arguments, as constants with many implicit arguments have, as a list:
+  -- one function per arity would be compiled for every combination of the
+  -- arguments' parameters (10^n rules for n arguments)
+  AppMacroTerm : Macro -> MacroArgs -> Term ;
+  AppMacroFormula : Macro -> MacroArgs -> Formula ;
+  OneMacroArg : Term -> MacroArgs ;
+  ConsMacroArg : Term -> MacroArgs -> MacroArgs ;
   
   StringMacro : String -> Macro ;
   

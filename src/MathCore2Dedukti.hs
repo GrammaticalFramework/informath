@@ -217,10 +217,7 @@ formula2dedukti formula = case formula of
   GApp3MacroFormula ident x y z -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z])
   GApp4MacroFormula ident x y z u -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z, u])
   GApp5MacroFormula ident a b c d e -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e])
-  GApp6MacroFormula ident a b c d e f -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e, f])
-  GApp7MacroFormula ident a b c d e f g -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e, f, g])
-  GApp8MacroFormula ident a b c d e f g h -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e, f, g, h])
-  GApp9MacroFormula ident a b c d e f g h i -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e, f, g, h, i])
+  GAppMacroFormula ident xs -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti (macroArgList xs))
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -332,10 +329,7 @@ term2dedukti term = case term of
   GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z])
   GApp4MacroTerm macro a b c d -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d])
   GApp5MacroTerm macro a b c d e -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e])
-  GApp6MacroTerm macro a b c d e f -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e, f])
-  GApp7MacroTerm macro a b c d e f g -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e, f, g])
-  GApp8MacroTerm macro a b c d e f g h -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e, f, g, h])
-  GApp9MacroTerm macro a b c d e f g h i -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e, f, g, h, i])
+  GAppMacroTerm macro xs -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti (macroArgList xs))
   GComprehensionTerm kterm x pterm ->
     foldl EApp (EIdent identSuchThat) [ 
       (term2dedukti kterm),
@@ -441,3 +435,8 @@ exps2list exps = case exps of
   GOneExps e -> [e]
   GManyExps (GListExp es) -> es
 
+-- | The arguments of a macro given as a list (AppMacroTerm)
+macroArgList :: GMacroArgs -> [GTerm]
+macroArgList xs = case xs of
+  GOneMacroArg t -> [t]
+  GConsMacroArg t rest -> t : macroArgList rest

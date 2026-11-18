@@ -158,7 +158,7 @@ symbolicArg exp = case exp of
 
 funListTerm :: QIdent -> [Exp] -> GTerm
 funListTerm ident exps = case ident of
-  QIdent s -> case (lookupConstant s, concatMap exp2terms exps) of
+  QIdent s -> case (lookupConstant s, macroTerms s exps) of
     (Just ("Const", c), []) -> GConstTerm (fgTree c)
     (Just ("Oper", c), [x]) -> GOperTerm (fgTree c) x
     (Just ("Oper2", c), [x, y]) -> GOper2Term (fgTree c) x y
@@ -168,10 +168,8 @@ funListTerm ident exps = case ident of
     (Just ("MACRO", c), [x, y, z]) -> GApp3MacroTerm (macroIdent c) x y z
     (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroTerm (macroIdent c) x y z u
     (Just ("MACRO", c), [a, b, x, y, z]) -> GApp5MacroTerm (macroIdent c) a b x y z
-    (Just ("MACRO", c), [a, b, d, x, y, z]) -> GApp6MacroTerm (macroIdent c) a b d x y z
-    (Just ("MACRO", c), [a, b, d, e, x, y, z]) -> GApp7MacroTerm (macroIdent c) a b d e x y z
-    (Just ("MACRO", c), [a, b, d, e, f, x, y, z]) -> GApp8MacroTerm (macroIdent c) a b d e f x y z
-    (Just ("MACRO", c), [a, b, d, e, f, g, x, y, z]) -> GApp9MacroTerm (macroIdent c) a b d e f g x y z
+    -- more arguments: as a list (Terms: AppMacroTerm)
+    (Just ("MACRO", c), ts@(_:_:_:_:_:_:_)) -> GAppMacroTerm (macroIdent c) (macroArgs ts)
     _ -> case exps of
       [] -> GIdentTerm (ident2ident ident)
       _:_ -> GAppFunctionTerm (GIdentFunction (ident2ident ident)) (GListTerm (map exp2term exps))
@@ -234,10 +232,7 @@ funListFormula ident exps = case ident of
     (Just ("MACRO", c), [x, y, z]) -> GApp3MacroFormula (macroIdent c) x y z
     (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroFormula (macroIdent c) x y z u
     (Just ("MACRO", c), [a, b, x, y, z]) -> GApp5MacroFormula (macroIdent c) a b x y z
-    (Just ("MACRO", c), [a, b, d, x, y, z]) -> GApp6MacroFormula (macroIdent c) a b d x y z
-    (Just ("MACRO", c), [a, b, d, e, x, y, z]) -> GApp7MacroFormula (macroIdent c) a b d e x y z
-    (Just ("MACRO", c), [a, b, d, e, f, x, y, z]) -> GApp8MacroFormula (macroIdent c) a b d e f x y z
-    (Just ("MACRO", c), [a, b, d, e, f, g, x, y, z]) -> GApp9MacroFormula (macroIdent c) a b d e f g x y z
+    (Just ("MACRO", c), ts@(_:_:_:_:_:_:_)) -> GAppMacroFormula (macroIdent c) (macroArgs ts)
     _ -> GMacroFormula (GStringMacro (GString ("NOTYET"++s)))
     
 hypoIdents :: GHypo -> [GIdent]
@@ -418,6 +413,15 @@ exp2term exp = case specialDedukti2Informath callBacks exp of
      
     _ -> error ("not yet exp2term: " ++ printTree exp)
 
+-- | The arguments of a constant as terms. A lambda is split into its
+-- variables and body for a macro defined by its symbol alone (a binder macro,
+-- \\HottPi{A}{x}{B}); for a form given inline with its arguments ($...#4...$,
+-- whose profile lists them), each argument is one term, a lambda as such
+macroTerms :: String -> [Exp] -> [GTerm]
+macroTerms s exps = case lookupConstantFull s of
+  Just (_, _, _, prof@('[':_)) | not (null prof) -> map exp2term exps
+  _ -> concatMap exp2terms exps
+
 exp2terms :: Exp -> [GTerm]
 exp2terms exp = case exp of
   EAbs _ _ -> case splitAbs exp of
@@ -525,3 +529,10 @@ isPropType :: Exp -> Bool
 isPropType e = case e of
   EApp (EIdent f) _ -> isElemIdent f && catExp e == "Prop"
   _ -> False
+
+-- | The arguments of a macro applied to more than five, as a list
+macroArgs :: [GTerm] -> GMacroArgs
+macroArgs ts = case ts of
+  [t] -> GOneMacroArg t
+  t : rest -> GConsMacroArg t (macroArgs rest)
+  [] -> error "macroArgs: no arguments"
