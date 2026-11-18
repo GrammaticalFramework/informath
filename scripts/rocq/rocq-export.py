@@ -297,7 +297,13 @@ def fix_rules(tr, name, binders, body):
                 del ctx2[v]
                 if pargs:
                     tys = ctor_arg_types(tr, h.name, vty, len(pargs))
-                    real_args = pargs[len(pargs) - len(tys):] if tys else pargs
+                    k0 = len(pargs) - len(tys) if tys else 0
+                    # a wildcard of the pattern (S _, printed so when its variable is
+                    # unused) gets a name, since a nested match may use the whole
+                    pargs = pargs[:k0] + [Var(tr.fresh('k', dict(ctx, **ctx2))) if a.kind == 'var' and a.name == '_'
+                                          else a for a in pargs[k0:]]
+                    p = App(h, pargs)
+                    real_args = pargs[k0:]
                     for a, ty in zip(real_args, tys):
                         if a.kind == 'var' and a.name != '_':
                             ctx2[a.name] = ty
