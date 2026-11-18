@@ -282,6 +282,9 @@ def pattern_vars(p):
 
 
 CONSTRUCTORS = set()          # filled by Env: the constructors of inductive types
+# the record types of the exported file, read as Informath's structures: a
+# variable of a record type R has the type Str R ("let G be a group")
+STRUCTURES = set()
 
 
 def is_constructor_name(n):
@@ -527,6 +530,8 @@ class Translator:
         s = self.sort(a, ctx)
         if s == 'Prop':
             return 'Proof (%s)' % self.prop(a, ctx)
+        if a.kind == 'var' and a.name in STRUCTURES:
+            return 'Str %s' % self.env.dk.get(a.name, a.name)
         return 'Elem %s' % paren(self.set(a, ctx))
 
     def set(self, a, ctx):
@@ -818,6 +823,8 @@ class Translator:
             res = 'Prop' if ty.name == 'Prop' else 'Set'
         elif s == 'Prop':
             res = 'Proof (%s)' % self.prop(ty, ctx)
+        elif ty.kind == 'var' and ty.name in STRUCTURES:
+            res = 'Str %s' % self.env.dk.get(ty.name, ty.name)
         else:
             res = 'Elem %s' % paren(self.set(ty, ctx))
         return ' -> '.join(parts + [res]), ctx, ty

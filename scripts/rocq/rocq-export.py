@@ -126,11 +126,19 @@ def scan(src):
         if kind in THEOREM_KINDS:
             stmt_end = end
             item['source'] = src[start:stmt_end].strip()
-            pm = re.compile(r'Proof\.').search(code, stmt_end)
+            # the proof right after the statement: Proof. ... Qed. (or Defined.,
+            # Admitted.), or Admitted. alone for a theorem stated without proof
+            am = re.compile(r'\s*Admitted\.').match(code, stmt_end)
+            pm = re.compile(r'\s*(?:Proof\.)').match(code, stmt_end)
             qm = re.compile(r'(Qed|Defined|Admitted)\.').search(code, pm.end()) if pm else None
-            if pm and qm:
+            if am:
+                item['admitted'] = True
+                item['endLine'] = line_of(src, am.end())
+            elif pm and qm:
+                if qm.group(1) == 'Admitted':
+                    item['admitted'] = True
                 item['script'] = (pm.end(), qm.start())
-                item['proofSource'] = src[pm.start():qm.end()]
+                item['proofSource'] = src[pm.start():qm.end()].strip()
                 item['endLine'] = line_of(src, qm.end())
             else:
                 item['endLine'] = line_of(src, end)
@@ -193,7 +201,7 @@ def query(vdir, mod, items):
             for c in [it['constructor']] + it['fields']:
                 cmds.append(('check', c, 'Check @%s.' % c))
             cmds.append(('print', n, 'Print %s.' % n))
-    text = PREAMBLE + 'Require Import %s.\n' % mod + SETTINGS + SEP + '\n' + \
+    text = PREAMBLE + 'Require Import %s.\n' % ' '.join(IMPORTS + [mod]) + SETTINGS + SEP + '\n' + \
         '\n'.join('%s\n%s' % (c, SEP) for _, _, c in cmds) + '\n'
     out = rocq(vdir, text)
     chunks = SEP_OUT.split(out)[1:]
@@ -348,15 +356,36 @@ def dk_names(env, items):
             env.dk[n] = n + '_' if n in coqterm.BASE_NAMES or n in ('In', 'max', 'map', 'ite', 'setof', 'bmem', 'pair', 'triple') else n
 
 
-def export_decls(vdir, mod, items):
-    res = query(vdir, mod, items)
+# the local modules that the exported file requires (set by main)
+IMPORTS = []
+
+
+def local_imports(vdir, src, seen=None):
+    """The modules of vdir that src requires, transitively, in dependency order."""
+    seen = [] if seen is None else seen
+    for m in re.finditer(r'Require\s+(?:Import\s+|Export\s+)?((?:[A-Za-z_][\w\']*\s*)+)\.', strip_comments(src)):
+        for name in m.group(1).split():
+            f = os.path.join(vdir, name + '.v')
+            if name not in seen and os.path.exists(f):
+                local_imports(vdir, open(f).read(), seen)
+                if name not in seen:
+                    seen.append(name)
+    return seen
+
+
+def export_decls(vdir, mod, items, dep_items=()):
+    """The Dedukti of items; dep_items are the declarations of the local
+    modules the file requires, whose types the translation needs, but
+    which are not exported again."""
+    dep_items = list(dep_items)
+    res = query(vdir, mod, dep_items + items)
     env = Env()
-    dk_names(env, items)
+    dk_names(env, dep_items + items)
     env.user = set(env.dk)
     tr = Translator(env)
     blocks = []
     # first the types of all constants, so that the translation knows them
-    for it in items:
+    for it in dep_items + items:
         n = it['coq']
         if it['kind'] in THEOREM_KINDS + AXIOM_KINDS:
             it['_type'] = parse_check(res[('check', n)])
@@ -385,6 +414,7 @@ def export_decls(vdir, mod, items):
             for c in [it['constructor']] + it['fields']:
                 env.types[c] = parse_check(res[('check', c)])
             coqterm.CONSTRUCTORS.add(it['constructor'])
+            coqterm.STRUCTURES.add(n)
     for it in items:
         n = it['coq']
         dn = tr.const_name(n)
@@ -401,7 +431,9 @@ def export_decls(vdir, mod, items):
                 block = '\n'.join(lines)
                 it['kind_'] = 'inductive'
             elif it['kind'] == 'Record':
-                lines = ['%s : %s.' % (dn, tr.decl_type(env.types[n])[0])]
+                # a structure, as Informath declares them (test/algebra.dk): the
+                # kind, its constructor with the fields as arguments, the selectors
+                lines = ['%s : Structure.' % dn]
                 for c in [it['constructor']] + it['fields']:
                     lines.append('%s : %s.' % (tr.const_name(c), tr.decl_type(env.types[c])[0]))
                 block = '\n'.join(lines)
@@ -743,7 +775,12 @@ def main():
     compile_if_needed(vfile)
     src = open(vfile).read()
     items = scan(src)
-    env, tr, blocks = export_decls(vdir, mod, items)
+    dep_items = []
+    IMPORTS[:] = local_imports(vdir, src)
+    for dep in IMPORTS:
+        compile_if_needed(os.path.join(vdir, dep + '.v'))
+        dep_items += scan(open(os.path.join(vdir, dep + '.v')).read())
+    env, tr, blocks = export_decls(vdir, mod, items, dep_items)
     os.makedirs(OUT, exist_ok=True)
     open(os.path.join(OUT, mod + '.dk'), 'w').write(
         '(; %s: declarations exported from %s by rocq-export.py ;)\n\n' % (mod, base) + '\n\n'.join(blocks) + '\n')

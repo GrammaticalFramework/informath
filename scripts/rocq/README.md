@@ -57,7 +57,15 @@ library's basic notions are mapped to Informath's base constants (`nat` to
 `Nat`, `le` to `Leq`, `eq` to `Eq` or `Eqt`, the logical connectives,
 lists, options, pairs, `S (S O)` to `2`). A `Fixpoint`, and a definition by
 cases on an argument, becomes rewrite rules, one for each case, which
-Informath reads one at a time. Constants with a binder notation are
+Informath reads one at a time. A `Record` is an Informath structure (as in
+`test/algebra.dk`): `R : Structure.`, its constructor with the fields as
+arguments into `Str R`, and the fields as selectors; a variable of type `R`
+is `Str R` ("let G be a group"), and the symbol table should `#EXCLUDE R`
+and word both `R` and the constructor. A file that requires other modules of
+its directory (`Require Import M.`, transitively) is exported with their
+constants known, but not exported again. A theorem ending in `Admitted.`
+(with or without a proof begun) is exported with `"admitted": true` in its
+JSON. Constants with a binder notation are
 eta-expanded, so that their function arguments are a bound variable and a
 body. A definition in a `Section` takes the section's variables as its
 first arguments, as it does outside the section.
