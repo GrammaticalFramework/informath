@@ -678,6 +678,31 @@ readNativeNames file = do
         k <- ["coq", "lean", "agda"], Just (J.JSString n) <- [lookup k (J.fromJSObject o)]]
       _ -> M.empty
 
+-- | The declarations without their unnamed hypotheses of propositions,
+-- (_ : Proof (C X)) ->: the type class instances that the Lean export states in
+-- theorems but leaves out of their applications, so that the theorems are rules
+-- whose premisses -proof-text reads off their types (as in mathlib-informath).
+dropInstanceHypotheses :: Module -> Module
+dropInstanceHypotheses (MJmts jmts) = MJmts (map drop jmts)
+ where
+  drop :: Jmt -> Jmt
+  drop j = case j of
+    JStatic c t -> JStatic c (dropT t)
+    JDef c (MTExp t) e -> JDef c (MTExp (dropT t)) e
+    JThm c (MTExp t) e -> JThm c (MTExp (dropT t)) e
+    JInj c (MTExp t) e -> JInj c (MTExp (dropT t)) e
+    _ -> j
+  dropT :: Exp -> Exp
+  dropT t = case t of
+    EFun h body | isInstance h -> dropT body
+    EFun h body -> EFun h (dropT body)
+    _ -> t
+  isInstance :: Dedukti.AbsDedukti.Hypo -> Bool
+  isInstance h = case h of
+    HParVarExp (QIdent "_") (EApp (EIdent (QIdent "Proof")) _) -> True
+    HVarExp (QIdent "_") (EApp (EIdent (QIdent "Proof")) _) -> True
+    _ -> False
+
 -- | A LaTeX document of proof texts.
 proofTextDocument :: Env -> [String] -> String
 proofTextDocument = proofDemoFile

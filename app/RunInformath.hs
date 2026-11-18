@@ -69,7 +69,9 @@ fromFormalism formalism file args = do
     prop <- doesFileExist (stem ++ "-prop.dk")
     extra <- filterM doesFileExist [root </> "share" </> "nd.dk", dir </> "eliminators.dk", stem ++ "-deps.dk",
                                     if prop then stem ++ "-prop.dk" else dk]
-    MJmts more <- if null extra then return (MJmts []) else fmap conv (readDeduktiModule extra)
+    -- (the Lean export's theorems as rules without their instances)
+    let rules = if formalism == "lean" then dropInstanceHypotheses else id
+    MJmts more <- if null extra then return (MJmts []) else fmap (rules . conv) (readDeduktiModule extra)
     let MJmts base = baseConstantModule env0
     return env0 { baseConstantModule = MJmts (base ++ more) }
   if proofsWanted then fromFormalismProofs env formalism file dir stem conv mo' args1 else do

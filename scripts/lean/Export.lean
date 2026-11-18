@@ -107,6 +107,11 @@ def freshName (n : Name) (prop : Bool) (sort : Bool := false) : M String := do
   modify fun s => { s with names := s.names.insert nm }
   return nm
 
+/-- The coercions, read as their argument (#COERCION): the casts between number
+types and the values of subtypes. -/
+def coercions : List Name :=
+  [``Nat.cast, ``Int.cast, ``NatCast.natCast, ``IntCast.intCast, ``Subtype.val, `Rat.cast, `RatCast.ratCast]
+
 /-- The binder infos of the arguments of a constant. -/
 def argInfos (c : Name) : MetaM (Array BinderInfo) := do
   let info ← getConstInfo c
@@ -234,6 +239,20 @@ partial def app (c : Name) (args : Array Expr) : M String := do
   if c == ``OfNat.ofNat && args.size ≥ 2 then
     if let .lit (.natVal n) := args[1]!.consumeMData then return numeral n
   if c == ``Nat.zero && args.isEmpty then return "0"
+  -- the order on sets and finite sets is inclusion, and its lattice operations
+  -- union and intersection (Mathlib: s ⊆ t is LE.le (Set α) s t, s ∩ t is Min.min)
+  if args.size == 4 && (match args[0]!.getAppFn.constName? with
+                         | some n => n == `Set || n == `Finset
+                         | none => false) then
+    let op : Option Name :=
+      if c == ``LE.le then some `HasSubset.Subset else if c == ``LT.lt then some `HasSSubset.SSubset
+      else if c == ``Max.max then some `Union.union else if c == ``Min.min then some `Inter.inter
+      else none
+    -- written as the application of the operation, which has the same arguments
+    -- (the type, its instance and the two sets); the instance is left out as always
+    if let some o := op then
+      modify fun st => { st with used := st.used.insert o }
+      return s!"{mangle o} {paren (← tr args[0]!)} {paren (← tr args[2]!)} {paren (← tr args[3]!)}"
   -- ∃ x, p x
   if c == ``Exists && args.size == 2 then
     let p := args[1]!
@@ -499,19 +518,23 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
     | .error _ => deps := deps ++ s!"(; NOT EXPORTED: {c} ;)\n\n"
   -- the implicit arguments, hidden in the readings: #HIDE c i j counts the
   -- arguments that Dedukti has, which are all but the instances
-  let mut hide := s!"# {mod}: the implicit arguments of its constants (scripts/lean/Export.lean)\n"
+  let mut hide := s!"# {mod}: the implicit arguments of its constants and the coercions (scripts/lean/Export.lean)\n"
   for c in (exported.toList ++ used.toList).toArray.qsort (·.toString < ·.toString) do
     if mapping.contains c || [``Eq, ``Exists, ``OfNat.ofNat].contains c then continue
     let r ← ((argInfos c).run' {} {}).toIO ctx st |>.toBaseIO
     if let .ok (infos, _) := r then
       let mut hidden := #[]
+      let mut firstExpl : Option Nat := none
       let mut i := 0
       for bi in infos do
         if bi == .instImplicit then continue
         i := i + 1
         if bi != .default then hidden := hidden.push i
+        else if firstExpl.isNone then firstExpl := some i
       if !hidden.isEmpty then
         hide := hide ++ s!"#HIDE {mangle c} {" ".intercalate (hidden.toList.map toString)}\n"
+      if coercions.contains c then
+        if let some k := firstExpl then hide := hide ++ s!"#COERCION {mangle c} {k}\n"
   IO.FS.createDirAll outDir
   IO.FS.writeFile s!"{outDir}/{mod}.dk" dk
   IO.FS.writeFile s!"{outDir}/{mod}-deps.dk" deps
