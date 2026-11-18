@@ -27,6 +27,7 @@ INDEX = os.path.join(project.DIR, 'index.json')
 LANGUAGES = os.environ.get('LANGUAGES', 'Eng').split(',')
 TIMEOUT = 120
 TMP = tempfile.mkdtemp(prefix='rocq-informath-')
+FAILURES = []   # the RunInformath runs on proofs that failed
 LABEL = re.compile(r'^\S+\.\s+')
 FORMULA_LABEL = re.compile(r'^\\textbf\{(\w+)\}(?: \\texttt\{\\detokenize\{([^}]*)\}\})?\.\s*')
 
@@ -218,6 +219,12 @@ def proof_texts(units, units_file):
     each row with the tactics of its step as justification; and the macros."""
     r = subprocess.run([RUN, '-tactic-proof', '-proof-indent', '-proof-goals', '-languages=' + ','.join(LANGUAGES),
                         '-add-symboltables=' + TABLE, units_file], capture_output=True, text=True)
+    if r.returncode != 0:
+        # a failure here (an unparsable wording in the table, ...) would leave
+        # all the proof texts of the module empty without notice
+        sys.stderr.write('rocq-index.py: RunInformath -tactic-proof failed on %s:\n%s\n'
+                         % (units_file, r.stderr[-2000:]))
+        FAILURES.append(units_file)
     texts = proof_tables(r.stdout, LANGUAGES)
     out = {}
     for p, t in zip(units, texts):
@@ -440,6 +447,12 @@ def main():
     missing = [d['coq'] for d in decls if not d['readings'].get('Eng')]
     if missing:
         print('no reading:', ' '.join(missing))
+    # theorems with a tactic proof and no proof text
+    noproof = [d['coq'] for d in decls if d.get('proofSource') and not d.get('proof')]
+    if noproof:
+        print('%d tactic proofs without a proof text: %s' % (len(noproof), ' '.join(noproof[:20])))
+    if FAILURES or noproof:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
