@@ -61,7 +61,9 @@ Informath reads one at a time. A `Record` is an Informath structure (as in
 `test/algebra.dk`): `R : Structure.`, its constructor with the fields as
 arguments into `Str R`, and the fields as selectors; a variable of type `R`
 is `Str R` ("let G be a group"), and the symbol table should `#EXCLUDE R`
-and word both `R` and the constructor. A file that requires other modules of
+and word both `R` and the constructor; `rocq-index.py` reads a structure
+as its definition, the constructor, whose arguments are named by the
+fields or by `FIELD_VARIABLES` (config.py). A file that requires other modules of
 its directory (`Require Import M.`, transitively) is exported with their
 constants known, but not exported again. A theorem ending in `Admitted.`
 (with or without a proof begun) is exported with `"admitted": true` in its

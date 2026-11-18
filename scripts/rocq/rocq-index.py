@@ -356,7 +356,14 @@ def main():
             d['module'] = mod
             d['dedukti'] = blocks.get(d['coq'], d.get('dedukti'))
             decls.append(d)
-            pieces += items_of(d['coq'], d['dedukti'], [d['constructor']] if 'constructor' in d else [])
+            if d.get('kind') == 'structure' and '%s : Structure.' % d.get('dk') in (d['dedukti'] or ''):
+                # a record exported as a structure: read as its definition, the
+                # constructor ("A group is ... where ..."), not field by field
+                lines = d['dedukti'].split('\n')
+                block = '\n'.join(lines[:2])
+                pieces += [((d['coq'], 'stmt'), block)]
+            else:
+                pieces += items_of(d['coq'], d['dedukti'], [d['constructor']] if 'constructor' in d else [])
     print('%d declarations, %d pieces to read with %s' % (len(decls), len(pieces), RUN))
     results = {}
     with concurrent.futures.ThreadPoolExecutor(8) as ex:

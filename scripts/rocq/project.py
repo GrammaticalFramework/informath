@@ -24,6 +24,8 @@ needs; rocq-export.py works without config.py):
     FUNCTION_FORMS   their forms for a function argument (\\CoqAllF)
     ATOMIC           macro name prefixes whose forms need no parentheses
     SIDE_CONDITIONS  propositions (prefixes) left out of proof texts
+    FIELD_VARIABLES  record field -> the variable naming it in the structure's
+                     definition (lawSet -> X, perp -> {|\\perp|})
 """
 import importlib.util
 import os

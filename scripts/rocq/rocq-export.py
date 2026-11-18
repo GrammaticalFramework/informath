@@ -362,6 +362,8 @@ def dk_names(env, items):
             env.dk[n] = n + '_' if n in coqterm.BASE_NAMES or n in ('In', 'max', 'map', 'ite', 'setof', 'bmem', 'pair', 'triple') else n
 
 
+FIELD_VARIABLES = project.get('FIELD_VARIABLES', {})
+
 # the local modules that the exported file requires (set by main)
 IMPORTS = []
 
@@ -440,7 +442,13 @@ def export_decls(vdir, mod, items, dep_items=()):
                 # a structure, as Informath declares them (test/algebra.dk): the
                 # kind, its constructor with the fields as arguments, the selectors
                 lines = ['%s : Structure.' % dn]
-                for c in [it['constructor']] + it['fields']:
+                # the constructor's arguments named as the project says (config.py
+                # FIELD_VARIABLES: field -> the variable of the definition, X for
+                # lawSet), else by the fields
+                names = [FIELD_VARIABLES.get(f, f) for f in it['fields']]
+                lines.append('%s : %s.' % (tr.const_name(it['constructor']),
+                                           tr.decl_type(env.types[it['constructor']], names=names)[0]))
+                for c in it['fields']:
                     lines.append('%s : %s.' % (tr.const_name(c), tr.decl_type(env.types[c])[0]))
                 block = '\n'.join(lines)
                 it['kind_'] = 'structure'
