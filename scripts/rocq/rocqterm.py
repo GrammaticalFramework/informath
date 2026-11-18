@@ -368,6 +368,7 @@ STDLIB_TYPES = {
     'leb': 'forall (_ : nat) (_ : nat), bool',
     'max': 'forall (_ : nat) (_ : nat), nat', 'min': 'forall (_ : nat) (_ : nat), nat',
     'add': 'forall (_ : nat) (_ : nat), nat', 'mul': 'forall (_ : nat) (_ : nat), nat',
+    'sub': 'forall (_ : nat) (_ : nat), nat',
     'map': 'forall (A : Type) (B : Type) (f : forall _ : A, B) (_ : list A), list B',
     'app': 'forall (A : Type) (_ : list A) (_ : list A), list A',
 }
@@ -386,6 +387,7 @@ STDLIB_DK = {
     'andb': ('andb', 0), 'orb': ('orb', 0), 'negb': ('negb', 0),
     'eqb': ('eqb', 0), 'ltb': ('ltb', 0), 'leb': ('leb', 0),
     'eq_dec': ('eqdec', 0), 'max': ('max', 0), 'min': ('min', 0), 'pred': ('pred', 0), 'add': ('plus', 0), 'mul': ('times', 0),
+    'sub': ('minus', 0),
     'map': ('map', 2), 'app': ('lappend', 1),
 }
 
