@@ -363,6 +363,8 @@ def dk_names(env, items):
 
 
 FIELD_VARIABLES = project.get('FIELD_VARIABLES', {})
+# the constructors of the records: constructor -> (record, fields)
+RECORD_CONSTRUCTORS = {}
 
 # the local modules that the exported file requires (set by main)
 IMPORTS = []
@@ -423,6 +425,7 @@ def export_decls(vdir, mod, items, dep_items=()):
                 env.types[c] = parse_check(res[('check', c)])
             coqterm.CONSTRUCTORS.add(it['constructor'])
             coqterm.STRUCTURES.add(n)
+            RECORD_CONSTRUCTORS[it['constructor']] = (n, it['fields'])
     for it in items:
         n = it['coq']
         dn = tr.const_name(n)
@@ -510,6 +513,29 @@ def definition(tr, it):
         rty = subst(rty.body, {rty.name: Var(b.name)})
         b = b.body
     dty, _, _ = tr.decl_type(ty, names=names)
+    # a structure given by its fields (the constructor of a record applied to
+    # them): a rule for each field that is not a proof, read as "the law of
+    # composition of the permutation group of X is ..."
+    h, hargs = head(b)
+    if h.kind == 'var' and h.name in RECORD_CONSTRUCTORS:
+        rec, fields = RECORD_CONSTRUCTORS[h.name]
+        nparams = len(hargs) - len(fields)
+        if nparams >= 0:
+            params, fargs = hargs[:nparams], hargs[nparams:]
+            lhs = ' '.join([dn] + names)
+            rules = []
+            for f, a in zip(fields, fargs):
+                fty = tr.env.types.get(f)
+                res = fty
+                while res is not None and res.kind == 'pi':
+                    res = res.body
+                if res is not None and tr.sort(res, {}) == 'Prop':
+                    continue
+                sel = ' '.join([tr.const_name(f)] + [paren(tr.term(x, ctx)) for x in params] + [paren(lhs)])
+                val = tr.prop(a, ctx) if tr.is_prop_term(a, ctx) else tr.term(a, ctx)
+                rules.append('[%s] %s --> %s' % (', '.join(names), sel, val))
+            if rules:
+                return 'def %s : %s.\n%s.' % (dn, dty, '\n'.join(rules))
     # a definition of a constant with arguments that the readings leave out,
     # or by cases on an argument: as rewrite rules
     if names and (n in coqterm.DROP or contains_match_on(b, set(names))):
