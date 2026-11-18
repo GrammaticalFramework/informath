@@ -173,7 +173,7 @@ def loadpath(vdir):
 
 
 def rocq(vfile_dir, text):
-    path = os.path.abspath(os.path.join(vfile_dir, 'query_tmp.v'))
+    path = os.path.abspath(os.path.join(vfile_dir, 'query_tmp_%d.v' % os.getpid()))
     open(path, 'w').write(text)
     r = subprocess.run(['rocq', 'repl'] + loadpath(vfile_dir) + ['-batch', '-l', path], cwd=vfile_dir,
                        capture_output=True, text=True)
@@ -728,7 +728,7 @@ def goal_dk(tr, goal, base_ctx, sec=None):
 
 def export_tactics(vdir, mod, src, items, tr):
     text, steps = instrumented(src, items)
-    path = os.path.abspath(os.path.join(vdir, 'replay_tmp.v'))
+    path = os.path.abspath(os.path.join(vdir, 'replay_tmp_%d.v' % os.getpid()))
     open(path, 'w').write(text)
     r = subprocess.run(['rocq', 'repl'] + loadpath(vdir) + ['-batch', '-l', path], cwd=vdir,
                        capture_output=True, text=True)
