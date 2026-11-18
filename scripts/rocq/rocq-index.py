@@ -223,7 +223,9 @@ def proof_texts(units, units_file):
     for p, t in zip(units, texts):
         if t:
             for lang in t:
-                t[lang] = [[n, text, 'TACTIC:' + u['by'].replace(' ;; ', '. ')]
+                # each row with the path of its step (the bullets and braces it is
+                # in) and its unit, for the folds of the pages (proof_folds.py)
+                t[lang] = [[n, text, 'TACTIC:' + u['by'].replace(' ;; ', '. '), u.get('path', []), u.get('unit', '')]
                            for (n, text, _), u in zip(t[lang], p['steps'])]
         out[p['coq']] = t
     return out, macros_of(r.stdout)

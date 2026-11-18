@@ -277,15 +277,90 @@ LABELS = {
             'toggle induction': 'show or hide the steps of the induction',
             'induction': ' (%d steps of the induction hidden)',
             'toggle cases': 'show or hide the steps of the case analysis',
-            'cases': ' (%d steps hidden)'},
+            'cases': ' (%d steps hidden)',
+            'toggle verification': 'show or hide the verification of this claim',
+            'verification': ' (its verification, %d lines, hidden)',
+            'toggle part': 'show or hide the rest of this part of the proof',
+            'part': ' (%d more lines of this part hidden)'},
     'Fre': {'fold all': 'tout replier', 'unfold all': 'tout déplier', 'line': 'ligne %s', 'lines': 'lignes %s-%s',
             'folded': ' (%s repliées)', 'derivation': ' (sa dérivation, %d lignes, repliée)',
             'toggle': 'replier ou déplier %s', 'toggle derivation': 'replier ou déplier la dérivation de cette ligne',
             'toggle induction': 'montrer ou cacher les étapes de la récurrence',
             'induction': ' (%d étapes de la récurrence cachées)',
             'toggle cases': "montrer ou cacher les étapes de l'analyse de cas",
-            'cases': ' (%d étapes cachées)'},
+            'cases': ' (%d étapes cachées)',
+            'toggle verification': 'montrer ou cacher la vérification de cette affirmation',
+            'verification': ' (sa vérification, %d lignes, cachée)',
+            'toggle part': 'montrer ou cacher la suite de cette partie de la preuve',
+            'part': ' (%d autres lignes de cette partie cachées)'},
 }
+
+
+def verification_collapses(rows, short_html=''):
+    """The collapses of the verifications of claims in a proof text made
+    from a tactic proof (Rocq's assert ... { ... }, Lean's have ... := by):
+    rows whose fourth element is the step's path (the bullets and braces it
+    is in) and fifth its unit ('verify' for a claim). The lines of the
+    braced proof that follows a claim, which are in a case of their own
+    below the claim's path, are hidden under the claim."""
+    out = {}
+    for i, r in enumerate(rows):
+        if len(r) < 5 or r[4] != 'verify' or i + 1 >= len(rows) or len(rows[i + 1]) < 4:
+            continue
+        p = list(r[3] or [])
+        q = list(rows[i + 1][3] or [])
+        if len(q) <= len(p) or q[:len(p)] != p:
+            continue
+        block = q[:len(p) + 1]
+        hidden = []
+        for j in range(i + 1, len(rows)):
+            pj = list(rows[j][3] or []) if len(rows[j]) > 3 else []
+            if pj[:len(block)] != block:
+                break
+            hidden.append(j)
+        if hidden:
+            out[i] = (hidden, short_html, 'verification')
+    return out
+
+
+def part_collapses(rows, short_html='', least=2):
+    """The collapses of the parts of a proof text made from a tactic proof
+    (the cases of Rocq's bullets and braces): rows whose fourth element is
+    the step's path. A part is the lines from one that enters a case (its
+    path longer than the line before, or another case at the same level)
+    to the end of that case; its lines after the first are hidden under it
+    if there are at least `least` of them."""
+    out = {}
+    paths = [list(r[3] or []) if len(r) > 3 else None for r in rows]
+    for i, p in enumerate(paths):
+        if not p or i == 0 or paths[i - 1] is None:
+            continue
+        q = paths[i - 1]
+        # the case entered: the shortest beginning of the path not shared with
+        # the line before (none if the line returns to an enclosing case)
+        k = 0
+        while k < len(p) and k < len(q) and p[k] == q[k]:
+            k += 1
+        if k == len(p):
+            continue
+        key = p[:k + 1]
+
+        def block(key):
+            out = []
+            for j in range(i + 1, len(rows)):
+                if paths[j] is None or paths[j][:len(key)] != key:
+                    break
+                out.append(j)
+            return out
+        hidden = block(key)
+        # a case divided into cases from its first line on (split; - ...; -
+        # split): the part is the first of these
+        while len(key) < len(p) and len({tuple(paths[j][len(key):len(key) + 1]) for j in hidden} - {()}) > 1:
+            key = p[:len(key) + 1]
+            hidden = block(key)
+        if len(hidden) >= least:
+            out[i] = (hidden, short_html, 'part')
+    return out
 
 
 def proof_table(rows, sentence_html=None, justification_html=None, number_html=None,
