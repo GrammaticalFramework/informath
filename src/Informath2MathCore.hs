@@ -516,3 +516,31 @@ declarationProp decl = case decl of
   GElemDeclaration ts term -> GFormulaProp (GElemFormula ts term)
   GTypingDeclaration ts term -> GFormulaProp (GElemFormula ts term)
   _ -> GDeclarationProp decl
+
+
+-- | "A function", "a two-place function" (BareFunKind, ...), "a predicate"
+-- (BarePredKind, ...), "a family indexed by N" (FamilyKind, ...), which
+-- MathCore2Informath.bareQuantifiers makes of a function kind whose
+-- arguments or value are of an implicit type (#IMPLICIT), as that
+-- function kind again: one alternative for each choice of the implicit
+-- kinds, for Dedukti to choose among by type checking
+restoreBareFunKinds :: [GKind] -> Tree a -> [Tree a]
+restoreBareFunKinds [] t = [t]
+restoreBareFunKinds kinds t = case t of
+  GBareFunKind -> funs 1
+  GBareFun2Kind -> funs 2
+  GBareFun3Kind -> funs 3
+  GBarePredKind -> preds 1
+  GBarePred2Kind -> preds 2
+  GBarePred3Kind -> preds 3
+  GFamilyKind a -> [GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) val | val <- kinds]
+  GFamily2Kind a b -> [GFunKind (GListArgKind [GKindArgKind (GExpKind a), GKindArgKind (GExpKind b)]) val | val <- kinds]
+  _ -> composOpM (restoreBareFunKinds kinds) t
+ where
+  funs :: Int -> [GKind]
+  funs n = [GFunKind (GListArgKind (map GKindArgKind args)) val |
+            args <- sequence (replicate n kinds), val <- kinds]
+  -- a predicate: a function to propositions
+  preds :: Int -> [GKind]
+  preds n = [GFunKind (GListArgKind (map GKindArgKind args)) (GNounKind (LexNoun "proposition_Noun")) |
+             args <- sequence (replicate n kinds)]

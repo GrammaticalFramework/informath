@@ -66,6 +66,10 @@ oper
   hold_V2 = mkV2 I.hålla_V for_Prep ;
   form_V2 = mkV2 (mkV "bilda") ;
   arbitrary_A = mkA "godtycklig" ;
+  two_place_A = mkA "tvåställig" ;
+  three_place_A = mkA "treställig" ;
+  family_N = mkN "familj" "familjer" ;
+  indexed_by_Prep = mkPrep "indexerad med" ;
   set_N = mkN "mängd" "mängder" ;
   proposition_N = mkN "påstående" ;
   

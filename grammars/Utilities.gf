@@ -326,6 +326,10 @@ oper
   hold_V2 : V2 ;
   form_V2 : V2 ;
   arbitrary_A : A ;
+  two_place_A : A ;
+  three_place_A : A ;
+  family_N : N ;
+  indexed_by_Prep : Prep ;
   set_N : N ;
   proposition_N : N ;
   at_Prep : Prep ;

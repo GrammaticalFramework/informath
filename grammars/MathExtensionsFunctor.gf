@@ -55,6 +55,14 @@ lin
   VarsHypo idents kind = Grammar.ImpP3 idents.np (mkVP (useKind kind)) ; 
   ClassKind noun = {cn = noun ; adv = lin Adv {s = []}} ;
   BareVarsHypo idents = Grammar.ImpP3 idents.np (mkVP arbitrary_A) ;
+  BareFunKind = {cn = mkCN function_N ; adv = lin Adv {s = []}} ;
+  BareFun2Kind = {cn = mkCN two_place_A function_N ; adv = lin Adv {s = []}} ;
+  BareFun3Kind = {cn = mkCN three_place_A function_N ; adv = lin Adv {s = []}} ;
+  BarePredKind = {cn = mkCN predicate_N ; adv = lin Adv {s = []}} ;
+  BarePred2Kind = {cn = mkCN two_place_A predicate_N ; adv = lin Adv {s = []}} ;
+  BarePred3Kind = {cn = mkCN three_place_A predicate_N ; adv = lin Adv {s = []}} ;
+  FamilyKind a = {cn = mkCN family_N ; adv = Syntax.mkAdv indexed_by_Prep a} ;
+  Family2Kind a b = {cn = mkCN family_N ; adv = Syntax.mkAdv indexed_by_Prep (mkNP and_Conj a b)} ;
   AdjKindHypo idents adj kind = Grammar.ImpP3 idents.np (mkVP (mkCN adj (useKind kind))) ; 
 
   SuchThatHypo idents prop kind = Grammar.ImpP3 idents.np (mkVP (suchThatCN (useKind kind) (partProp prop))) ; 

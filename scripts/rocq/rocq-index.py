@@ -353,6 +353,48 @@ def with_uses(proofs):
     return proofs
 
 
+_IMPLICIT = None
+
+
+def implicit_types():
+    """The types of the symbol table's #IMPLICIT lines (Elem Obj), whose
+    variables a reading leaves unbound."""
+    global _IMPLICIT
+    if _IMPLICIT is None:
+        _IMPLICIT = set()
+        for t in TABLE.split(','):
+            if os.path.exists(t):
+                for l in open(t):
+                    if l.startswith('#IMPLICIT'):
+                        _IMPLICIT.add(' '.join(l.split()[1:]).replace('(', '').replace(')', ''))
+    return _IMPLICIT
+
+
+def without_implicit_variables(proofs):
+    """The steps that introduce only variables of implicit types (intros x),
+    which say nothing, as the variables are read as being of those types:
+    left out, their tactics given to the next step."""
+    imp = implicit_types()
+
+    def only_implicit(u):
+        return (u.get('unit') == 'hypos' and u.get('hypos') and
+                all(t.replace('(', '').replace(')', '').strip() in imp for _, t in u['hypos']))
+    for p in proofs:
+        out, carry = [], None
+        for u in p['steps']:
+            if only_implicit(u):
+                carry = u['by'] if carry is None else carry + ' ;; ' + u['by']
+                continue
+            if carry is not None:
+                u = dict(u, by=carry + ' ;; ' + u.get('by', ''))
+                carry = None
+            out.append(u)
+        if carry is not None and out:
+            out[-1] = dict(out[-1], by=out[-1].get('by', '') + ' ;; ' + carry)
+        p['steps'] = out
+    return proofs
+
+
 def tactic_proofs(mod):
     """The proof texts of a module's tactic proofs, all steps and shortened
     (Informath's scripts/proof_shortening.py), and the rules applied."""
@@ -366,7 +408,7 @@ def tactic_proofs(mod):
         return {}, {}, macros, {}
     subprocess.run([sys.executable, os.path.join(HERE, 'rocq-tactic-units.py'), mod, OUT], check=True,
                    capture_output=True)
-    units = with_uses(json.load(open(units_file)))
+    units = with_uses(without_implicit_variables(json.load(open(units_file))))
     json.dump(units, open(units_file, 'w'), ensure_ascii=False, indent=1)
     full, macros = proof_texts(units, units_file)
     short_units, counts = [], {}

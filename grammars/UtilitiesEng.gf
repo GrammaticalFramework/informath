@@ -65,6 +65,10 @@ oper
   hold_V2 = mkV2 I.hold_V for_Prep ;
   form_V2 = mkV2 (mkV "form") ;
   arbitrary_A = mkA "arbitrary" ;
+  two_place_A = mkA "two-place" ;
+  three_place_A = mkA "three-place" ;
+  family_N = mkN "family" ;
+  indexed_by_Prep = mkPrep "indexed by" ;
   set_N = mkN "set" ;
   proposition_N = mkN "proposition" ;
 

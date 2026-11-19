@@ -34,6 +34,15 @@ fun
   -- semantics is the set and the assumption, not a variable of the kind
   ClassKind : Noun -> Kind ;
   BareVarsHypo : [Ident] -> Hypo ;  -- needed in proofs: let x be arbitrary
+  -- a function kind whose arguments and value are all of an implicit type
+  -- (#IMPLICIT): "let f be a function", "let g be a two-place function"
+  BareFunKind, BareFun2Kind, BareFun3Kind : Kind ;
+  -- the same with propositions as values: "let R be a predicate", "a two-place predicate"
+  BarePredKind, BarePred2Kind, BarePred3Kind : Kind ;
+  -- a function from a set to an implicit type: "let a be a family indexed by N",
+  -- with two arguments "a family indexed by N and N"
+  FamilyKind : Exp -> Kind ;
+  Family2Kind : Exp -> Exp -> Kind ;
   AdjKindHypo : [Ident] -> Adj -> Kind -> Hypo ;
   SuchThatHypo : [Ident] -> Prop -> Kind -> Hypo ;
   

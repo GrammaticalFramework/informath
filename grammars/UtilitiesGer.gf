@@ -68,6 +68,10 @@ oper
   hold_V2 = mkV2 I.halten_V for_Prep ;
   form_V2 = mkV2 (mkV "bilden") ;
   arbitrary_A = mkA "beliebig" ;
+  two_place_A = mkA "zweistellig" ;
+  three_place_A = mkA "dreistellig" ;
+  family_N = mkN "Familie" ;
+  indexed_by_Prep = mkPrep "indiziert durch" accusative ;
   set_N = mkN "Menge" ;
   proposition_N = mkN "Satz" "Sätze" masculine ;
   predicate_N = mkN "Prädikat" feminine ;

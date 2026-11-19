@@ -128,11 +128,91 @@ bareQuantifiers kinds t = case t of
   GCoreExistProp k x p | implicit k -> case bare p of
     GBareExistProp (GListIdent ys) q -> GBareExistProp (GListIdent (x : ys)) q
     q -> GBareExistProp (GListIdent [x]) q
+  -- the variables of a proof step ("let x be a mathematical object"), which
+  -- dropImplicitHypos does not reach: left out, as a variable that nothing
+  -- binds is of an implicit type ("assume that x \\in S" for "let x be a
+  -- mathematical object such that x \\in S"); "let x be arbitrary" only if
+  -- the variables are all the step says
+  GListHypo hs -> GListHypo (case dropVars hs of
+    [] -> map bare hs
+    hs' -> hs')
+  -- functions of implicit types: "let f be a function", "a two-place function";
+  -- to propositions: "a predicate"; from sets to an implicit type: "a family
+  -- indexed by N"
+  GFunKind (GListArgKind args) val
+    | all implicitArg args, implicit val, Just k <- bareFun (sum (map arity args)) -> k
+    | all implicitArg args, isPropKind val, Just k <- barePred (sum (map arity args)) -> k
+    | implicit val, Just es <- mapM argSet args, Just k <- family es -> k
+  GFunExpKind a b
+    | implicit (GExpKind a), implicit (GExpKind b) -> GBareFunKind
+    | implicit (GExpKind b) -> GFamilyKind a
+  GLetDeclarationHypo (GElemDeclaration (GListTerm ts) ty)
+    | Just xs <- mapM identOf ts, (as@(_ : _), v) <- funTypeParts ty, Just k <- typeKind as v ->
+        GVarsHypo (GListIdent xs) k
+  GSuchThatHypo _ p k | implicit k -> GPropHypo (bare p)
+  GVarsHypo xs k | implicit k -> GBareVarsHypo xs
+  GVarHypo x k | implicit k -> GBareVarHypo x
   _ -> composOp bare t
  where
   bare :: Tree b -> Tree b
   bare = bareQuantifiers kinds
   implicit k = elem (uncoerce k) (map uncoerce kinds)
+  implicitArg :: GArgKind -> Bool
+  implicitArg a = case a of
+    GKindArgKind k -> implicit k
+    GIdentsArgKind k _ -> implicit k
+    _ -> False
+  arity :: GArgKind -> Int
+  arity a = case a of
+    GIdentsArgKind _ (GListIdent xs) -> length xs
+    _ -> 1
+  bareFun :: Int -> Maybe GKind
+  bareFun n = case n of
+    1 -> Just GBareFunKind
+    2 -> Just GBareFun2Kind
+    3 -> Just GBareFun3Kind
+    _ -> Nothing
+  identOf :: GTerm -> Maybe GIdent
+  identOf t = case t of
+    GIdentTerm x -> Just x
+    _ -> Nothing
+  barePred :: Int -> Maybe GKind
+  barePred n = case n of
+    1 -> Just GBarePredKind
+    2 -> Just GBarePred2Kind
+    3 -> Just GBarePred3Kind
+    _ -> Nothing
+  family :: [GExp] -> Maybe GKind
+  family es = case es of
+    [a] -> Just (GFamilyKind a)
+    [a, b] -> Just (GFamily2Kind a b)
+    _ -> Nothing
+  isPropKind :: GKind -> Bool
+  isPropKind k = case k of
+    GNounKind (LexNoun "proposition_Noun") -> True
+    _ -> False
+  -- the argument of a family: a set that is not of an implicit type
+  argSet :: GArgKind -> Maybe GExp
+  argSet a = case a of
+    GKindArgKind (GExpKind e) | not (implicit (GExpKind e)) -> Just e
+    _ -> Nothing
+  -- the arguments and value of a function type A -> ... -> B
+  funTypeParts :: GTerm -> ([GTerm], GTerm)
+  funTypeParts ty = case ty of
+    GFunTypeTerm a b -> let (as, v) = funTypeParts b in (a : as, v)
+    _ -> ([], ty)
+  typeKind :: [GTerm] -> GTerm -> Maybe GKind
+  typeKind as v
+    | all imp as, imp v = bareFun (length as)
+    | imp v, not (any imp as) = family (map GTermExp as)
+    | otherwise = Nothing
+   where imp t = implicit (GExpKind (GTermExp t))
+  dropVars :: [GHypo] -> [GHypo]
+  dropVars hs = case hs of
+    GVarsHypo _ k : rest | implicit k -> dropVars rest
+    GVarHypo _ k : rest | implicit k -> dropVars rest
+    h : rest -> bare h : dropVars rest
+    [] -> []
 
 uncoerce :: Tree a -> Tree a
 uncoerce t = case t of

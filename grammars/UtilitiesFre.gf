@@ -68,6 +68,10 @@ oper
   hold_V2 = mkV2 I.tenir_V for_Prep ; ----
   form_V2 = mkV2 (mkV "former") ;
   arbitrary_A = mkA "arbitraire" ;
+  two_place_A = mkA "à deux places" "à deux places" "à deux places" "à deux places" ;
+  three_place_A = mkA "à trois places" "à trois places" "à trois places" "à trois places" ;
+  family_N = mkN "famille" ;
+  indexed_by_Prep = mkPrep "indexée par" ;
   set_N = mkN "ensemble" masculine ;
   combinaison_N = mkN "combinaison" feminine ;
   proposition_N = mkN "proposition" ;

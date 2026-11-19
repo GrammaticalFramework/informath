@@ -961,7 +961,7 @@ rankGFTreesAndNat :: Env -> (String -> String) -> [(Expr, String)] -> [((Expr, S
 rankGFTreesAndNat = rankTreesAndLins
 
 ext2core :: Env -> GJmt -> [GJmt]
-ext2core env = IMC.semantics (semanticsTableEnv env)
+ext2core env = concatMap (IMC.restoreBareFunKinds (implicitKinds env)) . IMC.semantics (semanticsTableEnv env)
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
 gjmt2dedukti env = concatMap (MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)) . ext2core env
