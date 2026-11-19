@@ -1,5 +1,25 @@
 ## Informath old news (see also Git history)
 
+9 September 2026: an updated version of the Informath paper in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893).
+
+24 July 2026: New binary release, entitled [Informath-0.4](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.4).
+
+22 July 2026: also verbal constants can now be defined with `#` variables, which enables permutations, as well as drops without the `#DROP` directive. See [the alternative symbol table](test/profiletest.dkgf) for examples.
+
+10 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
+
+22 June 2026: macros in symbol tables now directly possible in entries of form `$...$`, e.g. `$#1 \mid #2$`, from which a macro is generated automatically; see test/profiletest.dkgf
+
+15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
+
+9 June 2026: moved experimental and/or deprecated code to a separate repository, called [informath-experiments](https://github.com/aarneranta/informath-experiments).
+
+6 May 2026: New binary release, entitled [Informath-0.3](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.3).
+
+15 April 2026: Generalized production of synonyms, regulated by new flags `-synonyms=<int>` and `-symbolics=<int>`. Value 1 is reasonable for both of them: it means that just one verbal and one symbolic synonym is taken from the symbol table. Otherwise, the number of variations can now grow *very* large. Even without the `-variations` flag, this can make generation slow. In many demos accessible by `Makefile`, these flag values are used, but they can be overridden.
+
+4 March 2026: Binary release, entitled [Informath-0.2](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2).
+
 22 February 2026: a very first attempt at a binary release, starting with MacOS. No need to install Haskell or GF. See below on "Using ready-made binaries".
 
 19 February 2026: symbol tables are not generalized to contain full GF trees whose types are lexical categories. Such trees can also be parsed from quoted strings. In order to mark the boundaries between functions (which are no more single tokens), vertical bars `|` are now needed in symbol tables.See last chapter, "Symbol tables", for details.

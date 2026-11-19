@@ -8,33 +8,13 @@
 
 #### LATEST NEWS
 
-17 November 2026: conversions between Dedukti and Agda, Lean and Rocq.
-*From Dedukti* (`-to-formalism=agda|lean|rocq`), extended: rewrite rules are translated (Agda `REWRITE`, Rocq `Rewrite Rules`, Lean equations), and structures become Agda records, Lean structures and Rocq records; see [the informalization pipeline, 2.1](./doc/informalization-pipeline.md) and the tests in [test/formalisms](./test/formalisms) (`make formalism_tests`).
-*To Dedukti*, created: `RunInformath -from-formalism=agda|lean|rocq <file>` informalizes Agda, Lean and Rocq source files directly, via the exports of [scripts/agda](./scripts/agda/README.md), [scripts/lean](./scripts/lean/README.md) (new: any Lean file, no Mathlib needed) and [scripts/rocq](./scripts/rocq/README.md), with `#CONV` lines of symbol tables read backwards; combined with `-to-formalism`, it converts between the formalisms. See [the usage](#formalisms-to-dedukti) and the examples in [test/formalisms/sources](./test/formalisms/sources) (`make from_formalism_tests`).
+20 November 2026: [Godement Tinkered](./tinkered/godement-tinkered.pdf) and [Godement bricolé](./tinkered/godement-bricole.pdf): Godement's *Algebra* formalized in Rocq by Claude agents and read back by Informath, as books in English and French, every definition, theorem and proof written by Informath; see [tinkered/](./tinkered/README.md) and the template [autoformalize/claude-rocq](./autoformalize/claude-rocq/README.md).
+
+17 November 2026: conversions between Dedukti and Agda, Lean and Rocq, in both directions: `-to-formalism=agda|lean|rocq` now translates rewrite rules and structures, and `RunInformath -from-formalism=agda|lean|rocq <file>` informalizes source files directly, proofs included. See [the usage](#formalisms-to-dedukti) and [scripts/agda](./scripts/agda/README.md), [scripts/lean](./scripts/lean/README.md), [scripts/rocq](./scripts/rocq/README.md).
 
 23 October 2026: informalization of Lean Mathlib: [Examples](https://aarneranta.github.io/mathlib-informath/mathlib-informath.html), [Code](https://github.com/aarneranta/mathlib-informath)
 
 23 October 2026: repeatable autoformalization experiments with Claude code: see [instructions](./autoformalize)
-
-9 September 2026: an updated version of the Informath paper in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). 
-
-24 July 2026: New binary release, entitled [Informath-0.4](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.4).
-
-22 July 2026: also verbal constants can now be defined with `#` variables, which enables permutations, as well as drops without the `#DROP` directive. See [the alternative symbol table](test/profiletest.dkgf) for examples.
-
-10 July 2026: an experiment on porting the Informath grammar to new languages (Finnish and Czech) by help from Claude code. The process is documented in the [vibe directory](./doc/vibe/). NOTICE: these grammars are not yet an "official" part of Informath but need checking for known and still unknown bugs.
-
-22 June 2026: macros in symbol tables now directly possible in entries of form `$...$`, e.g. `$#1 \mid #2$`, from which a macro is generated automatically; see test/profiletest.dkgf
-
-15 June 2026: a lengthy paper on Informath in arXiv: [Symbolic Informalization: Fluent, Productive, Multilingual](https://arxiv.org/abs/2606.16893). At the moment, this is the most up-to-date description on some features of Informath.
-
-9 June 2026: moved experimental and/or deprecated code to a separate repository, called [informath-experiments](https://github.com/aarneranta/informath-experiments).
-
-6 May 2026: New binary release, entitled [Informath-0.3](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.3).
-
-15 April 2026: Generalized production of synonyms, regulated by new flags `-synonyms=<int>` and `-symbolics=<int>`. Value 1 is reasonable for both of them: it means that just one verbal and one symbolic synonym is taken from the symbol table. Otherwise, the number of variations can now grow *very* large. Even without the `-variations` flag, this can make generation slow. In many demos accessible by `Makefile`, these flag values are used, but they can be overridden.
-
-4 March 2026: Binary release, entitled [Informath-0.2](https://github.com/GrammaticalFramework/informath/releases/tag/informath-0.2).
 
 [Older news](./doc/old-news.md)
 

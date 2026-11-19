@@ -115,6 +115,8 @@ lin vertice_Noun = mkNoun (mkN "sommet" masculine) ;
 
 -- BEGIN words of the Godement symbol tables, written by Claude, to be reviewed
 lin satisfy_Verb = mkVerb (mkV "vérifier") ;
+lin form_Verb = mkVerb (mkV "former") ;
+lin only_Adj = mkAdj (prefixA (mkA "seul")) ;
 lin isotropic_Adj = mkAdj (mkA "isotrope") ;
 lin finite_dimensional_Adj = mkAdj (mkA "de dimension finie" "de dimension finie" "de dimension finie") ;
 lin indeterminate_Noun = mkNoun (mkN "indéterminée" feminine) ;
