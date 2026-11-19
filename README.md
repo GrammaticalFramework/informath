@@ -531,6 +531,18 @@ an element of `Elem (is_contr A)` is a proof that $A$ is contractible, so a
 hypothesis `(x : Elem (is_contr A))` reads "assume that $A$ is contractible",
 and a declaration of that type is a theorem.
 
+A constant can have a negated form of its own. The directive
+```
+#NEGATION Eqt Neqt
+```
+makes `not (Eqt A x y)` read as `Neqt A x y`, so that with the entry
+`Neqt : "#2 is distinct from #3" | $#2 \neq #3$` the negation of an equation
+is "$x \neq y$" rather than "it is not the case that $x = y$". The rewriting
+goes in this direction only: a negated `Neqt` is not read as `Eqt` (which would
+need double negation elimination), and the rewriting cannot loop. The other
+direction is a directive of its own, `#NEGATION Neqt Eqt`. It applies before
+the forms of the constants are chosen, so in statements and proof texts alike.
+
 Instead of symbolic expressions between dollars, a symbol table can contain a macro symbol and a separate directive
 ```
 #MACRO <latex_newcommand>

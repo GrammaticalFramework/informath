@@ -61,12 +61,22 @@ consistentHypos ts = case filter consistent ts of
 -- | The arguments that readings do not show: the coercions read as the
 -- argument they coerce (#COERCION), unless that makes the two sides of an
 -- equation or equivalence the same, as in ↑(m - n) = ↑m - ↑n, whose content
--- is the coercion; and the implicit arguments of constants (#HIDE)
+-- is the coercion; and the implicit arguments of constants (#HIDE).  Before
+-- that, a negation of a constant that has a negated form (#NEGATION c d) is
+-- that form: not (c a1 ... an) is d a1 ... an
 hideArgs :: SymbolTable -> DkTree a -> DkTree a
-hideArgs st = hide . uncoerce
+hideArgs st = hide . uncoerce . negations
  where
   hides = hideTable st
   coes = coercionTable st
+  negs = negationTable st
+
+  negations :: forall a. DkTree a -> DkTree a
+  negations t = case t of
+    EApp (EIdent (QIdent "not")) arg
+      | (EIdent c, args) <- splitApp arg, Just d <- M.lookup c negs ->
+          foldl EApp (EIdent d) (map negations args)
+    _ -> runIdentity (composOpM (Identity . negations) t)
 
   hide :: forall a. DkTree a -> DkTree a
   hide t = case t of

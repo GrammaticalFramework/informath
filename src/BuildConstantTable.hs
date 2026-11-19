@@ -128,6 +128,11 @@ data SymbolTable = SymbolTable {
   hideTable :: M.Map QIdent [Int],
   -- #COERCION c k: c is read as its k'th argument (counted before #HIDE)
   coercionTable :: M.Map QIdent Int,
+  -- #NEGATION c d: the negation of c, not (c a1 ... an), is read as d a1 ...
+  -- an ("#NEGATION Eqt Neqt": x \neq y for not (x = y)); in this direction
+  -- only, so that a negated d is not read as a doubly negated c, which would
+  -- not be intuitionistically the same, and the rewriting cannot loop
+  negationTable :: M.Map QIdent QIdent,
   -- #TYPENOUN c n: an element of a type c ... is called an n (Id: an
   -- identification), with -typing; keyed by c and by the LaTeX macros of c
   typeNounTable :: M.Map String String,
@@ -234,6 +239,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
   implicitTypes = implicitTypes,
   hideTable = M.fromList [(QIdent c, map read ns) | "#HIDE":c:ns <- entrylines],
   coercionTable = M.fromList [(QIdent c, read k) | ["#COERCION", c, k] <- entrylines],
+  negationTable = M.fromList [(QIdent c, QIdent d) | ["#NEGATION", c, d] <- entrylines],
   typeNounTable = M.fromList ([(c, n) | ["#TYPENOUN", c, n] <- entrylines] ++
                               [(m, n) | ["#TYPENOUN", c, n] <- entrylines,
                                         (qid:_, macros) <- numberedlines, qid == c, m <- macros]),
