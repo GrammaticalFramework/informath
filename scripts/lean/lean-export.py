@@ -2,7 +2,10 @@
 """Export the declarations of a Lean file to Informath's Dedukti dialect.
 
     python3 $INFORMATH/scripts/lean/lean-export.py File.lean [-out=<dir>] [-mapping=<file.tsv>]
-    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk  (default <dir>: out)
+    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk, File-proofs.dk,
+    #    File-tactics.json  (default <dir>: out)
+    python3 $INFORMATH/scripts/lean/lean-tactic-units.py File <dir>
+    # -> <dir>/File-tactic-units.json, for RunInformath -tactic-proof
 
 Lean elaborates the file and Export.lean (next to this script) translates its
 declarations (see there). No Lake project is needed for a file that imports

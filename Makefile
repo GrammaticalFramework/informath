@@ -238,6 +238,12 @@ from_formalism_tests:
 	  grep -q 'class="foldable"' $$form.html || exit 1 ; \
 	  echo "$$form: $$(grep -c 'class="entry"' $$form.html) entries, $$(grep -c 'class="foldable"' $$form.html) proof texts -> out/from-formalism/$$form.html" ; \
 	done
+	echo "${lightgreen}## lean tactic proofs${neutral}"
+	cd out/from-formalism ; \
+	  $(RUN) -from-formalism=lean -export-dir=lean-tactics ../../scripts/lean/tests/Tactics.lean -proof-text >lean-tactics.tex 2>/dev/null || exit 1 ; \
+	  n=$$(grep -c '"kind": "theorem"' lean-tactics/Tactics.json) ; p=$$(grep -c 'begin{tabular}' lean-tactics.tex) ; \
+	  echo "Tactics.lean: $$n theorems, $$p proof texts -> out/from-formalism/lean-tactics.tex" ; \
+	  [ "$$n" = "$$p" ] || exit 1
 
 top100:
 	echo "${lightgreen}## creating and displaying a LaTeX document from a sample of 100 theorems${neutral}"

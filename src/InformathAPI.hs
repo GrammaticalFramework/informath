@@ -655,7 +655,7 @@ termProofTexts env (MJmts jmts) = forM [(c, j) | j <- jmts, Just c <- [proofName
 -- one for each proof, by its name ("coq", "lean" or "name").
 tacticProofTexts :: Env -> String -> [(String, String)]
 tacticProofTexts env s = case J.decode s of
-  J.Ok (J.JSArray proofs) -> [(nameOf p, showTacticProofs env (J.encode (J.JSArray [p]))) | p <- proofs]
+  J.Ok (J.JSArray proofs) -> [(nameOf p, tacticProofsBody env (J.encode (J.JSArray [p]))) | p <- proofs]
   _ -> []
  where
   nameOf p = case p of
@@ -1081,10 +1081,14 @@ tryParseSymbolTable env ls = map tryParse ils
 -- and the types and propositions are Dedukti expressions. Each proof is
 -- printed as by -proof-text: a numbered table of lines in each language.
 showTacticProofs :: Env -> String -> String
-showTacticProofs env s = case J.decode s of
+showTacticProofs env s = prLatexFile (macroCommands (macroTable (symbolTable env))) (tacticProofsBody env s)
+
+-- | The proof texts of tactic proofs as showTacticProofs, without the LaTeX
+-- document around them: to be put in a document of more proofs.
+tacticProofsBody :: Env -> String -> String
+tacticProofsBody env s = case J.decode s of
   J.Error e -> error ("tactic proof file: " ++ e)
   J.Ok (J.JSArray proofs) ->
-    prLatexFile (macroCommands (macroTable (symbolTable env))) $
       unlines $ intersperse "\n\n" (map oneTacticProof proofs)
   J.Ok _ -> error "tactic proof file: a list of proofs expected"
  where

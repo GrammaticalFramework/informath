@@ -2,7 +2,7 @@
 Export the declarations of a Lean file to Informath's Dedukti dialect.
 
     lean --run Export.lean File.lean outDir [mapping.tsv]
-    # -> outDir/File.dk, File.json, File-hide.dkgf, File-deps.dk
+    # -> outDir/File.dk, File.json, File-hide.dkgf, File-deps.dk, File-proofs.dk, File-tactics.json
 
 (lean-export.py runs this, with `lake env` when the file is in a Lake project.)
 
@@ -23,7 +23,9 @@ but with Lean only:
   the #HIDE lines of File-hide.dkgf;
 * a definition by pattern matching or recursion becomes rewrite rules, one
   for each of its equation lemmas (`f (n + 1) = ...`); another definition gets
-  its definiens; a theorem is stated without its proof.
+  its definiens; a theorem is stated without its proof; a proof given as a
+  term goes to File-proofs.dk, the steps of a tactic proof to File-tactics.json
+  (see "Tactic proofs" below).
 
 Each declaration is preceded by `(; //LEAN:<name> ;)`.  File.json has, for each
 declaration, its Lean name, its Dedukti name, its kind, its docstring, Lean's
@@ -377,15 +379,93 @@ def readMapping (path : System.FilePath) : IO (Std.HashMap Name String × Std.Ha
     | _ => pure ()
   return (m, all)
 
-/-- Elaborate a Lean file: the environment it makes and its messages. -/
-def elaborate (path : System.FilePath) : IO (Environment × MessageLog) := do
+/-! ## Tactic proofs
+
+The file is elaborated with info trees, and File-tactics.json gets, for each
+step of a tactic proof (a tactic directly inside a tactic sequence written in
+the source: the tactics of `by`, of a `·` case, of a nested `have ... := by`),
+its position and text, the declaration it proves, the main goal before it and
+the goals after it, each with its hypotheses and target in Dedukti, as
+mathlib-informath's exporter writes them for Mathlib (`--tactics`).
+lean-tactic-units.py makes them proof units for RunInformath -tactic-proof. -/
+
+/-- A goal as JSON: its hypotheses, [name, Dedukti type, inaccessible], and
+its target in Dedukti. -/
+def goalJson (ci : ContextInfo) (mctx : MetavarContext) (g : MVarId)
+    (mapping : Std.HashMap Name String) (keepAll : Std.HashSet Name) : IO String := do
+  let act : MetaM String := do
+    let decl ← g.getDecl
+    withLCtx decl.lctx decl.localInstances do
+      let locals := decl.lctx.foldl (init := #[]) fun acc d =>
+        if d.isImplementationDetail then acc else acc.push d
+      -- the names of the hypotheses are taken: a bound variable of the target
+      -- does not capture one
+      let names : Std.HashSet String := locals.foldl (init := {}) fun acc d =>
+        acc.insert (d.userName.eraseMacroScopes.toString (escape := false))
+      let m : M String := do
+        let mut hs := #[]
+        for d in locals do
+          let nm := d.userName.eraseMacroScopes.toString (escape := false)
+          let ty ← hypoType (← Core.betaReduce (← instantiateMVars d.type))
+          hs := hs.push s!"[{jsonStr nm}, {jsonStr ty}, {if d.userName.hasMacroScopes then "true" else "false"}]"
+        -- β-reduced: a goal often has (fun x => P x) a after a rewrite
+        let tgt ← tr (← Core.betaReduce (← instantiateMVars decl.type))
+        return s!"\{\"hyps\": [{", ".intercalate hs.toList}], \"target\": {jsonStr tgt}}"
+      m.run' {mapping, keepAll, names}
+  try
+    ({ ci with mctx := mctx }).runMetaM {} act
+  catch e => return s!"\{\"error\": {jsonStr (toString e)}}"
+
+def seqKinds : List Name :=
+  [``Lean.Parser.Tactic.tacticSeq, ``Lean.Parser.Tactic.tacticSeq1Indented,
+   ``Lean.Parser.Tactic.tacticSeqBracketed]
+
+/-- The steps of the tactic proofs in an info tree: the tactics directly
+inside a tactic sequence, written in the source (not made by a macro). -/
+partial def tacticSteps (ctx? : Option ContextInfo) (inSeq : Bool) :
+    InfoTree → StateT (Array (ContextInfo × TacticInfo)) IO Unit
+  | .context pci t => tacticSteps (pci.mergeIntoOuter? ctx?) inSeq t
+  | .node i cs => do
+    match i with
+    | .ofTacticInfo ti =>
+      if seqKinds.contains ti.stx.getKind then
+        cs.forM (tacticSteps ctx? true)
+      else
+        if inSeq && (ti.stx.getPos? (canonicalOnly := true)).isSome then
+          if let some ci := ctx? then modify (·.push (ci, ti))
+        cs.forM (tacticSteps ctx? false)
+    | _ => cs.forM (tacticSteps ctx? inSeq)
+  | .hole _ => pure ()
+
+/-- Elaborate a Lean file with info trees: the environment it makes, its
+messages, and the steps of its tactic proofs as JSON. -/
+def elaborate (path : System.FilePath) (mapping : Std.HashMap Name String)
+    (keepAll : Std.HashSet Name) : IO (Environment × MessageLog × Array String) := do
   let input ← IO.FS.readFile path
   let inputCtx := Parser.mkInputContext input path.toString
   let (header, parserState, messages) ← Parser.parseHeader inputCtx
   let (env, messages) ← processHeader header {} messages inputCtx
-  let cmdState := Command.mkState env messages {}
+  let cmdState := { Command.mkState env messages {} with infoState := { enabled := true } }
   let s ← IO.processCommands inputCtx parserState cmdState
-  return (s.commandState.env, s.commandState.messages)
+  let fileMap := inputCtx.fileMap
+  let mut out := #[]
+  for t in s.commandState.infoState.trees do
+    let ((), steps) ← (tacticSteps none false t).run #[]
+    for (ci, ti) in steps do
+      let some pos := ti.stx.getPos? (canonicalOnly := true) | continue
+      let endPos := (ti.stx.getTailPos? (canonicalOnly := true)).getD pos
+      let p := fileMap.toPosition pos
+      let e := fileMap.toPosition endPos
+      let text := String.Pos.Raw.extract input pos endPos
+      let decl := ci.parentDecl?.getD .anonymous
+      let before ← match ti.goalsBefore with
+        | g :: _ => goalJson ci ti.mctxBefore g mapping keepAll
+        | [] => pure "null"
+      let mut after := #[]
+      for g in ti.goalsAfter do
+        after := after.push (← goalJson ci ti.mctxAfter g mapping keepAll)
+      out := out.push s!"\{\"line\": {p.line}, \"col\": {p.column}, \"endLine\": {e.line}, \"decl\": {jsonStr decl.toString}, \"kind\": {jsonStr ti.stx.getKind.toString}, \"nBefore\": {ti.goalsBefore.length}, \"tactic\": {jsonStr text}, \"before\": {before}, \"after\": [{", ".intercalate after.toList}]}"
+  return (s.commandState.env, s.commandState.messages, out)
 
 /-- The Dedukti of a declaration (its judgements) and its kind. -/
 def declDk (env : Environment) (n : Name) (ci : ConstantInfo) : M (String × String) := do
@@ -457,7 +537,7 @@ def proofDk (n : Name) (ci : ConstantInfo) : M String := do
 
 def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap Name String)
     (keepAll : Std.HashSet Name) : IO UInt32 := do
-  let (env, messages) ← elaborate path
+  let (env, messages, steps) ← elaborate path mapping keepAll
   let mut errors := 0
   for m in messages.toList do
     if m.severity == .error then
@@ -543,7 +623,8 @@ def exportFile (path : System.FilePath) (outDir : String) (mapping : Std.HashMap
     (s!"(; {mod}: the proof terms of its theorems, for RunInformath -proof-text with share/nd.dk ;)\n\n" ++
      "\n\n".intercalate proofs.toList ++ "\n")
   IO.FS.writeFile s!"{outDir}/{mod}.json" ("[\n" ++ ",\n".intercalate json.toList ++ "\n]\n")
-  IO.println s!"{mod}: {decls.size} declarations, {proofs.size} proof terms -> {outDir}/{mod}.dk, .json, -hide.dkgf, -deps.dk, -proofs.dk"
+  IO.FS.writeFile s!"{outDir}/{mod}-tactics.json" ("[\n" ++ ",\n".intercalate steps.toList ++ "\n]\n")
+  IO.println s!"{mod}: {decls.size} declarations, {proofs.size} proof terms, {steps.size} tactic steps -> {outDir}/{mod}.dk, .json, -hide.dkgf, -deps.dk, -proofs.dk, -tactics.json"
   return if errors > 0 then 1 else 0
 
 unsafe def main (args : List String) : IO UInt32 := do

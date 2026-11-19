@@ -7,14 +7,19 @@ mathlib-informath's exporter, it needs neither Mathlib nor a Lake project
 of its own, only Lean.
 
     python3 $INFORMATH/scripts/lean/lean-export.py File.lean -out=<dir>
-    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk, File-proofs.dk   (default <dir>: out)
+    # -> <dir>/File.dk, File.json, File-hide.dkgf, File-deps.dk, File-proofs.dk,
+    #    File-tactics.json   (default <dir>: out)
+    python3 $INFORMATH/scripts/lean/lean-tactic-units.py File <dir>
+    # -> <dir>/File-tactic-units.json: the tactic proofs as proof units
+    RunInformath -tactic-proof <dir>/File-tactic-units.json   # their proof texts
 
 or, reading the result in English at once (see `RunInformath -help`):
 
     RunInformath -from-formalism=lean File.lean
     RunInformath -from-formalism=lean -export-dir=<dir> File.lean     # keeping the export
     RunInformath -from-formalism=lean File.lean -to-formalism=agda    # to Agda, via Dedukti
-    RunInformath -from-formalism=lean File.lean -proof-text           # the proof texts of its theorems
+    RunInformath -from-formalism=lean File.lean -proof-text           # the proof texts of its theorems,
+                                                                      # by terms and by tactics
     RunInformath -from-formalism=lean File.lean -to-html-doc -to-lang=Eng,Fre >File.html
 
 ## How it works
@@ -61,6 +66,26 @@ Lean's logical rules (`And.intro`, `Or.elim`, `Exists.elim`, ...) are those of
 Informath's `share/nd.dk` (the third column `all` of `mapping.tsv`), which
 `RunInformath -proof-text` reads the proof with.
 
+A theorem proved `by` tactics gets its steps in `File-tactics.json`, as
+mathlib-informath's exporter writes them for Mathlib (`--tactics`): Lean
+elaborates the file with info trees, and each tactic written directly in a
+tactic sequence (of `by`, of a `·` case, of a nested `have ... := by`, of
+the alternatives of `cases ... with` and `induction ... with`) is a step,
+with its line, text, the theorem it proves, the main goal before it and the
+goals after it, their hypotheses and targets in the same Dedukti.
+`lean-tactic-units.py` (mathlib-informath's `tactic-units.py`, with the
+additions of `../rocq/rocq-tactic-units.py`) compares the goals of each step
+and makes it proof units, which `RunInformath -tactic-proof` reads: a new
+hypothesis is assumed (`intro`, the case of `cases`, `by_cases`) or let be
+(`obtain`, `rcases`), a new fact is stated (`have`, `simp at h`), a closed
+goal is concluded ("by computation" for `omega`, "by rewriting" for `rw`,
+...), a changed goal is what is enough to show (`apply`, `unfold`,
+`constructor`), a split is "we reason by cases" or "by induction". A step
+cites what its tactic applies: the theorems and axioms of the file by their
+names ("By `double_eq`, ..."), the hypotheses made by earlier steps by their
+labels ("By (h), ..."). `-from-formalism=lean -proof-text` and `-to-html-doc`
+do all this, and `tests/Tactics.lean` (`make from_formalism_tests`) is a test.
+
 Each declaration is preceded by `(; //LEAN:<name> ;)`. `File.json` lists them
 with their Lean names, Dedukti names, kinds, docstrings, Lean's statements,
 lines and source texts; `File-deps.dk` declares the constants that the file uses but
@@ -71,8 +96,13 @@ neither defines nor maps, with their types translated in the same way.
 * The Dedukti is for reading, not for checking: universes and instances are
   left out, and the patterns of the rules are what Lean's equation lemmas
   have.
-* Tactic proofs are not exported (mathlib-informath's exporter replays them
-  step by step for Mathlib's proofs); proof terms are, as above.
+* Tactic proofs are read step by step, as above, not shortened (as
+  `../rocq/rocq-index.py` shortens Rocq's); a step combined by `<;>` is one
+  step; the steps that a tactic makes itself (`simp`, `omega`) are not seen,
+  only what they leave; a step whose goals Export.lean cannot translate is
+  "obvious". A hypothesis of the statement is not cited by its label, which
+  the proof text does not show; lemmas of the libraries are cited only in the
+  tactic column.
 * Instances, the functions of derived instances (`deriving Repr`), recursors
   and other generated declarations are left out; mutual and nested inductive
   types are declared as the others, classes as structures.
