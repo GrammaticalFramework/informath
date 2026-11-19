@@ -40,6 +40,9 @@ fun
   FirstVerifyGoal : Prop -> Unit ;
   EnoughGoal : Prop -> Unit ;
   LabelEnoughGoal : Label -> Prop -> Unit ;  -- by L, it is enough to show that P
+  -- a claim verified by the steps that follow, stated forward: P. Indeed:
+  HaveIndeedGoal : Prop -> Unit ;
+  HaveIndeedLabelGoal : Prop -> Label -> Unit ;  -- P (h). Indeed:
   ConclusionLabelUnit : Prop -> Label -> Unit ;  -- P (h), a fact cited later by its label; the label with its parentheses
   LabelPropLabelConclusion : Label -> Prop -> Label -> Unit ;  -- by L, P (h)
   SinceGoal : Prop -> Prop -> Unit ;

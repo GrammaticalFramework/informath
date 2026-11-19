@@ -280,7 +280,7 @@ def units_of_proof(steps):
                 and all(is_prop(t) for _, t in new):
             # a fact proved by a nested proof, which follows
             add({'unit': 'verify', 'prop': conj([t[len('Proof '):] for _, t in new]),
-                 'by': st['tactic']}, hb)
+                 'by': st['tactic'], 'facts': [[n, t[len('Proof '):]] for n, t in new]}, hb)
         elif new:
             if not derived:
                 # an assumption, with what is left to show as its goal

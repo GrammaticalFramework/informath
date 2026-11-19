@@ -335,7 +335,7 @@ def with_uses(proofs):
             new = []
             if u.get('unit') == 'hypos':
                 new = [(x, t[len('Proof '):]) for x, t in u.get('hypos', []) if t.startswith('Proof ')]
-            elif u.get('unit') == 'conclusion':
+            elif u.get('unit') in ('conclusion', 'verify'):
                 new = [(x, t) for x, t in u.get('facts', [])]
             for x, t in new:
                 made[x], last[x] = (t, i), i
@@ -344,7 +344,7 @@ def with_uses(proofs):
         for i, u in enumerate(steps):
             if u.get('unit') == 'hypos':
                 labels = [x for x, t in u.get('hypos', []) if x in cited and t.startswith('Proof ')]
-            elif u.get('unit') == 'conclusion':
+            elif u.get('unit') in ('conclusion', 'verify'):
                 labels = [x for x, _ in u.get('facts', []) if x in cited]
             else:
                 labels = []
@@ -395,6 +395,41 @@ def without_implicit_variables(proofs):
     return proofs
 
 
+def forward_verifications(proofs):
+    """A claim verified in one step (assert (P) as h by one tactic) as that
+    step, stated forward: "by L, P (h)" rather than "first verify that P. By
+    L, P." A claim verified in more steps stays a claim ("we have P (h).
+    Indeed:"), with the steps folded under it (proof_folds.verification_collapses)."""
+    for p in proofs:
+        steps, out, i = p['steps'], [], 0
+        while i < len(steps):
+            u = steps[i]
+            if u.get('unit') == 'verify':
+                path = list(u.get('path') or [])
+                block = []
+                j = i + 1
+                if j < len(steps):
+                    q = list(steps[j].get('path') or [])
+                    if len(q) > len(path) and q[:len(path)] == path:
+                        prefix = q[:len(path) + 1]
+                        while j < len(steps) and list(steps[j].get('path') or [])[:len(prefix)] == prefix:
+                            block.append(steps[j])
+                            j += 1
+                if len(block) == 1 and block[0].get('unit') == 'conclusion':
+                    b = block[0]
+                    merged = dict(b, prop=u['prop'], by=u['by'] + ' ;; ' + b.get('by', ''),
+                                  path=u.get('path', []), depth=u.get('depth', b.get('depth')),
+                                  facts=u.get('facts', []))
+                    merged.pop('of', None)
+                    out.append(merged)
+                    i = j
+                    continue
+            out.append(u)
+            i += 1
+        p['steps'] = out
+    return proofs
+
+
 def tactic_proofs(mod):
     """The proof texts of a module's tactic proofs, all steps and shortened
     (Informath's scripts/proof_shortening.py), and the rules applied."""
@@ -417,7 +452,7 @@ def tactic_proofs(mod):
         short_units.append(dict(p, steps=steps, rules=c))
         for k, v in c.items():
             counts[k] = counts.get(k, 0) + v
-    with_uses(short_units)
+    with_uses(forward_verifications(short_units))
     short_file = os.path.join(OUT, mod + '-tactic-units-short.json')
     json.dump(short_units, open(short_file, 'w'), ensure_ascii=False, indent=1)
     short, _ = proof_texts(short_units, short_file)

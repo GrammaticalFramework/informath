@@ -1154,7 +1154,12 @@ showTacticProofs env s = case J.decode s of
          (Just l, _) -> GLabelEnoughGoal l p
          (_, a : as) -> GSinceGoal (DMC.exp2prop (ann (conjE (a : as)))) p
          _ -> GEnoughGoal p
-     "verify" -> fmap (GFirstVerifyGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
+     -- a claim verified by the steps that follow, forward: "P (h). Indeed:"
+     "verify" -> do
+       p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
+       return $ case labels st of
+         [] -> GHaveIndeedGoal p
+         ls -> GHaveIndeedLabelGoal p (labelOf (andList ["(" ++ labelText l ++ ")" | l <- ls]))
      "cases" -> return GCasesGoal
      "induction" -> return GInductionGoal
      _ -> return GObviousConclusion
