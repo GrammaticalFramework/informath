@@ -1,3 +1,5 @@
+noncomputable section
+
 axiom prop10 : even 0
 
 axiom prop20 (n : Nat) (_ : even n) : odd (n + 1)
