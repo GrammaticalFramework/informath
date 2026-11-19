@@ -16,6 +16,11 @@
   "undefined": 0,
   "seconds": 0.0
  },
+ "binder-formula": {
+  "lines": 2,
+  "undefined": 0,
+  "seconds": 0.0
+ },
  "cartesian": {
   "lines": 33,
   "undefined": 0,

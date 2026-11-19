@@ -238,14 +238,19 @@ funListFormula :: QIdent -> [Exp] -> GFormula
 funListFormula ident exps = case ident of
   QIdent s -> case (lookupConstant s, map exp2term exps) of
     (Just ("Compar", c), [x, y]) -> GEquationFormula (GBinaryEquation (fgTree c) x y)
-    (Just ("MACRO", c), []) -> GMacroFormula (macroIdent c)
-    (Just ("MACRO", c), [x]) -> GApp1MacroFormula (macroIdent c) x
-    (Just ("MACRO", c), [x, y]) -> GApp2MacroFormula (macroIdent c) x y
-    (Just ("MACRO", c), [x, y, z]) -> GApp3MacroFormula (macroIdent c) x y z
-    (Just ("MACRO", c), [x, y, z, u]) -> GApp4MacroFormula (macroIdent c) x y z u
-    (Just ("MACRO", c), [a, b, x, y, z]) -> GApp5MacroFormula (macroIdent c) a b x y z
-    (Just ("MACRO", c), ts@(_:_:_:_:_:_:_)) -> GAppMacroFormula (macroIdent c) (macroArgs ts)
+    -- a macro gets the bound variables of its λ arguments as arguments of
+    -- their own, as funListTerm gives them (\FilterEventually: x, body, filter)
+    (Just ("MACRO", c), _) -> macroFormula c (macroTerms s exps)
     _ -> GMacroFormula (GStringMacro (GString ("NOTYET"++s)))
+ where
+  macroFormula c ts = case ts of
+    [] -> GMacroFormula (macroIdent c)
+    [x] -> GApp1MacroFormula (macroIdent c) x
+    [x, y] -> GApp2MacroFormula (macroIdent c) x y
+    [x, y, z] -> GApp3MacroFormula (macroIdent c) x y z
+    [x, y, z, u] -> GApp4MacroFormula (macroIdent c) x y z u
+    [a, b, x, y, z] -> GApp5MacroFormula (macroIdent c) a b x y z
+    _ -> GAppMacroFormula (macroIdent c) (macroArgs ts)
     
 hypoIdents :: GHypo -> [GIdent]
 hypoIdents hypo = case hypo of

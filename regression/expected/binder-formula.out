@@ -1,0 +1,2 @@
+Eventually_pos. $\Eventually {x}{\mathrm{Gt} (x , 0)}{\atTopMACRoA}$.
+Eventually_le. Let $y \in \Real$. Then $\Eventually {x}{\mathrm{Leq} (y , x + y)}{\atTopMACRoA}$.

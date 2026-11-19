@@ -1,0 +1,3 @@
+Filter : Set.
+atTop : Elem Filter.
+Eventually : (X : Set) -> (p : (Elem X -> Prop)) -> (F : Elem Filter) -> Prop.

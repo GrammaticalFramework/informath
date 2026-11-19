@@ -1,0 +1,4 @@
+#HIDE Eventually 1
+Eventually : \Eventually
+#MACRO \newcommand{\Eventually}[3]{\forall^{\mathrm{f}} #1 \in #3,\ #2}
+atTop : $\mathrm{atTop}$

@@ -1,0 +1,7 @@
+(; A binder macro whose value is a proposition: its λ argument gives the
+   macro the bound variable and the body as two arguments (the declarations
+   are in binder_formula_base.dk) ;)
+
+eventually_pos : Proof (Eventually Real (x => Gt x 0) atTop).
+
+eventually_le : (y : Elem Real) -> Proof (Eventually Real (x => Leq y (plus x y)) atTop).
