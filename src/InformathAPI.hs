@@ -261,7 +261,7 @@ processJmt env djmt =
       hidden = implicitPositions env cjmt
       core = [DMC.hideHypoVars (hypoVarsAt hidden j) (dedukti2core j) | j <- jmts]
       exts = concatMap (core2ext env) core
-      bare = MCI.bareQuantifiers (implicitKinds env)
+      bare = MCI.bareQuantifiersWith (not (isFlag "-to-symbolic-latex" env)) (implicitKinds env)
       nlgs = setnub $ map (gf . bare) $ exts
       vars = if elem "-variations" (flags env) then id else (take 1) 
       best = maybe vars take (nbestNLG env)
@@ -1092,7 +1092,7 @@ showTacticProofs env s = case J.decode s of
 
    oneTacticProof p = unlines $ intersperse "\n\n" (
      ["\\subsection*{" ++ verbatimInline (str (field "name" p)) ++ "}"] ++
-     [table lang [(i, (depth st, (stepUnit st, labelled st)), str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
+     [table lang [(i, (depth st, (stepUnit lang st, labelled st)), str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
        | lang <- langsShown] ++
      ["\\clearpage"])
 
@@ -1114,8 +1114,8 @@ showTacticProofs env s = case J.decode s of
    labels st = [str v | v <- list (field "labels" st)]
 
    -- a step whose Dedukti does not parse is shown as obvious
-   stepUnit st = either (const GObviousConclusion) id (stepUnitE st)
-   stepUnitE st = case str (field "unit" st) of
+   stepUnit lang st = either (const GObviousConclusion) id (stepUnitE lang st)
+   stepUnitE lang st = case str (field "unit" st) of
      "hypos" -> do
        hs <- sequence [fmap (HVarExp (QIdent (str x))) (dk (str t))
                       | J.JSArray [x, t] <- list (field "hypos" st)]
@@ -1138,9 +1138,11 @@ showTacticProofs env s = case J.decode s of
        -- later, "P (h)"
        let own = case labels st of
              [] -> Nothing
-             ls -> Just (labelOf (andList ["(" ++ labelText l ++ ")" | l <- ls]))
-       return $ case (uses st, own, sinces, lookup (str (field "method" st)) methods) of
+             ls -> Just (labelOf (andList lang ["(" ++ labelText l ++ ")" | l <- ls]))
+       return $ case (uses lang st, own, sinces, lookup (str (field "method" st)) methods) of
          (Just l, Just h, _, _) -> GLabelPropLabelConclusion l p h
+         -- "since A, by L, P": lemmas and labels, and a hypothesis far above
+         (Just l, _, a : as, _) -> GSinceLabelConclusion (DMC.exp2prop (ann (conjE (a : as)))) l p
          (Just l, _, _, _) -> GLabelPropConclusion l p
          (_, _, a : as, _) -> GSinceConclusion (DMC.exp2prop (ann (conjE (a : as)))) p
          (_, Just h, _, _) -> GConclusionLabelUnit p h
@@ -1150,7 +1152,8 @@ showTacticProofs env s = case J.decode s of
        p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
        sinces <- mapM dk [str v | v <- list (field "since" st)]
        -- "by L, it is enough to show that P", "since A, it is enough to show that P"
-       return $ case (uses st, sinces) of
+       return $ case (uses lang st, sinces) of
+         (Just l, a : as) -> GSinceLabelEnoughGoal (DMC.exp2prop (ann (conjE (a : as)))) l p
          (Just l, _) -> GLabelEnoughGoal l p
          (_, a : as) -> GSinceGoal (DMC.exp2prop (ann (conjE (a : as)))) p
          _ -> GEnoughGoal p
@@ -1159,21 +1162,27 @@ showTacticProofs env s = case J.decode s of
        p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
        return $ case labels st of
          [] -> GHaveIndeedGoal p
-         ls -> GHaveIndeedLabelGoal p (labelOf (andList ["(" ++ labelText l ++ ")" | l <- ls]))
+         ls -> GHaveIndeedLabelGoal p (labelOf (andList lang ["(" ++ labelText l ++ ")" | l <- ls]))
      "cases" -> return GCasesGoal
      "induction" -> return GInductionGoal
      _ -> return GObviousConclusion
 
    -- what a step applies, as one label: the lemmas by their names in
    -- typewriter, the hypotheses and facts by their labels, ($h$)
-   uses st = case map tt [str v | v <- list (field "uses" st)] ++
+   uses lang st = case map tt [str v | v <- list (field "uses" st)] ++
                   ["(" ++ labelText h ++ ")" | h <- [str v | v <- list (field "cites" st)]] of
      [] -> Nothing
-     ls -> Just (labelOf (andList ls))
+     ls -> Just (labelOf (andList lang ls))
    labelOf l = GIdentLabel (GStrIdent (GString l))
-   andList ls = case ls of
+   -- a list of citations, "L, (h) and (k)", with the conjunction of the language
+   andList lang ls = case ls of
      [a] -> a
-     _ -> intercalate ", " (init ls) ++ " and " ++ last ls
+     _ -> intercalate ", " (init ls) ++ " " ++ andWord lang ++ " " ++ last ls
+   andWord lang = case reverse (take 3 (reverse (showCId lang))) of
+     "Fre" -> "et"
+     "Ger" -> "und"
+     "Swe" -> "och"
+     _ -> "and"
    tt l = "\\texttt{" ++ concatMap (\c -> if c == '_' then "\\_" else [c]) l ++ "}"
    -- a label as Informath shows the label of a hypothesis: $h$, $h_{1}$, $\\mathrm{hA}$
    labelText h = let (ds, l) = span (`elem` ['0'..'9']) (reverse h)
@@ -1239,7 +1248,7 @@ proofTreePrinter env = if isFlag "-proof-trees" env then Just formula else Nothi
  where
    -- the formulas of the trees in symbolic LaTeX (-proof-trees), as with -to-symbolic-latex
    formula e = gftree2nat senv (mkLanguage (grammar env) "Latex")
-                 (gf (MCI.bareQuantifiers kinds (DMC.exp2prop (head (annotateDkIdents senv e)))))
+                 (gf (MCI.bareQuantifiersWith False kinds (DMC.exp2prop (head (annotateDkIdents senv e)))))
    senv = env{flags = "-to-symbolic-latex" : flags env}
    kinds = implicitKinds env
 

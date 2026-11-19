@@ -26,6 +26,8 @@ needs; rocq-export.py works without config.py):
     SIDE_CONDITIONS  propositions (prefixes) left out of proof texts
     FIELD_VARIABLES  record field -> the variable naming it in the structure's
                      definition (lawSet -> X, perp -> {|\\perp|})
+    RECORDS_AS_STRUCTURES  False: records are sets of objects (R : Set, Elem R),
+                     not Informath structures (R : Structure, Str R); default True
 """
 import importlib.util
 import os

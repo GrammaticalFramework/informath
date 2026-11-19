@@ -258,6 +258,13 @@ def drop_side_conditions(steps):
 USING = re.compile(r"(?:^|\.\s*|;;\s*)(?:e?apply|exact|pose\s+proof|specialize|e?destruct|rewrite|erewrite|"
                    r"elim|inversion|injection)\s+(?:(?:<-|->)\s*)?\(?\s*@?([A-Za-z_][A-Za-z0-9_']*)")
 _NAMES = None
+_THEOREMS = None
+# the tactics whose terms name the facts they use: every lemma of the project
+# in them is cited, not only the head (exact (L1 _ (L2 x) h) cites L1 and
+# L2), and assert (h := L x) cites L
+TERM_TACTICS = re.compile(r"^\s*(?:e?apply|exact|pose\s+proof|specialize|e?destruct|rewrite|erewrite|elim|"
+                          r"inversion|injection|refine|assert\s*\(\s*[A-Za-z_][\w']*\s*:=|pose|set)\b")
+IDENT = re.compile(r"(?<![\w'.@])@?([A-Za-z_][A-Za-z0-9_']*)")
 
 
 def declared_names():
@@ -297,6 +304,24 @@ def plain(p):
     return p
 
 
+def theorem_names():
+    """The theorems and axioms of the export: the lemmas that a term can
+    name as an argument (not the definitions it applies)."""
+    global _THEOREMS
+    if _THEOREMS is None:
+        _THEOREMS = set()
+        for f in glob.glob(os.path.join(OUT, '*.json')):
+            if f.endswith('-tactics.json') or '-tactic-units' in f:
+                continue
+            try:
+                for d in json.load(open(f)):
+                    if isinstance(d, dict) and d.get('kind') in ('theorem', 'axiom', 'lemma'):
+                        _THEOREMS.add(d.get('coq'))
+            except (ValueError, TypeError):
+                pass
+    return _THEOREMS
+
+
 def with_uses(proofs):
     """Each step with what its tactics apply, in order, which the proof text
     cites: the lemmas of the formalization ("uses": "by L, P"), the local
@@ -305,6 +330,7 @@ def with_uses(proofs):
     above ("since": "since A, P"); and each step that makes a hypothesis or
     fact cited by its label with that label ("labels": "assume that A (h)")."""
     names = declared_names()
+    theorems = theorem_names()
     for p in proofs:
         steps = p['steps']
         made, last = {}, {}     # label -> (statement, line of the step that makes it), last line
@@ -313,6 +339,14 @@ def with_uses(proofs):
                 u.pop(k, None)
             used, cites, since = [], [], []
             if u.get('unit') in ('conclusion', 'enough'):
+                # the lemmas named anywhere in the terms of the tactics
+                for tac in re.split(r'\s*;;\s*|\.\s+(?=[a-z])', u.get('by', '')):
+                    if TERM_TACTICS.match(tac):
+                        for m in IDENT.finditer(tac):
+                            h = m.group(1)
+                            if h in theorems and h not in used and h not in made:
+                                used.append(h)
+                # the hypotheses where they are applied (the head of the term)
                 for m in USING.finditer(u.get('by', '')):
                     h = m.group(1)
                     if h in made and h not in cites and made[h][0] not in since:
@@ -616,14 +650,16 @@ def main():
              'informath': subprocess.run(['git', '-C', os.environ['INFORMATH_ROOT'], 'rev-parse', 'HEAD'],
                                          capture_output=True, text=True).stdout.strip()}
     json.dump(index, open(INDEX, 'w'), ensure_ascii=False, indent=1)
-    worded = sum(bool(d['readings'].get('Eng')) for d in decls)
-    print('%d declarations -> %s: %d English readings, %d formulas, %d proof texts (%d failed)'
-          % (len(decls), INDEX, worded, sum(bool(d['readings'].get('formula')) for d in decls),
+    # the statistics in the first of the languages (English by default)
+    L = LANGUAGES[0]
+    worded = sum(bool(d['readings'].get(L)) for d in decls)
+    print('%d declarations -> %s: %d readings (%s), %d formulas, %d proof texts (%d failed)'
+          % (len(decls), INDEX, worded, L, sum(bool(d['readings'].get('formula')) for d in decls),
              sum(bool(d.get('proof')) for d in decls), sum(1 for d in decls if 'proof' in d and not d['proof'])))
-    lines = lambda key: sum(len(d[key]['Eng']) for d in decls if d.get(key))
+    lines = lambda key: sum(len(d[key].get(L, [])) for d in decls if d.get(key))
     print('proof lines: %d, shortened %d (%s)' % (lines('proof'), lines('proofShort'),
                                                  ', '.join('%s %d' % kv for kv in counts.items())))
-    missing = [d['coq'] for d in decls if not d['readings'].get('Eng')]
+    missing = [d['coq'] for d in decls if not d['readings'].get(L)]
     if missing:
         print('no reading:', ' '.join(missing))
     # theorems with a tactic proof and no proof text

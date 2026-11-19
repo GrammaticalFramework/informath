@@ -118,8 +118,14 @@ unparenth t = case t of
 -- LaTeX (CoreAllProp, CoreExistProp), as the other passes need the kind
 -- ("every mathematical object is ..."). The kinds are compared uncoerced.
 bareQuantifiers :: [GKind] -> Tree a -> Tree a
-bareQuantifiers [] t = t
-bareQuantifiers kinds t = case t of
+bareQuantifiers = bareQuantifiersWith True
+
+-- | bareQuantifiers, with the function kinds of implicit types as nouns
+-- ("a function", "a predicate", "a family indexed by N") or not: not in
+-- symbolic formulas (-to-symbolic-latex), which keep $f \\in A \\rightarrow B$
+bareQuantifiersWith :: Bool -> [GKind] -> Tree a -> Tree a
+bareQuantifiersWith _ [] t = t
+bareQuantifiersWith nouns kinds t = case t of
   GAllProp (GListArgKind [GIdentsArgKind k xs]) p | implicit k -> GBareAllProp xs (bare p)
   GExistProp (GListArgKind [GIdentsArgKind k xs]) p | implicit k -> GBareExistProp xs (bare p)
   GCoreAllProp k x p | implicit k -> case bare p of
@@ -140,14 +146,14 @@ bareQuantifiers kinds t = case t of
   -- to propositions: "a predicate"; from sets to an implicit type: "a family
   -- indexed by N"
   GFunKind (GListArgKind args) val
-    | all implicitArg args, implicit val, Just k <- bareFun (sum (map arity args)) -> k
-    | all implicitArg args, isPropKind val, Just k <- barePred (sum (map arity args)) -> k
-    | implicit val, Just es <- mapM argSet args, Just k <- family es -> k
+    | nouns, all implicitArg args, implicit val, Just k <- bareFun (sum (map arity args)) -> k
+    | nouns, all implicitArg args, isPropKind val, Just k <- barePred (sum (map arity args)) -> k
+    | nouns, implicit val, Just es <- mapM argSet args, Just k <- family es -> k
   GFunExpKind a b
-    | implicit (GExpKind a), implicit (GExpKind b) -> GBareFunKind
-    | implicit (GExpKind b) -> GFamilyKind a
+    | nouns, implicit (GExpKind a), implicit (GExpKind b) -> GBareFunKind
+    | nouns, implicit (GExpKind b) -> GFamilyKind a
   GLetDeclarationHypo (GElemDeclaration (GListTerm ts) ty)
-    | Just xs <- mapM identOf ts, (as@(_ : _), v) <- funTypeParts ty, Just k <- typeKind as v ->
+    | nouns, Just xs <- mapM identOf ts, (as@(_ : _), v) <- funTypeParts ty, Just k <- typeKind as v ->
         GVarsHypo (GListIdent xs) k
   GSuchThatHypo _ p k | implicit k -> GPropHypo (bare p)
   GVarsHypo xs k | implicit k -> GBareVarsHypo xs
@@ -155,7 +161,7 @@ bareQuantifiers kinds t = case t of
   _ -> composOp bare t
  where
   bare :: Tree b -> Tree b
-  bare = bareQuantifiers kinds
+  bare = bareQuantifiersWith nouns kinds
   implicit k = elem (uncoerce k) (map uncoerce kinds)
   implicitArg :: GArgKind -> Bool
   implicitArg a = case a of

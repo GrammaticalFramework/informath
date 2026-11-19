@@ -78,7 +78,10 @@ jmt2jmt jmt = case jmt of
       _ | S.member cat kindCats -> case meexp of
        -- the definiens without the abstractions over the hypotheses, as for an Exp
        MEExp exp -> GDefKindJmt   definitionLabel ghypos (exp2kind definiendum) (exp2kind (stripAbs hypos exp))
-       _ | isStructureType kind -> GStructureJmt definitionLabel (GListClause (map hypo2clause hypos))
+       -- a structure kind with parameters (Str Ring -> Structure); the kind
+       -- alone (perm : Structure) is declared as any kind is: a GF list of
+       -- clauses cannot be empty
+       _ | isStructureType kind, not (null hypos) -> GStructureJmt definitionLabel (GListClause (map hypo2clause hypos))
                                      (exp2kind definiendum)
        _ ->         GAxiomKindJmt definitionLabel ghypos (exp2kind definiendum) (exp2kind kind)
 

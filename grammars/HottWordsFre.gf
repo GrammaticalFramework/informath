@@ -4,6 +4,9 @@ open UtilitiesFre, ParadigmsFre in {
 
 lin homotopic_Adj = mkAdj "homotopique" ;
 lin reflexivity_Noun = mkNoun (mkN "reflexivité") ;
+lin commutativity_Noun = mkNoun (mkN "commutativité") ;
+lin transitivity_Noun = mkNoun (mkN "transitivité") ;
+lin identical_Adj = mkAdj "identique" ;
 
 -- words of the Mathlib informalization
 lin coprime_Adj = mkAdj (mkA "premier entre eux" "première entre elles" "premiers entre eux" "premières entre elles") ;

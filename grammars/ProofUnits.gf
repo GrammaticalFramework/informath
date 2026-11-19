@@ -41,6 +41,10 @@ fun
   EnoughGoal : Prop -> Unit ;
   LabelEnoughGoal : Label -> Prop -> Unit ;  -- by L, it is enough to show that P
   -- a claim verified by the steps that follow, stated forward: P. Indeed:
+  -- a step that uses a hypothesis far above (by its statement) and lemmas (by name):
+  -- since A, by L, P / since A, by L, it is enough to show that P
+  SinceLabelConclusion : Prop -> Label -> Prop -> Unit ;
+  SinceLabelEnoughGoal : Prop -> Label -> Prop -> Unit ;
   HaveIndeedGoal : Prop -> Unit ;
   HaveIndeedLabelGoal : Prop -> Label -> Unit ;  -- P (h). Indeed:
   ConclusionLabelUnit : Prop -> Label -> Unit ;  -- P (h), a fact cited later by its label; the label with its parentheses

@@ -363,6 +363,11 @@ def dk_names(env, items):
 
 
 FIELD_VARIABLES = project.get('FIELD_VARIABLES', {})
+# config.py RECORDS_AS_STRUCTURES = False: a Record is a set of objects (its
+# kind : Set, its elements Elem R), and a definition by its constructor a
+# definition, as before records became Informath structures; for records that
+# are not algebraic structures (kg-heritage's perm, real)
+RECORDS_AS_STRUCTURES = project.get('RECORDS_AS_STRUCTURES', True)
 # the constructors of the records: constructor -> (record, fields)
 RECORD_CONSTRUCTORS = {}
 
@@ -424,8 +429,9 @@ def export_decls(vdir, mod, items, dep_items=()):
             for c in [it['constructor']] + it['fields']:
                 env.types[c] = parse_check(res[('check', c)])
             coqterm.CONSTRUCTORS.add(it['constructor'])
-            coqterm.STRUCTURES.add(n)
-            RECORD_CONSTRUCTORS[it['constructor']] = (n, it['fields'])
+            if RECORDS_AS_STRUCTURES:
+                coqterm.STRUCTURES.add(n)
+                RECORD_CONSTRUCTORS[it['constructor']] = (n, it['fields'])
     for it in items:
         n = it['coq']
         dn = tr.const_name(n)
@@ -446,7 +452,8 @@ def export_decls(vdir, mod, items, dep_items=()):
                 # kind, its constructor with the fields as arguments, the selectors
                 # the kind, with the parameters of the record (Str Ring -> Structure)
                 kty, _, _ = tr.decl_type(env.types[n])
-                lines = ['%s : %s.' % (dn, re.sub(r'(Set|Type)$', 'Structure', kty))]
+                lines = ['%s : %s.' % (dn, re.sub(r'(Set|Type)$', 'Structure', kty) if RECORDS_AS_STRUCTURES
+                                    else re.sub(r'Type$', 'Set', kty))]
                 # the constructor's arguments: the parameters, then the fields, named
                 # as the project says (config.py FIELD_VARIABLES: field -> the
                 # variable of the definition, X for lawSet), else by the fields

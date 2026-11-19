@@ -32,6 +32,15 @@ lin
     ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
   LabelPropLabelConclusion by prop label =
     ccText (strText ("nach" ++ (mkUtt by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  -- weil A, ...: the reason as a subordinate clause, the verb last
+  SinceConclusion a b =
+    ccText (strText ((SyntaxGer.mkAdv because_Subj (partProp a)).s ++ ",")) (propText b) ;
+  SinceGoal a goal =
+    strText ((SyntaxGer.mkAdv because_Subj (partProp a)).s ++ ", genügt es zu zeigen ," ++ (SyntaxGer.mkAdv that_Subj (partProp goal)).s ++ ".") ;
+  SinceLabelConclusion a label b =
+    ccText (strText ((SyntaxGer.mkAdv because_Subj (partProp a)).s ++ ", nach" ++ (mkUtt label.np).s ++ ",")) (propText b) ;
+  SinceLabelEnoughGoal a label b =
+    strText ((SyntaxGer.mkAdv because_Subj (partProp a)).s ++ ", nach" ++ (mkUtt label.np).s ++ "genügt es zu zeigen ," ++ (SyntaxGer.mkAdv that_Subj (partProp b)).s ++ ".") ;
   HaveIndeedGoal prop =
     ccText (propInText prop) (strText ". in der Tat :") ;
   HaveIndeedLabelGoal prop label =

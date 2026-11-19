@@ -63,6 +63,11 @@ lin
     ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
   LabelPropLabelConclusion by prop label =
     ccText (strText ("par" ++ (mkUtt by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  SinceLabelConclusion a label b =
+    ccText (strText "comme") (commaText (propInText a)) (strText ("par" ++ (mkUtt label.np).s ++ ",")) (propText b) ;
+  SinceLabelEnoughGoal a label b =
+    ccText (strText "comme") (commaText (propInText a)) (strText ("par" ++ (mkUtt label.np).s ++ ","))
+      (prefixText "il suffit de montrer que" (propText b)) ;
   HaveIndeedGoal prop =
     ccText (propInText prop) (strText ". en effet :") ;
   HaveIndeedLabelGoal prop label =

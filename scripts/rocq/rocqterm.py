@@ -695,7 +695,9 @@ class Translator:
                 name, drop = STDLIB_DK[s]
                 return ' '.join([name] + [paren(self.arg(a, None, ctx)) for a in args[drop:]])
         # a record's value function without its argument, rv y, is the object y itself, as in the article
-        if h.kind == 'var' and h.name in VALUE_FIELDS and len(args) == 1:
+        # (the field selector, not a bound variable of that name: the
+        # constructor's type forall rv, (forall n, Reg (rv n)) -> ...)
+        if h.kind == 'var' and h.name in VALUE_FIELDS and h.name not in ctx and len(args) == 1:
             return self.term(args[0], ctx)
         # the generating functions and their companions, indexed as in the
         # article: FA F1 n is F_(n+1)
