@@ -1,0 +1,2 @@
+Definition. Let $X$ be a set. Let $f$ be a function from $X$ to $\Real$. Let $C \in \Real$. Then $\boundedMACRoA {f}{C}$ is a proposition defined as the proposition that for all elements $x$ of $X$, $f (x)\leq C$.
+Bounded_const. Let $X$ be a set. Let $c \in \Real$. Then $\boundedMACRoA {\lambda x . c}{c}$.

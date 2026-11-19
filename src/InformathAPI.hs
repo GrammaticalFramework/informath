@@ -259,7 +259,8 @@ processJmt env djmt =
       cjmt = applyDeduktiConversions env djmt
       jmts = annotateDedukti env (dropImplicitHypos env cjmt)
       hidden = implicitPositions env cjmt
-      core = [DMC.hideHypoVars (hypoVarsAt hidden j) (dedukti2core j) | j <- jmts]
+      hides = jmtHides env cjmt
+      core = [DMC.hideHypoVars (hypoVarsAt hidden j) (DMC.jmt2coreHiding hides j) | j <- jmts]
       exts = concatMap (core2ext env) core
       bare = MCI.bareQuantifiersWith (not (isFlag "-to-symbolic-latex" env)) (implicitKinds env)
       nlgs = setnub $ map (gf . bare) $ exts
@@ -422,6 +423,18 @@ annotateDedukti :: Env -> Jmt -> [Jmt]
 annotateDedukti env t = annotateDkIdents env (harmonizeJmt t)
 
 -- | From annotated Dedukti to MathCore.
+-- | The positions that #HIDE hides in the applications of the constant that
+-- a judgement declares or defines
+jmtHides :: Env -> Jmt -> [Int]
+jmtHides env j = case j of
+  JDef c _ _ -> look c
+  JStatic c _ -> look c
+  JThm c _ _ -> look c
+  JInj c _ _ -> look c
+  _ -> []
+ where
+  look c = M.findWithDefault [] c (hideTable (symbolTable env))
+
 dedukti2core :: Jmt -> GJmt
 dedukti2core = DMC.jmt2core
 

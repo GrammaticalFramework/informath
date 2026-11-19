@@ -1,0 +1,7 @@
+(; A definition whose constant has a hidden (#HIDE) argument: its definiendum
+   leaves the argument out, as the applications of the constant do ;)
+
+def bounded : (X : Set) -> (f : (Elem X -> Elem Real)) -> (C : Elem Real) -> Prop :=
+  X => f => C => forall X (x => Leq (f x) C).
+
+bounded_const : (X : Set) -> (c : Elem Real) -> Proof (bounded X (x => c) c).

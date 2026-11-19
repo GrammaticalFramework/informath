@@ -128,6 +128,11 @@
   "latex_pages": 6,
   "latex_errors": 16
  },
+ "hide-definienda": {
+  "lines": 2,
+  "undefined": 0,
+  "seconds": 0.0
+ },
  "hott-latex": {
   "lines": 194,
   "undefined": 0,

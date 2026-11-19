@@ -19,7 +19,13 @@ import qualified Data.Set as S
 
 -- clean-up of remaining annotated idents
 jmt2core :: Jmt -> GJmt
-jmt2core = cleanup . jmt2jmt . introduceLocalDefinitions where
+jmt2core = jmt2coreHiding []
+
+-- | With the positions of the arguments that #HIDE hides in the applications
+-- of the judgement's constant: its definiendum leaves them out too, so that
+-- the constant's entry gets the arguments it gets everywhere else
+jmt2coreHiding :: [Int] -> Jmt -> GJmt
+jmt2coreHiding hidden = cleanup . jmt2jmtHiding hidden . introduceLocalDefinitions where
 
 -- the variables of the hypotheses of a judgement left out, where they are of
 -- an implicit type (#IMPLICIT): "Let m be a mathematical object" is not said
@@ -45,7 +51,10 @@ cleanup t = case t of
   _ -> Informath.composOp cleanup t
 
 jmt2jmt :: Jmt -> GJmt
-jmt2jmt jmt = case jmt of
+jmt2jmt = jmt2jmtHiding []
+
+jmt2jmtHiding :: [Int] -> Jmt -> GJmt
+jmt2jmtHiding hidden jmt = case jmt of
   JDef ident MTNone (MEExp exp) ->
     GDefUntypedExpJmt (LexLabel "definitionLabel") (ident2exp ident) (exp2exp exp)
   JDef ident@(QIdent sident) (MTExp typ) meexp ->
@@ -60,7 +69,7 @@ jmt2jmt jmt = case jmt of
           Just p -> appProfile p
 	  _ -> id
         _ -> id
-      definiendum = approf (foldl EApp (EIdent ident) (map EIdent hvars))
+      definiendum = approf (foldl EApp (EIdent ident) [EIdent v | (i, v) <- zip [1..] hvars, notElem i hidden])
     in case cat of
       -- an element of a proposition-type (is-contr unit, is-contr an adjective):
       -- a theorem, whatever the constant's own entry
@@ -106,9 +115,9 @@ jmt2jmt jmt = case jmt of
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
       _ -> error ("cannot convert category " ++ cat ++ " in " ++ printTree ident ++ " happened in " ++ printTree jmt)
 
-  JStatic ident typ -> jmt2jmt (JDef ident (MTExp typ) MENone)
-  JInj ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp)
-  JThm ident mtyp mexp -> jmt2jmt (JDef ident mtyp mexp) 
+  JStatic ident typ -> jmt2jmtHiding hidden (JDef ident (MTExp typ) MENone)
+  JInj ident mtyp mexp -> jmt2jmtHiding hidden (JDef ident mtyp mexp)
+  JThm ident mtyp mexp -> jmt2jmtHiding hidden (JDef ident mtyp mexp) 
   JRules rules -> GRewriteJmt (GListRule (map rule2rule rules))  
   _ -> error ("not yet: " ++ printTree jmt)
 

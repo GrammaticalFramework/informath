@@ -179,6 +179,10 @@ dict(name='proof-text-lambdas', tier='dev',
      what='proof texts of λs typed by a proof of an implication, a negation or a ∀',
      cmd='{RUN} -proof-text -base=test/natdedrules.dk test/prooftext_lambdas.dk', latex=True),
 
+dict(name='hide-definienda', tier='dev',
+     what='the definiendum of a constant with a #HIDE argument leaves it out, as its applications do',
+     cmd='{RUN} -add-symboltables=test/hide_definienda.dkgf test/hide_definienda.dk'),
+
 dict(name='mathcore-examples', tier='dev', make='mathcore_examples',
      what='MathCore text only',
      cmd='{RUN} -add-symboltables=test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk'),
