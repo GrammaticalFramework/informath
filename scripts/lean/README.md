@@ -96,9 +96,9 @@ neither defines nor maps, with their types translated in the same way.
 * The Dedukti is for reading, not for checking: universes and instances are
   left out, and the patterns of the rules are what Lean's equation lemmas
   have.
-* Tactic proofs are read step by step, as above, not shortened (as
-  `../rocq/rocq-index.py` shortens Rocq's); a step combined by `<;>` is one
-  step; the steps that a tactic makes itself (`simp`, `omega`) are not seen,
+* Tactic proofs are shortened and cited as Rocq's are
+  (`../proof_units.py -lean`; `-proof-all-steps` gives every step); a step
+  combined by `<;>` is one step; the steps that a tactic makes itself (`simp`, `omega`) are not seen,
   only what they leave; a step whose goals Export.lean cannot translate is
   "obvious". A hypothesis of the statement is not cited by its label, which
   the proof text does not show; lemmas of the libraries are cited only in the

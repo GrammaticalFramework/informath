@@ -34,7 +34,11 @@ missing or older:
 `index.json` has, for each declaration, its Rocq source and comment, its
 Dedukti, its reading in English and as a formula (a definition by cases one
 reading per case), and for a theorem the proof text of its tactic proof, all
-steps and shortened (`../proof_shortening.py`). Pages and articles are made
+steps and shortened (`../proof_shortening.py`), with what each step uses,
+claims stated forward and the steps that only introduce variables of
+`#IMPLICIT` types left out (`../proof_units.py`, which RunInformath
+`-from-formalism` uses too: shortened by default, every step with
+`-proof-all-steps`). Pages and articles are made
 from it by the project's own scripts; `../symbolic_proofs.py` writes proof
 texts with formulas for articles, and `../proof_folds.py` shows them in HTML.
 

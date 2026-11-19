@@ -12,9 +12,9 @@ import Utils (showFreqs, fileSuffix, dictValues)
 import System.Environment (getArgs, getEnv)
 import System.Directory (doesFileExist)
 import System.FilePath ((</>), takeBaseName, takeFileName)
-import Control.Monad (filterM)
+import Control.Monad (filterM, when)
 import System.Process (readProcessWithExitCode)
-import Data.List (intercalate)
+import Data.List (intercalate, isPrefixOf)
 import qualified Data.Map as M
 import qualified HtmlDoc as H
 import Dedukti.AbsDedukti
@@ -100,7 +100,19 @@ fromFormalismProofs env formalism file dir stem conv (MJmts jmts) args = do
   hasTactics <- doesFileExist (stem ++ "-tactics.json")
   tactics <- if not hasTactics then return [] else do
     _ <- readProcessWithExitCode "python3" [root </> "scripts" </> formalism </> (formalism ++ "-tactic-units.py"), mod, dir] ""
-    let units = dir </> (mod ++ "-tactic-units.json")
+    -- the units as the project pages have them (scripts/proof_units.py): shortened
+    -- (unless -proof-all-steps), with what each step uses, claims stated forward,
+    -- and without the steps that only introduce variables of #IMPLICIT types
+    let raw = dir </> (mod ++ "-tactic-units.json")
+        allSteps = elem "-proof-all-steps" args
+        tables = intercalate "," [drop (length "-add-symboltables=") a | a <- args, "-add-symboltables=" `isPrefixOf` a]
+    rawOk <- doesFileExist raw
+    when rawOk $ do
+      _ <- readProcessWithExitCode "python3" ([root </> "scripts" </> "proof_units.py", raw, dir, "-tables=" ++ tables] ++
+             ["-full" | allSteps] ++ ["-lean" | formalism == "lean"]) ""
+      return ()
+    improved <- doesFileExist (dir </> (mod ++ "-tactic-units" ++ (if allSteps then "-full" else "-short") ++ ".json"))
+    let units = if improved then dir </> (mod ++ "-tactic-units" ++ (if allSteps then "-full" else "-short") ++ ".json") else raw
     ok <- doesFileExist units
     if not ok then return [] else do
       s <- readFile units
@@ -237,6 +249,7 @@ helpMsg4 = [
   "* Translating from Agda, Lean and Rocq (source files exported to Dedukti by scripts/<formalism>/):",
   "",
   just "-from-formalism=<formalism>" "read the file as agda, lean or rocq, exported to Dedukti and then read as a .dk file; its identifiers converted by the #CONV lines of the symbol tables, read backwards; with -proof-text, the proof texts of its theorems (proof terms of Lean and Agda, tactic proofs of Lean and Rocq)",
+  just "-proof-all-steps" "with -from-formalism and -proof-text or -to-html-doc, the tactic proofs step by step, not shortened",
   just "-proof-timeout=<seconds>" "with -from-formalism and -proof-text or -to-html-doc, the time limit of each proof text, default 30",
   just "-export-dir=<dir>" "with -from-formalism, write the export (the .dk file, its symbol table of hidden arguments, ...) in <dir>, default a temporary directory",
   "",
