@@ -207,10 +207,12 @@ sem env t = case t of
   -- sets A and B to C, as MathCore2Informath.funKinds makes it
   GExpKind (GTermExp t@(GFunTypeTerm _ _)) ->
     let (args, val) = funTypeArgs t
-    in sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind (GTermExp a)) | a <- args]) (GExpKind (GTermExp val)))
-  -- "function from A to B" is the function kind of the sets A and B
+    in sem env (GFunKind (GListArgKind [GKindArgKind (GElemKind (GExpKind (GTermExp a))) | a <- args])
+                         (GElemKind (GExpKind (GTermExp val))))
+  -- "function from A to B" is the function kind of the sets A and B: from
+  -- the elements of A to the elements of B
   GFunExpKind a b ->
-    sem env (GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) (GExpKind b))
+    sem env (GFunKind (GListArgKind [GKindArgKind (GElemKind (GExpKind a))]) (GElemKind (GExpKind b)))
   GIfProp cond prop -> case getAndProps cond of
     Just props -> sem env (foldr (\a b -> GIfProp a b) prop props)
     _ -> GIfProp (sem env cond) (sem env prop)
@@ -533,8 +535,9 @@ restoreBareFunKinds kinds t = case t of
   GBarePredKind -> preds 1
   GBarePred2Kind -> preds 2
   GBarePred3Kind -> preds 3
-  GFamilyKind a -> [GFunKind (GListArgKind [GKindArgKind (GExpKind a)]) val | val <- kinds]
-  GFamily2Kind a b -> [GFunKind (GListArgKind [GKindArgKind (GExpKind a), GKindArgKind (GExpKind b)]) val | val <- kinds]
+  -- a family indexed by a set: from the elements of the set
+  GFamilyKind a -> [GFunKind (GListArgKind [GKindArgKind (GElemKind (GExpKind a))]) val | val <- kinds]
+  GFamily2Kind a b -> [GFunKind (GListArgKind [GKindArgKind (GElemKind (GExpKind a)), GKindArgKind (GElemKind (GExpKind b))]) val | val <- kinds]
   _ -> composOpM (restoreBareFunKinds kinds) t
  where
   funs :: Int -> [GKind]

@@ -218,6 +218,9 @@ formula2dedukti formula = case formula of
   GApp4MacroFormula ident x y z u -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [x, y, z, u])
   GApp5MacroFormula ident a b c d e -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti [a, b, c, d, e])
   GAppMacroFormula ident xs -> foldl EApp (EIdent (macro2ident ident)) (map term2dedukti (macroArgList xs))
+  -- R(x, y), a predicate applied to its arguments
+  GAppPredicateFormula (GIdentPredicate r) (GListTerm args) ->
+    foldl EApp (EIdent (ident2ident r)) (map term2dedukti args)
   _ -> eUndefinedDebug formula ----
 
 hypo2dedukti :: GHypo -> [Hypo]
@@ -262,6 +265,8 @@ argkind2dedukti argkind = case argkind of
 
 kind2dedukti :: GKind -> Exp
 kind2dedukti kind = case kind of
+  -- the elements of a function kind are its functions
+  GElemKind k@(GFunKind _ _) -> kind2dedukti k
   GElemKind k -> EApp (EIdent identElem) (kind2dedukti k)
 
   GSuchThatKind kind ident prop ->
@@ -282,7 +287,23 @@ kind2dedukti kind = case kind of
   GExpKind exp -> exp2dedukti exp
   GNounKind noun ->
     EIdent (QIdent (showGF noun))
+  -- a function kind, "function from A and B to C": A -> B -> C, with the
+  -- variables of its arguments where they have names that can be referred
+  -- to (not the "_h0" of an argument without one)
+  GFunKind (GListArgKind argkinds) val ->
+    foldr EFun (kind2dedukti val) (concatMap funArg argkinds)
   _ -> eUndefinedDebug kind ---- TODO
+ where
+  funArg :: GArgKind -> [Hypo]
+  funArg a = case a of
+    GKindArgKind k -> [HExp (kind2dedukti k)]
+    GIdentArgKind k x -> [funHypo (kind2dedukti k) x]
+    GIdentsArgKind k (GListIdent xs) -> [funHypo (kind2dedukti k) x | x <- xs]
+    _ -> [HExp (eUndefinedDebug a)]
+  funHypo :: Exp -> GIdent -> Hypo
+  funHypo k x = case ident2ident x of
+    QIdent ('_' : _) -> HExp k
+    v -> HVarExp v k
 
 exp2dedukti :: GExp -> Exp
 exp2dedukti exp = case exp of
@@ -329,6 +350,8 @@ term2dedukti term = case term of
   GApp3MacroTerm macro x y z -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [x, y, z])
   GApp4MacroTerm macro a b c d -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d])
   GApp5MacroTerm macro a b c d e -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti [a, b, c, d, e])
+  -- \\mathrm{c}, parsed as a macro applied to c: the constant c
+  GAppMacroTerm (GStringMacro (GString "\\mathrm")) (GOneMacroArg (GIdentTerm c)) -> EIdent (ident2ident c)
   GAppMacroTerm macro xs -> foldl EApp (EIdent (macro2ident macro)) (map term2dedukti (macroArgList xs))
   GComprehensionTerm kterm x pterm ->
     foldl EApp (EIdent identSuchThat) [ 
@@ -342,6 +365,9 @@ term2dedukti term = case term of
   GBetaRedexTerm ident body arg ->
     EApp (EAbs (BVar (ident2ident ident)) (term2dedukti body)) (term2dedukti arg)
   GFunTypeTerm arg val -> EFun (HExp (term2dedukti arg)) (term2dedukti val)
+  -- f(x, y), a function applied to its arguments
+  GAppFunctionTerm (GIdentFunction f) (GListTerm args) ->
+    foldl EApp (EIdent (ident2ident f)) (map term2dedukti args)
 
   _ -> eUndefinedDebug term ---- TODO
 
@@ -381,7 +407,9 @@ proofexp2exp proofexp = case proofexp of
 
 ident2ident :: GIdent -> QIdent
 ident2ident ident = case ident of
-  GStrIdent (GString s) -> QIdent (unLatexMathIdent (escapeConstant s))
+  -- \\mathrm{c} (a constant without a wording, as Informath shows it) is c;
+  -- what is left that is not an identifier is quoted
+  GStrIdent (GString s) -> QIdent (escapeConstant (unLatexMathIdent s))
 
 macro2ident :: GMacro -> QIdent
 macro2ident ident = case ident of

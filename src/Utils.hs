@@ -143,7 +143,7 @@ escapeUnderscores = concatMap (\c -> if c=='_' then "\\_" else [c])
 -- for converting back to Dedukti
 unLatexMathIdent :: String -> String
 unLatexMathIdent s = case s of
-  _ | isPrefixOf "\\mathrm{" s -> unescapeUnderscores (drop 7 (init s))
+  _ | isPrefixOf "\\mathrm{" s -> unescapeUnderscores (drop 8 (init s))
   _ | (b, '_':'{':rest) <- break (=='_') s, not (null rest), last rest == '}',
       all isDigit (init rest) -> unLatexMathIdent b ++ init rest
   '\\':g | elem g greekLetters -> g
