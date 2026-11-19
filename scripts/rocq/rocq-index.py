@@ -253,6 +253,106 @@ def drop_side_conditions(steps):
     return [u for u in steps if not side(u)] if SIDE_CONDITIONS else steps
 
 
+# the tactics that name the fact they use first: apply L, exact (L x), pose proof
+# (L x) as h, rewrite <- L, destruct (L x) as [...], specialize (L x)
+USING = re.compile(r"(?:^|\.\s*|;;\s*)(?:e?apply|exact|pose\s+proof|specialize|e?destruct|rewrite|erewrite|"
+                   r"elim|inversion|injection)\s+(?:(?:<-|->)\s*)?\(?\s*@?([A-Za-z_][A-Za-z0-9_']*)")
+_NAMES = None
+
+
+def declared_names():
+    """The names of the declarations of all the modules of the export: the
+    lemmas a step can use (not the local hypotheses, nor the library's)."""
+    global _NAMES
+    if _NAMES is None:
+        _NAMES = set()
+        for f in glob.glob(os.path.join(OUT, '*.json')):
+            if f.endswith('-tactics.json') or '-tactic-units' in f:
+                continue
+            try:
+                for d in json.load(open(f)):
+                    for k in ('coq', 'constructor'):
+                        if isinstance(d, dict) and isinstance(d.get(k), str):
+                            _NAMES.add(d[k])
+                    for fld in (d.get('fields') or []) if isinstance(d, dict) else []:
+                        if isinstance(fld, str):
+                            _NAMES.add(fld)
+                        elif isinstance(fld, (list, tuple)) and fld and isinstance(fld[0], str):
+                            _NAMES.add(fld[0])
+            except (ValueError, TypeError):
+                pass
+    return _NAMES
+
+
+# a local hypothesis cited more than this many lines after it was made or last
+# cited is cited by its statement ("since A, ..."), else by its label ("by (h)")
+FAR = 10
+
+
+def plain(p):
+    """A proposition in Dedukti without its spaces and outer parentheses."""
+    p = re.sub(r'\s+', '', p or '')
+    while p.startswith('(') and p.endswith(')'):
+        p = p[1:-1]
+    return p
+
+
+def with_uses(proofs):
+    """Each step with what its tactics apply, in order, which the proof text
+    cites: the lemmas of the formalization ("uses": "by L, P"), the local
+    hypotheses and derived facts by their labels ("cites": "by (h), P"), or by
+    their statements if they were made or last cited more than FAR lines
+    above ("since": "since A, P"); and each step that makes a hypothesis or
+    fact cited by its label with that label ("labels": "assume that A (h)")."""
+    names = declared_names()
+    for p in proofs:
+        steps = p['steps']
+        made, last = {}, {}     # label -> (statement, line of the step that makes it), last line
+        for i, u in enumerate(steps):
+            for k in ('uses', 'cites', 'since', 'labels'):
+                u.pop(k, None)
+            used, cites, since = [], [], []
+            if u.get('unit') in ('conclusion', 'enough'):
+                for m in USING.finditer(u.get('by', '')):
+                    h = m.group(1)
+                    if h in made and h not in cites and made[h][0] not in since:
+                        # not "since A, A": a hypothesis that is what the step
+                        # concludes is cited by its label, however far
+                        if i - last[h] > FAR and plain(made[h][0]) != plain(u.get('prop', '')):
+                            since.append(made[h][0])
+                        else:
+                            cites.append(h)
+                        last[h] = i
+                    elif h in names and h not in used and h not in made:
+                        used.append(h)
+            if used:
+                u['uses'] = used
+            if cites:
+                u['cites'] = cites
+            if since:
+                u['since'] = since
+            # what the step makes, by its labels
+            new = []
+            if u.get('unit') == 'hypos':
+                new = [(x, t[len('Proof '):]) for x, t in u.get('hypos', []) if t.startswith('Proof ')]
+            elif u.get('unit') == 'conclusion':
+                new = [(x, t) for x, t in u.get('facts', [])]
+            for x, t in new:
+                made[x], last[x] = (t, i), i
+        # the labels shown where they are made: those cited by label
+        cited = {h for u in steps for h in u.get('cites', [])}
+        for i, u in enumerate(steps):
+            if u.get('unit') == 'hypos':
+                labels = [x for x, t in u.get('hypos', []) if x in cited and t.startswith('Proof ')]
+            elif u.get('unit') == 'conclusion':
+                labels = [x for x, _ in u.get('facts', []) if x in cited]
+            else:
+                labels = []
+            if labels:
+                u['labels'] = labels
+    return proofs
+
+
 def tactic_proofs(mod):
     """The proof texts of a module's tactic proofs, all steps and shortened
     (Informath's scripts/proof_shortening.py), and the rules applied."""
@@ -266,7 +366,8 @@ def tactic_proofs(mod):
         return {}, {}, macros, {}
     subprocess.run([sys.executable, os.path.join(HERE, 'rocq-tactic-units.py'), mod, OUT], check=True,
                    capture_output=True)
-    units = json.load(open(units_file))
+    units = with_uses(json.load(open(units_file)))
+    json.dump(units, open(units_file, 'w'), ensure_ascii=False, indent=1)
     full, macros = proof_texts(units, units_file)
     short_units, counts = [], {}
     for p in units:
@@ -274,6 +375,7 @@ def tactic_proofs(mod):
         short_units.append(dict(p, steps=steps, rules=c))
         for k, v in c.items():
             counts[k] = counts.get(k, 0) + v
+    with_uses(short_units)
     short_file = os.path.join(OUT, mod + '-tactic-units-short.json')
     json.dump(short_units, open(short_file, 'w'), ensure_ascii=False, indent=1)
     short, _ = proof_texts(short_units, short_file)

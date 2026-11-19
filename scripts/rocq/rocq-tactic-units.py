@@ -294,7 +294,9 @@ def units_of_proof(steps):
             elif all(is_prop(t) for _, t in new):
                 # 'of': the hypotheses it is a new form of (rewrite ... in H), for proof_shortening
                 add(with_method({'unit': 'conclusion', 'prop': conj([t[len('Proof '):] for _, t in new]),
-                                 'by': st['tactic'], 'of': sorted(n for n, _ in new)}, st, name),
+                                 'by': st['tactic'], 'of': sorted(n for n, _ in new),
+                                 # the facts by their labels, which a later step may cite
+                                 'facts': [[n, t[len('Proof '):]] for n, t in new]}, st, name),
                     hyps(main) if main else hb)
             else:
                 add({'unit': 'hypos', 'hypos': new, 'by': st['tactic']}, hyps(main) if main else hb)

@@ -28,6 +28,12 @@ lin
     strText ("zuerst prüfen wir ," ++ (SyntaxGer.mkAdv that_Subj (partProp prop)).s ++ ".") ;
   EnoughGoal prop =
     strText ("es genügt zu zeigen ," ++ (SyntaxGer.mkAdv that_Subj (partProp prop)).s ++ ".") ;
+  ConclusionLabelUnit prop label =
+    ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelPropLabelConclusion by prop label =
+    ccText (strText ("nach" ++ (mkUtt by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelEnoughGoal label prop =
+    strText ("nach" ++ (mkUtt label.np).s ++ "genügt es zu zeigen ," ++ (SyntaxGer.mkAdv that_Subj (partProp prop)).s ++ ".") ;
   InductionGoal =
     strText "wir argumentieren durch Induktion :" ;
   CasesGoal =

@@ -53,6 +53,13 @@ lin
     prefixText "verifiera först att" (mkText (topProp prop)) ;
   EnoughGoal prop =
     prefixText "det räcker att visa att" (propText prop) ;
+  ConclusionLabelUnit prop label =
+    ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelPropLabelConclusion by prop label =
+    ccText (strText ("enligt" ++ (mkUtt by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelEnoughGoal label prop =
+    ccText (strText ("enligt" ++ (mkUtt label.np).s ++ ","))
+      (prefixText "det räcker att visa att" (propText prop)) ;
   SinceGoal prop goal =
     ccText (strText "eftersom") (commaText (propInText prop))
       (prefixText "det räcker att visa att" (propText goal)) ;

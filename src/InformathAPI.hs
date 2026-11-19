@@ -1092,7 +1092,7 @@ showTacticProofs env s = case J.decode s of
 
    oneTacticProof p = unlines $ intersperse "\n\n" (
      ["\\subsection*{" ++ verbatimInline (str (field "name" p)) ++ "}"] ++
-     [table lang [(i, (depth st, stepUnit st), str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
+     [table lang [(i, (depth st, (stepUnit st, labelled st)), str (field "by" st)) | (i, st) <- zip [1 :: Int ..] (list (field "steps" p))]
        | lang <- langsShown] ++
      ["\\clearpage"])
 
@@ -1108,13 +1108,21 @@ showTacticProofs env s = case J.decode s of
      _ -> 0 :: Int
    indent d = concat (replicate d "\\hspace*{1.5em}")
 
+   -- a step that shows the labels of its hypotheses or facts, which later
+   -- steps cite ("labels", from rocq-index.py): read with -proof-labels
+   labelled st = not (null (labels st))
+   labels st = [str v | v <- list (field "labels" st)]
+
    -- a step whose Dedukti does not parse is shown as obvious
    stepUnit st = either (const GObviousConclusion) id (stepUnitE st)
    stepUnitE st = case str (field "unit" st) of
      "hypos" -> do
        hs <- sequence [fmap (HVarExp (QIdent (str x))) (dk (str t))
                       | J.JSArray [x, t] <- list (field "hypos" st)]
-       let hypos = GListHypo (DMC.hypos2hypos [HVarExp x (ann t) | HVarExp x t <- hs])
+       -- a hypothesis keeps its label only if a later step cites it by the label
+       let hypo x t = if elem x (labels st) || not (isProofType t) then HVarExp (QIdent x) (ann t)
+                      else HExp (ann (proofProp t))
+           hypos = GListHypo (DMC.hypos2hypos [hypo x t | HVarExp (QIdent x) t <- hs])
        -- with -proof-goals, the goal of an assumption: "to prove that B, assume that A"
        case field "goal" st of
          J.JSString g | isFlag "-proof-goals" env -> do
@@ -1123,15 +1131,57 @@ showTacticProofs env s = case J.decode s of
          _ -> return (GHyposUnit hypos)
      "conclusion" -> do
        p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
-       -- how the step proves it, if the tactic says: "by rewriting, P"
-       return $ case lookup (str (field "method" st)) methods of
-         Just hence -> GHencePropConclusion hence p
-         Nothing -> GConclusionUnit p
-     "enough" -> fmap (GEnoughGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
+       sinces <- mapM dk [str v | v <- list (field "since" st)]
+       -- what the step applies: lemmas and labels, "by L, P"; hypotheses far
+       -- above by their statements, "since A, P"; or how the step proves it,
+       -- if the tactic says: "by rewriting, P"; and the label of a fact cited
+       -- later, "P (h)"
+       let own = case labels st of
+             [] -> Nothing
+             ls -> Just (labelOf (andList ["(" ++ labelText l ++ ")" | l <- ls]))
+       return $ case (uses st, own, sinces, lookup (str (field "method" st)) methods) of
+         (Just l, Just h, _, _) -> GLabelPropLabelConclusion l p h
+         (Just l, _, _, _) -> GLabelPropConclusion l p
+         (_, _, a : as, _) -> GSinceConclusion (DMC.exp2prop (ann (conjE (a : as)))) p
+         (_, Just h, _, _) -> GConclusionLabelUnit p h
+         (_, _, _, Just hence) -> GHencePropConclusion hence p
+         _ -> GConclusionUnit p
+     "enough" -> do
+       p <- fmap (DMC.exp2prop . ann) (dk (str (field "prop" st)))
+       sinces <- mapM dk [str v | v <- list (field "since" st)]
+       -- "by L, it is enough to show that P", "since A, it is enough to show that P"
+       return $ case (uses st, sinces) of
+         (Just l, _) -> GLabelEnoughGoal l p
+         (_, a : as) -> GSinceGoal (DMC.exp2prop (ann (conjE (a : as)))) p
+         _ -> GEnoughGoal p
      "verify" -> fmap (GFirstVerifyGoal . DMC.exp2prop . ann) (dk (str (field "prop" st)))
      "cases" -> return GCasesGoal
      "induction" -> return GInductionGoal
      _ -> return GObviousConclusion
+
+   -- what a step applies, as one label: the lemmas by their names in
+   -- typewriter, the hypotheses and facts by their labels, ($h$)
+   uses st = case map tt [str v | v <- list (field "uses" st)] ++
+                  ["(" ++ labelText h ++ ")" | h <- [str v | v <- list (field "cites" st)]] of
+     [] -> Nothing
+     ls -> Just (labelOf (andList ls))
+   labelOf l = GIdentLabel (GStrIdent (GString l))
+   andList ls = case ls of
+     [a] -> a
+     _ -> intercalate ", " (init ls) ++ " and " ++ last ls
+   tt l = "\\texttt{" ++ concatMap (\c -> if c == '_' then "\\_" else [c]) l ++ "}"
+   -- a label as Informath shows the label of a hypothesis: $h$, $h_{1}$, $\\mathrm{hA}$
+   labelText h = let (ds, l) = span (`elem` ['0'..'9']) (reverse h)
+                 in case reverse l of
+                      [c] -> "$" ++ [c] ++ (if null ds then "" else "_{" ++ reverse ds ++ "}") ++ "$"
+                      _ -> "$\\mathrm{" ++ h ++ "}$"
+   isProofType t = case t of
+     EApp (EIdent (QIdent "Proof")) _ -> True
+     _ -> False
+   proofProp t = case t of
+     EApp (EIdent (QIdent "Proof")) a -> a
+     _ -> t
+   conjE es = foldr1 (\a b -> EApp (EApp (EIdent (QIdent "and")) a) b) es
 
    methods = [("definition", GbyDefinitionHence), ("rewriting", GbyRewritingHence),
               ("simplification", GbySimplificationHence), ("computation", GbyComputationHence),
@@ -1153,9 +1203,10 @@ showTacticProofs env s = case J.decode s of
      J.JSArray vs -> vs
      _ -> []
 
-   unit2nat lang u = unlex env (gftree2nat env lang (gf (best u)))
-   best u = MCI.bareQuantifiers (implicitKinds env)
-              (head ([u' | GUnitJmt u' <- core2ext env (GUnitJmt u)] ++ [u]))
+   unit2nat lang (u, lab) = unlex env (gftree2nat env lang (gf (best (if lab then lenv else env) u)))
+   best e u = MCI.bareQuantifiers (implicitKinds env)
+              (head ([u' | GUnitJmt u' <- core2ext e (GUnitJmt u)] ++ [u]))
+   lenv = env{flags = "-proof-labels" : flags env}
 
 --- proof text demo, experimental
 showProofDemo :: Env -> Module -> Module -> String

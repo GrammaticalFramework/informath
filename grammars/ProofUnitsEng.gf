@@ -57,6 +57,13 @@ lin
     prefixText "first verify that" (mkText (topProp prop)) ;
   EnoughGoal prop = 
     prefixText "it is enough to show that" (propText prop) ;
+  ConclusionLabelUnit prop label =
+    ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelPropLabelConclusion by prop label =
+    ccText (strText ("by" ++ (mkUtt by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelEnoughGoal label prop =
+    ccText (strText ("by" ++ (mkUtt label.np).s ++ ","))
+      (prefixText "it is enough to show that" (propText prop)) ;
   SinceGoal prop goal =
     ccText (strText "since") (commaText (propInText prop))
       (prefixText "it is enough to show that" (propText goal)) ;
