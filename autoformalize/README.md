@@ -13,6 +13,10 @@ It packages the workflow of two earlier experiments, Godement's *Algebra*
 (`godement-index`) and Rijke's *Introduction to Homotopy Type Theory*
 (`hott-llm`).
 
+`claude-rocq/` is the same for Rocq: the text formalized in Rocq, with
+tactic proofs, exported to Dedukti and read back by Informath (see its
+README).
+
 ## What is here
 
 | | |
