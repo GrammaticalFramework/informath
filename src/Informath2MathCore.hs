@@ -23,7 +23,7 @@ newVar senv = (xi, senv{varlist = x : varlist senv}) where
   
 semantics :: SemDefs -> GJmt -> [GJmt]
 semantics defs =
-  concatMap (map classKinds . inSituResults . addCoercions . addParenth . sem initSEnv . godementSem)
+  concatMap (map classKinds . inSituResults . addCoercions . addParenth . splitClauses . sem initSEnv . godementSem)
   . godementExpand . removeFonts . appSemDefs defs
 
 addCoercions :: Tree a -> Tree a
@@ -467,6 +467,29 @@ paramClauses env h = case h of
   isStructureNoun n = case n of
     LexNoun "set_Noun" -> False
     _ -> True
+
+-- | A conjunction said with "and" in a clause of a structure is several
+-- clauses, one per field, as semHypo makes several hypotheses of it ("both A
+-- and B", a CoreAndProp, is one); so is "for all x, A and B", whose fields
+-- are "for all x, A" and "for all x, B". Before addParenth, which makes every
+-- conjunction a CoreAndProp.
+splitClauses :: Tree a -> Tree a
+splitClauses t = case t of
+  GListClause cs -> GListClause (concatMap splitClause cs)
+  _ -> composOp splitClauses t
+
+splitClause :: GClause -> [GClause]
+splitClause c = case c of
+  GPropClause (GProofProp p) -> map (GPropClause . GProofProp) (fields p)
+  GPropClause p -> map GPropClause (fields p)
+  _ -> [c]
+ where
+  fields :: GProp -> [GProp]
+  fields p = case p of
+    GAndProp (GListProp ps) -> concatMap fields ps
+    GAllProp args q | qs@(_ : _ : _) <- fields q -> [GAllProp args r | r <- qs]
+    GCoreAllProp k x q | qs@(_ : _ : _) <- fields q -> [GCoreAllProp k x r | r <- qs]
+    _ -> [p]
 
 extensionStructure :: GLabel -> GKind -> GKind -> GIdent -> [GArgKind] -> [GProp] -> GJmt
 extensionStructure label kind parent x args props =

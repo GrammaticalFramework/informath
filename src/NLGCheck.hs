@@ -70,14 +70,14 @@ classify t sems
 -- normalization
 
 normalize :: GJmt -> GJmt
-normalize = alpha . hypos . canonicalHypoVars . distributeAll . pullConclusion . props . forms . IMC.addParenth . MCI.uncoerce
+normalize = alpha . clauses . hypos . canonicalHypoVars . props . distributeAll . pullConclusion . props . forms . IMC.addParenth . MCI.uncoerce
 
 -- | The normalization without what changes the hypotheses: they are not split
 -- into one proposition each, not sorted, and the quantifiers of the
 -- conclusion stay there; only the variables of one VarsHypo are separated
 -- (as they are separate arguments) and labels dropped.
 normalizeKeepingHypos :: GJmt -> GJmt
-normalizeKeepingHypos = alpha . varHypos . distributeAll . props . forms . IMC.addParenth . MCI.uncoerce
+normalizeKeepingHypos = alpha . varHypos . props . distributeAll . props . forms . IMC.addParenth . MCI.uncoerce
  where
   varHypos :: Tree a -> Tree a
   varHypos t = case t of
@@ -141,7 +141,8 @@ props t = case t of
      GIfProp a' c -> GIfProp (andP (conjuncts a ++ conjuncts a')) c
      _ -> GIfProp a b
 
--- | ∀ distributed over ∧ (after the conclusion's quantifiers are hypotheses)
+-- | ∀ distributed over ∧ (after the conclusion's quantifiers are hypotheses);
+-- the conjunctions it makes are flattened by props again
 distributeAll :: Tree a -> Tree a
 distributeAll t = case t of
   GCoreAllProp k x p -> case distributeAll p of
@@ -200,6 +201,27 @@ hypos t = case t of
      GPropVarHypo _ p -> split (GPropHypo p)
      GPropHypo (GAndProp (GListProp ps)) -> concatMap (split . GPropHypo) ps
      _ -> [h]
+
+-- | The clauses of a structure one proposition at a time, its data (VarClause)
+-- before its properties, each in their order: an extension judgement ("a
+-- monoid is a semigroup M with an element 1 of M such that A and B") names the
+-- data first, and "and" may join several fields
+clauses :: Tree a -> Tree a
+clauses t = case t of
+  GListClause cs ->
+    let cs' = concatMap split (map clauses cs)
+    in GListClause ([c | c <- cs', isVar c] ++ [c | c <- cs', not (isVar c)])
+  _ -> composOp clauses t
+ where
+   split :: GClause -> [GClause]
+   split c = case c of
+     GPropClause (GProofProp p) -> split (GPropClause p)
+     GPropClause (GAndProp (GListProp ps)) -> concatMap (split . GPropClause) ps
+     _ -> [c]
+   isVar :: GClause -> Bool
+   isVar c = case c of
+     GVarClause _ _ -> True
+     _ -> False
 
 -- | The variables bound by quantifiers renamed _b0, _b1, ... in the order of
 -- the binders
