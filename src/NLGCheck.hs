@@ -14,7 +14,7 @@
 -- The variants are made by the passes of MathCore2Informath.nlg, rebuilt
 -- here so that each variant is attributed to the first stage that makes it.
 
-module NLGCheck (Stage, nlgStages, normalize, Verdict(..), classify, firstDifference, Report, report, reportTSV) where
+module NLGCheck (Stage, nlgStages, normalize, Verdict(..), classify, firstStep, firstDifference, Report, report, reportTSV) where
 
 import Informath
 import qualified MathCore2Informath as MCI
@@ -78,16 +78,45 @@ normalize = alpha . clauses . hypos . canonicalHypoVars . props . distributeAll 
 -- (as they are separate arguments) and labels dropped.
 normalizeKeepingHypos :: GJmt -> GJmt
 normalizeKeepingHypos = alpha . varHypos . props . distributeAll . props . forms . IMC.addParenth . MCI.uncoerce
+
+-- | The variables of one VarsHypo separated, labels dropped
+varHypos :: Tree a -> Tree a
+varHypos t = case t of
+  GListHypo hs -> GListHypo (concatMap one (map varHypos hs))
+  _ -> composOp varHypos t
  where
-  varHypos :: Tree a -> Tree a
-  varHypos t = case t of
-    GListHypo hs -> GListHypo (concatMap one (map varHypos hs))
-    _ -> composOp varHypos t
   one :: GHypo -> [GHypo]
   one h = case h of
     GVarsHypo (GListIdent xs) k -> [GVarsHypo (GListIdent [x]) k | x <- xs]
     GPropVarHypo _ p -> [GPropHypo p]
     _ -> [h]
+
+-- | The steps of normalization, cumulative: each includes the ones before it;
+-- the first five are normalizeKeepingHypos, the last one normalize
+steps :: [(String, GJmt -> GJmt)]
+steps =
+  [ ("bound variables", alpha . IMC.addParenth)
+  , ("coercions", alpha . base)
+  , ("notation", alpha . forms . base)
+  , ("connectives", alpha . props . forms . base)
+  , ("distribution", alpha . props . distributeAll . props . forms . base)
+  , ("hypothesis variables", normalizeKeepingHypos)
+  , ("conclusion as hypotheses", alpha . varHypos . props . distributeAll . pullConclusion . props . forms . base)
+  , ("variable names", alpha . varHypos . canonicalHypoVars . props . distributeAll . pullConclusion . props . forms . base)
+  , ("hypotheses split and sorted", alpha . hypos . canonicalHypoVars . props . distributeAll . pullConclusion . props . forms . base)
+  , ("structure clauses", normalize)
+  ]
+ where
+  base = IMC.addParenth . MCI.uncoerce
+
+-- | The first step of normalization after which t is among the semantics of
+-- a variant: "exact" without normalization, Nothing if none
+firstStep :: GJmt -> [GJmt] -> Maybe String
+firstStep t sems
+  | elem t sems = Just "exact"
+  | otherwise = case [name | (name, n) <- steps, elem (n t) (map n sems)] of
+      name : _ -> Just name
+      [] -> Nothing
 
 -- | Forms that the semantics rewrites to equivalent ones: an adjective kind as
 -- a such-that kind, a plural kind as the kind, a nested collective function
@@ -346,12 +375,13 @@ report results = unlines $
 
 -- | The check as tab-separated lines, for merging the checks of many files:
 -- name, number of the MathCore tree, stage, verdict, the head functions where
--- t and the semantics of t' first differ (lost only), and t' in words; a
+-- t and the semantics of t' first differ (lost only), t' in words, and the
+-- first step of normalization that makes them equal (firstStep); a
 -- judgement without MathCore trees as one line with the verdict NoTree
 reportTSV :: [String] -> Report -> String
 reportTSV untreed results = unlines $
-  [ tabs [name, "-", "-", "NoTree", "", "", ""] | name <- untreed ] ++
-  [ tabs [name, show i, s, show v, a, b, clean lin]
+  [ tabs [name, "-", "-", "NoTree", "", "", "", ""] | name <- untreed ] ++
+  [ tabs [name, show i, s, show v, a, b, clean lin, maybe "" id (firstStep t sems)]
   | (i, (name, t, vs)) <- numbered results, (s, _, lin, sems) <- vs
   , let v = classify t sems
   , let (a, b) = if v /= Lost then ("", "") else case sems of
