@@ -44,7 +44,7 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{A Hundred and Ninety-Two Commits}
+\title{A Hundred and Ninety-Eight Commits}
 \subtitle{What Claude Code has contributed to Informath, July--November 2026}
 \author{Aarne Ranta}
 \date{November 2026}
@@ -56,7 +56,7 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 1,000 commits since 2024, almost all by hand.
-    \item \textbf{192} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{198} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
@@ -68,10 +68,10 @@
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--67
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--70
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
   \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774},
-  \commit{93cb23a}, \commit{90a1fb4}, \commit{89c0874}, \commit{5005af0} and this version).
+  \commit{93cb23a}, \commit{90a1fb4}, \commit{89c0874}, \commit{5005af0}, \commit{0f54230} and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -2364,6 +2364,87 @@ example/           divisibility.tex, formalized
 \end{frame}
 
 % =====================================================================
+\section{Part XV: The round trip at scale, and Czech again}
+
+\begin{frame}{Since 19 November: 5 more commits as 3 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    68 & The round-trip check for a whole library: TSV and normalization steps & 23 Nov & 2 \\
+    69 & Two kinds of loss: quoted names, ``and'' in structures & 23 Nov & 1 \\
+    70 & Czech complete again, in a parallel worktree & 23 Nov & 2 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  \small The check of Task 48 (\texttt{-check-nlg-semantics}) run over a whole library instead
+  of a sample. One session, with two background agents (Czech, and the slides of Tasks 54--67).
+  Plus one commit for these slides.
+\end{frame}
+
+\begin{frame}{Task 68: The round-trip check for a whole library}
+  \commit{a3fb56c}, \commit{0d9c762} (23 Nov)
+  \prompt{I want to test roundtrip in sense 2 for all the Mathlib definitions and theorem
+  statements that are stored in mathlib-informath.}
+  \begin{itemize}\footnotesize
+    \item \texttt{-check-nlg-semantics -tsv}: one line per variant (judgement, tree, stage,
+          verdict, where $t$ and the semantics first differ, the words), so that the checks of
+          a thousand files can be merged; judgements without trees marked \texttt{NoTree}.
+    \item First, the build: \bad{\texttt{src/Informath.hs} was stale}, without the new
+          function kinds; \texttt{make english\_grammar} again.
+  \end{itemize}
+  \prompt{\ldots\ the different types of equivalence in Mathlib are counted \ldots}
+  \begin{itemize}\footnotesize
+    \item \texttt{firstStep}: the first of ten cumulative normalization steps that makes $t$ one
+          of the readings --- bound variables, coercions, notation, connectives, $\forall$ over
+          $\wedge$, hypothesis variables (= \emph{same hypotheses}), conclusion as hypotheses,
+          variable names, hypotheses split and sorted, structure clauses.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 69: Two kinds of loss}
+  \commit{8178447} (23 Nov)
+  \prompt{Can you fix losses 1 and 2, and update roundtrip.tex after that?}
+  \begin{itemize}\small
+    \item \textbf{Quoted names.} GF's GADT read \texttt{'p-adic\_Adj'} with \texttt{showCId} and
+          wrote it back with \texttt{mkCId}: \bad{a new name, quoted once more on each round}.
+          61 words (\emph{p-adic}, HoTT's \emph{bi-invertible}, \emph{k-truncated} \ldots) were
+          \bad{never linearized}, in any project. \texttt{scripts/unquote-gadt.py}, run by
+          \texttt{make english\_grammar}.
+    \item \textbf{``and'' in structures.} ``a monoid is a semigroup $M$ with \ldots\ such that
+          for all $a$, $1a = a$ and $a1 = a$'': two fields in Lean, one in the semantics. Now
+          \ok{one clause per field}, as for hypotheses (Task 51); after the semantics, but
+          \bad{before \texttt{addParenth}}, which makes every ``and'' a ``both''.
+    \item The check itself: flattening after distributing $\forall$; data clauses before
+          properties, as the extension form must say them.
+    \item Three attempts to place the clause split; each time the trees showed why.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 70: Czech complete again}
+  \commit{cca1122}, merged \commit{6ffd6ce} (23 Nov)
+  \prompt{In parallel, if possible, you can complete Czech in informath/grammars/. Or would it
+  be better to do that in a separate Claude session?}
+  \begin{itemize}\small
+    \item A background agent in a git worktree: two grammar builds in one checkout would
+          overwrite each other's \texttt{.gfo} and PGF files.
+    \item \bad{Four opers} missing in \texttt{UtilitiesCze} broke the build; behind them
+          \bad{932 missing linearizations} (606 HoTT words, 7 modules without a Czech
+          concrete).
+    \item Fixed on the way: ``říkáme, že \ldots'' dropped its ``jestliže'' clause; ``Hilbertův
+          prostor'' instead of ``Hilbertprostor''; \texttt{NamelyExp} compiled
+          \bad{$>$10 min} $\to$ \ok{14 s} without the optional comma.
+  \end{itemize}
+  \prompt{OK, then it is not compiling the grammar. Let it finish and merge when done.}
+  \begin{itemize}\small
+    \item Open: ``je rovná do'' (\texttt{to\_Prep} is ``do'' for maps), ``$G$ a $H$ je'' (RGL
+          agreement); a list of uncertain words for a Czech reader.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
 \section{Observations and the future}
 
 \begin{frame}{What we observed}
@@ -2544,6 +2625,28 @@ example/           divisibility.tex, formalized
         \item Measuring the compilation time of \texttt{App6}..\texttt{App9}.
         \item Variable names from a list; propositions as types.
         \item A build that fails instead of reporting ``0 failed''.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{What the round-trip tasks added}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \ok{\textbf{Worked well}}
+      \begin{itemize}\small
+        \item A check run over a whole library finds what a sample does not (quoted names).
+        \item Reading the trees of one lost case before changing code.
+        \item Work in parallel: agents in a worktree and on the slides, the main session on the
+              semantics.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \bad{\textbf{Needed a human}}
+      \begin{itemize}\small
+        \item What counts as the same: ``and'' as fields, ``both'' as one.
+        \item Which slides, which paper, which results where.
+        \item Reviewing the Czech words.
       \end{itemize}
     \end{column}
   \end{columns}
