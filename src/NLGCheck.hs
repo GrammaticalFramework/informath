@@ -14,7 +14,7 @@
 -- The variants are made by the passes of MathCore2Informath.nlg, rebuilt
 -- here so that each variant is attributed to the first stage that makes it.
 
-module NLGCheck (Stage, nlgStages, normalize, Verdict(..), classify, firstDifference, Report, report) where
+module NLGCheck (Stage, nlgStages, normalize, Verdict(..), classify, firstDifference, Report, report, reportTSV) where
 
 import Informath
 import qualified MathCore2Informath as MCI
@@ -321,3 +321,29 @@ report results = unlines $
      Just (a, b) -> name ++ ": `" ++ cut (showExpr [] a) ++ "` / `" ++ cut (showExpr [] b) ++ "`"
      Nothing -> name
    cut s = if length s > 120 then take 117 s ++ "..." else s
+
+-- | The check as tab-separated lines, for merging the checks of many files:
+-- name, number of the MathCore tree, stage, verdict, the head functions where
+-- t and the semantics of t' first differ (lost only), and t' in words; a
+-- judgement without MathCore trees as one line with the verdict NoTree
+reportTSV :: [String] -> Report -> String
+reportTSV untreed results = unlines $
+  [ tabs [name, "-", "-", "NoTree", "", "", ""] | name <- untreed ] ++
+  [ tabs [name, show i, s, show v, a, b, clean lin]
+  | (i, (name, t, vs)) <- numbered results, (s, _, lin, sems) <- vs
+  , let v = classify t sems
+  , let (a, b) = if v /= Lost then ("", "") else case sems of
+          x : _ -> maybe ("", "") (\(p, q) -> (headOf p, headOf q))
+                     (firstDifference (gf (normalize t)) (gf (normalize x)))
+          [] -> ("(no semantics)", "")
+  ]
+ where
+   tabs = foldr1 (\x y -> x ++ "\t" ++ y)
+   clean = map (\c -> if c == '\t' || c == '\n' then ' ' else c)
+   headOf e = maybe (showExpr [] e) (showCId . fst) (unApp e)
+   -- the trees of one judgement numbered from 0
+   numbered rs = go "" 0 rs
+    where
+     go _ _ [] = []
+     go prev k (r@(name, _, _) : rest) =
+       let k' = if name == prev then k + 1 else 0 in (k', r) : go name k' rest

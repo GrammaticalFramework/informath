@@ -275,6 +275,7 @@ helpMsg4 = [
   just "-parallel-data" "print complete parallel data in jsonl",
   just "-proof-text" "print proof texts (experimental), needs -base=<rules>.dk",
   just "-check-nlg-semantics" "check that the semantics of each NLG variant of each statement includes the statement (doc/nlg-and-semantics.md)",
+  just "-tsv" "with -check-nlg-semantics: one tab-separated line per variant (name, tree, stage, verdict, difference, words)",
   just "-tactic-proof" "print proof texts of proofs given as lists of proof units in a .json file (from tactic proofs)",
   just "-proof-terms" "with -proof-text, also show the proof terms and their Dedukti lines",
   just "-proof-text-dedukti" "with -proof-text, also show the lines of the proof text with their formulas in Dedukti",

@@ -283,8 +283,11 @@ processJmt env djmt =
 -- the variant counts as lost.
 checkNLGSemantics :: Env -> Module -> IO String
 checkNLGSemantics env (MJmts jmts) = do
-  results <- mapM one [(jmtName j, t) | j <- includedDefs env jmts, t <- cores j]
-  return (NC.report results)
+  let js = includedDefs env jmts
+  results <- mapM one [(jmtName j, t) | j <- js, t <- cores j]
+  return (if isFlag "-tsv" env
+            then NC.reportTSV [jmtName j | j <- js, null (cores j)] results
+            else NC.report results)
  where
   one (name, t) = do
     vs <- mapM (\(s, v) -> do
