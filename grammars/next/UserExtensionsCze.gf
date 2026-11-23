@@ -3,8 +3,14 @@ concrete UserExtensionsCze of UserExtensions =
   NaprocheWordsCze,
   HottWordsCze,
   GodementWordsCze,
-  MizarCze,
+  NaturalDeductionCze,
   ProofUnitsCze,
+  MizarCze,
+  MizarWordsCze,
+  GodementSyntaxCze,
   GodementExamplesCze,
+  MytextWordsCze,
+  KgahWordsCze,
+  KgbWordsCze,
   MathlibCze
   ;

@@ -17,17 +17,29 @@ in {
 
 oper
 
-  postAdvS : S -> Adv -> S = \s, adv -> s ** {s = s.s ++ adv.s} ;
+  -- all the word orders of the sentence get the adverb, as in the RGL's
+  -- appendSentence: "říkáme, že G je abelovská, jestliže P" uses the fronted one
+  postAdvS : S -> Adv -> S = \s, adv ->
+    s ** {s = s.s ++ adv.s ; fronted = s.fronted ++ adv.s ; body = s.body ++ adv.s} ;
   displayLatexS : Symb -> S = \x -> symb (mkSymb ("$$" ++ x.s ++ "$$")) ;
 
   -- the modifier in the genitive after the head: relace ekvivalence
   compoundCN : CN -> CN -> CN = \cn1, cn2 ->
     cn2 ** {s = \\n, c => cn2.s ! n ! c ++ cn1.s ! singular ! genitive} ;
 
-  nameCompoundCN : PN -> CN -> CN = \pn, cn ->
-    cn ** {s = \\n, c => pn.s ! nominative ++ Predef.BIND ++ cn.s ! n ! c} ;
+  -- the possessive adjective of a name: "Hilbertův prostor", "Eulerova
+  -- konstanta", "Cauchyova posloupnost"; the name is not known at compile time,
+  -- so the -ův endings are bound to it as they are (not "Jacobiho")
+  possNameAP : Str -> AP = \name ->
+    let ap : AP = mkAP (otcuvA "ův")
+    in ap ** {s = \\g, n, c => name ++ Predef.BIND ++ ap.s ! g ! n ! c ;
+              pred = \\a => name ++ Predef.BIND ++ ap.pred ! a} ;
 
-  npGenNounNP : NP -> CN -> NP = \np, cn -> mkNP (Extend.GenNP np) cn ;
+  nameCompoundCN : PN -> CN -> CN = \pn, cn ->
+    mkCN (possNameAP (pn.s ! nominative)) cn ;
+
+  -- Extend.GenNP is not in the Czech RGL
+  npGenNounNP : NP -> CN -> NP = \np, cn -> mkNP (mkCN (possNameAP (np.s ! nominative)) cn) ;
 
   negPol = negativePol ;
 
@@ -80,6 +92,11 @@ oper
   hold_V2 = mkV2 (mkV "platit") (lin Prep {s = "pro" ; c = accusative ; hasPrep = True}) ;
   form_V2 = mkV2 (mkV "tvořit") ;
   arbitrary_A = mkA "libovolný" ;
+  two_place_A = mkA "dvoumístný" ;
+  three_place_A = mkA "třímístný" ;
+  -- "rodina indexovaná množinou I": the participle agrees with the feminine "rodina"
+  family_N = zenaN "rodina" ;
+  indexed_by_Prep = mkPrep "indexovaná" instrumental ;
   set_N = mnozina_N ;
   proposition_N = hradN "výrok" ;
 

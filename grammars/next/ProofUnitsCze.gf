@@ -6,7 +6,9 @@ open
   SyntaxCze,
   ParadigmsCze,
   (P=ParadigmsCze),
-  UtilitiesCze
+  SymbolicCze,
+  UtilitiesCze,
+  (Grammar=GrammarCze)
 
 in {
 
@@ -20,6 +22,29 @@ lin
   GoalHyposUnit hypos prop = prefixText ("abychom dokázali, že" ++ (mkUtt (topProp prop)).s ++ ",") hypos.text ;
 
   HyposAssumption hypos = hypos.text ;
+
+  -- written by Claude, to be reviewed: the units that Czech lacked
+----  UnitsProof units = units ;  -- as in the other languages
+  IdentKindAssumption kind ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP (useKind kind))) ;
+  IdentExpAssumption exp ident =
+    mkText (Grammar.ImpP3 (latexNP (mkSymb ident)) (mkVP exp)) ;
+  ConclusionLabelUnit prop label =
+    ccText (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  LabelPropLabelConclusion by prop label =
+    ccText (strText ((SyntaxCze.mkAdv podle_Prep by.np).s ++ ",")) (propInText prop) (strText ((mkUtt label.np).s ++ ".")) ;
+  SinceLabelConclusion a label b =
+    ccText (strText "protože") (commaText (propInText a)) (strText ((SyntaxCze.mkAdv podle_Prep label.np).s ++ ",")) (propText b) ;
+  SinceLabelEnoughGoal a label b =
+    ccText (strText "protože") (commaText (propInText a)) (strText ((SyntaxCze.mkAdv podle_Prep label.np).s ++ ","))
+      (prefixText "stačí ukázat, že" (propText b)) ;
+  HaveIndeedGoal prop =
+    ccText (propInText prop) (strText ". skutečně :") ;
+  HaveIndeedLabelGoal prop label =
+    ccText (propInText prop) (strText ((mkUtt label.np).s ++ ". skutečně :")) ;
+  LabelEnoughGoal label prop =
+    ccText (strText ((SyntaxCze.mkAdv podle_Prep label.np).s ++ ","))
+      (prefixText "stačí ukázat, že" (propText prop)) ;
   PropAssumption prop label =
     ccText (prefixText "předpokládejme, že" (propText prop)) (strText ("(" ++ (mkUtt label.np).s ++ ")")) ;
 
