@@ -44,7 +44,7 @@
 \newcommand{\how}{\par\textcolor{gfblue}{\textbf{Prompt and interaction}}\par}
 \newcommand{\what}{\par\textcolor{gfblue}{\textbf{Outcome}}\par}
 
-\title{A Hundred and Thirty-Six Commits}
+\title{A Hundred and Ninety-Two Commits}
 \subtitle{What Claude Code has contributed to Informath, July--November 2026}
 \author{Aarne Ranta}
 \date{November 2026}
@@ -56,22 +56,22 @@
 \begin{frame}{This talk}
   \begin{itemize}
     \item Informath: over 1,000 commits since 2024, almost all by hand.
-    \item \textbf{145} of them are co-authored by Claude (Claude Code, Anthropic's
+    \item \textbf{192} of them are co-authored by Claude (Claude Code, Anthropic's
           coding agent, working in a terminal in my checkout).
     \item For each task: \textbf{why} it was needed, the \textbf{prompt and
           interaction}, and the \textbf{outcome} --- including what is still wrong.
     \item Sources: \texttt{git log}, the diffs, Claude Code session transcripts
-          (September, October), session logs that Claude wrote itself
+          (September--November), session logs that Claude wrote itself
           (July, and the Rijke project in September).
   \end{itemize}
 
   \vspace{0.5em}
   \small
   These slides were themselves drafted by Claude from those sources
-  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--51
+  (\commit{35d81f9}, 27 September), and extended in October and November with Tasks 12--67
   (\commit{ab75fd7}, \commit{9809d76}, \commit{ffb638d}, \commit{8cbe9a3},
   \commit{09a82f6}, \commit{4bfa9a2}, \commit{016e07b}, \commit{1ef8d7f}, \commit{7426774},
-  \commit{93cb23a}, \commit{90a1fb4} and this version).
+  \commit{93cb23a}, \commit{90a1fb4}, \commit{89c0874}, \commit{5005af0} and this version).
 \end{frame}
 
 \begin{frame}{Outline}
@@ -2034,7 +2034,7 @@ example/           divisibility.tex, formalized
   \prompt{I would like to informalize the Coq files in \textasciitilde/claude/kgah/Coq/ using the
   verbalizations in vonPlato...tex and Informath, in the same way as in mathlib-informath}
   \prompt{I'm very interested in the proofs as well.}
-  \begin{itemize}\small
+  \begin{itemize}\footnotesize
     \item An exporter outside Informath: Rocq prints each declaration fully elaborated
           (\texttt{Set Printing All}), a Python parser translates it; a \texttt{Fixpoint}
           becomes rewrite rules, read one at a time. Each tactic replayed between two
@@ -2043,13 +2043,12 @@ example/           divisibility.tex, formalized
   \end{itemize}
   \prompt{Add the missing words to the English grammar. Then shorten the proofs, but with a set
   of reusable rules. What do you mean by trivial, is it generalizable?}
-  \begin{itemize}\small
+  \begin{itemize}\footnotesize
     \item \texttt{KgahWords}: ``real'', ``set of reals'', ``force'', ``closed downwards''.
     \item Trivial: a step that changes only the \emph{form} of a goal or a hypothesis, or
           repeats the line before. \texttt{scripts/proof\_shortening.py}: five rules on proof
           units, not on tactics, so Lean's units too. \ok{707 lines $\to$ 545}.
-    \item A rule merging assumptions first \bad{ran two cases of an induction together}:
-          assumptions that open a case are now kept apart.
+    \item A merging rule \bad{ran two cases of an induction together}; now kept apart.
   \end{itemize}
 \end{frame}
 
@@ -2070,6 +2069,297 @@ example/           divisibility.tex, formalized
           proof.
     \item New rule \emph{by-assumption}: a merged step had stated \bad{``$j = j'$''} where it
           derives the contradiction.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part XIII: Coq again, and Rijke's Agda}
+
+\begin{frame}{Since 15 November (afternoon): 12 more commits as 7 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    54 & The second Gödel article: words, and five more shortening rules & 15 Nov & 3 \\
+    55 & The Rocq scripts moved into Informath & 16 Nov & 1 \\
+    \midrule
+    56 & Rijke's Agda, with proof texts & 16 Nov & 1 \\
+    57 & Agda proofs by cases, and variable names from a table & 17 Nov & 2 \\
+    58 & Propositions as types: three readings of a theorem & 17 Nov & 2 \\
+    59 & The symbol table in words: \texttt{\#VERBAL}, nine arguments & 17 Nov & 2 \\
+    60 & Macro arguments as a list: 80 seconds of compilation $\to$ 0.1 & 18 Nov & 1 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  A third source language: \textbf{Agda}, Rijke's own code for his book
+  (\texttt{hott-llm/version-2}). Plus one commit by me (German after changes in the RGL's
+  \texttt{ParadigmsGer}, 16 Nov).
+\end{frame}
+
+\begin{frame}{Task 54: The second Gödel article}
+  \commit{ad812a5}, \commit{608c082}, \commit{57eedf1} (15 Nov)
+  \prompt{I would like to formalize the results of JvP... in Coq, with help, if needed, from lines
+  3243-4108 in LG... \ldots\ Leave out trivial steps of proofs if really trivial.}
+  \begin{itemize}\small
+    \item A background agent wrote the Coq (1,484 lines, no \texttt{Admitted}); Informath needed
+          \texttt{KgbWords}: ``proof of well-ordering'', ``inflationary''.
+    \item \texttt{symbolic\_proofs.py}: Task 53's proof writer, shared by both articles. The kgb
+          proofs exposed a rule that stated \bad{``$x = y$''} where the successor case is proved.
+  \end{itemize}
+  \prompt{\ldots\ the two harder shortening rules (dropping repeated facts, and merging unfolding steps
+  into the step that uses them).}
+  \begin{itemize}\small
+    \item Those two and three more: \ok{kgah 705 lines $\to$ 494, kgb 1,270 $\to$ 728}. Weak
+          outlining was a bug: the exporter lost Rocq's other goals after a \texttt{set}.
+    \item A rating of ``4'' was read as an answer, and the article renamed to version 4.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 55: The Rocq scripts moved into Informath}
+  \commit{51a2e8a} (16 Nov)
+  \prompt{Is coq-export.py a script that could be used for any Rock project, not just in this repo?
+  Then I think it could be made available in \textasciitilde/claude/informath/.}
+  \prompt{I would first want to check what is the difference from the official translator, in
+  \textasciitilde/claude/CoqInE.}
+  \begin{itemize}\small
+    \item Claude listed what was not general: kgah's truth values built in, part of the standard
+          library, no \texttt{Instance} or \texttt{\_CoqProject}.
+    \item CoqInE is for \emph{checking} (the kernel terms, a \texttt{lia} step as a certificate),
+          these scripts for \emph{reading} (the tactic script replayed): a table in
+          \texttt{scripts/rocq/README.md}.
+    \item \texttt{scripts/rocq}: predicate sets as a setting, load paths from a
+          \texttt{\_CoqProject}, more kinds of declarations, the skipped ones reported. Both
+          Gödel projects rebuilt from the new place \ok{with the same output}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 56: Rijke's Agda, with proof texts}
+  \commit{46581b2} (16 Nov)
+  \prompt{I would like to make a new attempt with \textasciitilde/claude/hott-llm/, with an
+  Informath-oriented script using \textasciitilde/claude/hott-agda/Agda code \ldots\ The script
+  should then be located in informath, next to the rocq-export.}
+  \begin{itemize}\small
+    \item \texttt{scripts/agda}: an Agda 2.8.0 backend writing the type-checked definitions as JSON.
+          §§ 2--5: 230 of 233 readings, \bad{no proofs}.
+  \end{itemize}
+  \prompt{I was expecting Agda's proof terms to be converted to Dedukti proof terms and these terms
+  to proof texts, as done in e.g. mathlib-informath and godement-index.}
+  \prompt{Aren't named assumptions already available in HyposUnit using PropVarHypo ?}
+  \begin{itemize}\small
+    \item Induction rules generated for each data type, pattern matching as induction: 68 proofs.
+          \texttt{PropVarHypo} lost its label in three places: \ok{``Assume that $x = y$ ($p$)''}.
+    \item An induction collapsed to one line with a $\oplus$ that unfolds it.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 57: Agda proofs by cases, and names from a table}
+  \commit{cc08a58}, \commit{935224f} (17 Nov)
+  \prompt{commit, then do the integer collapse}
+  \begin{itemize}\small
+    \item Matching on several arguments and nested patterns as nested eliminators;
+          $\mathbb{Z} = \mathrm{coprod}(\mathbb{N}, \mathrm{coprod}(\mathrm{unit}, \mathbb{N}))$ unfolded before the split; a case
+          rule where no induction hypothesis is needed. § 5: 68 $\to$ \ok{96} of 106.
+    \item Collapsed case trees: left-inverse-pred-$\mathbb{Z}$ \ok{16 lines $\to$ 6}.
+  \end{itemize}
+  \prompt{Fixing names to Rijke's sounds like a good idea. This should be done in some general way
+  in which variable names are picked from an external list.}
+  \begin{itemize}\small
+    \item \texttt{VARIABLE\_NAMES} in the project's \texttt{config.py}: $\mathbb{N}$ gets
+          $n, m, k, l$, paths $p, q, r, s$.
+    \item Reusing $n$ for the predecessor, as Rijke does, made Informath \bad{merge two
+          ``Let $n \in \mathbb{N}$''}: parts split again get a neutral name.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 58: Propositions as types: three readings}
+  \commit{b63aaf3}, \commit{2090f81} (17 Nov)
+  \prompt{\ldots\ a similarity measure with the informalization? \ldots\ Another suggestion that I have
+  is to cope with the propositions as types idea \ldots\ equality is sometimes a sentence stated
+  true or proved, sometimes the type of an object.}
+  \prompt{yes, commit and then do the identification form}
+  \begin{itemize}\small
+    \item \texttt{-statement-labels}; \texttt{-typing} with \texttt{\#TYPENOUN Id identification\_Noun}:
+          \ok{``Let $p : x = y$. Let $q : y = z$. Then there is an identification
+          $p \cdot q : x = z$''}, the closest to Rijke 1,184 times (191 as a type, 93 as a
+          proposition).
+    \item The whole book: 3,753 declarations, 385 proof texts. On the way, \bad{a new parse of
+          ``$A \in B$''} without semantics, and \texttt{INFORMATH\_ROOT} at the old checkout.
+  \end{itemize}
+  \prompt{Où en êtes-vous ?}
+  \begin{itemize}\small
+    \item Claude answered in French. \emph{``let us continue in English so that the
+          documentation remains consistent''}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 59: The symbol table in words}
+  \commit{88bed72}, \commit{01b278b} (17 Nov)
+  \prompt{I would like to improve the symbol table hott.dkgf. For example: section 10, definition
+  10.1.1. The text clearly defines the adjective ``X is contractible'' and the function ``the center
+  of contraction of X''. But these are still rendered formally.}
+  \begin{itemize}\small
+    \item \texttt{\#VERBAL}, and elements of adjective types as proofs: \ok{``Let $A$ be a
+          contractible type. Then the center of contraction of $A$ is an element of $A$.''}
+    \item 57 predicates; 44 verbal forms ported from version 1, checked by type (one wrong
+          order). A bug: \bad{\texttt{\#10} read as \texttt{\#1}}.
+  \end{itemize}
+  \prompt{Please go on with the 502 verbal forms.}
+  \begin{itemize}\small
+    \item Mostly in Informath: a form with more than 4 arguments fell back to the raw name;
+          \texttt{App6}..\texttt{App9}. Raw names \ok{502 $\to$ 30}; ``for all elements of
+          $A$, $B$ is decidable''.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 60: Macro arguments as a list}
+  \commit{59f3576} (18 Nov)
+  \prompt{The new rules for macro applications in grammars/TermsLatex.gf are heavy to compile. If we
+  only include up to App5, the compilation of TermsLatex.gf takes 120ms. \ldots\ And with the full
+  9, 80662ms. I would really like to avoid this. Can you find the reason for this growth and
+  eliminate it?}
+  \begin{itemize}\small
+    \item A \texttt{Term} has 5 precedences $\times$ 2 values of \texttt{isNumber}: \bad{$10^n$
+          rules} for $n$ arguments. Task 59 had not measured the compilation.
+    \item \texttt{MacroArgs}, a list with no parameters: \ok{80.7 s $\to$ 0.10 s}, the English
+          grammar 907 KB $\to$ 615 KB, and no limit on arguments (316 declarations need 6--9).
+    \item The list exposed a lambda split for every macro, \bad{$\mathsf{ap}\{z\}\{f(z,y)\}\{p\}$};
+          now only binder macros: $\mathsf{ap}_{\lambda z.\, f(z,y)}(p)$.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Part XIV: From Agda, Lean and Rocq, and Godement in Rocq}
+
+\begin{frame}{Since 17 November: 31 more commits as 7 tasks}
+  \footnotesize
+  \begin{tabular}{rllr}
+    \toprule
+    & \textbf{Task} & \textbf{Date} & \textbf{Commits} \\
+    \midrule
+    61 & Rewrite rules and structures, to Agda, Lean and Rocq & 17, 19 Nov & 3 \\
+    62 & From Agda, Lean and Rocq files: \texttt{-from-formalism} & 17--18 Nov & 5 \\
+    \midrule
+    63 & Godement in Rocq: what the exporter needed & 18 Nov & 10 \\
+    64 & Tactic proof texts: folds, citations, negations, implicit types & 18--19 Nov & 6 \\
+    65 & Lean tactic proofs, as on the project pages & 19 Nov & 2 \\
+    66 & \emph{Godement Tinkered} and \emph{Godement bricolé} & 19 Nov & 3 \\
+    67 & Two fixes from a Navier--Stokes example & 19 Nov & 2 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5em}
+  \small Made on my other computer: \textbf{no transcripts on this machine}, so no prompts. The
+  frames follow the commit messages and the other projects' logs. Plus one commit for these
+  slides.
+\end{frame}
+
+\begin{frame}{Task 61: Rewrite rules and structures, to Agda, Lean and Rocq}
+  \commit{fd18875}, \commit{bd4eaab} (17 Nov), \commit{b5d837a} (19 Nov)
+  \begin{itemize}\small
+    \item \texttt{-to-formalism} translates a whole module. \texttt{DeduktiRules}: one rule with
+          variable patterns becomes a definition. The rest: Agda \texttt{REWRITE}, Rocq
+          \texttt{Rewrite Rules}, Lean \texttt{@[simp]} axioms. Rules between proofs are dropped.
+    \item \texttt{DeduktiStructures}: a structure's first constructor becomes an Agda record, a
+          Lean structure or a Rocq record, its selectors the fields, extensions definitions.
+    \item \texttt{make formalism\_tests} checks the results in all four systems.
+    \item Lean's new \texttt{noncomputable section} changed \texttt{exx-lean}. The session on
+          this machine reported it twice (``which you may want to accept''); \bad{accepted two
+          days later}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 62: From Agda, Lean and Rocq files}
+  \commit{530527d}, \commit{7af5158}, \commit{73a3d04}, \commit{711763c} (17 Nov),
+  \commit{96b38e8} (18 Nov)
+  \begin{itemize}\small
+    \item \texttt{scripts/lean/Export.lean}: any Lean file, no Mathlib or Lake project needed.
+    \item \texttt{RunInformath -from-formalism=agda|lean|rocq <file>} runs the export, reads the
+          \texttt{\#CONV} lines backwards; with \texttt{-to-formalism} it \ok{converts between
+          the formalisms}.
+    \item \texttt{-proof-text} and \texttt{-to-html-doc}: proof texts of term and tactic proofs,
+          and an HTML page like the project indexes, in several languages, with folds.
+    \item Compared with mathlib-informath's exporter on Mathlib code: codomains as types,
+          instances dropped as in applications, $s \cap t$ for \bad{\texttt{Min.min}}, casts as
+          coercions. \ok{The same statements, readings and proof texts.}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 63: Godement in Rocq: what the exporter needed}
+  \commit{88ec87e}, \commit{072eab0}, \commit{e7d6e53}, \commit{c7eeb50}, \commit{158d075},
+  \commit{1e719c9}, \commit{fe0231c},\\ \commit{ebc4f46}, \commit{6e854ef}, \commit{d9ad7fe} (18 Nov)
+  \begin{itemize}\small
+    \item In \texttt{godement-index/rocq}, Claude agents formalized Godement's \emph{Algebra} in
+          Rocq from the book's text, §§ 0--36 by the next morning.
+    \item Records as structures: \ok{``A law of composition is a mathematical object $X$ with a
+          function $\perp$ \ldots''}; with parameters: ``let $K$ be a ring. a left module over $K$
+          is a group $M$ with \ldots''
+    \item Bugs found by the book: \bad{``let \_ be a left module over $K$''}, \texttt{permutationGroup X}
+          \bad{``defined as the set of groups''}, an \texttt{Admitted} theorem taking the next
+          proof, an unbound wildcard, two exports clashing in one directory.
+    \item \bad{A failed run left a module's proof texts empty, reported as ``0 failed''}: the
+          build now fails. One cause: beta-redexes in goals.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 64: Tactic proof texts}
+  \commit{9aba82c} (18 Nov), \commit{30aaa3f}, \commit{0ff1330}, \commit{2b3c701},
+  \commit{9f03984}, \commit{7d0a7e4} (19 Nov)
+  \begin{itemize}\small
+    \item Folds: the proof of a claim (\texttt{assert \{ \ldots\ \}}) and the lines of each case,
+          so that a tactic proof reads as an outline.
+    \item \texttt{\#NEGATION Eqt Neqt}: \ok{$x \neq y$} for ``it is not the case that $x = y$''.
+    \item What each step uses: ``by $L$, $P$'', ``since $A$, $P$'' for a hypothesis far above,
+          ``$P$ ($h$)''. Claims stated forward: ``$P$ ($h$). Indeed:''.
+    \item Implicit types: ``assume that $x \in S$'' for \bad{``let $x$ be a mathematical object
+          such that $x \in S$''}; ``a predicate'', ``a family indexed by $N$'', parsed back to
+          Dedukti.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 65: Lean tactic proofs, as on the project pages}
+  \commit{d49cca6}, \commit{a66de82} (19 Nov)
+  \begin{itemize}\small
+    \item \texttt{Export.lean} writes each tactic with its goals before and after, ported from
+          mathlib-informath without Mathlib; \texttt{lean-tactic-units.py} makes proof units of
+          them, as for Rocq. A test file of 17 theorems.
+    \item \texttt{scripts/proof\_units.py}: what made the Rocq pages read better (shortening,
+          citations, claims forward, implicit types) moved out of \texttt{rocq-index.py},
+          \ok{its output unchanged}, and applied by \texttt{-from-formalism} to Rocq and Lean.
+    \item Lean's tactics read: \texttt{rw [\ldots]}, \texttt{simp [\ldots]},
+          \texttt{have}/\texttt{obtain}, the hypotheses among the arguments of \texttt{exact}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 66: \emph{Godement Tinkered} and \emph{Godement bricolé}}
+  \commit{0bb2b56}, \commit{f0e0ab9}, \commit{1c96fcc} (19 Nov)
+  \begin{itemize}\small
+    \item French proof texts and readings: ``de $A$ à $B$'', ``la première projection'', lists of
+          citations with \emph{et}; and fixes for kg-heritage (records as sets by a setting).
+    \item \texttt{autoformalize/claude-rocq}: the Godement project's kit as a template: a
+          \texttt{CLAUDE.md}, five skills (formalize a chapter, pending statements, merge, test a
+          wording, faithfulness audit), scripts.
+    \item \texttt{tinkered/}: \ok{two books ``that nobody wrote''}, in English and French. 5,363
+          declarations, 4,483 theorems proved by tactics; every definition, theorem and proof
+          written by Informath, cut to the detail of a textbook.
+    \item ``A test for human readers: can the mathematics be learned from text generated in
+          this way?''
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Task 67: Two fixes from a Navier--Stokes example}
+  \commit{7385dc0}, \commit{f9d7c00} (19 Nov)
+  \begin{itemize}\small
+    \item In mathlib-informath, \texttt{examples/navier-stokes}: OpenAI's \texttt{NavierStokesAndEuler}
+          informalized.
+    \item \texttt{\#HIDE}: a definiendum kept the hidden arguments, so the shown ones were shifted:
+          \bad{$\|P\|_{C^S(f \times \mathbb{R}^2)} \leq n$} for \texttt{JetBound(P, f, S, n, C)}.
+    \item A binder macro of a proposition got its $\lambda$ whole,
+          \bad{\texttt{\textbackslash FilterEventually \{\textbackslash lambda x . p\}\{F\}}}, one
+          argument short; now \ok{\texttt{\{x\}\{p\}\{F\}}}.
+    \item Each with a regression case. Still open: a proposition in a term position is shown as
+          $\mathrm{Gt}(x, 0)$.
   \end{itemize}
 \end{frame}
 
@@ -2229,6 +2519,31 @@ example/           divisibility.tex, formalized
               constant in the hypotheses.
         \item The regression suite, \bad{not run for six commits}: the broken formulas
               were found only when I asked about a failure.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{What the formalism tasks added}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \ok{\textbf{Worked well}}
+      \begin{itemize}\small
+        \item Moving code and checking that the output is the same (two Gödel projects, the
+              Rocq index).
+        \item Comparing two exporters on the same code: the Lean one against Mathlib's.
+        \item Tests in all four systems, \texttt{make formalism\_tests}.
+        \item Whole books overnight: Rijke in Agda, Godement in Rocq.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \bad{\textbf{Needed a human}}
+      \begin{itemize}\small
+        \item One script instead of two copies, and where it should live.
+        \item Proofs from Agda's proof terms, and \texttt{PropVarHypo}, already there.
+        \item Measuring the compilation time of \texttt{App6}..\texttt{App9}.
+        \item Variable names from a list; propositions as types.
+        \item A build that fails instead of reporting ``0 failed''.
       \end{itemize}
     \end{column}
   \end{columns}
