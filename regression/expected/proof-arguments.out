@@ -1,0 +1,7 @@
+Definition. Let $x$ be a proposition. Then we can say that $\mathrm{Fact} (x)$.
+Definition. Let $p \in \Natural$. Then the sets of $p$ form a set.
+Definition. Let $p \in \Natural$. Let $d$ be a set of $p$. Then we can say that $d$ is good for $p$.
+Aux_proof_2. Let $p \in \Natural$. Then $p$ is prime.
+Definition. $A$, if for all functions $\mathrm{ld}$ from natural numbers $p$ to sets of $p$, for all natural numbers $p$, if $p$ is prime, then $\mathrm{ld} (p)$ is good for $p$.
+Definition. $B$, if for all functions $\mathrm{ld}$ from natural numbers $p$ to sets of $p$, for all natural numbers $p$, $\mathrm{ld} (p)$ is good for $p$.
+Definition. $C$, if for all functions $\mathrm{ld}$ from natural numbers $p$ to sets of $p$, for all natural numbers $p$, if $p$ is prime, then $\mathrm{ld} (p)$ is good for $p$.

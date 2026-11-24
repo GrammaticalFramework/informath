@@ -215,6 +215,11 @@
   "undefined": 0,
   "seconds": 0.8
  },
+ "proof-arguments": {
+  "lines": 7,
+  "undefined": 0,
+  "seconds": 0.0
+ },
  "proof-binder-if": {
   "lines": 3,
   "undefined": 0,

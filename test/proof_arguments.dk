@@ -1,0 +1,10 @@
+(; The proofs a quantified function takes, and those given to it, are not shown:
+   A reads as C, a function from natural numbers whose argument is prime ;)
+
+Fact : Prop -> Prop.
+Data : (p : Elem Nat) -> Set.
+good : (p : Elem Nat) -> (d : Elem (Data p)) -> Prop.
+aux_proof_2 : (p : Elem Nat) -> Proof (Fact (prime p)).
+def A : Prop := forall ((p : Elem Nat) -> (h : Proof (Fact (prime p))) -> Elem (Data p)) (ld => forall Nat (p => forall (Proof (Fact (prime p))) (h2 => good p (ld p h2)))).
+def B : Prop := forall ((p : Elem Nat) -> Proof (Fact (prime p)) -> Elem (Data p)) (ld => forall Nat (p => good p (ld p (aux_proof_2 p)))).
+def C : Prop := forall ((p : Elem Nat) -> Elem (Data p)) (ld => forall Nat (p => if (Fact (prime p)) (good p (ld p)))).

@@ -13,6 +13,7 @@ import Environment
 import PGF hiding (Hypo)
 
 import Data.List (intersperse, sortOn)
+import Data.Char (isDigit)
 import Data.Functor.Identity (Identity(..), runIdentity)
 import Data.Monoid (Sum(..))
 import Control.Monad.Writer (WriterT(..), tell, censor, lift)
@@ -65,8 +66,79 @@ consistentHypos ts = case filter consistent ts of
 -- that, a negation of a constant that has a negated form (#NEGATION c d) is
 -- that form: not (c a1 ... an) is d a1 ... an
 hideArgs :: SymbolTable -> DkTree a -> DkTree a
-hideArgs st = proofIfs . hide . uncoerce . negations
+hideArgs st = proofIfs . dropProofs . hide . uncoerce . negations
  where
+  -- proofs are not shown in readings of statements and definitions: a
+  -- function quantified over (forall, exists) loses the proofs that its type
+  -- takes, and its applications lose the proofs given to it, the variables
+  -- bound to the proofs of a proposition (forall (Proof P) (h => ...),
+  -- (h : Proof P) -> ...) and Lean's auxiliary proofs c___proof_N, so that
+  -- "for all functions ld from natural numbers p and elements h of Proof applied
+  -- to the proposition that p is prime to ..., for all elements h2 of Proof
+  -- ..., ld(p, h2)" reads "for all functions ld from natural numbers p to ...,
+  -- if p is prime, then ld(p)" (with proofIfs). Constants keep their arguments,
+  -- since their entries may show proofs (\inv{f}{p}), and the bodies of
+  -- theorems keep their proofs, which their proof texts show
+  dropProofs :: forall a. DkTree a -> DkTree a
+  dropProofs t = case t of
+    JDef c (MTExp ty) (MEExp body) | isProofType ty ->
+      JDef c (MTExp (dropIn S.empty S.empty ty)) (MEExp body)
+    JThm c (MTExp ty) me -> JThm c (MTExp (dropIn S.empty S.empty ty)) me
+    _ -> dropIn S.empty S.empty t
+
+  isProofType :: Exp -> Bool
+  isProofType ty = case ty of
+    EFun _ b -> isProofType b
+    EApp (EIdent (QIdent "Proof")) _ -> True
+    _ -> False
+
+  isProof :: Exp -> Bool
+  isProof ty = case ty of
+    EApp (EIdent (QIdent "Proof")) _ -> True
+    _ -> False
+
+  auxProof :: QIdent -> Bool
+  auxProof (QIdent c) = case break (== '_') (reverse c) of
+    (ds, rest) -> not (null ds) && all isDigit ds && take 7 rest == "_foorp_"
+
+  takesProofs :: Exp -> Bool
+  takesProofs ty = case ty of
+    EFun (HVarExp _ h) b -> isProof h || takesProofs b
+    EFun (HParVarExp _ h) b -> isProof h || takesProofs b
+    EFun (HExp h) b -> isProof h || takesProofs b
+    _ -> False
+
+  -- ps: the variables bound to proofs; fs: the functions that lose their proofs
+  dropIn :: forall a. S.Set QIdent -> S.Set QIdent -> DkTree a -> DkTree a
+  dropIn ps fs t = case t of
+    EApp (EApp (EIdent q@(QIdent "forall")) dom) (EAbs b body)
+      | isProof dom -> EApp (EApp (EIdent q) (dropIn ps fs dom))
+                            (EAbs b (dropIn (S.insert (bind2var b) ps) (S.delete (bind2var b) fs) body))
+    EApp (EApp (EIdent q@(QIdent qs)) dom) (EAbs b body) | elem qs ["forall", "exists"] ->
+      let v = bind2var b
+          fs' = if takesProofs dom then S.insert v fs else S.delete v fs
+      in EApp (EApp (EIdent q) (noProofHypos ps fs dom)) (EAbs b (dropIn (S.delete v ps) fs' body))
+    EFun h@(HVarExp v ty) body | isProof ty -> EFun (dropIn ps fs h) (dropIn (S.insert v ps) fs body)
+    EFun h@(HParVarExp v ty) body | isProof ty -> EFun (dropIn ps fs h) (dropIn (S.insert v ps) fs body)
+    EApp _ _ -> case splitApp t of
+      (EIdent f, args) | S.member f fs -> foldl EApp (EIdent f) [dropIn ps fs a | a <- args, not (proofArg a)]
+      (f, args) -> foldl EApp (dropIn ps fs f) (map (dropIn ps fs) args)
+    _ -> runIdentity (composOpM (Identity . dropIn ps fs) t)
+   where
+    proofArg :: Exp -> Bool
+    proofArg a = case splitApp a of
+      (EIdent x, _) -> S.member x ps || auxProof x
+      _ -> False
+
+  -- the type of a quantified function without the proofs it takes
+  noProofHypos :: S.Set QIdent -> S.Set QIdent -> Exp -> Exp
+  noProofHypos ps fs ty = case ty of
+    EFun (HVarExp v h) b | isProof h -> noProofHypos (S.insert v ps) fs b
+    EFun (HParVarExp v h) b | isProof h -> noProofHypos (S.insert v ps) fs b
+    EFun (HExp h) b | isProof h -> noProofHypos ps fs b
+    EFun h b -> EFun (dropIn ps fs h) (noProofHypos ps fs b)
+    _ -> dropIn ps fs ty
+
   -- a quantification over the proofs of a proposition whose variable the
   -- reading no longer shows, because it occurs only as a hidden argument
   -- (Lean's [NeZero N], used by an instance argument), is an implication:

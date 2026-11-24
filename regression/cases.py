@@ -187,6 +187,10 @@ dict(name='proof-binder-if', tier='dev',
      what='a quantification over proofs whose variable is only a hidden argument reads as "if"',
      cmd='{RUN} -add-symboltables=test/proof_binder_if.dkgf test/proof_binder_if.dk'),
 
+dict(name='proof-arguments', tier='dev',
+     what='a quantified function loses the proofs its type takes and its applications the proofs given to it',
+     cmd='{RUN} -add-symboltables=test/proof_arguments.dkgf test/proof_arguments.dk'),
+
 dict(name='binder-formula', tier='dev',
      what='a binder macro whose value is a proposition gets the bound variable and the body of its λ',
      cmd='{RUN} -base=test/binder_formula_base.dk -add-symboltables=test/binder_formula.dkgf '

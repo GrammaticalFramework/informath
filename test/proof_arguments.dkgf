@@ -1,0 +1,4 @@
+# Fact P (Lean's class of the proofs of P) read as P
+Data : "set of #1"
+good : "#2 is good for #1"
+#COERCION Fact 1
