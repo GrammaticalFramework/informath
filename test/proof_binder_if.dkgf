@@ -1,0 +1,4 @@
+# the proof of NonZero n is hidden in the applications of recip
+#HIDE recip 2
+NonZero : "#1 is nonzero"
+recip : $\frac{1}{#1}$

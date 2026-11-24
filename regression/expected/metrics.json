@@ -215,6 +215,11 @@
   "undefined": 0,
   "seconds": 0.8
  },
+ "proof-binder-if": {
+  "lines": 3,
+  "undefined": 0,
+  "seconds": 0.1
+ },
  "proof-text": {
   "lines": 124,
   "undefined": 0,

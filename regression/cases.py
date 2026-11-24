@@ -183,6 +183,10 @@ dict(name='hide-definienda', tier='dev',
      what='the definiendum of a constant with a #HIDE argument leaves it out, as its applications do',
      cmd='{RUN} -add-symboltables=test/hide_definienda.dkgf test/hide_definienda.dk'),
 
+dict(name='proof-binder-if', tier='dev',
+     what='a quantification over proofs whose variable is only a hidden argument reads as "if"',
+     cmd='{RUN} -add-symboltables=test/proof_binder_if.dkgf test/proof_binder_if.dk'),
+
 dict(name='binder-formula', tier='dev',
      what='a binder macro whose value is a proposition gets the bound variable and the body of its λ',
      cmd='{RUN} -base=test/binder_formula_base.dk -add-symboltables=test/binder_formula.dkgf '

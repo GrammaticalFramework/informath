@@ -65,8 +65,19 @@ consistentHypos ts = case filter consistent ts of
 -- that, a negation of a constant that has a negated form (#NEGATION c d) is
 -- that form: not (c a1 ... an) is d a1 ... an
 hideArgs :: SymbolTable -> DkTree a -> DkTree a
-hideArgs st = hide . uncoerce . negations
+hideArgs st = proofIfs . hide . uncoerce . negations
  where
+  -- a quantification over the proofs of a proposition whose variable the
+  -- reading no longer shows, because it occurs only as a hidden argument
+  -- (Lean's [NeZero N], used by an instance argument), is an implication:
+  -- forall (Proof P) (h => B) is if P B when h is not in B
+  proofIfs :: forall a. DkTree a -> DkTree a
+  proofIfs t = case t of
+    EApp (EApp (EIdent (QIdent "forall")) (EApp (EIdent (QIdent "Proof")) p)) (EAbs b body)
+      | notElem (bind2var b) (identsInTree body) ->
+          EApp (EApp (EIdent (QIdent "if")) (proofIfs p)) (proofIfs body)
+    _ -> runIdentity (composOpM (Identity . proofIfs) t)
+
   hides = hideTable st
   coes = coercionTable st
   negs = negationTable st

@@ -1,0 +1,3 @@
+Definition. Let $n \in \Natural$. Then we can say that $n$ is nonzero.
+Definition. Let $n$ be a nonzero natural number. Then $\recipMACRoA {n}$ is a real number.
+Recip_pos. For all natural numbers $n$, if $n$ is nonzero, then $\recipMACRoA {n}> 0$.

@@ -1,0 +1,9 @@
+(; A quantification over the proofs of a proposition whose variable occurs
+   only as a hidden (#HIDE) argument, as Lean's instance argument [NeZero n]
+   does, reads as an implication: forall (Proof P) (h => B) is if P B ;)
+
+NonZero : (n : Elem Nat) -> Prop.
+
+recip : (n : Elem Nat) -> (h : Proof (NonZero n)) -> Elem Real.
+
+recip_pos : forall Nat (n => forall (Proof (NonZero n)) (h => Gt (recip n h) 0)).
