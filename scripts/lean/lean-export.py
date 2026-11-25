@@ -50,8 +50,83 @@ def load_config(d):
     return conf
 
 
+def top_args(s):
+    """The top-level arguments of a Dedukti application or binder list: the
+    parenthesized groups and the atoms of s."""
+    out, depth, cur = [], 0, ''
+    for c in s.strip():
+        if c == '(':
+            if depth == 0 and cur.strip():
+                out.append(cur.strip())
+                cur = ''
+            depth += 1
+            cur += c
+        elif c == ')':
+            depth -= 1
+            cur += c
+            if depth == 0:
+                out.append(cur.strip())
+                cur = ''
+        elif c == ' ' and depth == 0:
+            if cur.strip():
+                out.append(cur.strip())
+            cur = ''
+        else:
+            cur += c
+    if cur.strip():
+        out.append(cur.strip())
+    return out
+
+
+def prop_fields(ctor_line, fields):
+    """The fields whose constructor arguments are proofs, from the constructor's
+    declaration (mkR : (X : Elem Obj) -> ... -> (perp_in : Proof (...)) -> Str R)."""
+    ty = ctor_line.split(' : ', 1)[1]
+    binders = [a for a in top_args(ty.replace(' -> ', ' ')) if a.startswith('(') and ' : ' in a]
+    binders = binders[len(binders) - len(fields):] if len(binders) >= len(fields) else binders
+    return [fld for fld, b in zip(fields, binders) if b[1:].split(' : ', 1)[1].startswith('Proof')]
+
+
 def token(name):
     return re.compile(r"(?<![\w'])%s(?![\w'])" % re.escape(name))
+
+
+def by_constructor(dk, known, renames, mang):
+    """A definition whose body is a structure's constructor applied to its
+    fields (compositionLaw E := mkLawOfComposition (mappings E E) (...) p) as
+    ../rocq/rocq-export.py has it: the constant declared, with a rewrite rule
+    for each field that is not a proof (lawSet (compositionLaw E) --> mappings
+    E E), which Informath reads as "the set of the law ... is ..."."""
+    ctors = {}
+    for n, s in known.items():
+        ctors[renames[mang(n) + '__' + s['ctor']]] = s
+
+    def one(m):
+        name, ty, body = m.group(1), m.group(2), m.group(3)
+        xs = []
+        while True:
+            mm = re.match(r"([\w']+) => (.*)$", body, re.S)
+            if not mm:
+                break
+            xs.append(mm.group(1))
+            body = mm.group(2)
+        args = top_args(body)
+        if not args or args[0] not in ctors:
+            return m.group(0)
+        s = ctors[args[0]]
+        fields, fargs = s['fields'], args[1:]
+        nparams = len(fargs) - len(fields)
+        if nparams < 0:
+            return m.group(0)
+        params, fargs = fargs[:nparams], fargs[nparams:]
+        lhs = ' '.join([name] + xs)
+        lhs = '(%s)' % lhs if xs else lhs
+        rules = ['[%s] %s --> %s' % (', '.join(xs), ' '.join([fld] + params + [lhs]), a)
+                 for fld, a in zip(fields, fargs) if fld not in s.get('propFields', [])]
+        if not rules:
+            return m.group(0)
+        return 'def %s : %s.\n%s.' % (name, ty, '\n'.join(rules))
+    return re.sub(r"(?m)^def ([\w']+) : (.*?) :=\n  (.*?)\.$", one, dk)
 
 
 def structures(out, mod, conf):
@@ -87,7 +162,8 @@ def structures(out, mod, conf):
         try:
             for d in json.load(open(jf)):
                 if isinstance(d, dict) and d.get('kind') == 'structure' and 'structureCtor' in d:
-                    known.setdefault(d['lean'], {'ctor': d['structureCtor'], 'fields': d['fields']})
+                    known.setdefault(d['lean'], {'ctor': d['structureCtor'], 'fields': d['fields'],
+                                                 'propFields': d.get('propFields', [])})
         except (ValueError, KeyError):
             pass
     if not known:
@@ -136,6 +212,12 @@ def structures(out, mod, conf):
                     line = token(fld).sub(lambda _: fvars[fld], line)
             return line
         dk = re.sub(r'(?m)^%s : .*$' % re.escape(ctor), ctor_line, dk)
+    # the data fields of each structure (not the proofs), for definitions by a constructor
+    for n, s in own.items():
+        ctor = renames[mang(n) + '__' + s['ctor']]
+        m = re.search(r'(?m)^%s : .*$' % re.escape(ctor), dk)
+        s['propFields'] = prop_fields(m.group(0), s['fields']) if m else []
+    dk = by_constructor(dk, known, renames, mang)
     open(dkf, 'w').write(dk)
     # the constants declared for the module (earlier structures among them)
     deps = os.path.join(out, mod + '-deps.dk')
@@ -167,6 +249,7 @@ def structures(out, mod, conf):
             d['structureCtor'] = s['ctor']
             d['constructor'] = renames[mang(d['lean']) + '__' + s['ctor']]
             d['fields'] = s['fields']
+            d['propFields'] = s.get('propFields', [])
     json.dump(decls, open(os.path.join(out, mod + '.json'), 'w'), ensure_ascii=False, indent=0)
 
 
