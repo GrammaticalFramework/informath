@@ -22,6 +22,16 @@ or, reading the result in English at once (see `RunInformath -help`):
                                                                       # by terms and by tactics
     RunInformath -from-formalism=lean File.lean -to-html-doc -to-lang=Eng,Fre >File.html
 
+In a project of many files (`godement-index/lean/`), `-project=<dir>`
+names the directory of the project's `config.py`: the file's structures are
+then exported as the Rocq exporter exports Records, as Informath structures
+(`Group : Structure.`, the constructor `mkGroup` into `Str Group`, the
+fields by their own names, `groupLaw`), with the constructor's arguments
+named by `FIELD_VARIABLES`; and `../rocq/rocq-index.py`, with `FORMALISM =
+'lean'` in `config.py`, reads all the files into the project's `index.json`.
+A constant named as one of Informath's base constants gets an underscore
+(`In` is `In_`).
+
 ## How it works
 
 Lean elaborates the file: `Export.lean` is a Lean program, run with

@@ -39,11 +39,33 @@ import Lean
 
 open Lean Meta Elab
 
+/-- Informath's base constants (share/baseconstants.dk) and the names the
+other exports avoid too (../rocq/rocqterm.py BASE_NAMES): a constant of the
+file with one of these names gets an underscore (`In` is `In_`). Lean's `List`
+and `Vector` are not among them: they are read as Informath's. -/
+def baseNames : Std.HashSet String := Std.HashSet.ofList
+  ["Cardinal", "Circle", "Complex", "Dig", "Elem", "Enum", "Eq", "Eqt", "Equ", "Geq", "Gt", "In",
+   "Int", "Leq", "Lt", "Nat", "Neq", "Num", "Polynomial", "Proof", "Prop", "Rat", "Real",
+   "Set", "abs", "and", "angleBetween", "arccos", "arcsin", "arctan", "area", "binomial",
+   "bmem", "bool", "cardinality", "cartesian", "combinations", "combinationsFromSet", "complement",
+   "congruent", "cons", "cos", "degree", "denumerable", "difference", "disjoint", "div", "divide",
+   "divisible", "divisor", "dotProduct", "element", "empty", "emptyset", "enum123", "enumset",
+   "equalset", "even", "exists", "factorial", "false", "finite", "forall", "fst", "function",
+   "gcd", "if", "iff", "infinite", "infinity", "inhabited", "integral", "intersection",
+   "irrational", "isRoot", "ite", "legendre", "length", "log", "map", "max", "member", "minus",
+   "nd", "neg", "negative", "negativePart", "ni", "nil", "nn", "norm", "not", "notelement", "odd",
+   "or", "orthogonal", "pair", "pi", "plus", "positive", "positivePart", "pow", "powerset",
+   "prime", "radius", "rational", "setof", "sigma", "sin", "sqrt", "square", "subset", "subseteq",
+   "succ", "suchthat", "superset", "superseteq", "tan", "times", "triple", "union", "universeset",
+   "vectorPlus"]
+
 /-- Lean name -> Dedukti identifier: `.` as `__`, other non-identifier
-characters as `_u<hex>_`; the words of Informath's framework are not redefined. -/
+characters as `_u<hex>_`; the words of Informath's framework are not redefined,
+and the names of its base constants get an underscore. -/
 def mangle (n : Name) : String :=
   let s := n.toString (escape := false)
-  let s := if ["Set", "Elem", "Prop", "Proof", "Type"].contains s then "Lean_" ++ s else s
+  let s := if ["Set", "Elem", "Prop", "Proof", "Type"].contains s then "Lean_" ++ s
+    else if baseNames.contains s then s ++ "_" else s
   s.foldl (fun acc c =>
     if c == '.' then acc ++ "__"
     else if c.isAlphanum || c == '_' || c == '\'' || c == '!' || c == '?' then acc.push c

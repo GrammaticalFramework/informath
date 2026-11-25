@@ -20,6 +20,12 @@ import concurrent.futures, glob, json, os, re, subprocess, sys, tempfile
 
 import project
 HERE = os.path.dirname(os.path.abspath(__file__))
+# config.py FORMALISM = 'lean': the modules are Lean files, exported by
+# ../lean/lean-export.py -project=<the project> (out/<M>.json names the
+# declarations by 'lean', their tags are their docstrings), and the tactic
+# proofs are made units by ../lean/lean-tactic-units.py
+LEAN = project.get('FORMALISM', 'rocq') == 'lean'
+NAME = 'lean' if LEAN else 'coq'
 MODULES = project.get('MODULES', [])
 TABLE = os.path.join(project.DIR, project.get('TABLE', 'table.dkgf'))
 OUT = os.path.join(project.DIR, 'out')
@@ -49,7 +55,7 @@ def blocks_of(mod):
     rocq-export.py, //AGDA: from agda-export.py)."""
     text = open(os.path.join(OUT, mod + '.dk')).read()
     out = {}
-    for m in re.finditer(r'\(; //(?:COQ|AGDA):(\S+) ;\)\n(.*?)(?=\n\n\(; //(?:COQ|AGDA):|\Z)', text, re.S):
+    for m in re.finditer(r'\(; //(?:COQ|AGDA|LEAN):(\S+) ;\)\n(.*?)(?=\n\n\(; //(?:COQ|AGDA|LEAN):|\Z)', text, re.S):
         out[m.group(1)] = m.group(2).strip()
     return out
 
@@ -234,7 +240,7 @@ def proof_texts(units, units_file):
                 # in) and its unit, for the folds of the pages (proof_folds.py)
                 t[lang] = [[n, text, 'TACTIC:' + u['by'].replace(' ;; ', '. '), u.get('path', []), u.get('unit', '')]
                            for (n, text, _), u in zip(t[lang], p['steps'])]
-        out[p['coq']] = t
+        out[p[NAME]] = t
     return out, macros_of(r.stdout)
 
 
@@ -258,7 +264,7 @@ def drop_side_conditions(steps):
 # RunInformath -from-formalism; it reads the lemmas from OUT and #IMPLICIT
 # from TABLE
 import proof_units
-proof_units.OUT, proof_units.TABLE = OUT, TABLE
+proof_units.OUT, proof_units.TABLE, proof_units.LEAN = OUT, TABLE, LEAN
 from proof_units import (FAR, plain, declared_names, theorem_names, with_uses, implicit_types,
                          without_implicit_variables, forward_verifications)
 
@@ -274,7 +280,8 @@ def tactic_proofs(mod):
         open(empty, 'w').write('[]')
         _, macros = proof_texts([], empty)
         return {}, {}, macros, {}
-    subprocess.run([sys.executable, os.path.join(HERE, 'rocq-tactic-units.py'), mod, OUT], check=True,
+    units_script = os.path.join(HERE, '..', 'lean', 'lean-tactic-units.py') if LEAN else os.path.join(HERE, 'rocq-tactic-units.py')
+    subprocess.run([sys.executable, units_script, mod, OUT], check=True,
                    capture_output=True)
     units = with_uses(without_implicit_variables(json.load(open(units_file))))
     json.dump(units, open(units_file, 'w'), ensure_ascii=False, indent=1)
@@ -361,6 +368,25 @@ def prop_pieces(modules, theorems):
     return out
 
 
+def lean_source(d):
+    """A declaration of a Lean module as rocq-index.py has those of Rocq: its
+    tag (the docstring) as its comment, a theorem's source split into the
+    statement and the proof (proofSource), a def's kind 'definition'."""
+    d['comment'] = d.get('doc', '')
+    src = d.get('source', '')
+    src = re.sub(r'^/--.*?-/\s*', '', src, flags=re.S)
+    if d.get('kind') == 'theorem':
+        m = re.search(r':=', src)
+        if m:
+            d['proofSource'] = src[m.start():]
+            src = src[:m.start()].rstrip()
+        if re.search(r'\bsorry\b', d.get('proofSource', '')):
+            d['admitted'] = True
+    elif d.get('kind') == 'def':
+        d['kind'] = 'definition'
+    d['source'] = src
+
+
 def main():
     global TABLE
     # the symbol table with the implicit arguments of the export hidden
@@ -376,16 +402,18 @@ def main():
         blocks = blocks_of(mod)
         for d in json.load(open(os.path.join(OUT, mod + '.json'))):
             d['module'] = mod
-            d['dedukti'] = blocks.get(d['coq'], d.get('dedukti'))
+            if LEAN:
+                lean_source(d)
+            d['dedukti'] = blocks.get(d[NAME], d.get('dedukti'))
             decls.append(d)
             if d.get('kind') == 'structure' and re.match(r'%s : (.* -> )?Structure\.' % re.escape(d.get('dk', '')), d['dedukti'] or ''):
                 # a record exported as a structure: read as its definition, the
                 # constructor ("A group is ... where ..."), not field by field
                 lines = d['dedukti'].split('\n')
                 block = '\n'.join(lines[:2])
-                pieces += [((d['coq'], 'stmt'), block)]
+                pieces += [((d[NAME], 'stmt'), block)]
             else:
-                pieces += items_of(d['coq'], d['dedukti'], [d['constructor']] if 'constructor' in d else [])
+                pieces += items_of(d[NAME], d['dedukti'], [d['constructor']] if 'constructor' in d else [])
     print('%d declarations, %d pieces to read with %s' % (len(decls), len(pieces), RUN))
     results = {}
     with concurrent.futures.ThreadPoolExecutor(8) as ex:
@@ -431,13 +459,13 @@ def main():
         if d.get('dk') in terms:
             d['proof'] = terms[d['dk']]
     for d in decls:
-        if (d['coq'], 'typing') in results:
-            d['typingReadings'] = results[(d['coq'], 'typing')]
+        if (d[NAME], 'typing') in results:
+            d['typingReadings'] = results[(d[NAME], 'typing')]
     for d in decls:
         if (d.get('dk'), 'prop') in results:
             d['propReadings'] = results[(d['dk'], 'prop')]
     for d in decls:
-        n = d['coq']
+        n = d[NAME]
         d['readings'] = results.get((n, 'stmt'), {})
         rules = sorted(k for k in results if k[0] == n and len(k) == 3)
         if rules:
@@ -459,11 +487,12 @@ def main():
     lines = lambda key: sum(len(d[key].get(L, [])) for d in decls if d.get(key))
     print('proof lines: %d, shortened %d (%s)' % (lines('proof'), lines('proofShort'),
                                                  ', '.join('%s %d' % kv for kv in counts.items())))
-    missing = [d['coq'] for d in decls if not d['readings'].get(L)]
+    missing = [d[NAME] for d in decls if not d['readings'].get(L)]
     if missing:
         print('no reading:', ' '.join(missing))
     # theorems with a tactic proof and no proof text
-    noproof = [d['coq'] for d in decls if d.get('proofSource') and not d.get('proof')]
+    noproof = [d[NAME] for d in decls if d.get('proofSource') and not d.get('proof')
+               and (not LEAN or re.match(r':=\s*by\b', d['proofSource']))]
     if noproof:
         print('%d tactic proofs without a proof text: %s' % (len(noproof), ' '.join(noproof[:20])))
     if FAILURES or noproof:
