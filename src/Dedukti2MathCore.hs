@@ -61,6 +61,10 @@ jmt2jmtHiding hidden jmt = case jmt of
     let
       (hypos, kind) = splitType typ
       kindIsProp = kind == typeProp
+      -- the kind, also when annotated (Prop&&Prop...): a proposition
+      kindNamesProp = case kind of
+        EIdent (QIdent k) -> stripConstant k == "Prop"
+        _ -> False
       cat = guessGFCat ident typ
       ghypos = GListHypo (hypos2hypos hypos)
       hvars  = concatMap hypo2vars hypos
@@ -80,6 +84,10 @@ jmt2jmtHiding hidden jmt = case jmt of
        _ ->         GAxiomJmt (ident2label ident) ghypos (exp2prop kind)
        
       _ | S.member cat expCats -> case meexp of
+       -- a proposition without hypotheses: "P is the proposition that Q", not
+       -- "P is a proposition defined as the proposition that Q"
+       MEExp exp | kindNamesProp, null hypos ->
+                    GDefUntypedExpJmt definitionLabel (exp2exp definiendum) (exp2exp exp)
        MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 
@@ -99,6 +107,8 @@ jmt2jmtHiding hidden jmt = case jmt of
        _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
 
       _ | cat == "MACRO" -> case meexp of
+       MEExp exp | kindNamesProp, null hypos ->
+                    GDefUntypedExpJmt definitionLabel (GTermExp (exp2term definiendum)) (exp2exp exp)
        MEExp exp
         | kindIsProp -> GDefPropJmt definitionLabel ghypos (exp2prop definiendum) (exp2prop exp)
         | otherwise  -> GDefExpJmt  definitionLabel ghypos (GTermExp (exp2term definiendum)) (exp2kind kind)
@@ -110,6 +120,8 @@ jmt2jmtHiding hidden jmt = case jmt of
        _ ->         GAxiomPropJmt definitionLabel ghypos (exp2prop definiendum)
        
       _ | S.member cat symbolicCats -> case meexp of
+       MEExp exp | kindNamesProp, null hypos ->
+                    GDefUntypedExpJmt definitionLabel (exp2exp definiendum) (exp2exp exp)
        MEExp exp -> GDefExpJmt   definitionLabel ghypos (exp2exp definiendum) (exp2kind kind)
                                    (exp2exp (stripAbs hypos exp))   
        _ ->         GAxiomExpJmt definitionLabel ghypos (exp2exp definiendum) (exp2kind kind) 

@@ -1,0 +1,3 @@
+# the names as symbols, as a generated names table gives them
+AllNonneg : $\operatorname{AllNonneg}$
+Bounded : $\operatorname{Bounded}(#1)$

@@ -1,0 +1,7 @@
+(; A proposition defined without hypotheses reads "P is defined as the
+   proposition that Q" (DefUntypedExpJmt), not "P is a proposition defined as
+   the proposition that Q"; with hypotheses it keeps them (DefExpJmt) ;)
+
+def AllNonneg : Prop := forall Nat (n => Leq 0 n).
+
+def Bounded : (B : Elem Nat) -> Prop := B => forall Nat (n => Leq n B).

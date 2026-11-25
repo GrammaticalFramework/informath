@@ -1,0 +1,2 @@
+Definition. $\AllNonnegMACRoA$ is defined as the proposition that for all natural numbers $n$, $0 \leq n$.
+Definition. Let $B \in \Natural$. Then $\BoundedMACRoB {B}$ is a proposition defined as the proposition that for all natural numbers $n$, $n \leq B$.

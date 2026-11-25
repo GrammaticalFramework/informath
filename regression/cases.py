@@ -191,6 +191,10 @@ dict(name='proof-arguments', tier='dev',
      what='a quantified function loses the proofs its type takes and its applications the proofs given to it',
      cmd='{RUN} -add-symboltables=test/proof_arguments.dkgf test/proof_arguments.dk'),
 
+dict(name='prop-definition', tier='dev',
+     what='a proposition defined without hypotheses: "P is defined as the proposition that Q"',
+     cmd='{RUN} -add-symboltables=test/prop_definition.dkgf test/prop_definition.dk'),
+
 dict(name='binder-formula', tier='dev',
      what='a binder macro whose value is a proposition gets the bound variable and the body of its λ',
      cmd='{RUN} -base=test/binder_formula_base.dk -add-symboltables=test/binder_formula.dkgf '
