@@ -8,7 +8,7 @@
   "lines": 983,
   "undefined": 0,
   "seconds": 0.2,
-  "latex_pages": 59,
+  "latex_pages": 58,
   "latex_errors": 0
  },
  "bind": {
@@ -302,19 +302,19 @@
  "top100-force-symbolic": {
   "lines": 50,
   "undefined": 0,
-  "seconds": 0.1,
+  "seconds": 0.0,
   "latex_pages": 2,
   "latex_errors": 0
  },
  "top100-godement-trees": {
   "lines": 615,
   "undefined": 0,
-  "seconds": 0.5
+  "seconds": 0.4
  },
  "top100-latex": {
   "lines": 1746,
   "undefined": 0,
-  "seconds": 0.8,
+  "seconds": 0.7,
   "latex_pages": 134,
   "latex_errors": 0
  },

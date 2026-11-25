@@ -332,69 +332,69 @@ Definition. Let $x$ and $y$ be integers. Then $x$ is a divisor of $y$, if $\divi
 
 Definition. Let $x , y \in \Integer$. Then $x$ is a divisor of $y$, if $\divides {x}{y}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m < n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m < n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m < n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m < n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m < n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m < n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m < n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m < n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m < n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1 < m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists a natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no natural number $m$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n \in \Natural$. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n \in \Natural$. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $\divisible {n}{m}$.
 
-Definition. Let $n$ be a natural number. Then $n$ is prime, if it is not the case that there exists an element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
+Definition. Let $n$ be a natural number. Then $n$ is prime, if there exists no element $m$ of $\Natural$, such that $1$ is less than $m$, $m$ is less than $n$ and $n$ is divisible by $m$.
 
 Definition. The booleans form a set.
 
@@ -1866,53 +1866,53 @@ Definition. Let $A$ be a set. Let $a$ be an element of the universal set. Then $
 
 Definition. Let $A$ be a set. Let $a$ be an element of the universal set. Then $A$ contains $a$, if $a$ is an element of $A$.
 
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x \in A$ of the universal set, such that $x \in B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x \in A$ of the universal set, such that $x \in B$.
+
 Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x \in B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x \in A$ of the universal set, such that $x \in B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x \in A$ of the universal set, such that $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x \in B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x \in A$ of the universal set, such that $x$ is an element of $B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
+
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
 
 Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x \in B$.
-
 Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists $x \in A$ in $\mathbb{ U}$, such that $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x \in A$ of the universal set, such that $x$ is an element of $B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x \in B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A \notmeets B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ and $B$ are disjoint, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of $\mathbb{ U}$, such that $x$ is an element of $A$ and $x$ is an element of $B$.
-
-Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if it is not the case that there exists an element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
+Definition. Let $A$ and $B$ be sets. Then $A$ is disjoint from $B$, if there exists no element $x$ of the universal set, such that $x$ is an element of $A$ and $x$ is an element of $B$.
 
 Definition. Let $A$ be a set. Then $A$ is empty, if $A = \emptyset$.
 

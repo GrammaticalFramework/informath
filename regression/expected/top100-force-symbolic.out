@@ -32,7 +32,7 @@ Thm01d. $\sqrt{ 2}$ is not rational.
 
 Thm01e. $\sqrt{ 2}$ is irrational.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
 Thm02. Let $P$ be a polynomial such that $\mathrm{degree} (P)> 0$. Then there exists an element $c$ of $\Complex$, such that $c$ is a root of $P$.
 

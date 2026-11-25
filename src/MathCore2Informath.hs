@@ -1078,5 +1078,8 @@ negated t = case t of
   GCoreNotProp (GAdvProp adv x) -> GNotAdvProp adv x
   GCoreNotProp (GAdv2Prop adv x y) -> GNotAdv2Prop adv x y
   GCoreNotProp (GAdvCProp adv x y) -> GNotAdvCProp adv (GListExp [x, y])
+  -- "there is no natural number n such that ...", not "it is not the case that
+  -- there exists a natural number n, such that ..."
+  GCoreNotProp (GExistProp argkinds prop) -> GExistNoProp argkinds (negated prop)
   _ -> composOp negated t
 

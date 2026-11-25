@@ -104,117 +104,117 @@ Thm01e. $\sqrt{ 2}$ is irrational.
 
 Thm01e. The square root of $2$ is irrational.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q > 0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no natural numbers $p$ and $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no natural number $p$, such that there exists $q > 0$ in $\Natural$, such that the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exist elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exist no elements $p$ and $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}= 2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q > 0$, such that the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to $2 \times (q ^{ 2})$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and $q ^{ 2}$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and $p ^{ 2}$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists an element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no element $p$ of $\Natural$, such that there exists a natural number $q$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
-Thm01f. It is not the case that there exists a natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
+Thm01f. There exists no natural number $p$, such that there exists an element $q$ of $\Natural$, such that $q$ is greater than $0$ and the square of $p$ is equal to the product of $2$ and the square of $q$.
 
 Thm02. Let $P$ be a polynomial such that the degree of $P$ is greater than $0$. Then there exists a complex $c$, such that $c$ is a root of $P$.
 
