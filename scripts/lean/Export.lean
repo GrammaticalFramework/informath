@@ -210,7 +210,7 @@ partial def binder (n : Name) (t b : Expr) (bi : BinderInfo) (isLam : Bool) (pla
   let nm ← freshName n prop (sortish t)
   let intro ← if isLam && plain == 0 && (← get).proofMode then isProp (← inferType (.lam n t b bi))
               else pure false
-  withLocalDecl (Name.mkSimple nm) bi t fun y => do
+  let r ← withLocalDecl (Name.mkSimple nm) bi t fun y => do
     let body := b.instantiate1 y
     let bs ← match body with
       | .lam n2 t2 b2 bi2 => if plain > 1 then binder n2 t2 b2 bi2 true (plain - 1) else tr body
@@ -229,6 +229,9 @@ partial def binder (n : Name) (t b : Expr) (bi : BinderInfo) (isLam : Bool) (pla
     let cod ← hypoType body
     if !b.hasLooseBVars then return s!"{← hypoType t} -> {cod}"
     return s!"({nm} : {← hypoType t}) -> {cod}"
+  -- the name is free again outside its scope: sibling binders reuse it (∀ x, ... ∧ ∀ x, ...)
+  modify fun s => { s with names := s.names.erase nm }
+  return r
 
 /-- The type of a hypothesis or a value: Proof P, Set, Prop, or Elem α. -/
 partial def hypoType (t : Expr) : M String := do
