@@ -167,7 +167,8 @@ def with_uses(proofs):
                         else:
                             cites.append(h)
                         last[h] = i
-                    elif h in names and h not in used and h not in made:
+                    elif (h in theorems if LEAN else h in names) and h not in used and h not in made:
+                        # (Lean: not the definitions of rw [...] lists, nor constants)
                         used.append(h)
             if used:
                 u['uses'] = used

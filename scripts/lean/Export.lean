@@ -77,6 +77,7 @@ structure St where
   proofMode : Bool := false          -- translating a proof term
   used : Std.HashSet Name := {}      -- constants referred to, not mapped
   names : Std.HashSet String := {}   -- variable names in use
+  reserved : Std.HashSet String := {}  -- the user's binder names in the statement, not given to others
 
 abbrev M := StateRefT St MetaM
 
@@ -122,11 +123,15 @@ def freshName (n : Name) (prop : Bool) (sort : Bool := false) : M String := do
     !(base0.toList.head?.map Char.isDigit |>.getD false) && !n.hasMacroScopes &&
     !["Set", "Elem", "Prop", "Proof", "Type", "forall", "exists", "if", "and", "or", "not"].contains base0
   let base := if ok then base0 else if prop then "h" else if sort then latin else "x"
-  if !(← get).names.contains base then
+  -- a name made up (an anonymous hypothesis) avoids the names the user gives later binders
+  let taken (s : String) : M Bool := do
+    let st ← get
+    return st.names.contains s || (!ok && st.reserved.contains s)
+  if !(← taken base) then
     modify fun s => { s with names := s.names.insert base }
     return base
   let mut i := 1
-  while (← get).names.contains s!"{base}{i}" do i := i + 1
+  while (← taken s!"{base}{i}") do i := i + 1
   let nm := s!"{base}{i}"
   modify fun s => { s with names := s.names.insert nm }
   return nm
@@ -331,7 +336,18 @@ partial def statementGo (isThm : Bool) (t : Expr) : M String := do
       return s!"({nm} : {← hypoType ty}) -> {rest}"
   | _ => hypoType t
 
+/-- The names the user gives the binders of an expression. -/
+partial def binderNames : Expr → List String
+  | .forallE n t b _ | .lam n t b _ =>
+    (if n.hasMacroScopes then [] else [asciiName (n.toString (escape := false))]) ++ binderNames t ++ binderNames b
+  | .letE n t v b _ =>
+    (if n.hasMacroScopes then [] else [asciiName (n.toString (escape := false))]) ++ binderNames t ++ binderNames v ++ binderNames b
+  | .app f a => binderNames f ++ binderNames a
+  | .mdata _ e => binderNames e
+  | _ => []
+
 partial def statement (t : Expr) : M String := do
+  modify fun s => { s with reserved := Std.HashSet.ofList (binderNames t) }
   statementGo (← isProp t) t
 
 /-- The definiens of a definition, its λs matching the binders of its type;
@@ -362,6 +378,8 @@ partial def rule (t : Expr) (vars : Array String := #[]) : M String := do
 
 def jsonStr (s : String) : String := (Json.str s).compress
 
+/-- The kind of a declaration in File.json (an axiom whose type is not a
+proposition is made a "constant" by declDk). -/
 def kindOf : ConstantInfo → String
   | .thmInfo _ => "theorem" | .defnInfo _ => "def" | .axiomInfo _ => "axiom"
   | .inductInfo _ => "inductive" | .ctorInfo _ => "constructor" | .opaqueInfo _ => "opaque"
@@ -525,7 +543,12 @@ def declDk (env : Environment) (n : Name) (ci : ConstantInfo) : M (String × Str
     reset
     let v ← value ci.type di.value
     return (header ++ s!"def {mangle n} : {t} :=\n  {v}.", "def")
-  | _ => return (s!"(; //LEAN:{n} ;)\n{← decl n ci.type}", kindOf ci)
+  | _ =>
+    -- an axiom that is not a proposition (axiom Obj : Type, axiom In : Obj → Obj → Prop)
+    -- is a constant, which proof texts do not cite as a lemma
+    let k := kindOf ci
+    let k ← if k == "axiom" && !(← isProp ci.type) then pure "constant" else pure k
+    return (s!"(; //LEAN:{n} ;)\n{← decl n ci.type}", k)
 
 /-- Whether the source of a declaration gives its proof as a term: its text
 after the first := does not begin with `by` (a tactic proof), and there is
