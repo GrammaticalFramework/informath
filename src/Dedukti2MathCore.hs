@@ -15,6 +15,8 @@ import SpecialConstants
 import Utils (mkLatexMathIdent)
 
 import Data.Char
+import DeduktiRules (substExp)
+import qualified Data.Map as M
 import qualified Data.Set as S
 
 -- clean-up of remaining annotated idents
@@ -331,6 +333,7 @@ exp2kind exp = case specialDedukti2Informath callBacks exp of
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of
         EIdent ident -> funListKind ident args
+        EAbs _ _ -> exp2kind (betaHead fun args)
     EIdent ident@(QIdent s) -> case lookupConstant s of  ---- TODO: more high level
       Just ("Noun", c) -> GNounKind (fgTree c)
       Just _ -> funListKind ident []
@@ -358,6 +361,7 @@ exp2propSpecial exp = case specialDedukti2Informath callBacks exp of
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of
         EIdent ident -> funListProp ident args
+        EAbs _ _ -> exp2prop (betaHead fun args)
     EFun _ _ -> case splitType exp of
       (hypos, exp) ->
         GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
@@ -432,6 +436,8 @@ exp2term exp = case specialDedukti2Informath callBacks exp of
           Just s -> GNumberTerm (GInt (read s))
           _ -> funListTerm ident args
         EIdent ident@(QIdent _) -> funListTerm ident args
+        -- (x => y => b) u v, left by an unfolding in a Lean statement: b[u/x, v/y]
+        EAbs _ _ -> exp2term (betaHead fun args)
         _ -> error ("not yet exp2term on application: " ++ printTree exp)
    
     EAbs bind body -> GAbsTerm (bind2coreIdent bind) (exp2term body)
@@ -469,6 +475,7 @@ exp2formula exp = case specialDedukti2Informath callBacks exp of
     EApp _ _ -> case splitApp exp of
      (fun, args) -> case fun of
         EIdent ident -> funListProp ident args
+        EAbs _ _ -> exp2formula (betaHead fun args)
     EFun _ _ -> case splitType exp of
       (hypos, exp) ->
         GAllProp (GListArgKind (map hypo2coreArgKind hypos)) (exp2prop exp)
@@ -539,6 +546,18 @@ ident2kind ident = case ident of
   QIdent s -> case lookupConstant s of
     Just ("Noun", c) -> GNounKind (fgTree c)
     _ -> GExpKind (GTermExp (GIdentTerm (ident2ident ident)))
+
+-- | The β-reduction of an abstraction applied to arguments, as far as there are arguments.
+betaHead :: Exp -> [Exp] -> Exp
+betaHead f args = case (f, args) of
+  (EAbs b body, a : as) -> betaHead (substExp (M.singleton (bindVar' b) a) body) as
+  _ -> foldl EApp f args
+ where
+  bindVar' :: Bind -> QIdent
+  bindVar' b = case b of
+    BVar x -> x
+    BTyped x _ -> x
+    BLet x _ _ -> x
 
 bind2coreIdent :: Bind -> GIdent
 bind2coreIdent = ident2ident . bind2ident
