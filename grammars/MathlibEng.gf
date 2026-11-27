@@ -250,6 +250,7 @@ lin ergodic_Adj = mkAdj "ergodic" ;
 lin essentially_Adverb = ParadigmsEng.mkAdv "essentially" ;
 lin eventual_Adj = mkAdj "eventual" ;
 lin eventually_Adverb = ParadigmsEng.mkAdv "eventually" ;
+lin frequently_Adverb = ParadigmsEng.mkAdv "frequently" ;
 lin excenter_Noun = mkNoun "excenter" ;
 lin exponentiable_Adj = mkAdj "exponentiable" ;
 lin exposed_Adj = mkAdj "exposed" ;

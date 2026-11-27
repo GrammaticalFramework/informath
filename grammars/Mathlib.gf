@@ -248,6 +248,7 @@ fun ergodic_Adj : Adj ;
 fun essentially_Adverb : Adverb ;
 fun eventual_Adj : Adj ;
 fun eventually_Adverb : Adverb ;
+fun frequently_Adverb : Adverb ;
 fun excenter_Noun : Noun ;
 fun exponentiable_Adj : Adj ;
 fun exposed_Adj : Adj ;

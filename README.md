@@ -781,6 +781,8 @@ AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
 Binder    (Exp->Exp) -> Exp          the function sum of X of $x$  
 Binder1   Kind -> (Exp->Exp) -> Exp  the disjoint union of X where $x$ is an A
 Binder2   Exp->Exp->(Exp->Exp)->Exp  the integral of Z where $x$ ranges from X to Y      
+PropBinder (Exp->Prop) -> Prop      for $x$ eventually, P                  (a GF tree: AdverbPropBinder eventually_Adverb)
+ArgPropBinder (Exp->Prop)->Exp->Prop  for $x$ eventually in X, P        (AdverbPrepArgPropBinder eventually_Adverb in_Prep)
 Dep       Exp -> Kind                root of X
 Dep2      Exp -> Exp -> Kind         interval from X to Y
 DepC      Exps -> Kind               path between X and Y

@@ -1,0 +1,4 @@
+Eventually : AdverbPrepArgPropBinder eventually_Adverb in_Prep
+Frequently : AdverbPrepArgPropBinder frequently_Adverb in_Prep
+Always : AdverbPropBinder locally_Adverb
+atTop : $\mathrm{atTop}$

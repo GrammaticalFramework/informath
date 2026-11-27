@@ -1,0 +1,18 @@
+first : Proof (Eventually (x => Gt x (nd 0)) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => exists Real (z => and (equalset z x) (Leq y (vectorPlus x z)))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => exists Real (z => and (equalset z x) (Leq y (plus x z)))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => exists Real (z => and (Eq z x) (Leq y (vectorPlus x z)))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => exists Real (z => and (Eq z x) (Leq y (plus x z)))) atTop) .
+existence : y : Elem Real -> Proof (and (Eventually (x => exists Real (z => equalset z x)) atTop) (Leq y (vectorPlus x z))) .
+existence : y : Elem Real -> Proof (and (Eventually (x => exists Real (z => equalset z x)) atTop) (Leq y (plus x z))) .
+existence : y : Elem Real -> Proof (and (Eventually (x => exists Real (z => Eq z x)) atTop) (Leq y (vectorPlus x z))) .
+existence : y : Elem Real -> Proof (and (Eventually (x => exists Real (z => Eq z x)) atTop) (Leq y (plus x z))) .
+existence : y : Elem Real -> Proof (Eventually (x => and (exists Real (z => equalset z x)) (Leq y (vectorPlus x z))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => and (exists Real (z => equalset z x)) (Leq y (plus x z))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => and (exists Real (z => Eq z x)) (Leq y (vectorPlus x z))) atTop) .
+existence : y : Elem Real -> Proof (Eventually (x => and (exists Real (z => Eq z x)) (Leq y (plus x z))) atTop) .
+disjunction : Proof (or (Frequently (x => Lt x (nd 0)) atTop) (forall Real (z => Leq z (times x z)))) .
+disjunction : Proof (or (Frequently (x => Lt x (nd 0)) atTop) (forall Real (z => Leq z (cartesian x z)))) .
+disjunction : Proof (Frequently (x => or (Lt x (nd 0)) (forall Real (z => Leq z (times x z)))) atTop) .
+disjunction : Proof (Frequently (x => or (Lt x (nd 0)) (forall Real (z => Leq z (cartesian x z)))) atTop) .
+implication : Proof (Always (x => if (Gt x (nd 0)) (Eventually (z => Lt x z) atTop))) .

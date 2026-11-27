@@ -200,6 +200,23 @@ dict(name='binder-formula', tier='dev',
      cmd='{RUN} -base=test/binder_formula_base.dk -add-symboltables=test/binder_formula.dkgf '
          'test/binder_formula.dk'),
 
+dict(name='prop-binder', tier='dev',
+     what='constants binding a variable in a proposition (BinderProp, ArgBinderProp): the body is a proposition',
+     cmd='{RUN} -base=test/prop_binder_base.dk -add-symboltables=test/prop_binder.dkgf '
+         'test/prop_binder.dk'),
+
+dict(name='prop-binder-mathcore', tier='dev',
+     what='BinderProp and ArgBinderProp in MathCore text',
+     cmd='{RUN} -base=test/prop_binder_base.dk -add-symboltables=test/prop_binder.dkgf '
+         '-mathcore test/prop_binder.dk'),
+
+dict(name='prop-binder-roundtrip', tier='dev',
+     what='the English of prop_binder.dk parsed back to Dedukti',
+     cmd='{RUN} -base=test/prop_binder_base.dk -add-symboltables=test/prop_binder.dkgf '
+         '-to-lang=Eng test/prop_binder.dk >{WORK}/pb.txt && '
+         '{RUN} -base=test/prop_binder_base.dk -add-symboltables=test/prop_binder.dkgf '
+         '-from-lang=Eng {WORK}/pb.txt | grep -v UN'),
+
 dict(name='mathcore-examples', tier='dev', make='mathcore_examples',
      what='MathCore text only',
      cmd='{RUN} -add-symboltables=test/natural_deduction.dkgf -mathcore test/mathcore_examples.dk'),

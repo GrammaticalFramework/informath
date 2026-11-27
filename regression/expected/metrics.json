@@ -246,6 +246,21 @@
   "latex_pages": 5,
   "latex_errors": 0
  },
+ "prop-binder": {
+  "lines": 4,
+  "undefined": 0,
+  "seconds": 0.1
+ },
+ "prop-binder-mathcore": {
+  "lines": 4,
+  "undefined": 0,
+  "seconds": 0.0
+ },
+ "prop-binder-roundtrip": {
+  "lines": 18,
+  "undefined": 0,
+  "seconds": 0.6
+ },
  "prop-definition": {
   "lines": 2,
   "undefined": 0,

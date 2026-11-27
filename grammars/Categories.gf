@@ -58,6 +58,8 @@ cat
   Binder  ; -- Exp -> Ident -> Exp ?
   Binder1 ; -- Exp -> Ident -> Kind -> Exp ?
   Binder2 ; -- Exp -> Ident -> Exp -> Exp -> Exp ?
+  PropBinder ;    -- (Exp -> Prop) -> Prop          -- c (x => P): for $x$ eventually, P
+  ArgPropBinder ; -- (Exp -> Prop) -> Exp -> Prop   -- c (x => P) F: for $x$ eventually in F, P
   
   Adverb ;     -- used for modifying adjectives, as "uniformly"
   Prep ;       -- used for symbol table extensions of grammar

@@ -1,0 +1,4 @@
+First. For $x$ eventually in $\atTopMACRoA$, $x > 0$.
+Existence. Let $y \in \Real$. Then for $x$ eventually in $\atTopMACRoA$, there exists a real number $z$, such that $z = x$ and $y \leq x + z$.
+Disjunction. For $x$ frequently in $\atTopMACRoA$, $x < 0$ or for all real numbers $z$, $z \leq x \times z$.
+Implication. For $x$ locally, if $x > 0$, then for $z$ eventually in $\atTopMACRoA$, $x < z$.

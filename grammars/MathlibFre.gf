@@ -252,6 +252,7 @@ lin ergodic_Adj = mkAdj (mkA "ergodique" "ergodique") ;
 lin essentially_Adverb = ParadigmsFre.mkAdv "essentiellement" ;
 lin eventual_Adj = mkAdj (mkA "ultime" "ultime") ;
 lin eventually_Adverb = ParadigmsFre.mkAdv "à partir d'un certain rang" ;
+lin frequently_Adverb = ParadigmsFre.mkAdv "fréquemment" ;
 lin excenter_Noun = mkNoun (mkN "centre du cercle exinscrit" "centres du cercle exinscrit" masculine) ;
 lin exponentiable_Adj = mkAdj (mkA "exponentiable" "exponentiable") ;
 lin exposed_Adj = mkAdj (mkA "exposé") ;

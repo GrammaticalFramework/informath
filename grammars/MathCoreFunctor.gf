@@ -213,6 +213,12 @@ lin
       (mkQS (mkQCl where_IAdv (mkCl (latexNP (mkSymb ident))
              (mkVP range_V3 lower upper))))) ;
 
+  BinderProp binder ident prop =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep (mkNP (latexNP (mkSymb ident)) binder)) (partProp prop)) ;
+  ArgBinderProp binder ident prop exp =
+    simpleProp (Grammar.ExtAdvS (Syntax.mkAdv for_Prep
+      (mkNP (mkNP (latexNP (mkSymb ident)) binder.adv) (Syntax.mkAdv binder.prep exp))) (partProp prop)) ;
+
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti
 

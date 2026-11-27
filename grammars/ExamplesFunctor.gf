@@ -15,6 +15,7 @@ lincat
   Argument = Exp ;
   KindArgument = Kind ;
   BoundVariable = Str ;
+  PropArgument = Prop ;
 
 lin
   ExampleJmt ex = lin Text ex ;
@@ -54,6 +55,8 @@ lin
   BinderExample b i f = mkExample (BinderExp b i f) ;
   Binder1Example b k i f = mkExample (Binder1Exp b k i f) ;
   Binder2Example b x y i f = mkExample (Binder2Exp b x y i f) ;
+  PropBinderExample b i p = mkExample (BinderProp b i p) ;
+  ArgPropBinderExample b i p x = mkExample (ArgBinderProp b i p x) ;
 
   LabelExample label = mkExample (mkUtt label.np) "." ;
 
@@ -63,6 +66,7 @@ lin
 
   x_BoundVariable = "x" ;
   i_BoundVariable = "i" ;
+  P_PropArgument = IdentProp "P" ;
 
   A_KindArgument = NounKind (mkNoun "A") ;
   B_KindArgument = NounKind (mkNoun "B") ;
@@ -124,6 +128,8 @@ lin
   NounBinder noun = noun ;
   NounBinder1 noun = noun ;
   NounBinder2 noun = noun ;
+  AdverbPropBinder adv = adv ;
+  AdverbPrepArgPropBinder adv prep = {adv = adv ; prep = prep} ;
 
   at_Prep = Utilities.at_Prep ;
   between_Prep = Syntax.between_Prep ;

@@ -226,6 +226,7 @@ lin ergodic_Adj = mkAdj (mkA "ergodisk") ;
 lin essentially_Adverb = ParadigmsSwe.mkAdv "väsentligen" ;
 lin eventual_Adj = mkAdj (mkA "slutlig") ;
 lin eventually_Adverb = ParadigmsSwe.mkAdv "till slut" ;
+lin frequently_Adverb = ParadigmsSwe.mkAdv "ofta" ;
 lin excenter_Noun = mkNoun (mkN "medelpunkt för vidskriven cirkel" "medelpunkter för vidskriven cirkel") ;
 lin exponentiable_Adj = mkAdj (mkA "exponentierbar") ;
 lin exposed_Adj = mkAdj (mkA "exponerad" "exponerat") ;

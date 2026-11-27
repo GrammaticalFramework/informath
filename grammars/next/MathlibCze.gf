@@ -233,6 +233,7 @@ lin ergodic_Adj = mkAdj (mkA "ergodický") ;
 lin essentially_Adverb = ParadigmsCze.mkAdv "podstatně" ;
 lin eventual_Adj = mkAdj (mkA "konečný") ;
 lin eventually_Adverb = ParadigmsCze.mkAdv "nakonec" ;
+lin frequently_Adverb = ParadigmsCze.mkAdv "často" ;
 lin excenter_Noun = mkNoun (mkN "střed připsané kružnice" "středu připsané kružnice" mascInanimate) ;
 lin exponentiable_Adj = mkAdj (mkA "exponovatelný") ;
 lin exposed_Adj = mkAdj (mkA "exponovaný") ;

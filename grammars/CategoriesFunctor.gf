@@ -66,6 +66,8 @@ lincat
   Binder = CN ;
   Binder1 = CN ;
   Binder2 = CN ;
+  PropBinder = Syntax.Adv ;
+  ArgPropBinder = {adv : Syntax.Adv ; prep : Syntax.Prep} ;
 
   Prep = Syntax.Prep ;
   ProperName = PN ;

@@ -7,6 +7,7 @@ cat
   Argument ;
   KindArgument ;
   BoundVariable ;
+  PropArgument ;
 
 fun
   -- to access from startcat
@@ -43,10 +44,13 @@ fun
   BinderExample : Binder -> BoundVariable -> Argument -> Example ;
   Binder1Example : Binder1 -> KindArgument -> BoundVariable -> Argument -> Example ;
   Binder2Example : Binder2 -> Argument -> Argument -> BoundVariable -> Argument -> Example ;
+  PropBinderExample : PropBinder -> BoundVariable -> PropArgument -> Example ;
+  ArgPropBinderExample : ArgPropBinder -> BoundVariable -> PropArgument -> Argument -> Example ;
 
   X_Argument, Y_Argument, Z_Argument : Argument ;
   A_KindArgument, B_KindArgument : KindArgument ;
   x_BoundVariable, i_BoundVariable : BoundVariable ;
+  P_PropArgument : PropArgument ;
 
   IntArgument : Int -> Argument ;
 
@@ -103,6 +107,8 @@ fun
   NounBinder : Noun -> Binder ;
   NounBinder1 : Noun -> Binder1 ;
   NounBinder2 : Noun -> Binder2 ;
+  AdverbPropBinder : Adverb -> PropBinder ;           -- eventually
+  AdverbPrepArgPropBinder : Adverb -> Prep -> ArgPropBinder ;  -- eventually in
 
 ----  noPrep : Prep ;
 

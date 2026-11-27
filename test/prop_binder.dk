@@ -1,0 +1,12 @@
+(; Constants that bind a variable in a proposition (BinderProp,
+   ArgBinderProp): the body of the λ is read as a proposition, so its
+   quantifiers and connectives are words, not terms like exists(...);
+   the declarations are in prop_binder_base.dk ;)
+
+first : Proof (Eventually (x => Gt x 0) atTop).
+
+existence : (y : Elem Real) -> Proof (Eventually (x => exists Real (z => and (Eq z x) (Leq y (plus x z)))) atTop).
+
+disjunction : Proof (Frequently (x => or (Lt x 0) (forall Real (z => Leq z (times x z)))) atTop).
+
+implication : Proof (Always (x => if (Gt x 0) (Eventually (z => Lt x z) atTop))).

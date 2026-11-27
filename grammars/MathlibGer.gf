@@ -230,6 +230,7 @@ lin ergodic_Adj = mkAdj (mkA "ergodisch") ;
 lin essentially_Adverb = ParadigmsGer.mkAdv "wesentlich" ;
 lin eventual_Adj = mkAdj (mkA "schließlich") ;
 lin eventually_Adverb = ParadigmsGer.mkAdv "schließlich" ;
+lin frequently_Adverb = ParadigmsGer.mkAdv "häufig" ;
 lin excenter_Noun = mkNoun (mkN "Ankreismittelpunkt" "Ankreismittelpunkte" masculine) ;
 lin exponentiable_Adj = mkAdj (mkA "exponierbar") ;
 lin exposed_Adj = mkAdj (mkA "exponiert") ;

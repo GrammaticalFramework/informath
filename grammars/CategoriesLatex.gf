@@ -41,6 +41,7 @@ lincat
   Dep, Dep2, DepC = Str ;
   Adv, Adv2, AdvC = Str ;
   Binder, Binder1, Binder2 = Str ;
+  PropBinder, ArgPropBinder = Str ;
   Adverb, Prep, ProperName = Str ;
 
   Label = {s : Str ; isIdent : Bool} ; -- isIdent: the judgement gives the keyword

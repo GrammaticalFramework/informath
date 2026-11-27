@@ -1,0 +1,5 @@
+Filter : Set.
+atTop : Elem Filter.
+Eventually : (p : (Elem Real -> Prop)) -> (F : Elem Filter) -> Prop.
+Frequently : (p : (Elem Real -> Prop)) -> (F : Elem Filter) -> Prop.
+Always : (p : (Elem Real -> Prop)) -> Prop.

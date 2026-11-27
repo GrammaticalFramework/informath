@@ -59,7 +59,9 @@ verbalCatMap = M.fromList [
 
   ("Binder",  ("Exp", ["Ident", "Exp"])),
   ("Binder1", ("Exp", ["Kind", "Ident", "Exp"])),
-  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"]))
+  ("Binder2", ("Exp", ["Exp", "Exp", "Ident", "Exp"])),
+  ("PropBinder", ("Prop", ["Ident", "Prop"])),
+  ("ArgPropBinder", ("Prop", ["Ident", "Prop", "Exp"]))
   ]
 
 -- symbolic categories to verbal types (for type checking with Dedukti)

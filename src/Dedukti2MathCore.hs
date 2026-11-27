@@ -222,6 +222,12 @@ funListKind ident exps = case ident of
 
 funListProp :: QIdent -> [Exp] -> GProp
 funListProp ident exps = case ident of
+  -- a constant binding a variable in a proposition: its body is a
+  -- proposition, not a term (Filter.Eventually (x => P) F)
+  QIdent s | Just ("PropBinder", c) <- lookupConstant s, [EAbs b y] <- exps ->
+    GBinderProp (fgTree c) (bind2coreIdent b) (exp2prop y)
+  QIdent s | Just ("ArgPropBinder", c) <- lookupConstant s, [EAbs b y, z] <- exps ->
+    GArgBinderProp (fgTree c) (bind2coreIdent b) (exp2prop y) (exp2exp z)
   QIdent s -> case (lookupConstant s, map exp2exp exps) of
     (Just ("Adj", c), [x]) -> GAdjProp (fgTree c) x
     (Just ("Adj2", c), [x, y]) -> GAdj2Prop (fgTree c) x y

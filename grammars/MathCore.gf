@@ -113,6 +113,11 @@ fun
   Binder1Exp : Binder1 -> Kind -> Ident -> Exp -> Exp ;
   Binder2Exp : Binder2 -> Exp -> Exp -> Ident -> Exp -> Exp ;
 
+-- constants that bind a variable in a proposition, as generalized quantifiers:
+-- Filter.Eventually (x => P) F, "for $x$ eventually in $F$, P"
+  BinderProp : PropBinder -> Ident -> Prop -> Prop ;
+  ArgBinderProp : ArgPropBinder -> Ident -> Prop -> Exp -> Prop ;
+
 
 -- coercions, to disappear in Core2Informath
 -- their purpose is to maintain lossless rendering of Dedukti

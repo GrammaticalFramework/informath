@@ -160,6 +160,8 @@ prop2dedukti prop = case prop of
     propPi (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
   GCoreExistProp kind ident prop ->
     propSigma (kind2dedukti kind) (EAbs (BVar (ident2ident ident)) (prop2dedukti prop)) 
+  GBinderProp f i p -> appIdent (showGF f) [EAbs (BVar (ident2ident i)) (prop2dedukti p)]
+  GArgBinderProp f i p x -> appIdent (showGF f) [EAbs (BVar (ident2ident i)) (prop2dedukti p), exp2dedukti x]
   GAppProp ident exps ->
     foldl1 EApp ((EIdent (ident2ident ident)) : map exp2dedukti (exps2list exps))
 
