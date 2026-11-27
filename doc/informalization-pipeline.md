@@ -129,6 +129,7 @@ The steps of `readEnv`, with the choices made in each:
    | `#TYPENOUN c n` | `typeNounTable` | with `-typing`: an element of the type family c is an n, "there is an identification $p : x = y$" |
    | `#VERBAL c ...` | `verbalSet` | c read in words outside formulas ("$A$ is contractible"), with its symbolic forms only inside formulas |
    | `#NEGATION c d` | `negationTable` | `not (c a1 ... an)` read as `d a1 ... an` ("$x \neq y$"), in this direction only |
+   | `#FOLD d c i k` | `foldTable` | `c a1 ... a(i-1) (k b1 ... bm)`, `k ...` the last argument, read as `d a1 ... a(i-1) b1 ... bm`; undone in parsing back |
 
    For a constant entry, the first form is the *primary* one. The others are
    *symbolic* forms (those of a symbolic category, such as the `$...$` forms

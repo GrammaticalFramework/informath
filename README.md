@@ -523,6 +523,23 @@ need double negation elimination), and the rewriting cannot loop. The other
 direction is a directive of its own, `#NEGATION Neqt Eqt`. It applies before
 the forms of the constants are chosen, so in statements and proof texts alike.
 
+A constant applied to a particular constant as its last argument can be read
+as a constant of its own. The directive
+```
+#FOLD EventuallyAtTop Eventually 3 atTop
+```
+makes `Eventually A p (atTop A)` read as `EventuallyAtTop A p A`: the last
+argument, an application of `atTop`, is replaced by the arguments of `atTop`.
+`EventuallyAtTop` needs no declaration, but it has an entry and `#HIDE` lines of
+its own; with `AdverbPropBinder sufficiently_large_Adverb` it reads "for $x$
+sufficiently large, P", and `Eventually` itself, with
+`AdverbPrepArgPropBinder eventually_Adverb in_Prep`, "for $x$ eventually in
+$F$, P". So with `#FOLD EventuallyNhds Eventually 3 nhds` and the entry
+`AdverbPrepArgPropBinder sufficiently_close_Adverb to_Prep`, `Eventually A p
+(nhds A T a)` reads "for $x$ sufficiently close to $a$, P". A text parsed back
+gets the application of `atTop` or `nhds` again (without the hidden arguments,
+as any constant).
+
 Instead of symbolic expressions between dollars, a symbol table can contain a macro symbol and a separate directive
 ```
 #MACRO <latex_newcommand>
@@ -781,7 +798,7 @@ AdjE      Exps -> Prop               X and Y are equal EQUIVALENCE
 Binder    (Exp->Exp) -> Exp          the function sum of X of $x$  
 Binder1   Kind -> (Exp->Exp) -> Exp  the disjoint union of X where $x$ is an A
 Binder2   Exp->Exp->(Exp->Exp)->Exp  the integral of Z where $x$ ranges from X to Y      
-PropBinder (Exp->Prop) -> Prop      for $x$ eventually, P                  (a GF tree: AdverbPropBinder eventually_Adverb)
+PropBinder (Exp->Prop) -> Prop      for $x$ sufficiently large, P          (a GF tree: AdverbPropBinder sufficiently_large_Adverb)
 ArgPropBinder (Exp->Prop)->Exp->Prop  for $x$ eventually in X, P        (AdverbPrepArgPropBinder eventually_Adverb in_Prep)
 Dep       Exp -> Kind                root of X
 Dep2      Exp -> Exp -> Kind         interval from X to Y

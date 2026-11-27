@@ -66,7 +66,7 @@ consistentHypos ts = case filter consistent ts of
 -- that, a negation of a constant that has a negated form (#NEGATION c d) is
 -- that form: not (c a1 ... an) is d a1 ... an
 hideArgs :: SymbolTable -> DkTree a -> DkTree a
-hideArgs st = proofIfs . dropProofs . hide . uncoerce . negations
+hideArgs st = proofIfs . dropProofs . hide . uncoerce . negations . folds
  where
   -- proofs are not shown in readings of statements and definitions: a
   -- function quantified over (forall, exists) loses the proofs that its type
@@ -154,6 +154,16 @@ hideArgs st = proofIfs . dropProofs . hide . uncoerce . negations
   coes = coercionTable st
   negs = negationTable st
 
+  -- #FOLD d c i k: c a1 ... a(i-1) (k b1 ... bm) is d a1 ... a(i-1) b1 ... bm
+  foldsOf = M.fromListWith (++) [(c, [(d, i, k)]) | (d, (c, i, k)) <- M.assocs (foldTable st)]
+  folds :: forall a. DkTree a -> DkTree a
+  folds t = case t of
+    EApp _ _ | (EIdent c, args) <- splitApp t, Just fs <- M.lookup c foldsOf,
+               (d, bs) : _ <- [(d, bs) | (d, i, k) <- fs, length args == i,
+                                         (EIdent k', bs) <- [splitApp (last args)], k' == k] ->
+      foldl EApp (EIdent d) (map folds (init args ++ bs))
+    _ -> runIdentity (composOpM (Identity . folds) t)
+
   negations :: forall a. DkTree a -> DkTree a
   negations t = case t of
     EApp (EIdent (QIdent "not")) arg
@@ -186,6 +196,18 @@ hideArgs st = proofIfs . dropProofs . hide . uncoerce . negations
 
   isEquation :: QIdent -> Bool
   isEquation (QIdent c) = elem c ["Eq", "Eqt", "iff", "Equ"]
+
+-- | The inverse of #FOLD, for parsing back: d a1 ... an is c a1 ... a(i-1)
+-- (k ai ... an)
+unfoldDedukti :: SymbolTable -> DkTree a -> DkTree a
+unfoldDedukti st t = case t of
+  EApp _ _ | (EIdent d, args) <- splitApp t, Just (c, i, k) <- M.lookup d table, length args >= i - 1 ->
+    let (before, after) = splitAt (i - 1) (map (unfoldDedukti st) args)
+    in foldl EApp (EIdent c) (before ++ [foldl EApp (EIdent k) after])
+  EIdent d | Just (c, 1, k) <- M.lookup d table -> EApp (EIdent c) (EIdent k)
+  _ -> runIdentity (composOpM (Identity . unfoldDedukti st) t)
+ where
+  table = foldTable st
 
 annotateDkIdentsFb :: Bool -> Env -> DkTree a -> [DkTree a]
 annotateDkIdentsFb fallback env =

@@ -10,3 +10,11 @@ existence : (y : Elem Real) -> Proof (Eventually (x => exists Real (z => and (Eq
 disjunction : Proof (Frequently (x => or (Lt x 0) (forall Real (z => Leq z (times x z)))) atTop).
 
 implication : Proof (Always (x => if (Gt x 0) (Eventually (z => Lt x z) atTop))).
+
+(; #FOLD EventuallyLarge Eventually 2 atTop: "for $x$ sufficiently large" ;)
+
+large : Proof (Eventually (x => Lt 1 x) atTop).
+
+(; #FOLD EventuallyNear Eventually 2 near, near with an argument: "for $x$ sufficiently close to $a$" ;)
+
+close : (a : Elem Real) -> Proof (Eventually (x => Leq x (plus a 1)) (near a)).

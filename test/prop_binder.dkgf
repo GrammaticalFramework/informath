@@ -2,3 +2,7 @@ Eventually : AdverbPrepArgPropBinder eventually_Adverb in_Prep
 Frequently : AdverbPrepArgPropBinder frequently_Adverb in_Prep
 Always : AdverbPropBinder locally_Adverb
 atTop : $\mathrm{atTop}$
+#FOLD EventuallyLarge Eventually 2 atTop
+EventuallyLarge : AdverbPropBinder sufficiently_large_Adverb
+#FOLD EventuallyNear Eventually 2 near
+EventuallyNear : AdverbPrepArgPropBinder sufficiently_close_Adverb to_Prep

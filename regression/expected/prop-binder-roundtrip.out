@@ -16,3 +16,6 @@ disjunction : Proof (or (Frequently (x => Lt x (nd 0)) atTop) (forall Real (z =>
 disjunction : Proof (Frequently (x => or (Lt x (nd 0)) (forall Real (z => Leq z (times x z)))) atTop) .
 disjunction : Proof (Frequently (x => or (Lt x (nd 0)) (forall Real (z => Leq z (cartesian x z)))) atTop) .
 implication : Proof (Always (x => if (Gt x (nd 0)) (Eventually (z => Lt x z) atTop))) .
+large : Proof (Eventually (x => Lt (nd 1) x) atTop) .
+close : a : Elem Real -> Proof (Eventually (x => Leq x (vectorPlus a (nd 1))) (near a)) .
+close : a : Elem Real -> Proof (Eventually (x => Leq x (plus a (nd 1))) (near a)) .

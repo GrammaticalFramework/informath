@@ -24,7 +24,7 @@ import DeduktiRules (emptyRuleContext)
 import Ranking
 import Environment
 import BuildConstantTable
-import AnnotateDedukti (harmonizeJmt, annotateDkIdents, DkTree)
+import AnnotateDedukti (harmonizeJmt, annotateDkIdents, unfoldDedukti, DkTree)
 import qualified Dedukti2MathCore as DMC
 import qualified MathCore2Informath as MCI
 import qualified Informath2MathCore as IMC
@@ -980,10 +980,10 @@ ext2core :: Env -> GJmt -> [GJmt]
 ext2core env = concatMap (IMC.restoreBareFunKinds (implicitKinds env)) . IMC.semantics (semanticsTableEnv env)
 
 gjmt2dedukti :: Env -> GJmt -> [Jmt] 
-gjmt2dedukti env = concatMap (MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)) . ext2core env
+gjmt2dedukti env = map (unfoldDedukti (symbolTable env)) . concatMap (MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)) . ext2core env
 
 core2dedukti :: Env -> GJmt -> [Jmt]
-core2dedukti env = MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)
+core2dedukti env = map (unfoldDedukti (symbolTable env)) . MCD.jmt2dedukti (backConstantTableEnv env) (dropTableEnv env)
 
 
 -- * Reading input for processing

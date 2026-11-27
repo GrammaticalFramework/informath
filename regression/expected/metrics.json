@@ -247,19 +247,19 @@
   "latex_errors": 0
  },
  "prop-binder": {
-  "lines": 4,
+  "lines": 6,
   "undefined": 0,
-  "seconds": 0.1
+  "seconds": 0.0
  },
  "prop-binder-mathcore": {
-  "lines": 4,
+  "lines": 6,
   "undefined": 0,
   "seconds": 0.0
  },
  "prop-binder-roundtrip": {
-  "lines": 18,
+  "lines": 21,
   "undefined": 0,
-  "seconds": 0.6
+  "seconds": 0.5
  },
  "prop-definition": {
   "lines": 2,

@@ -133,6 +133,13 @@ data SymbolTable = SymbolTable {
   -- only, so that a negated d is not read as a doubly negated c, which would
   -- not be intuitionistically the same, and the rewriting cannot loop
   negationTable :: M.Map QIdent QIdent,
+  -- #FOLD d c i k: c whose i'th and last argument (counted before #HIDE) is
+  -- the constant k applied to b1 ... bm is read as d with b1 ... bm in place
+  -- of that argument ("#FOLD EventuallyNhds Eventually 3 nhds": Eventually A
+  -- p (nhds A T a) is EventuallyNhds A p A T a, which has an entry of its own,
+  -- "for $x$ sufficiently close to $a$"); parsed back, d a1 ... an is c
+  -- a1 ... a(i-1) (k ai ... an); keyed by d
+  foldTable :: M.Map QIdent (QIdent, Int, QIdent),
   -- #TYPENOUN c n: an element of a type c ... is called an n (Id: an
   -- identification), with -typing; keyed by c and by the LaTeX macros of c
   typeNounTable :: M.Map String String,
@@ -240,6 +247,7 @@ buildSymbolTable pgf lang ls = SymbolTable {
   hideTable = M.fromList [(QIdent c, map read ns) | "#HIDE":c:ns <- entrylines],
   coercionTable = M.fromList [(QIdent c, read k) | ["#COERCION", c, k] <- entrylines],
   negationTable = M.fromList [(QIdent c, QIdent d) | ["#NEGATION", c, d] <- entrylines],
+  foldTable = M.fromList [(QIdent d, (QIdent c, read i, QIdent k)) | ["#FOLD", d, c, i, k] <- entrylines],
   typeNounTable = M.fromList ([(c, n) | ["#TYPENOUN", c, n] <- entrylines] ++
                               [(m, n) | ["#TYPENOUN", c, n] <- entrylines,
                                         (qid:_, macros) <- numberedlines, qid == c, m <- macros]),
